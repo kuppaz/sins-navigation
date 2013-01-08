@@ -56,8 +56,6 @@ namespace SINS_motion_processing_new_data
         //[DllImport("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//Motion Imitator//SINS_Aligment//SINS_Aligment.dll")]
         //unsafe private static extern int main();
 
-        //ТРАТАТА - SVN выдался на ура!!!!
-
         public SINS_Processing()
         {
             InitializeComponent();
