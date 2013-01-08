@@ -60,7 +60,6 @@ namespace SINS_motion_processing_new_data
         {
             InitializeComponent();
         }
-        уывапывап
 
         private void Main_Block_Click_new_Click(object sender, EventArgs e)
         {
