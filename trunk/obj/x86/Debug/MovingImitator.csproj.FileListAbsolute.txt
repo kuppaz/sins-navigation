@@ -1,0 +1,31 @@
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\bin\Debug\MovingImitator.exe
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\bin\Debug\MovingImitator.pdb
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.Form1.resources
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.Properties.Resources.resources
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.exe
+D:\Ботва\Postgraduate\Scientific work\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.Properties.Resources.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\bin\Debug\MovingImitator.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\bin\Debug\MovingImitator.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\bin\Debug\Common_Namespace.dll
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\bin\Debug\Common_Namespace.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\obj\x86\Debug\MovingImitator.Imitation.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\bin\Debug\MovingImitator.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\bin\Debug\MovingImitator.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\bin\Debug\Common_Namespace.dll
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\bin\Debug\Common_Namespace.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\obj\x86\Debug\MovingImitator.Imitation.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\obj\x86\Debug\MovingImitator.Properties.Resources.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\obj\x86\Debug\MovingImitator.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\obj\x86\Debug\MovingImitator.pdb

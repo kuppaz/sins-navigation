@@ -1,0 +1,22 @@
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\bin\Debug\OdoData.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\bin\Debug\OdoData.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\bin\Debug\Common_Namespace.dll
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\bin\Debug\Common_Namespace.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\obj\x86\Debug\OdoData.data_exploration.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\obj\x86\Debug\OdoData.Properties.Resources.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\obj\x86\Debug\OdoData.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\OdoData\obj\x86\Debug\OdoData.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\bin\Debug\OdoData.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\bin\Debug\OdoData.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\bin\Debug\Common_Namespace.dll
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\bin\Debug\Common_Namespace.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.data_exploration.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.Properties.Resources.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.pdb

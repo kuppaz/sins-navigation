@@ -1,0 +1,23 @@
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\bin\Debug\SINS motion processing.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\bin\Debug\SINS motion processing.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\bin\Debug\Common_Namespace.dll
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\bin\Debug\Common_Namespace.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\obj\x86\Debug\SINS_motion_processing.Properties.Resources.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\obj\x86\Debug\SINS_motion_processing_new_data.SINS_Processing.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\Motion Imitator\MovingImitator\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINS motion processing.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINS motion processing.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\Common_Namespace.dll
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\Common_Namespace.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS_motion_processing.Properties.Resources.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS_motion_processing_new_data.SINS_Processing.resources
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.exe
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.pdb
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.csprojResolveAssemblyReference.cache
+D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.csproj.GenerateResource.Cache
+C:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.exe
+C:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.pdb
