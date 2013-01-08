@@ -61,6 +61,8 @@ namespace SINS_motion_processing_new_data
             InitializeComponent();
         }
 
+        // ТРАТАТА - свн выдался на ура!!!
+
         private void Main_Block_Click_new_Click(object sender, EventArgs e)
         {
             DateTime datetime_start = DateTime.Now;
