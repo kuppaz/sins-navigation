@@ -308,6 +308,35 @@ namespace Common_Namespace
 
 
 
+        public static void MAKE_H_AND_CORRECTION_alignment(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
+        {
+            for (int i = 0; i < SimpleData.iMx * SimpleData.iMz; i++) KalmanVars.Matrix_H[i] = 0.0;
+
+            KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = 1.0;
+            KalmanVars.Matrix_H[1 * SimpleData.iMx + 3] = 1.0;
+
+            KalmanVars.Measure[0] = SINSstate.Vx_0[0];
+            KalmanVars.Measure[1] = SINSstate.Vx_0[1];
+
+            KalmanVars.Matrix_H[2 * SimpleData.iMx + 0] = 1.0;
+            KalmanVars.Matrix_H[3 * SimpleData.iMx + 1] = 1.0;
+
+            KalmanVars.Measure[2] = (SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
+            KalmanVars.Measure[3] = (SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n;
+
+
+            KalmanVars.Noize_Z[0] = 0.02;
+            KalmanVars.Noize_Z[1] = 0.02;
+            KalmanVars.Noize_Z[2] = 0.002;
+            KalmanVars.Noize_Z[3] = 0.002;
+
+            KalmanVars.cnt_measures = 4;
+
+            KalmanProcs.KalmanCorrection(KalmanVars);
+        }
+
+
+
         public static void MAKE_H_AND_CORRECTION(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
             for (int i = 0; i < SimpleData.iMx * SimpleData.iMz; i++) KalmanVars.Matrix_H[i] = 0.0;
@@ -317,120 +346,131 @@ namespace Common_Namespace
             {
                 if (SINSstate.KNS_flg == false)
                 {
-                    if (SINSstate.Odometr_SINS_case == true)
+                    //--------------------------------------------------------------------------
+                    //--------------------------ПОЗИЦИОННАЯ КОРЕКЦИЯ-----------------------------
+                    //--------------------------------------------------------------------------
+                    if (SINSstate.UsingOdoPosition == true)
                     {
-                        //Вот это вот нахрена?
-                        KalmanVars.Matrix_H[1 * SimpleData.iMx + 1] = 1.0;
-                        KalmanVars.Matrix_H[1 * SimpleData.iMx + SINSstate.value_iMx_r_odo_12 + 1] = -1.0;
-                        KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0;
-                        KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r_odo_12] = -1.0;
+                        SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
 
-                        KalmanVars.Measure[0] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
-                        KalmanVars.Measure[1] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
-
-                        KalmanVars.Noize_Z[0] = 0.2;
-                        KalmanVars.Noize_Z[1] = 0.2;
-
-                        KalmanVars.cnt_measures = 2;
-                    }
-                    else if (SINSstate.Odometr_SINS_case == false)
-                    {
-                        //--------------------------------------------------------------------------
-                        //--------------------------ПОЗИЦИОННАЯ КОРЕКЦИЯ-----------------------------
-                        //--------------------------------------------------------------------------
-                        if (SINSstate.UsingOdoPosition == true)
+                        //---Разбиение на три составляющие---
+                        if (SINSstate.Use_3_Measure == true)
                         {
-                            SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
+                            KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0;
+                            //KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0 - (SINSstate.A_x0s[1, 1] * SINSstate.OdometerVector[1]*Math.Tan(SINSstate.Latitude)) / SINSstate.R_e;
+                            //KalmanVars.Matrix_H[0 * SimpleData.iMx + 5] = SINSstate.A_x0s[2, 1] * SINSstate.OdometerVector[1];
+                            //KalmanVars.Matrix_H[0 * SimpleData.iMx + 6] = - SINSstate.A_x0s[1, 1] * SINSstate.OdometerVector[1];
 
-                            //---Разбиение на три составляющие---
-                            if (SINSstate.Use_3_Measure == true)
-                            {
-                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0;
-                                    //KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0 - (SINSstate.A_x0s[1, 1] * SINSstate.OdometerVector[1]*Math.Tan(SINSstate.Latitude)) / SINSstate.R_e;
-                                    //KalmanVars.Matrix_H[0 * SimpleData.iMx + 5] = SINSstate.A_x0s[2, 1] * SINSstate.OdometerVector[1];
-                                    //KalmanVars.Matrix_H[0 * SimpleData.iMx + 6] = - SINSstate.A_x0s[1, 1] * SINSstate.OdometerVector[1];
+                            KalmanVars.Matrix_H[1 * SimpleData.iMx + 1] = 1.0;
+                            //KalmanVars.Matrix_H[1 * SimpleData.iMx + 0] = (SINSstate.A_x0s[0, 1] * SINSstate.OdometerVector[1] * Math.Tan(SINSstate.Latitude)) / SINSstate.R_e;
+                            //KalmanVars.Matrix_H[1 * SimpleData.iMx + 4] = -SINSstate.A_x0s[2, 1] * SINSstate.OdometerVector[1];
+                            //KalmanVars.Matrix_H[1 * SimpleData.iMx + 6] = SINSstate.A_x0s[0, 1] * SINSstate.OdometerVector[1];
 
-                                    KalmanVars.Matrix_H[1 * SimpleData.iMx + 1] = 1.0;
-                                    //KalmanVars.Matrix_H[1 * SimpleData.iMx + 0] = (SINSstate.A_x0s[0, 1] * SINSstate.OdometerVector[1] * Math.Tan(SINSstate.Latitude)) / SINSstate.R_e;
-                                    //KalmanVars.Matrix_H[1 * SimpleData.iMx + 4] = -SINSstate.A_x0s[2, 1] * SINSstate.OdometerVector[1];
-                                    //KalmanVars.Matrix_H[1 * SimpleData.iMx + 6] = SINSstate.A_x0s[0, 1] * SINSstate.OdometerVector[1];
+                            //Формирование измерений по географическим координатам
+                            KalmanVars.Measure[0] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude);
+                            KalmanVars.Measure[1] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-                                    //Формирование измерений по географическим координатам
-                                    KalmanVars.Measure[0] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude);
-                                    KalmanVars.Measure[1] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
+                            KalmanVars.Noize_Z[0] = SINSstate.A_x0s[0, 1] * 0.2;
+                            KalmanVars.Noize_Z[1] = SINSstate.A_x0s[1, 1] * 0.2;
 
-                                    KalmanVars.Noize_Z[0] = SINSstate.A_x0s[0, 1] * 0.2;
-                                    KalmanVars.Noize_Z[1] = SINSstate.A_x0s[1, 1] * 0.2;
+                            KalmanVars.cnt_measures = 2;
 
-                                    KalmanVars.cnt_measures = 2;
-
-                                    if (SINSstate.iMx_r3_dV3)
-                                    {
-                                        KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3] = 1.0;
-                                        //KalmanVars.Matrix_H[2 * SimpleData.iMx + 4] = SINSstate.A_x0s[1, 1] * SINSstate.OdometerVector[1];
-                                        //KalmanVars.Matrix_H[2 * SimpleData.iMx + 5] = -SINSstate.A_x0s[0, 1] * SINSstate.OdometerVector[1];
-
-                                        KalmanVars.Measure[2] = (SINSstate.Altitude - SINSstate_OdoMod.Altitude);
-
-                                        KalmanVars.Noize_Z[2] = SINSstate.A_x0s[2, 1] * 0.2;
-
-                                        KalmanVars.cnt_measures = 3;
-                                    }
-                            }
-                            //---Одно измерение---
-                            else if (SINSstate.Use_1_Measure == true)
-                            {
-                                if (false)
-                                {
-                                    double[] dS_x = new double[3];
-                                    SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
-
-                                    if (SINSstate.feedbackExist == true)
-                                    {
-                                        SINSstate_OdoMod.Latitude = SINSstate.Latitude_prev + dS_x[1] / SINSstate.R_n;
-                                        SINSstate_OdoMod.Longitude = SINSstate.Longitude_prev + dS_x[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-                                        SINSstate_OdoMod.Altitude = SINSstate.Altitude_prev + dS_x[2];
-                                    }
-
-                                    //---Разница двух модулей с разностями между разными значениями координат---
-                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0 * Math.Sign(Math.Abs(SINSstate.Longitude - SINSstate.Longitude_prev) - Math.Abs(Math.Abs(SINSstate_OdoMod.Longitude - SINSstate.Longitude_prev)));
-                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 1] = 1.0 * Math.Sign(Math.Abs(SINSstate.Latitude - SINSstate.Latitude_prev) - Math.Abs(Math.Abs(SINSstate_OdoMod.Latitude - SINSstate.Latitude_prev)));
-
-                                    KalmanVars.Measure[0] = Math.Abs(SINSstate.Latitude - SINSstate.Latitude_prev) * SINSstate.R_n - Math.Abs(SINSstate_OdoMod.Latitude - SINSstate.Latitude_prev) * SINSstate.R_n +
-                                                            Math.Abs(SINSstate.Longitude - SINSstate.Longitude_prev) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude) - Math.Abs(SINSstate_OdoMod.Longitude - SINSstate.Longitude_prev) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude);
-
-                                    KalmanVars.Noize_Z[0] = 1.0;
-                                    KalmanVars.cnt_measures = 1;
-
-                                    if (SINSstate.iMx_r3_dV3)
-                                    {
-                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3] = 1.0 * Math.Sign(Math.Abs(SINSstate.Altitude - SINSstate.Altitude_prev) - Math.Abs(SINSstate_OdoMod.Altitude - SINSstate.Altitude_prev));
-
-                                        KalmanVars.Measure[0] += Math.Abs(SINSstate.Altitude - SINSstate.Altitude_prev) - Math.Abs(SINSstate_OdoMod.Altitude - SINSstate.Altitude_prev);
-                                    }
-                                }
-                                else
-                                {
-                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0 * Math.Sign(SINSstate.Longitude - SINSstate_OdoMod.Longitude);
-                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 1] = 1.0 * Math.Sign(SINSstate.Latitude - SINSstate_OdoMod.Latitude);
-
-                                    KalmanVars.Measure[0] = Math.Abs(SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n +
-                                                            Math.Abs(SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude);
-
-                                    KalmanVars.Noize_Z[0] = 1.0;
-                                    KalmanVars.cnt_measures = 1;
-
-                                    if (SINSstate.iMx_r3_dV3)
-                                    {
-                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3] = 1.0 * Math.Sign(SINSstate.Altitude - SINSstate_OdoMod.Altitude);
-
-                                        KalmanVars.Measure[0] += Math.Abs(SINSstate.Altitude - SINSstate_OdoMod.Altitude);
-                                    }
-                                }
-                            }
-
-                            //---ДОПОЛНИТЕЛЬНОЕ измерение по вертикальной скорости---
                             if (SINSstate.iMx_r3_dV3)
+                            {
+                                KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3] = 1.0;
+                                //KalmanVars.Matrix_H[2 * SimpleData.iMx + 4] = SINSstate.A_x0s[1, 1] * SINSstate.OdometerVector[1];
+                                //KalmanVars.Matrix_H[2 * SimpleData.iMx + 5] = -SINSstate.A_x0s[0, 1] * SINSstate.OdometerVector[1];
+
+                                KalmanVars.Measure[2] = (SINSstate.Altitude - SINSstate_OdoMod.Altitude);
+
+                                KalmanVars.Noize_Z[2] = SINSstate.A_x0s[2, 1] * 0.2;
+
+                                KalmanVars.cnt_measures = 3;
+                            }
+                        }
+                        //---Одно измерение---
+                        else if (SINSstate.Use_1_Measure == true)
+                        {
+                            if (false)
+                            {
+                                double[] dS_x = new double[3];
+                                SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
+
+                                if (SINSstate.feedbackExist == true)
+                                {
+                                    SINSstate_OdoMod.Latitude = SINSstate.Latitude_prev + dS_x[1] / SINSstate.R_n;
+                                    SINSstate_OdoMod.Longitude = SINSstate.Longitude_prev + dS_x[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+                                    SINSstate_OdoMod.Altitude = SINSstate.Altitude_prev + dS_x[2];
+                                }
+
+                                //---Разница двух модулей с разностями между разными значениями координат---
+                                KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0 * Math.Sign(Math.Abs(SINSstate.Longitude - SINSstate.Longitude_prev) - Math.Abs(Math.Abs(SINSstate_OdoMod.Longitude - SINSstate.Longitude_prev)));
+                                KalmanVars.Matrix_H[0 * SimpleData.iMx + 1] = 1.0 * Math.Sign(Math.Abs(SINSstate.Latitude - SINSstate.Latitude_prev) - Math.Abs(Math.Abs(SINSstate_OdoMod.Latitude - SINSstate.Latitude_prev)));
+
+                                KalmanVars.Measure[0] = Math.Abs(SINSstate.Latitude - SINSstate.Latitude_prev) * SINSstate.R_n - Math.Abs(SINSstate_OdoMod.Latitude - SINSstate.Latitude_prev) * SINSstate.R_n +
+                                                        Math.Abs(SINSstate.Longitude - SINSstate.Longitude_prev) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude) - Math.Abs(SINSstate_OdoMod.Longitude - SINSstate.Longitude_prev) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude);
+
+                                KalmanVars.Noize_Z[0] = 1.0;
+                                KalmanVars.cnt_measures = 1;
+
+                                if (SINSstate.iMx_r3_dV3)
+                                {
+                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3] = 1.0 * Math.Sign(Math.Abs(SINSstate.Altitude - SINSstate.Altitude_prev) - Math.Abs(SINSstate_OdoMod.Altitude - SINSstate.Altitude_prev));
+
+                                    KalmanVars.Measure[0] += Math.Abs(SINSstate.Altitude - SINSstate.Altitude_prev) - Math.Abs(SINSstate_OdoMod.Altitude - SINSstate.Altitude_prev);
+                                }
+                            }
+                            else
+                            {
+                                KalmanVars.Matrix_H[0 * SimpleData.iMx + 0] = 1.0 * Math.Sign(SINSstate.Longitude - SINSstate_OdoMod.Longitude);
+                                KalmanVars.Matrix_H[0 * SimpleData.iMx + 1] = 1.0 * Math.Sign(SINSstate.Latitude - SINSstate_OdoMod.Latitude);
+
+                                KalmanVars.Measure[0] = Math.Sqrt(Math.Pow((SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n, 2) +
+                                                        Math.Pow((SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude), 2));
+
+                                KalmanVars.Noize_Z[0] = 1.0;
+                                KalmanVars.cnt_measures = 1;
+
+                                if (SINSstate.iMx_r3_dV3)
+                                {
+                                    
+                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3] = 1.0 * Math.Sign(SINSstate.Altitude - SINSstate_OdoMod.Altitude);
+
+                                    KalmanVars.Measure[0] = Math.Sqrt(Math.Pow((SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n, 2) + Math.Pow(SINSstate.Altitude - SINSstate_OdoMod.Altitude, 2) +
+                                                            Math.Pow((SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_OdoMod.Latitude), 2));
+                                }
+                            }
+                        }
+
+                        //---ДОПОЛНИТЕЛЬНОЕ измерение по вертикальной скорости---
+                        if (SINSstate.iMx_r3_dV3)
+                        {
+                            if (SINSstate.UseLastMinusOneOdo == false)
+                                SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
+                            else
+                                SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
+
+                            CopyArray(SINSstate.OdoSpeed, SINSstate.A_x0s * SINSstate.OdometerVector);
+
+                            KalmanVars.Measure[KalmanVars.cnt_measures] = SINSstate.Vx_0[2] - SINSstate.OdoSpeed[2];
+
+                            KalmanVars.Matrix_H[KalmanVars.cnt_measures * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = 1.0;
+
+                            KalmanVars.Noize_Z[KalmanVars.cnt_measures] = KalmanVars.OdoNoise;
+                            KalmanVars.cnt_measures++;
+                        }
+                    }
+
+                    //--------------------------------------------------------------------------
+                    //--------------------------СКОРОСТНАЯ КОРЕКЦИЯ-----------------------------
+                    //--------------------------------------------------------------------------
+                    else if (SINSstate.UsingOdoVelocity == true)
+                    {
+                        //---Разбиение на три составляющие---
+                        if (SINSstate.Use_3_Measure == true)
+                        {
+                            //---КОРРЕКТИРОВАНИЕ ПО СКОРОСТИ В ПРОЕКЦИИ НА ГЕОГРАФИЮ---
+                            if (SINSstate.UseOdoVelocity_In_Oz == false)
                             {
                                 if (SINSstate.UseLastMinusOneOdo == false)
                                     SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
@@ -439,146 +479,119 @@ namespace Common_Namespace
 
                                 CopyArray(SINSstate.OdoSpeed, SINSstate.A_x0s * SINSstate.OdometerVector);
 
-                                KalmanVars.Measure[KalmanVars.cnt_measures] = SINSstate.Vx_0[2] - SINSstate.OdoSpeed[2];
+                                for (int i = 0; i < 3; i++)
+                                    KalmanVars.Measure[i] = SINSstate.Vx_0[i] - SINSstate.OdoSpeed[i];
 
-                                KalmanVars.Matrix_H[KalmanVars.cnt_measures * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = 1.0;
+                                KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = 1.0;
+                                KalmanVars.Matrix_H[1 * SimpleData.iMx + 3] = 1.0;
+                                KalmanVars.cnt_measures = 2;
 
-                                KalmanVars.Noize_Z[KalmanVars.cnt_measures] = KalmanVars.OdoNoise;
-                                KalmanVars.cnt_measures++;
+                                if (SINSstate.iMx_r3_dV3)
+                                {
+                                    KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = 1.0;
+                                    KalmanVars.cnt_measures = 3;
+                                }
+
+                                KalmanVars.Noize_Z[0] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise;
+                                KalmanVars.Noize_Z[1] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise;
+                                KalmanVars.Noize_Z[2] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise;
+
                             }
-                        }
-                        //--------------------------------------------------------------------------
-                        //--------------------------СКОРОСТНАЯ КОРЕКЦИЯ-----------------------------
-                        //--------------------------------------------------------------------------
-                        else if (SINSstate.UsingOdoVelocity == true)
-                        {
-                            //---Разбиение на три составляющие---
-                            if (SINSstate.Use_3_Measure == true)
+
+                            //---В ПРОЕКЦИИ НА ПРИБОРНЫЕ ОСИ---
+                            else if (SINSstate.UseOdoVelocity_In_Oz == true)
                             {
-                                //---КОРРЕКТИРОВАНИЕ ПО СКОРОСТИ В ПРОЕКЦИИ НА ГЕОГРАФИЮ---
-                                if (SINSstate.UseOdoVelocity_In_Oz == false)
+                                if (true)
                                 {
                                     if (SINSstate.UseLastMinusOneOdo == false)
                                         SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
                                     else
                                         SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
 
-                                    CopyArray(SINSstate.OdoSpeed, SINSstate.A_x0s * SINSstate.OdometerVector);
+                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = SINSstate.A_sx0[0, 0];
+                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = SINSstate.A_sx0[0, 1];
+                                    KalmanVars.Matrix_H[1 * SimpleData.iMx + 2] = SINSstate.A_sx0[1, 0];
+                                    KalmanVars.Matrix_H[1 * SimpleData.iMx + 3] = SINSstate.A_sx0[1, 1];
 
-                                    for (int i = 0; i < 3; i++)
-                                        KalmanVars.Measure[i] = SINSstate.Vx_0[i] - SINSstate.OdoSpeed[i];
+                                    KalmanVars.Measure[0] = SINSstate.A_sx0[0, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[0, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[0, 2] * SINSstate.Vx_0[2];
+                                    KalmanVars.Measure[1] = SINSstate.A_sx0[1, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[1, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[1, 2] * SINSstate.Vx_0[2] - SINSstate.OdometerVector[1];
 
-                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = 1.0;
-                                    KalmanVars.Matrix_H[1 * SimpleData.iMx + 3] = 1.0;
-                                    KalmanVars.cnt_measures = 2;
+                                    KalmanVars.Noize_Z[0] = 0.001;
+                                    KalmanVars.Noize_Z[1] = 1.0;
 
                                     if (SINSstate.iMx_r3_dV3)
                                     {
-                                        KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = 1.0;
+                                        KalmanVars.Matrix_H[2 * SimpleData.iMx + 2] = SINSstate.A_sx0[2, 0];
+                                        KalmanVars.Matrix_H[2 * SimpleData.iMx + 3] = SINSstate.A_sx0[2, 1];
+                                        KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[2, 2];
+
+                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[0, 2];
+                                        KalmanVars.Matrix_H[1 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[1, 2];
+
+                                        KalmanVars.Measure[2] = SINSstate.A_sx0[2, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[2, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[2, 2] * SINSstate.Vx_0[2];
+                                        KalmanVars.Noize_Z[2] = 0.001;
                                         KalmanVars.cnt_measures = 3;
                                     }
-
-                                    KalmanVars.Noize_Z[0] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise;
-                                    KalmanVars.Noize_Z[1] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise;
-                                    KalmanVars.Noize_Z[2] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise;
-
                                 }
-
-                                //---В ПРОЕКЦИИ НА ПРИБОРНЫЕ ОСИ---
-                                else if (SINSstate.UseOdoVelocity_In_Oz == true)
-                                {
-                                    if (true)
-                                    {
-                                        if (SINSstate.UseLastMinusOneOdo == false)
-                                            SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
-                                        else
-                                            SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
-
-                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = SINSstate.A_sx0[0, 0];
-                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = SINSstate.A_sx0[0, 1];
-                                        KalmanVars.Matrix_H[1 * SimpleData.iMx + 2] = SINSstate.A_sx0[1, 0];
-                                        KalmanVars.Matrix_H[1 * SimpleData.iMx + 3] = SINSstate.A_sx0[1, 1];
-
-                                        KalmanVars.Measure[0] = SINSstate.A_sx0[0, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[0, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[0, 2] * SINSstate.Vx_0[2];
-                                        KalmanVars.Measure[1] = SINSstate.A_sx0[1, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[1, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[1, 2] * SINSstate.Vx_0[2] - SINSstate.OdometerVector[1];
-
-                                        KalmanVars.Noize_Z[0] = 0.001;
-                                        KalmanVars.Noize_Z[1] = 1.0;
-
-                                        if (SINSstate.iMx_r3_dV3)
-                                        {
-                                            KalmanVars.Matrix_H[2 * SimpleData.iMx + 2] = SINSstate.A_sx0[2, 0];
-                                            KalmanVars.Matrix_H[2 * SimpleData.iMx + 3] = SINSstate.A_sx0[2, 1];
-                                            KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[2, 2];
-
-                                            KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[0, 2];
-                                            KalmanVars.Matrix_H[1 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[1, 2];
-
-                                            KalmanVars.Measure[2] = SINSstate.A_sx0[2, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[2, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[2, 2] * SINSstate.Vx_0[2];
-                                            KalmanVars.Noize_Z[2] = 0.001;
-                                            KalmanVars.cnt_measures = 3;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (SINSstate.UseLastMinusOneOdo == false)
-                                            SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
-                                        else
-                                            SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
-
-                                        //KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = SINSstate.A_sx0[0, 0];
-                                        //KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = SINSstate.A_sx0[0, 1];
-                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = SINSstate.A_sx0[1, 0];
-                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = SINSstate.A_sx0[1, 1];
-
-                                        //KalmanVars.Measure[0] = SINSstate.A_sx0[0, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[0, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[0, 2] * SINSstate.Vx_0[2];
-                                        KalmanVars.Measure[0] = SINSstate.A_sx0[1, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[1, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[1, 2] * SINSstate.Vx_0[2] - SINSstate.OdometerVector[1];
-
-                                        //KalmanVars.Noize_Z[0] = 0.001;
-                                        KalmanVars.Noize_Z[0] = 1.0;
-
-                                        KalmanVars.cnt_measures = 1;
-
-                                        if (SINSstate.iMx_r3_dV3)
-                                        {
-                                            //KalmanVars.Matrix_H[2 * SimpleData.iMx + 2] = SINSstate.A_sx0[2, 0];
-                                            //KalmanVars.Matrix_H[2 * SimpleData.iMx + 3] = SINSstate.A_sx0[2, 1];
-                                            //KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[2, 2];
-
-                                            //KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[0, 2];
-                                            KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[1, 2];
-
-                                            //KalmanVars.Measure[2] = SINSstate.A_sx0[2, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[2, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[2, 2] * SINSstate.Vx_0[2];
-                                            //KalmanVars.Noize_Z[2] = 0.001;
-                                            //KalmanVars.cnt_measures = 3;
-                                        }
-                                    }
-                                }
-                            }
-                            //---ОДНО ИЗМЕРЕНИЕ---
-                            if (SINSstate.Use_1_Measure == true)
-                            {
-                                if (SINSstate.UseLastMinusOneOdo == false)
-                                    SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
                                 else
-                                    SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
-
-                                CopyArray(SINSstate.OdoSpeed, SINSstate.A_x0s * SINSstate.OdometerVector);
-
-                                KalmanVars.Measure[0] = Math.Abs(SINSstate.Vx_0[0] - SINSstate.OdoSpeed[0]) + Math.Abs(SINSstate.Vx_0[1] - SINSstate.OdoSpeed[1]);
-
-                                KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = Math.Sign(SINSstate.Vx_0[0] - SINSstate.OdoSpeed[0]);
-                                KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = Math.Sign(SINSstate.Vx_0[1] - SINSstate.OdoSpeed[1]);
-
-                                if (SINSstate.iMx_r3_dV3)
                                 {
-                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] += Math.Sign(SINSstate.Vx_0[2] - SINSstate.OdoSpeed[2]);
-                                    KalmanVars.Measure[0] += Math.Abs(SINSstate.Vx_0[2] - SINSstate.OdoSpeed[2]);
-                                }
+                                    if (SINSstate.UseLastMinusOneOdo == false)
+                                        SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
+                                    else
+                                        SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
 
-                                KalmanVars.cnt_measures = 1;
-                                KalmanVars.Noize_Z[0] = KalmanVars.OdoNoise;
+                                    //KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = SINSstate.A_sx0[0, 0];
+                                    //KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = SINSstate.A_sx0[0, 1];
+                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = SINSstate.A_sx0[1, 0];
+                                    KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = SINSstate.A_sx0[1, 1];
+
+                                    //KalmanVars.Measure[0] = SINSstate.A_sx0[0, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[0, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[0, 2] * SINSstate.Vx_0[2];
+                                    KalmanVars.Measure[0] = SINSstate.A_sx0[1, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[1, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[1, 2] * SINSstate.Vx_0[2] - SINSstate.OdometerVector[1];
+
+                                    //KalmanVars.Noize_Z[0] = 0.001;
+                                    KalmanVars.Noize_Z[0] = 1.0;
+
+                                    KalmanVars.cnt_measures = 1;
+
+                                    if (SINSstate.iMx_r3_dV3)
+                                    {
+                                        //KalmanVars.Matrix_H[2 * SimpleData.iMx + 2] = SINSstate.A_sx0[2, 0];
+                                        //KalmanVars.Matrix_H[2 * SimpleData.iMx + 3] = SINSstate.A_sx0[2, 1];
+                                        //KalmanVars.Matrix_H[2 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[2, 2];
+
+                                        //KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[0, 2];
+                                        KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] = SINSstate.A_sx0[1, 2];
+
+                                        //KalmanVars.Measure[2] = SINSstate.A_sx0[2, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[2, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[2, 2] * SINSstate.Vx_0[2];
+                                        //KalmanVars.Noize_Z[2] = 0.001;
+                                        //KalmanVars.cnt_measures = 3;
+                                    }
+                                }
                             }
+                        }
+                        //---ОДНО ИЗМЕРЕНИЕ---
+                        if (SINSstate.Use_1_Measure == true)
+                        {
+                            if (SINSstate.UseLastMinusOneOdo == false)
+                                SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
+                            else
+                                SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
+
+                            CopyArray(SINSstate.OdoSpeed, SINSstate.A_x0s * SINSstate.OdometerVector);
+
+                            KalmanVars.Measure[0] = Math.Abs(SINSstate.Vx_0[0] - SINSstate.OdoSpeed[0]) + Math.Abs(SINSstate.Vx_0[1] - SINSstate.OdoSpeed[1]);
+
+                            KalmanVars.Matrix_H[0 * SimpleData.iMx + 2] = Math.Sign(SINSstate.Vx_0[0] - SINSstate.OdoSpeed[0]);
+                            KalmanVars.Matrix_H[0 * SimpleData.iMx + 3] = Math.Sign(SINSstate.Vx_0[1] - SINSstate.OdoSpeed[1]);
+
+                            if (SINSstate.iMx_r3_dV3)
+                            {
+                                KalmanVars.Matrix_H[0 * SimpleData.iMx + SINSstate.value_iMx_r3_dV3 + 1] += Math.Sign(SINSstate.Vx_0[2] - SINSstate.OdoSpeed[2]);
+                                KalmanVars.Measure[0] += Math.Abs(SINSstate.Vx_0[2] - SINSstate.OdoSpeed[2]);
+                            }
+
+                            KalmanVars.cnt_measures = 1;
+                            KalmanVars.Noize_Z[0] = KalmanVars.OdoNoise;
                         }
                     }
 
@@ -591,9 +604,9 @@ namespace Common_Namespace
                 else
                 {
                     if (SINSstate.UseLastMinusOneOdo == false)
-                         SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
+                        SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev) / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
                     else
-                         SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
+                        SINSstate.OdometerVector[1] = (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev_2) / SINSstate.OdoTimeStepCount_2 / SINSstate.timeStep;
 
                     CopyArray(SINSstate.OdoSpeed, SINSstate.A_x0s * SINSstate.OdometerVector);
 
