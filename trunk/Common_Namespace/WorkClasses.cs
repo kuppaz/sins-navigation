@@ -38,7 +38,7 @@ namespace Common_Namespace
         public double alpha_z, alpha_x, alpha_y;
         public bool usinganglecorrection = false, UsingCorrection = false, KNS_flg = false, Alignment = false, Autonomous = false, UsingAvegering = false, UsingAltitudeCorrection = false, feedbackExist = false;
         public bool UsingClasAlignment = false, UsingNavAlignment = false;
-        public bool Odometr_SINS = false;
+        public bool Odometr_SINS_case = false;
         public bool UseOdoVelocity_In_Oz = false;
 
         public double temp1, temp2, tempLat;
@@ -53,11 +53,11 @@ namespace Common_Namespace
 
         public string Global_file = "";
 
-        public bool iMx_r3_dV3 = false, iMx_r_odo_12 = false, iMx_kappa_13_ds = false;
+        public bool iMx_r3_dV3 = false, iMx_kappa_13_ds = false;
         public int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0;
 
         public bool UsingOdoPosition = false, UsingOdoVelocity = false;
-        public bool Use_First_Odo_Data_3_Measure = false, Use_First_Odo_Data_1_Measure = false;
+        public bool Use_3_Measure = false, Use_1_Measure = false;
 
         public gps_data GPS_Data = new gps_data();
         public odometer_data OdometerData = new odometer_data();
@@ -70,7 +70,7 @@ namespace Common_Namespace
         public double LongSNS, LatSNS, AltSNS;
         public double[] Vx_0_prev = new double[3];
 
-        public double V_abs, DistanceModeled = 0.0;
+        public double V_abs, DistanceModeled = 0.0, Time_Alignment = 0;
 
         public double OdoAbsSpeed, OdoSpeedPrev, OdoSpeedPrev_2;
         public double[] OdometerVector = new double[3];
@@ -102,7 +102,7 @@ namespace Common_Namespace
 
         public double Latitude_Point;
 
-        public double Altitude_prev;
+        public double Altitude_prev, Latitude_prev, Longitude_prev;
 
         public int LastCountForRead;
     }
