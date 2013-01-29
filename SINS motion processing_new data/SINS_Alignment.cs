@@ -16,11 +16,11 @@ namespace SINS_motion_processing
 {
     public partial class SINS_Alignment
     {
-        static StreamWriter Alignment_Errors = new StreamWriter("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//MovingImitator_Azimut//SINS motion processing_new data//Alignment_Errors.txt");
-        static StreamWriter Alignment_SINSstate = new StreamWriter("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//MovingImitator_Azimut//SINS motion processing_new data//Alignment_SINSstate.txt");
-        static StreamWriter Alignment_Corrected_State = new StreamWriter("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//MovingImitator_Azimut//SINS motion processing_new data//Alignment_Corrected_State.txt");
-        static StreamWriter Alignment_StateErrorsVector = new StreamWriter("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//MovingImitator_Azimut//SINS motion processing_new data//Alignment_StateErrorsVector.txt");
-        static StreamWriter Alignment_avg_rougth = new StreamWriter("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth.txt");
+        static StreamWriter Alignment_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Alignment_Errors.txt");
+        static StreamWriter Alignment_SINSstate = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Alignment_SINSstate.txt");
+        static StreamWriter Alignment_Corrected_State = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Alignment_Corrected_State.txt");
+        static StreamWriter Alignment_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Alignment_StateErrorsVector.txt");
+        static StreamWriter Alignment_avg_rougth = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth.txt");
 
         public static int RougthAlignment(Proc_Help ProcHelp, SINS_State SINSstate, StreamReader myFile, Kalman_Vars KalmanVars)
         {
@@ -160,8 +160,6 @@ namespace SINS_motion_processing
             //W_my[1] = W_my[1] * SimpleData.U;
             //W_my[2] = W_my[2] * SimpleData.U;
 
-            SINSstate.Heading = SINSstate.Heading - Math.PI;
-
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
             if (Math.Abs(w_avg[0] - U_s[0]) < 0.00001) { }
@@ -172,12 +170,16 @@ namespace SINS_motion_processing
                 U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
             }
 
+            SINSstate.Time_Alignment = SINSstate.Time;
+
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
             SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
             SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-            SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
             SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
+
+            SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time - SINSstate.Time_Alignment, SINSstate.Longitude_Start);
+            //Далее произойдет обнуление SINSstate.Time
             SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
 
 

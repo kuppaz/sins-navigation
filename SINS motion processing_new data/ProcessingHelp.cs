@@ -160,7 +160,7 @@ namespace SINS_motion_processing
                 else if (i % SINSstate.FreqOutput == 0)
                 {
                     ProcHelp.datastring = (SINSstate.Time).ToString() + " " + SINSstate.Count.ToString() + " " + SINSstate.OdoTimeStepCount.ToString()
-                                        + " " + SINSstate.OdometerVector[1].ToString() 
+                                        + " " + SINSstate.OdoSpeed[1].ToString() 
                                         + " " + ((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n).ToString()
                                         + " " + ((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e).ToString() + " " + SINSstate.Altitude.ToString()
                                         + " " + ProcHelp.LatSNS.ToString() + " " + ProcHelp.LongSNS.ToString() + " " + ProcHelp.AltSNS.ToString() + " " + ProcHelp.SpeedSNS.ToString()
@@ -191,7 +191,7 @@ namespace SINS_motion_processing
                                     + " " + KalmanVars.ErrorConditionVector_p[12].ToString();
                 if (SINSstate.iMx_r3_dV3)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.value_iMx_r3_dV3].ToString() + " " + KalmanVars.ErrorConditionVector_p[SINSstate.value_iMx_r3_dV3 + 1].ToString();
-                if (SINSstate.iMx_r_odo_12)
+                if (SINSstate.Odometr_SINS_case)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.value_iMx_r_odo_12].ToString() + " " + KalmanVars.ErrorConditionVector_p[SINSstate.value_iMx_r_odo_12 + 1].ToString();
                 if (SINSstate.iMx_kappa_13_ds)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.value_iMx_kappa_13_ds].ToString() + " " + KalmanVars.ErrorConditionVector_p[SINSstate.value_iMx_kappa_13_ds + 1].ToString() + " " + KalmanVars.ErrorConditionVector_p[SINSstate.value_iMx_kappa_13_ds + 2].ToString();
@@ -199,6 +199,75 @@ namespace SINS_motion_processing
                 Nav_StateErrorsVector.WriteLine(ProcHelp.datastring);
             }
 
+        }
+
+
+
+        public static void SaratovGK_Positions(SINS_State SINSstate, Proc_Help ProcHelp)
+        {
+            //SINSstate.UsingClasAlignment = false;
+            //UsingClasAlignment.Checked = false;
+            //ProcHelp.AlgnCnt = 10;
+
+            for (int i = 0; i < 46; i++)
+                ProcHelp.distance_GK_Sarat[i] = 1000.0;
+
+            SINSstate.GK_Latitude[0] = 51.65744354 * SimpleData.ToRadian; SINSstate.GK_Longitude[0] = 45.91832179 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[1] = 51.65736976 * SimpleData.ToRadian; SINSstate.GK_Longitude[1] = 45.91801222 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[2] = 51.65727971 * SimpleData.ToRadian; SINSstate.GK_Longitude[2] = 45.91762382 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[3] = 51.65726450 * SimpleData.ToRadian; SINSstate.GK_Longitude[3] = 45.91752491 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[4] = 51.65727589 * SimpleData.ToRadian; SINSstate.GK_Longitude[4] = 45.91745401 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[5] = 51.65730910 * SimpleData.ToRadian; SINSstate.GK_Longitude[5] = 45.91739258 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[6] = 51.65734559 * SimpleData.ToRadian; SINSstate.GK_Longitude[6] = 45.91735828 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[7] = 51.65737465 * SimpleData.ToRadian; SINSstate.GK_Longitude[7] = 45.91727285 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[8] = 51.65737334 * SimpleData.ToRadian; SINSstate.GK_Longitude[8] = 45.91716680 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[9] = 51.65735419 * SimpleData.ToRadian; SINSstate.GK_Longitude[9] = 45.91707277 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[10] = 51.65731701 * SimpleData.ToRadian; SINSstate.GK_Longitude[10] = 45.91687866 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[11] = 51.65727808 * SimpleData.ToRadian; SINSstate.GK_Longitude[11] = 45.91672552 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[12] = 51.65722199 * SimpleData.ToRadian; SINSstate.GK_Longitude[12] = 45.91662125 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[13] = 51.65716790 * SimpleData.ToRadian; SINSstate.GK_Longitude[13] = 45.91655937 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[14] = 51.65711749 * SimpleData.ToRadian; SINSstate.GK_Longitude[14] = 45.91651203 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[15] = 51.65709286 * SimpleData.ToRadian; SINSstate.GK_Longitude[15] = 45.91641882 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[16] = 51.65708167 * SimpleData.ToRadian; SINSstate.GK_Longitude[16] = 45.91635739 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[17] = 51.65703936 * SimpleData.ToRadian; SINSstate.GK_Longitude[17] = 45.91614723 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[18] = 51.65698476 * SimpleData.ToRadian; SINSstate.GK_Longitude[18] = 45.91589917 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[19] = 51.65689765 * SimpleData.ToRadian; SINSstate.GK_Longitude[19] = 45.91550328 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[20] = 51.65689492 * SimpleData.ToRadian; SINSstate.GK_Longitude[20] = 45.91543676 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[21] = 51.65691551 * SimpleData.ToRadian; SINSstate.GK_Longitude[21] = 45.91540262 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[22] = 51.65704944 * SimpleData.ToRadian; SINSstate.GK_Longitude[22] = 45.91532339 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[23] = 51.65707977 * SimpleData.ToRadian; SINSstate.GK_Longitude[23] = 45.91531771 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[24] = 51.65710306 * SimpleData.ToRadian; SINSstate.GK_Longitude[24] = 45.91537133 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[25] = 51.65717924 * SimpleData.ToRadian; SINSstate.GK_Longitude[25] = 45.91572499 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[26] = 51.65727245 * SimpleData.ToRadian; SINSstate.GK_Longitude[26] = 45.91614317 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[27] = 51.65726635 * SimpleData.ToRadian; SINSstate.GK_Longitude[27] = 45.91623031 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[28] = 51.65724287 * SimpleData.ToRadian; SINSstate.GK_Longitude[28] = 45.91625902 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[29] = 51.65712406 * SimpleData.ToRadian; SINSstate.GK_Longitude[29] = 45.91633022 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[30] = 51.65709286 * SimpleData.ToRadian; SINSstate.GK_Longitude[30] = 45.91641882 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[31] = 51.65706786 * SimpleData.ToRadian; SINSstate.GK_Longitude[31] = 45.91655874 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[32] = 51.65670888 * SimpleData.ToRadian; SINSstate.GK_Longitude[32] = 45.91677764 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[33] = 51.65627597 * SimpleData.ToRadian; SINSstate.GK_Longitude[33] = 45.91704150 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[34] = 51.65622206 * SimpleData.ToRadian; SINSstate.GK_Longitude[34] = 45.91715524 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[35] = 51.65621375 * SimpleData.ToRadian; SINSstate.GK_Longitude[35] = 45.91737896 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[36] = 51.65622808 * SimpleData.ToRadian; SINSstate.GK_Longitude[36] = 45.91751543 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[37] = 51.65631557 * SimpleData.ToRadian; SINSstate.GK_Longitude[37] = 45.91793501 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[38] = 51.65658905 * SimpleData.ToRadian; SINSstate.GK_Longitude[38] = 45.91912273 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[39] = 51.65662906 * SimpleData.ToRadian; SINSstate.GK_Longitude[39] = 45.91918654 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[40] = 51.65668143 * SimpleData.ToRadian; SINSstate.GK_Longitude[40] = 45.91923808 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[41] = 51.65674261 * SimpleData.ToRadian; SINSstate.GK_Longitude[41] = 45.91923338 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[42] = 51.65747169 * SimpleData.ToRadian; SINSstate.GK_Longitude[42] = 45.91882389 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[43] = 51.65750359 * SimpleData.ToRadian; SINSstate.GK_Longitude[43] = 45.91878763 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[44] = 51.65752586 * SimpleData.ToRadian; SINSstate.GK_Longitude[44] = 45.91873369 * SimpleData.ToRadian;
+            SINSstate.GK_Latitude[45] = 51.65752379 * SimpleData.ToRadian; SINSstate.GK_Longitude[45] = 45.91867080 * SimpleData.ToRadian;
+
+            //SINSstate.Heading = -1.93;
+
+            SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+            SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
+            SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
+            SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
+            SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
+            SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
+            SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
         }
 
     }
