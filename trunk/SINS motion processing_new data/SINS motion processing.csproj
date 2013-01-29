@@ -53,6 +53,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -64,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AngleHandle.cs" />
+    <Compile Include="Odometr_SINS.cs" />
     <Compile Include="SINS_Alignment.cs" />
     <Compile Include="ModelsOfOdoCorrection.cs" />
     <Compile Include="ProcessingHelp.cs" />
@@ -131,7 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AT_dAT.txt" />
-    <Content Include="TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
