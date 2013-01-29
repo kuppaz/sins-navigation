@@ -8,3 +8,11 @@ D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator
 D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.dll
 D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.pdb
 D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.csprojResolveAssemblyReference.cache
+C:\SINS Solution\MovingImitator_Azimut\Common_Namespace\bin\Debug\Common_Namespace.dll
+C:\SINS Solution\MovingImitator_Azimut\Common_Namespace\bin\Debug\Common_Namespace.pdb
+C:\SINS Solution\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.dll
+C:\SINS Solution\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.pdb
+D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\bin\Debug\Common_Namespace.dll
+D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\bin\Debug\Common_Namespace.pdb
+D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.dll
+D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.pdb
