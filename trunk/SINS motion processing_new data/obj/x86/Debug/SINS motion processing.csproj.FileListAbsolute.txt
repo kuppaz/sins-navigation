@@ -29,13 +29,17 @@ C:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\D
 C:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.csproj.GenerateResource.Cache
 C:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.exe
 C:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.pdb
-D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.exe
-D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.pdb
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINS motion processing.exe
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINS motion processing.pdb
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\Common_Namespace.dll
+D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINSAlignment.dll
+D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINSProcessingModes.dll
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\Common_Namespace.pdb
+D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINSAlignment.pdb
+D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\bin\Debug\SINSProcessingModes.pdb
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.csprojResolveAssemblyReference.cache
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS_motion_processing.Properties.Resources.resources
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS_motion_processing_new_data.SINS_Processing.resources
 D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.csproj.GenerateResource.Cache
+D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.exe
+D:\SINS Solution\MovingImitator_Azimut\SINS motion processing_new data\obj\x86\Debug\SINS motion processing.pdb

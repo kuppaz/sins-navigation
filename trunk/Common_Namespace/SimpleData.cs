@@ -11,8 +11,10 @@ namespace Common_Namespace
         public static int iMz;
         public static int iMq;
 
+        public static int iMz_Align = 7, iMx_Align = 9, iMq_Align = 3;
+
         public static double A = 6378137.0; // a - большая полуось
-        public static double Ex = 0.0066943799901413;
+        public static double Ex_Squared = 0.0066943799901413;
         public static double U = 0.000072921151467;
 
         public static double ToRadian = Math.PI / 180.0;

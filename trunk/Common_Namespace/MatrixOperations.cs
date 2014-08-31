@@ -471,6 +471,41 @@ namespace Common_Namespace
         }
 
         //
+        //Создаем матрицу из диадного произведения векторов
+        //
+        public static Matrix MatrixFromDiadVector(double[] a, double[] b)
+        {
+            Matrix mOut = new Matrix(a.Length, a.Length);
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                for (int j = 0; j < a.Length; j++)
+                {
+                    mOut[i, j] = a[i] * b[j];
+                }
+            }
+
+            return mOut;
+        }
+        //
+        //Создаем матрицу из диадного произведения векторов
+        //
+        public static double[] VectorFromVectorOnMatrix(double[] a, Matrix b)
+        {
+            double[] mOut = new double[a.Length];
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                for (int j = 0; j < a.Length; j++)
+                {
+                    mOut[i] += a[j] * b[j, i];
+                }
+            }
+
+            return mOut;
+        }
+
+        //
         //Конвертирует вектор в матрицу с 1 столбцом
         //
         public static Matrix ConvertToMatrix(double[] vectorIN)

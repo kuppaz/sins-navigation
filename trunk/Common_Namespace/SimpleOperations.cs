@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Common_Namespace
 {
@@ -9,12 +10,12 @@ namespace Common_Namespace
     {
         public static double RadiusE(double Latitude, double Altitude) //R_1
         {
-            return SimpleData.A / Math.Pow(1 - SimpleData.Ex * Math.Sin(Latitude) * Math.Sin(Latitude), 0.5) + Altitude;
+            return SimpleData.A / Math.Pow(1 - SimpleData.Ex_Squared * Math.Sin(Latitude) * Math.Sin(Latitude), 0.5) + Altitude;
         }
 
         public static double RadiusN(double Latitude, double Altitude) //R_2
         {
-            return SimpleData.A * (1 - SimpleData.Ex) / Math.Pow(1 - SimpleData.Ex * Math.Sin(Latitude) * Math.Sin(Latitude), 1.5) + Altitude;
+            return SimpleData.A * (1 - SimpleData.Ex_Squared) / Math.Pow(1 - SimpleData.Ex_Squared * Math.Sin(Latitude) * Math.Sin(Latitude), 1.5) + Altitude;
         }
 
         public static double GilmertGravityForce(double Latitude, double Altitude)
@@ -36,12 +37,37 @@ namespace Common_Namespace
             return (Vect1[0] * Vect2[0] + Vect1[1] * Vect2[1] + Vect1[2] * Vect2[2]);
         }
 
+        public static double[] NullingOfArray(double[] Vect)
+        {
+            for (int i = 0; i < Vect.Length; i++)
+                Vect[i] = 0.0;
+
+            return Vect;
+        }
+
         //---------------------------------Задается модель поведения движения-------------------------------------------
+
+        public static double CalculateDistanceBtwDots(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
+        {
+            double lat_dif_true = (Lat2 - Lat1) * SimpleOperations.RadiusN(Lat2, Alt2);
+            double long_dif_true = (Lon2 - Lon1) * SimpleOperations.RadiusE(Lat2, Alt2) * Math.Cos(Lat2);
+
+            return Math.Sqrt(lat_dif_true * lat_dif_true + long_dif_true * long_dif_true);
+        }
+        public static double CalculateHeadingByTwoDots(double Lat1, double Lon1, double Alt1, double Lat2, double Lon2, double Alt2)
+        {
+            double lat_dif_true = (Lat2 - Lat1) * SimpleOperations.RadiusN(Lat2, Alt2);
+            double long_dif_true = (Lon2 - Lon1) * SimpleOperations.RadiusE(Lat2, Alt2) * Math.Cos(Lat2);
+
+            return Math.Atan2(long_dif_true, lat_dif_true);
+        }
+
+
         public static double[] Velocity_s(double CurrentTime)
         {
             double[] ResultVect = new double[3];
             ResultVect[0] = 0.0;
-            ResultVect[1] = 0.2 * CurrentTime;
+            ResultVect[1] = 0.02 * CurrentTime;
             ResultVect[2] = 0.0;
             return ResultVect;
         }
@@ -50,26 +76,35 @@ namespace Common_Namespace
         {
             double[] ResultVect = new double[3];
             ResultVect[0] = 0.0;
-            ResultVect[1] = 0.2;
+            ResultVect[1] = 0.02;
             ResultVect[2] = 0.0;
             return ResultVect;
         }
 
-        public static double[] AnglesHRP(double CurrentTime, double StartHeading, double StartRoll, double StartPitch)
+        public static void AnglesHRP(double CurrentTime, SINS_State SINSstate, double StartHeading, double StartRoll, double StartPitch)
         {
             double[] ResultVect = new double[3];
-            ResultVect[0] = StartHeading + 30.0 * SimpleData.ToRadian * Math.Sin(0.052 * CurrentTime);
-            ResultVect[1] = StartRoll + 5.0 * SimpleData.ToRadian * Math.Sin(0.021 * CurrentTime);
-            ResultVect[2] = StartPitch + 15.0 * SimpleData.ToRadian * Math.Sin(0.035 * CurrentTime);
+            SINSstate.Heading = StartHeading + 30.0 * SimpleData.ToRadian * Math.Sin(0.04 * CurrentTime);
+            SINSstate.Roll = StartRoll + 5.0 * SimpleData.ToRadian * Math.Sin(0.021 * CurrentTime);
+            SINSstate.Pitch = StartPitch + 0.0 * SimpleData.ToRadian * Math.Sin(0.025 * CurrentTime);
+        }
+
+        public static double[] DerivativeOfAnglesHRP(double dT, SINS_State SINSstate)
+        {
+            double[] ResultVect = new double[3];
+            ResultVect[0] = (SINSstate.Heading - SINSstate.Heading_prev) / dT;
+            ResultVect[1] = (SINSstate.Roll - SINSstate.Roll_prev) / dT;
+            ResultVect[2] = (SINSstate.Pitch - SINSstate.Pitch_prev) / dT;
+
             return ResultVect;
         }
 
-        public static double[] DerivativeOfAnglesHRP(double CurrentTime)
+        public static double[] DerivativeOfAnglesHRP_analitic(double CurrentTime)
         {
             double[] ResultVect = new double[3];
             ResultVect[0] = 30.0 * 0.052 * SimpleData.ToRadian * Math.Cos(0.052 * CurrentTime);
             ResultVect[1] = 5.0 * 0.021 * SimpleData.ToRadian * Math.Cos(0.021 * CurrentTime);
-            ResultVect[2] = 15.0 * 0.035 * SimpleData.ToRadian * Math.Cos(0.035 * CurrentTime);
+            ResultVect[2] = 0.01 * 0.035 * SimpleData.ToRadian * Math.Cos(0.035 * CurrentTime);
             return ResultVect;
         }
         //---------------------------------------------------------------------------------------------------------------
@@ -83,25 +118,21 @@ namespace Common_Namespace
             return ResultVect;
         }
 
-        public static double[] RelativeAngular_sx0(double CurrentTime, double[] OrientationAngles)
+        public static double[] RelativeAngular_sx0(double CurrentTime, SINS_State SINSstate, double[] dAngular)
         {
             double[] ResultVect = new double[3];
-            double[] dAngular = DerivativeOfAnglesHRP(CurrentTime);
-
-            ResultVect[0] = dAngular[2] * Math.Cos(OrientationAngles[1]) + dAngular[0] * Math.Cos(OrientationAngles[2]) * Math.Sin(OrientationAngles[1]);
-            ResultVect[1] = dAngular[1] - dAngular[0] * Math.Sin(OrientationAngles[2]);
-            ResultVect[2] = dAngular[2] * Math.Sin(OrientationAngles[1]) - dAngular[0] * Math.Cos(OrientationAngles[2]) * Math.Cos(OrientationAngles[1]);
+            ResultVect[0] = dAngular[2] * Math.Cos(SINSstate.Roll) + dAngular[0] * Math.Cos(SINSstate.Pitch) * Math.Sin(SINSstate.Roll);
+            ResultVect[1] = dAngular[1] - dAngular[0] * Math.Sin(SINSstate.Pitch);
+            ResultVect[2] = dAngular[2] * Math.Sin(SINSstate.Roll) - dAngular[0] * Math.Cos(SINSstate.Pitch) * Math.Cos(SINSstate.Roll);
             return ResultVect;
         }
 
-        public static double[] RelativeAngular_x0s(double CurrentTime, double[] OrientationAngles)
+        public static double[] RelativeAngular_x0s(double CurrentTime, SINS_State SINSstate, double[] dAngular)
         {
             double[] ResultVect = new double[3];
-            double[] dAngular = DerivativeOfAnglesHRP(CurrentTime);
-
-            ResultVect[0] = -dAngular[2] * Math.Cos(OrientationAngles[0]) - dAngular[1] * Math.Sin(OrientationAngles[0]) * Math.Cos(OrientationAngles[2]);
-            ResultVect[1] = dAngular[2] * Math.Sin(OrientationAngles[0]) - dAngular[1] * Math.Cos(OrientationAngles[0]) * Math.Cos(OrientationAngles[2]);
-            ResultVect[2] = dAngular[0] - dAngular[1] * Math.Sin(OrientationAngles[2]);
+            ResultVect[0] = -dAngular[2] * Math.Cos(SINSstate.Heading) - dAngular[1] * Math.Sin(SINSstate.Heading) * Math.Cos(SINSstate.Pitch);
+            ResultVect[1] = dAngular[2] * Math.Sin(SINSstate.Heading) - dAngular[1] * Math.Cos(SINSstate.Heading) * Math.Cos(SINSstate.Pitch);
+            ResultVect[2] = dAngular[0] - dAngular[1] * Math.Sin(SINSstate.Pitch);
             return ResultVect;
         }
 
@@ -123,13 +154,11 @@ namespace Common_Namespace
             return ResultVect;
         }
 
-        public static double[] PositionIntegration_x0(double dT, double[] Position_prev, double[] Velocity_x0)
+        public static void PositionIntegration_x0(double dT, SINS_State SINSstate)
         {
-            double[] ResultVect = new double[3];
-            ResultVect[0] = Position_prev[0] + dT * (Velocity_x0[1] / RadiusN(Position_prev[0], Position_prev[2]));
-            ResultVect[1] = Position_prev[1] + dT * (Velocity_x0[0] / RadiusE(Position_prev[0], Position_prev[2]) / Math.Cos(Position_prev[0]));
-            ResultVect[2] = Position_prev[2] + dT * Velocity_x0[2];
-            return ResultVect;
+            SINSstate.Latitude = SINSstate.Latitude_prev + dT * (SINSstate.Vx_0[1] / RadiusN(SINSstate.Latitude_prev, SINSstate.Altitude_prev));
+            SINSstate.Longitude = SINSstate.Longitude_prev + dT * (SINSstate.Vx_0[0] / RadiusE(SINSstate.Latitude_prev, SINSstate.Altitude_prev) / Math.Cos(SINSstate.Latitude_prev));
+            SINSstate.Altitude = SINSstate.Altitude_prev + dT * SINSstate.Vx_0[2];
         }
 
 
@@ -162,6 +191,56 @@ namespace Common_Namespace
             MatrixResult[2, 2] = Math.Cos(SINSState.Pitch) * Math.Cos(SINSState.Roll);
             return MatrixResult;
         }
+        public static Matrix A_sx0_Gyro(SINS_State SINSState)
+        {
+            Matrix MatrixResult = new Matrix(3, 3);
+            MatrixResult[0, 0] = Math.Cos(SINSState.GyroHeading) * Math.Cos(SINSState.Roll) + Math.Sin(SINSState.GyroHeading) * Math.Sin(SINSState.Pitch) * Math.Sin(SINSState.Roll);
+            MatrixResult[0, 1] = -Math.Sin(SINSState.GyroHeading) * Math.Cos(SINSState.Roll) + Math.Cos(SINSState.GyroHeading) * Math.Sin(SINSState.Pitch) * Math.Sin(SINSState.Roll);
+            MatrixResult[0, 2] = -Math.Cos(SINSState.Pitch) * Math.Sin(SINSState.Roll);
+            MatrixResult[1, 0] = Math.Sin(SINSState.GyroHeading) * Math.Cos(SINSState.Pitch);
+            MatrixResult[1, 1] = Math.Cos(SINSState.GyroHeading) * Math.Cos(SINSState.Pitch);
+            MatrixResult[1, 2] = Math.Sin(SINSState.Pitch);
+            MatrixResult[2, 0] = Math.Cos(SINSState.GyroHeading) * Math.Sin(SINSState.Roll) - Math.Sin(SINSState.GyroHeading) * Math.Sin(SINSState.Pitch) * Math.Cos(SINSState.Roll);
+            MatrixResult[2, 1] = -Math.Sin(SINSState.GyroHeading) * Math.Sin(SINSState.Roll) - Math.Cos(SINSState.GyroHeading) * Math.Sin(SINSState.Pitch) * Math.Cos(SINSState.Roll);
+            MatrixResult[2, 2] = Math.Cos(SINSState.Pitch) * Math.Cos(SINSState.Roll);
+            return MatrixResult;
+        }
+        public static Matrix A_cx0(SINS_State SINSState)
+        {
+            Matrix MatrixResult = new Matrix(3, 3);
+            MatrixResult[0, 0] = Math.Cos(SINSState.CourseHeading);
+            MatrixResult[0, 1] = -Math.Sin(SINSState.CourseHeading);
+            MatrixResult[0, 2] = 0.0;
+            MatrixResult[1, 0] = Math.Sin(SINSState.CourseHeading) * Math.Cos(SINSState.CoursePitch);
+            MatrixResult[1, 1] = Math.Cos(SINSState.CourseHeading) * Math.Cos(SINSState.CoursePitch);
+            MatrixResult[1, 2] = Math.Sin(SINSState.CoursePitch);
+            MatrixResult[2, 0] = -Math.Sin(SINSState.CourseHeading) * Math.Sin(SINSState.CoursePitch);
+            MatrixResult[2, 1] = -Math.Cos(SINSState.CourseHeading) * Math.Sin(SINSState.CoursePitch);
+            MatrixResult[2, 2] = Math.Cos(SINSState.CoursePitch);
+            return MatrixResult;
+        }
+        public static Matrix A_x0c_by_V(double[] V_x0)
+        {
+            double V_hor = Math.Sqrt(V_x0[0] * V_x0[0] + V_x0[1] * V_x0[1]);
+            double V = Math.Sqrt(V_x0[0] * V_x0[0] + V_x0[1] * V_x0[1] + V_x0[2] * V_x0[2]);
+
+            double sin_psi = V_x0[0] / V_hor;
+            double cos_psi = V_x0[1] / V_hor;
+            double cos_theta = V_hor / V;
+            double sin_theta = V_x0[2] / V;
+
+            Matrix MatrixResult = new Matrix(3, 3);
+            MatrixResult[0, 0] = cos_psi;
+            MatrixResult[0, 1] = sin_psi * cos_theta;
+            MatrixResult[0, 2] = -sin_psi * sin_theta;
+            MatrixResult[1, 0] = -sin_psi;
+            MatrixResult[1, 1] = cos_psi * cos_theta;
+            MatrixResult[1, 2] = -cos_psi * sin_theta;
+            MatrixResult[2, 0] = 0.0;
+            MatrixResult[2, 1] = sin_theta;
+            MatrixResult[2, 2] = cos_theta;
+            return MatrixResult;
+        }
         public static Matrix A_xs(SINS_State SINSState)
         {
             Matrix MatrixResult = new Matrix(3, 3);
@@ -190,14 +269,35 @@ namespace Common_Namespace
             MatrixResult[2, 2] = Math.Sin(Latitude);
             return MatrixResult;
         }
+        public static Matrix A_x0n_Gyro(SINS_State SINSState)
+        {
+            Matrix MatrixResult = new Matrix(3, 3);
+            //MatrixResult[0, 0] = -Math.Sin(SINSState.Longitude);
+            //MatrixResult[1, 0] = -Math.Cos(SINSState.Longitude) * Math.Sin(SINSState.Latitude);
+            //MatrixResult[2, 0] = Math.Cos(SINSState.Longitude) * Math.Cos(SINSState.Latitude);
+
+            MatrixResult[0, 1] = Math.Cos(SINSState.Azimth) * Math.Cos(SINSState.Longitude) - Math.Sin(SINSState.Azimth) * Math.Sin(SINSState.Longitude) * Math.Sin(SINSState.Latitude);
+            MatrixResult[1, 1] = -Math.Sin(SINSState.Azimth) * Math.Cos(SINSState.Longitude) - Math.Cos(SINSState.Azimth) * Math.Sin(SINSState.Longitude) * Math.Sin(SINSState.Latitude);
+            MatrixResult[2, 1] = Math.Sin(SINSState.Longitude) * Math.Cos(SINSState.Latitude);
+
+            MatrixResult[0, 2] = Math.Sin(SINSState.Azimth) * Math.Cos(SINSState.Latitude);
+            MatrixResult[1, 2] = Math.Cos(SINSState.Azimth) * Math.Cos(SINSState.Latitude);
+            MatrixResult[2, 2] = Math.Sin(SINSState.Latitude);
+
+            MatrixResult[0, 0] = MatrixResult[1, 1] * MatrixResult[2, 2] - MatrixResult[1, 2] * MatrixResult[2, 1];
+            MatrixResult[1, 0] = MatrixResult[2, 1] * MatrixResult[0, 2] - MatrixResult[2, 2] * MatrixResult[0, 1];
+            MatrixResult[2, 0] = MatrixResult[0, 1] * MatrixResult[1, 2] - MatrixResult[0, 2] * MatrixResult[1, 1];
+
+            return MatrixResult;
+        }
         public static Matrix A_ne(double CurrentTime, double StartLongitude)
         {
             Matrix MatrixResult = new Matrix(3, 3);
-            MatrixResult[0, 0] = Math.Cos(SimpleData.U * CurrentTime + StartLongitude);
-            MatrixResult[0, 1] = Math.Sin(SimpleData.U * CurrentTime + StartLongitude);
+            MatrixResult[0, 0] = Math.Cos(SimpleData.U * CurrentTime);// + StartLongitude);
+            MatrixResult[0, 1] = Math.Sin(SimpleData.U * CurrentTime);// + StartLongitude);
             MatrixResult[0, 2] = 0.0;
-            MatrixResult[1, 0] = -Math.Sin(SimpleData.U * CurrentTime + StartLongitude);
-            MatrixResult[1, 1] = Math.Cos(SimpleData.U * CurrentTime + StartLongitude);
+            MatrixResult[1, 0] = -Math.Sin(SimpleData.U * CurrentTime);// + StartLongitude);
+            MatrixResult[1, 1] = Math.Cos(SimpleData.U * CurrentTime);// + StartLongitude);
             MatrixResult[1, 2] = 0.0;
             MatrixResult[2, 0] = 0.0;
             MatrixResult[2, 1] = 0.0;
@@ -209,6 +309,16 @@ namespace Common_Namespace
         {
             for (int ii = 0; ii < p.Length; ii++)
                 p[ii] = p_2[ii];
+        }
+        public static void CopyArray(double[,] p, int i, double[] p_2)
+        {
+            for (int ii = 0; ii < p_2.Length; ii++)
+                p[i,ii] = p_2[ii];
+        }
+        public static void CopyArray(double[] p, int i, double[,] p_2)
+        {
+            for (int ii = 0; ii < p.Length; ii++)
+                p[ii] = p_2[i,ii];
         }
         public static void CopyMatrix(Matrix p, Matrix p_2)
         {
@@ -243,8 +353,36 @@ namespace Common_Namespace
             return MatrixResult;
         }
 
-        
 
+        public static void PrintMatrixToFile(double[] Matrix, int dim_str, int dim_colls)
+        {
+            StreamWriter PrintMatrix = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//PrintMatrix.txt");
+            for (int j = 0; j < dim_str; j++)
+            {
+                string str_odo = null;
+                for (int i = 0; i < dim_colls; i++)
+                {
+                    str_odo = str_odo + " " + Matrix[j * dim_colls + i].ToString();
+                }
+
+                PrintMatrix.WriteLine(str_odo);
+            }
+            PrintMatrix.Close();
+        }
+
+        public static void PrintVectorToFile(double[] Vector, int dim)
+        {
+            StreamWriter PrintVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//PrintVector.txt");
+            for (int j = 0; j < dim; j++)
+            {
+                string str_odo = null;
+
+                str_odo = str_odo + " " + Vector[j].ToString();
+
+                PrintVector.WriteLine(str_odo);
+            }
+            PrintVector.Close();
+        }
         
        
     }

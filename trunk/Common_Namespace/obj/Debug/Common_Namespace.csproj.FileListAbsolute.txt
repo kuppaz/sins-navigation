@@ -16,3 +16,4 @@ D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\bin\Debug\Common_Namespa
 D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\bin\Debug\Common_Namespace.pdb
 D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.dll
 D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.pdb
+D:\SINS Solution\MovingImitator_Azimut\Common_Namespace\obj\Debug\Common_Namespace.csprojResolveAssemblyReference.cache
