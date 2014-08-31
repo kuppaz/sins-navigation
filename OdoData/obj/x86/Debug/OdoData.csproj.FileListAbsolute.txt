@@ -20,3 +20,13 @@ D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator
 D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\GenerateResource.write.1.tlog
 D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.exe
 D:\Ботва\Postgraduate\1#_Scientific work\1#_Software\1#_Mine\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.pdb
+D:\SINS Solution\MovingImitator_Azimut\OdoData\bin\Debug\OdoData.exe
+D:\SINS Solution\MovingImitator_Azimut\OdoData\bin\Debug\OdoData.pdb
+D:\SINS Solution\MovingImitator_Azimut\OdoData\bin\Debug\Common_Namespace.dll
+D:\SINS Solution\MovingImitator_Azimut\OdoData\bin\Debug\Common_Namespace.pdb
+D:\SINS Solution\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.csprojResolveAssemblyReference.cache
+D:\SINS Solution\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.data_exploration.resources
+D:\SINS Solution\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.Properties.Resources.resources
+D:\SINS Solution\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.csproj.GenerateResource.Cache
+D:\SINS Solution\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.exe
+D:\SINS Solution\MovingImitator_Azimut\OdoData\obj\x86\Debug\OdoData.pdb

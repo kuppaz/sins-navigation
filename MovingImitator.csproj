@@ -66,6 +66,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram3.cd" />
+    <None Include="ClassDiagram4.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -81,6 +85,12 @@
       <Project>{D982742C-D9C4-4B0B-9C4D-A4BCC7EB73BE}</Project>
       <Name>Common_Namespace</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Traj Models\By_Circle.txt" />
+    <Content Include="Traj Models\Calibr_200m_then_run.txt" />
+    <Content Include="Traj Models\ModelsOfTrajectorys.txt" />
+    <Content Include="Traj Models\Square Traj 5.5 km.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

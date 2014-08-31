@@ -8,314 +8,342 @@ namespace Common_Namespace
 {
     public class Alignment : SimpleOperations
     {
-        static StreamWriter Alignment_Scalyar = new StreamWriter("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//Motion Imitator//MovingImitator//SINS motion processing_new data//Alignment_Scalyar.dat");
-        static StreamWriter Alignment_Measures = new StreamWriter("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//Motion Imitator//MovingImitator//SINS motion processing_new data//Alignment_Measures.dat");
-
-        /*----------------------Для выставки-------------------------------------*/
-
-        public static void Make_H(Kalman_Vars KalmanVars, SINS_State SINSstate)
+        public static int RougthAlignment(Proc_Help ProcHelp, SINS_State SINSstate, StreamReader myFile, Kalman_Vars KalmanVars, SINS_State SINSstate_OdoMod)
         {
-            double[] Wz = new double[3]; double[] Fz = new double[3];
-            int i = 0;
+            int k = 0, i = 0;
+            double[] f_avg = new double[3]; double[] w_avg = new double[3]; double[] w_avg_x = new double[3]; double[] U_s = new double[3];
+            Matrix A_xs = new Matrix(3, 3);
 
-            for (i = 0; i < 3; i++)
+            StreamWriter Alignment_avg_rougth = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth.txt");
+            StreamWriter Alignment_avg_rougthMovingAVG = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth_MovingAVG.txt");
+
+            double[] array_sigma_f_1 = new double[200000];
+            double[] array_sigma_f_2 = new double[200000];
+            double[] array_sigma_f_3 = new double[200000];
+            double[] array_sigma_w_1 = new double[200000];
+            double[] array_sigma_w_2 = new double[200000];
+            double[] array_sigma_w_3 = new double[200000];
+            double[] sigma_f = new double[3];
+            double[] sigma_w = new double[3];
+
+            Alignment_avg_rougth.WriteLine("count f_1 f_2 f_3 w_1 w_2 w_3 heading roll pitch Latitude");
+            Alignment_avg_rougthMovingAVG.WriteLine("count MA_f_1 MA_f_2 MA_f_3 MA_w_1 MA_w_2 MA_w_3");
+
+
+            while (true)
             {
-                Wz[i] = (SINSstate.W_z[i] + SINSstate.W_z_prev[i]) / 2.0;
-                Fz[i] = (SINSstate.F_z[i] + SINSstate.F_z_prev[i]) / 2.0;
+                i++;
+                if (i < 1) { myFile.ReadLine(); continue; }
+                if (SINSstate.FLG_Stop == 0 && false)
+                {
+                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                }
+                else
+                {
+                    i--;
+                    break;
+                }
             }
 
-            //Позиционные измерения, широта, долгота
-            KalmanVars.Measure[0] = (SINSstate.Longitude - SINSstate.LongSNS) * Math.Cos(SINSstate.Latitude_Start) * RadiusE(SINSstate.Latitude_Start, SINSstate.AltSNS);
-            KalmanVars.Measure[1] = (SINSstate.Latitude - SINSstate.Latitude_Start) * RadiusN(SINSstate.Latitude_Start, SINSstate.AltSNS);
-            for (i = 0; i < 2; i++)
+            int t = i;
+
+            double AvgMean = 0, Otklon = 0;
+            double Latitude = 0.0, Pitch = 0.0, Roll = 0.0, Heading = 0.0;
+            int max_cnt_jj = 100;
+            double[] BufAvg = new double[max_cnt_jj];
+
+            int MovingWindow = 500;
+            double[] MovingAverageAccGyro = new double[6];
+
+            for (i = t; ; i++)
             {
-                KalmanVars.Matrix_H[i * SimpleData.iMx + i] = 1.0;
-                KalmanVars.Noize_Z[i] = 0.75;
-            }
-            KalmanVars.cnt_measures = 2;
+                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
 
-            //Динамические скоростные измерения
-            for (i = 2; i < 4; i++)
+                if (/*SINSstate.FLG_Stop == 0 || */(ProcHelp.AlgnCnt != 0 && i == ProcHelp.AlgnCnt))
+                    break;
+
+                //if (i == 1000)
+                //    break;
+
+
+                array_sigma_f_1[k] = SINSstate.F_z[0];
+                array_sigma_f_2[k] = SINSstate.F_z[1];
+                array_sigma_f_3[k] = SINSstate.F_z[2];
+                array_sigma_w_1[k] = SINSstate.W_z[0];
+                array_sigma_w_2[k] = SINSstate.W_z[1];
+                array_sigma_w_3[k] = SINSstate.W_z[2];
+
+                f_avg[0] += SINSstate.F_z[0]; w_avg[0] += SINSstate.W_z[0];
+                f_avg[1] += SINSstate.F_z[1]; w_avg[1] += SINSstate.W_z[1];
+                f_avg[2] += SINSstate.F_z[2]; w_avg[2] += SINSstate.W_z[2];
+                k++;
+
+                for (int u = 1; u <= Math.Min(k, MovingWindow); u++)
+                {
+                    MovingAverageAccGyro[0] += array_sigma_f_1[k - u];
+                    MovingAverageAccGyro[1] += array_sigma_f_2[k - u];
+                    MovingAverageAccGyro[2] += array_sigma_f_3[k - u];
+                    MovingAverageAccGyro[3] += array_sigma_w_1[k - u];
+                    MovingAverageAccGyro[4] += array_sigma_w_2[k - u];
+                    MovingAverageAccGyro[5] += array_sigma_w_3[k - u];
+                }
+                for (int u = 0; u < 6; u++)
+                    MovingAverageAccGyro[u] = MovingAverageAccGyro[u] / MovingWindow;
+
+               
+
+                //---Считаем максимальное отклонение от текущего среднего по max_cnt_jj съемам данных----
+                for (int ij = 1; ij < max_cnt_jj; ij++)
+                    BufAvg[ij - 1] = BufAvg[ij];
+                BufAvg[max_cnt_jj - 1] = f_avg[2] / k;
+
+                AvgMean = 0;
+                for (int ij = 0; ij < max_cnt_jj; ij++)
+                    AvgMean += BufAvg[ij];
+
+                AvgMean = AvgMean / max_cnt_jj;
+                Otklon = Math.Abs(AvgMean - BufAvg[0]);
+
+                for (int ij = 0; ij < max_cnt_jj; ij++)
+                {
+                    if (Otklon < Math.Abs(AvgMean - BufAvg[ij]))
+                        Otklon = Math.Abs(AvgMean - BufAvg[ij]);
+                }
+                //-------
+
+
+
+                Pitch = Math.Atan2(f_avg[1], Math.Sqrt(f_avg[0] * f_avg[0] + f_avg[2] * f_avg[2]));
+                Roll = -Math.Atan2(f_avg[0], f_avg[2]);
+                A_xs = SimpleOperations.A_xs(SINSstate);
+                w_avg_x = Matrix.Multiply(A_xs, w_avg);
+
+                Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
+                Latitude = Math.Atan2(w_avg_x[2], Math.Sqrt(w_avg_x[1] * w_avg_x[1] + w_avg_x[0] * w_avg_x[0]));
+
+                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
+                if (Math.Abs(w_avg[0] / k - U_s[0]) < 0.000005) { }
+                else
+                {
+                    Heading = Heading - Math.PI;
+                    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                    U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
+                }
+                for (int j = 0; j < 3; j++)
+                    SINSstate.AlignAlgebraDrifts[j] = w_avg[j] / k - U_s[j];
+
+                if (k > MovingWindow && k % 5 == 0)
+                {
+                    Alignment_avg_rougth.WriteLine(SINSstate.Count.ToString() + " " + (f_avg[0] / k).ToString() + " " + (f_avg[1] / k).ToString() + " " + (f_avg[2] / k).ToString() + " " + (w_avg[0] / k).ToString() + " " + (w_avg[1] / k).ToString() + " " + (w_avg[2] / k).ToString()
+                        + " " + Heading.ToString() + " " + Roll.ToString() + " " + Pitch.ToString() + " " + Latitude.ToString() + " " + Otklon.ToString()
+                        + " " + (w_avg_x[0] / k).ToString() + " " + (w_avg_x[1] / k).ToString() + " " + (w_avg_x[2] / k).ToString());
+
+                    Alignment_avg_rougthMovingAVG.WriteLine(SINSstate.Time.ToString() + " " + MovingAverageAccGyro[0] + " " + MovingAverageAccGyro[1] + " " + MovingAverageAccGyro[2] + " " + MovingAverageAccGyro[3] + " " + MovingAverageAccGyro[4]
+                        + " " + MovingAverageAccGyro[5]);
+                }
+            }
+
+
+            f_avg[0] = f_avg[0] / k; w_avg[0] = w_avg[0] / k;
+            f_avg[1] = f_avg[1] / k; w_avg[1] = w_avg[1] / k;
+            f_avg[2] = f_avg[2] / k; w_avg[2] = w_avg[2] / k;
+
+            for (int j = 0; j < k; j++)
             {
-                KalmanVars.Measure[i] = SINSstate.Vx_0[i-2];
-                KalmanVars.Matrix_H[i * SimpleData.iMx + i] = 1.0;
-                KalmanVars.Noize_Z[i] = 0.003;
+                sigma_f[0] += Math.Pow((array_sigma_f_1[j] - f_avg[0]), 2);
+                sigma_f[1] += Math.Pow((array_sigma_f_2[j] - f_avg[1]), 2);
+                sigma_f[2] += Math.Pow((array_sigma_f_3[j] - f_avg[2]), 2);
+                sigma_w[0] += Math.Pow((array_sigma_w_1[j] - w_avg[0]), 2);
+                sigma_w[1] += Math.Pow((array_sigma_w_2[j] - w_avg[1]), 2);
+                sigma_w[2] += Math.Pow((array_sigma_w_3[j] - w_avg[2]), 2);
             }
-            KalmanVars.cnt_measures = KalmanVars.cnt_measures + 2;
-            i--;
 
-            i++;
-            //Скалярное измерение по модулю угловой скорости
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 10] = 2 * Wz[0];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 11] = 2 * Wz[1];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 12] = 2 * Wz[2];
-            KalmanVars.Measure[i] = Math.Pow(AbsoluteVectorValue(Wz), 2) - SimpleData.U * SimpleData.U;
-            KalmanVars.Noize_Z[i] = 0.03 * SimpleData.ToRadian / 3600.0;
-            KalmanVars.cnt_measures = KalmanVars.cnt_measures + 1;
+            sigma_f[0] = Math.Sqrt(sigma_f[0] / k);
+            sigma_f[1] = Math.Sqrt(sigma_f[1] / k);
+            sigma_f[2] = Math.Sqrt(sigma_f[2] / k);
+            sigma_w[0] = Math.Sqrt(sigma_w[0] / k);
+            sigma_w[1] = Math.Sqrt(sigma_w[1] / k);
+            sigma_w[2] = Math.Sqrt(sigma_w[2] / k);
 
-            i++;
-            //Скалярное измерение по модулю силы тяжести
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 7] = 2 * Fz[0];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 8] = 2 * Fz[1];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 9] = 2 * Fz[2];
-            KalmanVars.Measure[i] = Math.Pow(AbsoluteVectorValue(Fz), 2) - SINSstate.g * SINSstate.g;
-            KalmanVars.Noize_Z[i] = 0.05;
-            KalmanVars.cnt_measures = KalmanVars.cnt_measures + 1;
+            //шумы ньютонометров и дусов
+            for (int j = 0; j < 3; j++)
+            {
+                if (SimpleOperations.AbsoluteVectorValue(sigma_f) > 1E-5)
+                    KalmanVars.Noise_Vel[j] = sigma_f[j] / 1.0;
+                if (SimpleOperations.AbsoluteVectorValue(sigma_w) > 1E-9)
+                    KalmanVars.Noise_Angl[j] = sigma_w[j] / 1.0;
 
-            i++;
-            //Скалярное измерение по модулvю силы тяжести и угловой скорости
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 7] = Wz[0];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 8] = Wz[1];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 9] = Wz[2];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 10] = Fz[0];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 11] = Fz[1];
-            KalmanVars.Matrix_H[i * SimpleData.iMx + 12] = Fz[2];
-            KalmanVars.Measure[i] = SkalyarProduct(Fz, Wz) - SimpleData.U * SINSstate.g * Math.Sin(SINSstate.Latitude);
-            KalmanVars.Noize_Z[i] = 0.005;
-            KalmanVars.cnt_measures = KalmanVars.cnt_measures + 1;
+                //if (SINSstate.Global_file.Contains("Azimut_T_zaezd_Golovan_18_Oct_2013") == true)
+                //{
+                //    KalmanVars.Noise_Vel[j] = sigma_f[j] * 5.0;
+                //    KalmanVars.Noise_Angl[j] = sigma_w[j] * 5.0;
+                //}
+            }
+
+            SINSstate.Pitch = Math.Atan2(f_avg[1], Math.Sqrt(f_avg[0] * f_avg[0] + f_avg[2] * f_avg[2]));
+            SINSstate.Roll = -Math.Atan2(f_avg[0], f_avg[2]);
+
+            A_xs = SimpleOperations.A_xs(SINSstate);
+            w_avg_x = Matrix.Multiply(A_xs, w_avg);
+
+            SINSstate.Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
+            Latitude = Math.Atan2(w_avg_x[2], Math.Sqrt(w_avg_x[1] * w_avg_x[1] + w_avg_x[0] * w_avg_x[0]));
+
+            SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+            U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
+            if (Math.Abs(w_avg[0] - U_s[0]) < 0.000005) { }
+            else
+            {
+                SINSstate.Heading = SINSstate.Heading - Math.PI;
+                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
+            }
 
 
-            Alignment_Scalyar.WriteLine(SINSstate.Count.ToString() + " " + KalmanVars.Measure[0].ToString() + " " + KalmanVars.Measure[1].ToString() + " " + KalmanVars.Measure[2].ToString()
-                                       + " " + KalmanVars.Measure[3].ToString() + " " + KalmanVars.Measure[4].ToString() + " " + KalmanVars.Measure[5].ToString() + " " + KalmanVars.Measure[6].ToString());
-            //Alignment_Measures.WriteLine(SINSstate.Count.ToString() + " " + Wz[0] + " " + SINSstate.W_z[0].ToString() + " " + Wz[1] + " " + Wz[2] + " " + Fz[0] + " " + Fz[1] + " " + Fz[2]);
 
 
-            /*KalmanVars.Measure[6] = SINSstate.F_x[0];
-            KalmanVars.Measure[7] = SINSstate.F_x[1];
-            KalmanVars.Matrix_H[6 * SimpleData.iMx + 7] = -SINSstate.g;
-            KalmanVars.Matrix_H[6 * SimpleData.iMx + 12] = 1.0;
-            KalmanVars.Matrix_H[7 * SimpleData.iMx + 6] = SINSstate.g;
-            KalmanVars.Matrix_H[7 * SimpleData.iMx + 13] = 1.0;*/
+            for (int j = 0; j < 3; j++)
+                SINSstate.AlignAlgebraDrifts[j] = U_s[j] - w_avg[j];
+
+            SINSstate.Time_Alignment = SINSstate.Time;
+
+
+
+
+            if (SINSstate.Global_file == "Azimuth_minsk_race_4_3to6to2")
+            {
+                //SINSstate.Heading = -3.0504734;
+            }
+            if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "ktn004_21.03.2012")
+            {
+                SINSstate.Heading = 15.28 * SimpleData.ToRadian;
+            }
+            if (SINSstate.Global_file.Contains("Azimut-T_18-Oct-2013_11-05-11") == true)
+            {
+                KalmanVars.Noise_Vel[0] = 0.01; //Part of Ge
+                KalmanVars.Noise_Vel[1] = 0.01;
+                KalmanVars.Noise_Vel[2] = 0.01;
+                KalmanVars.Noise_Angl[0] = 0.005558373; // 10.0 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_Angl[1] = 0.005558373; //10.0 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_Angl[2] = 0.005558373; //10.0 * 3.141592 / 180.0 / 3600.0;
+            }
+
+
+
+
+
+
+            if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+            {
+                double lat_dif_true = (49.99452656 * SimpleData.ToRadian - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(49.99452656 * SimpleData.ToRadian, SINSstate.Altitude_Start);
+                double long_dif_true = (46.87201806 * SimpleData.ToRadian - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(49.99452656 * SimpleData.ToRadian, SINSstate.Altitude_Start) * Math.Cos(49.99452656 * SimpleData.ToRadian);
+                double SettedHeading = Math.Atan2(long_dif_true, lat_dif_true);
+
+                if (SINSstate.Time > 10000.0)
+                {
+                    SettedHeading = SimpleOperations.CalculateHeadingByTwoDots(49.80892188 * SimpleData.ToRadian, 45.3817334 * SimpleData.ToRadian, SINSstate.GPS_Data.gps_Altitude_prev.Value,
+                                        49.80906066 * SimpleData.ToRadian, 45.38113053 * SimpleData.ToRadian, SINSstate.GPS_Data.gps_Altitude.Value);
+                }
+                else
+                {
+                    double difHeadings = SettedHeading - SINSstate.Heading;
+
+                    SINSstate.Heading = SettedHeading;
+                    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                    SimpleOperations.CopyArray(U_s, SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude));
+                }
+
+                for (int j = 0; j < 3; j++)
+                    SINSstate.AlignAlgebraDrifts[j] = U_s[j] - w_avg[j];
+
+                for (int j = 0; j < 3; j++)
+                {
+                    KalmanVars.Noise_Vel[j] = KalmanVars.Noise_Vel[j] * 5.0;
+                    KalmanVars.Noise_Angl[j] = KalmanVars.Noise_Angl[j] * 5.0;
+                    //KalmanVars.Noise_Vel[j] = KalmanVars.Noise_Vel.Max();
+                    //KalmanVars.Noise_Angl[j] = KalmanVars.Noise_Angl.Max();
+                }
+            }
+            
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
+
+
+
+            SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+            SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
+            SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
+            SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
+            SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
+
+            SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time - SINSstate.Time_Alignment, SINSstate.Longitude_Start);
+            //Далее произойдет обнуление SINSstate.Time
+            SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
+
+
+            Alignment_avg_rougth.Close();
+            Alignment_avg_rougthMovingAVG.Close();
+            return i;
         }
 
-        public static void Make_A(SINS_State SINSstate, Kalman_Vars KalmanVars)
+
+
+
+        public static void OutPutInfo_Nav_Alignment(Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, StreamReader myFile, Kalman_Vars KalmanVars,
+                        StreamWriter Alignment_Errors, StreamWriter Alignment_SINSstate, StreamWriter Alignment_Corrected_State, StreamWriter Alignment_StateErrorsVector)
         {
-            KalmanVars.Matrix_A[1] = SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[2] = -SINSstate.Omega_x[1];
-            KalmanVars.Matrix_A[3] = 1.0;
-            KalmanVars.Matrix_A[SimpleData.iMx] = -SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[SimpleData.iMx + 2] = SINSstate.Omega_x[0];
-            KalmanVars.Matrix_A[SimpleData.iMx + 4] = 1.0;
-            KalmanVars.Matrix_A[2 * SimpleData.iMx] = SINSstate.Omega_x[1];
-            KalmanVars.Matrix_A[2 * SimpleData.iMx + 1] = -SINSstate.Omega_x[0];
-            KalmanVars.Matrix_A[2 * SimpleData.iMx + 5] = 1.0;
+            if (SINSstate.Count % SINSstate.FreqOutput == 0)
+            {
+                ProcHelp.datastring = KalmanVars.ErrorConditionVector_p[0].ToString() + " " + KalmanVars.ErrorConditionVector_p[1].ToString()
+                                     + " " + KalmanVars.ErrorConditionVector_p[2].ToString() + " " + KalmanVars.ErrorConditionVector_p[3].ToString()
+                                      + " " + (KalmanVars.ErrorConditionVector_p[4] * 180.0 / 3.141592).ToString() + " " + (KalmanVars.ErrorConditionVector_p[5] * 180.0 / 3.141592).ToString() + " " + (KalmanVars.ErrorConditionVector_p[6] * 180.0 / 3.141592).ToString()
+                                       + " " + KalmanVars.ErrorConditionVector_p[7].ToString() + " " + KalmanVars.ErrorConditionVector_p[8].ToString() + " " + KalmanVars.ErrorConditionVector_p[9].ToString()
+                                        + " " + KalmanVars.ErrorConditionVector_p[10].ToString() + " " + KalmanVars.ErrorConditionVector_p[11].ToString() + " " + KalmanVars.ErrorConditionVector_p[12].ToString();
+                Alignment_Errors.WriteLine(ProcHelp.datastring);
 
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 1] = -(SINSstate.u_x[1] * SINSstate.Vx_0[1] + SINSstate.u_x[2] * SINSstate.Vx_0[2]) / SimpleData.A;
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 4] = 2 * SINSstate.u_x[2] + SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 5] = -2 * SINSstate.u_x[1] - SINSstate.Omega_x[1];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 6] = -SINSstate.u_x[1] * SINSstate.Vx_0[1] - SINSstate.u_x[2] * SINSstate.Vx_0[2];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 7] = -SINSstate.g;
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 10] = SINSstate.Vx_0[2];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 11] = -SINSstate.Vx_0[1];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 12] = 1.0;
+                ProcHelp.datastring = (SINSstate.Count * SINSstate.timeStep).ToString() + " " + SINSstate.Count.ToString() + " " +
+                                (SINSstate.Latitude * SimpleData.ToDegree).ToString() + " " + (SINSstate.Longitude * SimpleData.ToDegree).ToString() + " " + SINSstate.Altitude.ToString() + " "
+                                + ProcHelp.LatSNS.ToString() + " " + ProcHelp.LongSNS.ToString() + " " + SINSstate.Vx_0[0].ToString() + " " + SINSstate.Vx_0[1].ToString() + " " + (SINSstate.Heading * SimpleData.ToDegree).ToString() + " "
+                                  + (SINSstate.Roll * SimpleData.ToDegree).ToString() + " " + (SINSstate.Pitch * SimpleData.ToDegree).ToString();
+                Alignment_SINSstate.WriteLine(ProcHelp.datastring);
 
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 0] = SINSstate.u_x[2] * SINSstate.Vx_0[2] / SimpleData.A;
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 1] = SINSstate.u_x[1] * SINSstate.Vx_0[0] / SimpleData.A;
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 3] = -2 * SINSstate.u_x[2] - SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 5] = SINSstate.Omega_x[0];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 6] = SINSstate.u_x[1] * SINSstate.Vx_0[0] + SINSstate.g;
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 7] = -SINSstate.u_x[2] * SINSstate.Vx_0[2];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 8] = SINSstate.u_x[1] * SINSstate.Vx_0[2];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 9] = -SINSstate.Vx_0[2];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 11] = SINSstate.Vx_0[0];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 13] = 1.0;
+                ProcHelp.datastring = (SINSstate.Count * SINSstate.timeStep).ToString() + " " + SINSstate.Count.ToString() + " " + (SINSstate2.Latitude * SimpleData.ToDegree).ToString() + " " + (SINSstate.Latitude * SimpleData.ToDegree).ToString()
+                                + " " + (SINSstate2.Longitude * SimpleData.ToDegree).ToString() + " " + (SINSstate.Longitude * SimpleData.ToDegree).ToString() + " " + SINSstate2.Altitude.ToString() + " "
+                                + SINSstate2.Vx_0[0].ToString() + " " + SINSstate2.Vx_0[1].ToString() + " " + SINSstate2.Vx_0[2].ToString() + " " + 
+                                (SINSstate.Heading * SimpleData.ToDegree).ToString() + " " + (SINSstate2.Heading * SimpleData.ToDegree).ToString() + " "
+                                + (SINSstate.Roll * SimpleData.ToDegree).ToString() + " " + (SINSstate2.Roll * SimpleData.ToDegree).ToString() + " "
+                                + (SINSstate.Pitch * SimpleData.ToDegree).ToString() + " " + (SINSstate2.Pitch * SimpleData.ToDegree).ToString();
+                Alignment_Corrected_State.WriteLine(ProcHelp.datastring);
 
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 0] = -SINSstate.u_x[2] * SINSstate.Vx_0[1] / SimpleData.A;
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 1] = SINSstate.u_x[2] * SINSstate.Vx_0[0] / SimpleData.A;
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 2] = 2 * SINSstate.g / SimpleData.A;
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 3] = 2 * SINSstate.u_x[1] + SINSstate.Omega_x[1];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 4] = -SINSstate.Omega_x[0];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 6] = SINSstate.u_x[2] * SINSstate.Vx_0[0];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 7] = SINSstate.u_x[2] * SINSstate.Vx_0[1];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 8] = -SINSstate.u_x[1] * SINSstate.Vx_0[1];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 9] = SINSstate.Vx_0[1];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 10] = -SINSstate.Vx_0[0];
-            //KalmanVars.Matrix_A[5 * SimpleData.iMx + 9] = -SINSstate.V_x[2];
-            //KalmanVars.Matrix_A[5 * SimpleData.iMx + 11] = SINSstate.V_x[0];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 14] = 1.0;
-
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 0] = -SINSstate.u_x[2] / SimpleData.A;
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 2] = -SINSstate.Omega_x[0] / SimpleData.A;
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 4] = -1.0 / SimpleData.A;
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 7] = SINSstate.u_x[2] + SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 8] = -SINSstate.u_x[1];
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 9] = -1.0;
-
-            KalmanVars.Matrix_A[7 * SimpleData.iMx + 1] = -SINSstate.u_x[2] / SimpleData.A;
-            KalmanVars.Matrix_A[7 * SimpleData.iMx + 2] = -SINSstate.Omega_x[1] / SimpleData.A;
-            KalmanVars.Matrix_A[7 * SimpleData.iMx + 3] = 1.0 / SimpleData.A;
-            KalmanVars.Matrix_A[7 * SimpleData.iMx + 6] = -(SINSstate.u_x[2] + SINSstate.Omega_x[2]);
-            KalmanVars.Matrix_A[7 * SimpleData.iMx + 8] = SINSstate.u_x[0];
-            KalmanVars.Matrix_A[7 * SimpleData.iMx + 10] = -1.0;
-
-            KalmanVars.Matrix_A[8 * SimpleData.iMx + 0] = SINSstate.Omega_x[0] / SimpleData.A;
-            KalmanVars.Matrix_A[8 * SimpleData.iMx + 1] = (SINSstate.u_x[1] + SINSstate.Omega_x[1]) / SimpleData.A;
-            KalmanVars.Matrix_A[8 * SimpleData.iMx + 6] = SINSstate.u_x[1] + SINSstate.Omega_x[1];
-            KalmanVars.Matrix_A[8 * SimpleData.iMx + 7] = -SINSstate.Omega_x[0];
-            KalmanVars.Matrix_A[8 * SimpleData.iMx + 11] = -1.0;
+                ProcHelp.datastring = (SINSstate.DeltaLatitude * SimpleData.ToDegree).ToString() + " " + (SINSstate.DeltaLongitude * SimpleData.ToDegree).ToString() + " " + SINSstate.DeltaV_1.ToString() + " " + SINSstate.DeltaV_2.ToString() + " "
+                                + SINSstate.DeltaV_3.ToString() + " " + SINSstate.DeltaHeading.ToString() + " " + SINSstate.DeltaRoll.ToString() + " " + SINSstate.DeltaPitch.ToString();
+                Alignment_StateErrorsVector.WriteLine(ProcHelp.datastring);
+            }
         }
 
-        public static void Make_A_easy(SINS_State SINSstate, Kalman_Vars KalmanVars)
+
+
+
+        public static void OutPutInfo_Class_Alignment(Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, StreamReader myFile, Kalman_Align KalmanAlign,
+                        StreamWriter Alignment_Errors, StreamWriter Alignment_SINSstate, StreamWriter Alignment_Corrected_State, StreamWriter Alignment_StateErrorsVector)
         {
-            KalmanVars.Matrix_A[2] = 1.0;
-            KalmanVars.Matrix_A[1] = SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[6] = SINSstate.Vx_0[1];
-            KalmanVars.Matrix_A[SimpleData.iMx + 3] = 1.0;
-            KalmanVars.Matrix_A[SimpleData.iMx + 0] = -SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[SimpleData.iMx + 6] = -SINSstate.Vx_0[0];
+            if (SINSstate.Count % SINSstate.FreqOutput == 0)
+            {
+                ProcHelp.datastring = (SINSstate.Count * SINSstate.timeStep).ToString() + " " + (KalmanAlign.ErrorConditionVector_p[0] * 180.0 / 3.141592).ToString() + " " + (KalmanAlign.ErrorConditionVector_p[1] * 180.0 / 3.141592).ToString()
+                                     + " " + (KalmanAlign.ErrorConditionVector_p[2] * 180.0 / 3.141592).ToString()
+                                     + " " + KalmanAlign.ErrorConditionVector_p[3].ToString() + " " + (KalmanAlign.ErrorConditionVector_p[4]).ToString() + " " + (KalmanAlign.ErrorConditionVector_p[5]).ToString()
+                                     + " " + (KalmanAlign.ErrorConditionVector_p[6]).ToString() + " " + KalmanAlign.ErrorConditionVector_p[7].ToString() + " " + KalmanAlign.ErrorConditionVector_p[8].ToString();
+                Alignment_StateErrorsVector.WriteLine(ProcHelp.datastring);
 
-            KalmanVars.Matrix_A[2 * SimpleData.iMx + 3] = (SINSstate.Omega_x[2] + 2 * SINSstate.u_x[2]);
-            KalmanVars.Matrix_A[2 * SimpleData.iMx + 5] = -SINSstate.g;
-            KalmanVars.Matrix_A[2 * SimpleData.iMx + 7] = SINSstate.A_x0s[0, 0];
-            KalmanVars.Matrix_A[2 * SimpleData.iMx + 8] = SINSstate.A_x0s[0, 1];
-            KalmanVars.Matrix_A[2 * SimpleData.iMx + 9] = SINSstate.A_x0s[0, 2];
-
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 2] = -2 * SINSstate.u_x[2] - SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 4] = SINSstate.g;
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 7] = SINSstate.A_x0s[1, 0];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 8] = SINSstate.A_x0s[1, 1];
-            KalmanVars.Matrix_A[3 * SimpleData.iMx + 9] = SINSstate.A_x0s[1, 2];
-
-
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 0] = -SINSstate.u_x[2] / SimpleData.A;
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 3] = -1.0 / SimpleData.A;
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 5] = SINSstate.u_x[2] + SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 6] = -SINSstate.u_x[1] - SINSstate.Omega_x[1];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 10] = SINSstate.A_x0s[0, 0];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 11] = SINSstate.A_x0s[0, 1];
-            KalmanVars.Matrix_A[4 * SimpleData.iMx + 12] = SINSstate.A_x0s[0, 2];
-
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 1] = -SINSstate.u_x[2] / SimpleData.A;
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 2] = 1.0 / SimpleData.A;
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 4] = -SINSstate.u_x[2] - SINSstate.Omega_x[2];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 6] = SINSstate.u_x[0] + SINSstate.Omega_x[0];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 10] = SINSstate.A_x0s[1, 0];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 11] = SINSstate.A_x0s[1, 1];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 12] = SINSstate.A_x0s[1, 2];
-
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 0] = (SINSstate.u_x[0] + SINSstate.Omega_x[0]) / SimpleData.A;
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 1] = (SINSstate.u_x[1] + SINSstate.Omega_x[1]) / SimpleData.A;
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 4] = SINSstate.u_x[1] + SINSstate.Omega_x[1];
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 5] = -SINSstate.u_x[0] - SINSstate.Omega_x[0];
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 10] = SINSstate.A_x0s[2, 0];
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 11] = SINSstate.A_x0s[2, 1];
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 12] = SINSstate.A_x0s[2, 2];
+                ProcHelp.datastring = (SINSstate.Count * SINSstate.timeStep).ToString() + " " + SINSstate.Count.ToString() + " " +
+                                (SINSstate.Latitude * SimpleData.ToDegree).ToString() + " " + (SINSstate.Longitude * SimpleData.ToDegree).ToString() + " " + SINSstate.Altitude.ToString() + " "
+                                + SINSstate.Vx_0[0].ToString() + " " + SINSstate.Vx_0[1].ToString() + " "
+                                + (SINSstate.Heading * SimpleData.ToDegree).ToString() + " " + " " + ((SINSstate.Heading - SINSstate.DeltaHeading) * SimpleData.ToDegree).ToString() + " "
+                                + (SINSstate.Roll * SimpleData.ToDegree).ToString() + " " + ((SINSstate.Roll - SINSstate.DeltaRoll) * SimpleData.ToDegree).ToString() + " "
+                                + (SINSstate.Pitch * SimpleData.ToDegree).ToString() + " " + ((SINSstate.Pitch - SINSstate.DeltaPitch) * SimpleData.ToDegree).ToString();
+                Alignment_SINSstate.WriteLine(ProcHelp.datastring);
+            }
         }
 
-        public static void Make_StateErrors(double[] ErrorVector, SINS_State SINSstate)
-        {
-            SINSstate.DeltaLatitude = ErrorVector[1] / SINSstate.R_n;
-            SINSstate.DeltaLongitude = ErrorVector[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-
-            //SINSstate.DeltaV_1 = -(-ErrorVector[3] - SINSstate.V_x[1] * ErrorVector[8] - SINSstate.V_x[2] * (ErrorVector[0] / SimpleData.A_S_axis - ErrorVector[7]));
-            //SINSstate.DeltaV_2 = -(-ErrorVector[4] + SINSstate.V_x[1] * ErrorVector[8] - SINSstate.V_x[2] * (ErrorVector[1] / SimpleData.A_S_axis + ErrorVector[6]));
-
-            SINSstate.DeltaV_1 = ErrorVector[2] ;
-            SINSstate.DeltaV_2 = ErrorVector[3] ;
-
-            SINSstate.DeltaRoll = -(ErrorVector[4] * Math.Sin(SINSstate.Heading) + ErrorVector[5] * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch);
-            SINSstate.DeltaPitch = -ErrorVector[4] * Math.Cos(SINSstate.Heading) + ErrorVector[5] * Math.Sin(SINSstate.Heading);
-            SINSstate.DeltaHeading = ErrorVector[6] + SINSstate.DeltaRoll * Math.Sin(SINSstate.Pitch);
-        }
-
-        public static void Do_SINSstate_Correction(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate2)
-        {
-            //SINSstate2.Altitude = SINSstate.Altitude - SINSstate.DeltaAltitude;
-
-            SINSstate2.Latitude = SINSstate.Latitude - SINSstate.DeltaLatitude;
-            SINSstate2.Longitude = SINSstate.Longitude - SINSstate.DeltaLongitude;
-
-            SINSstate2.Vx_0[0] = SINSstate.Vx_0[0] - SINSstate.DeltaV_1;
-            SINSstate2.Vx_0[1] = SINSstate.Vx_0[1] - SINSstate.DeltaV_2;
-
-            SINSstate2.Roll = SINSstate.Roll - SINSstate.DeltaRoll;
-            SINSstate2.Pitch = SINSstate.Pitch - SINSstate.DeltaPitch;
-            SINSstate2.Heading = SINSstate.Heading - SINSstate.DeltaHeading;
-
-            //корректированная матрица ориентации
-            SINSstate2.A_sx0 = A_sx0(SINSstate);
-            SINSstate2.A_x0s = SINSstate2.A_sx0.Transpose();
-            SINSstate2.A_x0n = A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-            SINSstate2.A_nx0 = SINSstate2.A_x0n.Transpose();
-        }
-
-        public static void StateForecast(SINS_State SINSstate)
-        {
-            double[] temp1 = new double[3];
-            Matrix tempM = new Matrix(3, 3);
-
-            SINSstate.g_0 = NormalGravity_g0(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.u_x = U_x0(SINSstate.Latitude);
-            SINSstate.g_x[0] = 0.0;
-            SINSstate.g_x[1] = 0.0;
-            SINSstate.g_x[2] = -GilmertGravityForce(SINSstate.Latitude, SINSstate.Altitude);
-            //SINSstate.g_x[2] = -9.78049 * SimpleData.a_SemimajorAxis * SimpleData.a_SemimajorAxis * (1.0 + 0.005317099 * Math.Sin(SINSstate.Latitude) * Math.Sin(SINSstate.Latitude)) / (SimpleData.a_SemimajorAxis + SINSstate.Altitude) / (SimpleData.a_SemimajorAxis + SINSstate.Altitude);
-
-            SINSstate.Omega_x[0] = -SINSstate.Vx_0[1] / SINSstate.R_n;
-            SINSstate.Omega_x[1] = SINSstate.Vx_0[0] / SINSstate.R_e;
-            SINSstate.Omega_x[2] = SINSstate.Vx_0[0] * Math.Tan(SINSstate.Latitude) / SINSstate.R_e;
-
-            SINSstate.F_x = SINSstate.A_x0s * SINSstate.F_z;
-            SINSstate.Altitude = SINSstate.Altitude + SINSstate.Vx_0[2] * SINSstate.timeStep;
-            //SINSstate.Altitude = SINSstate.Altitude + (SINSstate.A_x0s* SINSstate.OdometerVector)[2] * SINSstate.timeStep;
-
-            //---Интегрирование скорости---//
-            temp1 = (Matrix.SkewSymmetricMatrix(SINSstate.Omega_x) + 2 * Matrix.SkewSymmetricMatrix(SINSstate.u_x)) * SINSstate.Vx_0;
-            temp1 = temp1 + Matrix.ConvertToMatrix(SINSstate.F_x);
-            temp1 = SINSstate.Vx_0 + Matrix.ConvertToMatrix(temp1 + Matrix.ConvertToMatrix(SINSstate.g_x)) * SINSstate.timeStep;
-            SINSstate.Vx_0 = temp1;
-
-            //---Интегрирвание Матрицы ориентации A_sx0 и A_x0n---//
-            tempM = Matrix.SkewSymmetricMatrix(SINSstate.u_x) + Matrix.SkewSymmetricMatrix(SINSstate.Omega_x);
-            tempM = SINSstate.A_sx0 + (Matrix.SkewSymmetricMatrix(SINSstate.W_z) * SINSstate.A_sx0 - SINSstate.A_sx0 * (tempM)) * SINSstate.timeStep;
-            SINSstate.A_sx0 = tempM;
-            SINSstate.A_x0s = tempM.Transpose();
-            tempM = SINSstate.A_x0n + Matrix.SkewSymmetricMatrix(SINSstate.Omega_x) * SINSstate.A_x0n * SINSstate.timeStep;
-            SINSstate.A_x0n = tempM;
-            SINSstate.A_nx0 = tempM.Transpose();
-
-            //---Пересчет всех углов для X^- ---//
-            SINSstate.Roll = -Math.Atan(SINSstate.A_sx0[0, 2] / SINSstate.A_sx0[2, 2]);
-            SINSstate.Pitch = Math.Atan(SINSstate.A_sx0[1, 2] / Math.Sqrt(SINSstate.A_sx0[0, 2] * SINSstate.A_sx0[0, 2] + SINSstate.A_sx0[2, 2] * SINSstate.A_sx0[2, 2]));
-            SINSstate.Heading = Math.Atan(SINSstate.A_sx0[1, 0] / SINSstate.A_sx0[1, 1]);
-
-            SINSstate.Latitude = Math.Atan(SINSstate.A_x0n[2, 2] / SINSstate.A_x0n[1, 2]);
-            SINSstate.Longitude = Math.Atan(SINSstate.A_x0n[1, 1] / SINSstate.A_x0n[1, 0]);
-
-            //---Прогноз для векторов: U_x^-, g_x^-, \Omega_x^- ---//
-            SINSstate.u_x = U_x0(SINSstate.Latitude);
-            SINSstate.g_x[0] = 0.0;
-            SINSstate.g_x[1] = 0.0;
-            SINSstate.g_x[2] = -GilmertGravityForce(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.Omega_x[0] = -SINSstate.Vx_0[1] / (SINSstate.R_n + SINSstate.Altitude);
-            SINSstate.Omega_x[1] = SINSstate.Vx_0[0] / (SINSstate.R_e + SINSstate.Altitude);
-            SINSstate.Omega_x[2] = SINSstate.Vx_0[0] * Math.Tan(SINSstate.Latitude) / (SINSstate.R_e + SINSstate.Altitude);
-        }
-
-        public static void InitOfCovarianceMatrixes(Kalman_Vars KalmanVars)
-        {
-            for (int i = 0; i < SimpleData.iMx * SimpleData.iMx; i++)
-                KalmanVars.CovarianceMatrixS_m[i] = KalmanVars.CovarianceMatrixS_p[i] = 0.0;
-
-            KalmanVars.CovarianceMatrixS_m[0 * SimpleData.iMx + 0] =  KalmanVars.CovarianceMatrixS_p[0 * SimpleData.iMx + 0] = 0.1;    // позиционные ошибки
-            KalmanVars.CovarianceMatrixS_m[1 * SimpleData.iMx + 1] =  KalmanVars.CovarianceMatrixS_p[1 * SimpleData.iMx + 1] = 0.1;
-
-            KalmanVars.CovarianceMatrixS_m[2 * SimpleData.iMx + 2] =  KalmanVars.CovarianceMatrixS_p[2 * SimpleData.iMx + 2] = 0.001;   // 0.01 м/с
-            KalmanVars.CovarianceMatrixS_m[3 * SimpleData.iMx + 3] =  KalmanVars.CovarianceMatrixS_p[3 * SimpleData.iMx + 3] = 0.001;
-
-            KalmanVars.CovarianceMatrixS_m[4 * SimpleData.iMx + 4] =  KalmanVars.CovarianceMatrixS_p[4 * SimpleData.iMx + 4] = 5.0 * SimpleData.ToRadian_min;  // 5 угл. минут
-            KalmanVars.CovarianceMatrixS_m[5 * SimpleData.iMx + 5] =  KalmanVars.CovarianceMatrixS_p[5 * SimpleData.iMx + 5] = 5.0 * SimpleData.ToRadian_min;
-            KalmanVars.CovarianceMatrixS_m[6 * SimpleData.iMx + 6] =  KalmanVars.CovarianceMatrixS_p[6 * SimpleData.iMx + 6] = 5.0 * SimpleData.ToRadian_min;
-
-            KalmanVars.CovarianceMatrixS_m[10 * SimpleData.iMx + 10] = KalmanVars.CovarianceMatrixS_p[10 * SimpleData.iMx + 10] = 0.02 * SimpleData.ToRadian / 3600.0; // 0.02 град/час
-            KalmanVars.CovarianceMatrixS_m[11 * SimpleData.iMx + 11] = KalmanVars.CovarianceMatrixS_p[11 * SimpleData.iMx + 11] = 0.02 * SimpleData.ToRadian / 3600.0;
-            KalmanVars.CovarianceMatrixS_m[12 * SimpleData.iMx + 12] = KalmanVars.CovarianceMatrixS_p[12 * SimpleData.iMx + 12] = 0.02 * SimpleData.ToRadian / 3600.0;
-
-            KalmanVars.CovarianceMatrixS_m[7 * SimpleData.iMx + 7] = KalmanVars.CovarianceMatrixS_p[7 * SimpleData.iMx + 7] = 0.001;    // м/с^2
-            KalmanVars.CovarianceMatrixS_m[8 * SimpleData.iMx + 8] = KalmanVars.CovarianceMatrixS_p[8 * SimpleData.iMx + 8] = 0.001;
-            KalmanVars.CovarianceMatrixS_m[9 * SimpleData.iMx + 9] = KalmanVars.CovarianceMatrixS_p[9 * SimpleData.iMx + 9] = 0.001;
-        }
     }
 }
