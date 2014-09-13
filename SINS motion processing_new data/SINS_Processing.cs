@@ -211,7 +211,8 @@ namespace SINS_motion_processing_new_data
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
                 ProcHelp.AlgnCnt = 27000;
-                SINSstate.LastCountForRead -= 27000;
+                if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true) 
+                    ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
                 ParamStart.Experiment_stdKappa1 = 0.01; //минут
                 ParamStart.Experiment_stdKappa3 = 0.01; //минут
             }
@@ -307,17 +308,17 @@ namespace SINS_motion_processing_new_data
 
 
 
-            if (SINSstate.Global_file == "Saratov_run_2014_07_23")
-            {
-                ProcHelp.AlgnCnt = 27000 - 4000;
-                l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
+            //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+            //{
+            //    ProcHelp.AlgnCnt = 27000 - 4000;
+            //    l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
 
-                FileStream aFile = new FileStream("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt", FileMode.Append, FileAccess.Write);
-                StreamWriter ForHelp = new StreamWriter(aFile);
-                ForHelp.WriteLine("");
-                ForHelp.WriteLine("Оценки дрейфов в конце: nu_z1 = " + SINSstate.AlignAlgebraDrifts[0] + ", nu_z2 = " + SINSstate.AlignAlgebraDrifts[1] + ", nu_z3 = " + SINSstate.AlignAlgebraDrifts[2]);
-                ForHelp.Close(); aFile.Close();
-            }
+            //    FileStream aFile = new FileStream("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt", FileMode.Append, FileAccess.Write);
+            //    StreamWriter ForHelp = new StreamWriter(aFile);
+            //    ForHelp.WriteLine("");
+            //    ForHelp.WriteLine("Оценки дрейфов в конце: nu_z1 = " + SINSstate.AlignAlgebraDrifts[0] + ", nu_z2 = " + SINSstate.AlignAlgebraDrifts[1] + ", nu_z3 = " + SINSstate.AlignAlgebraDrifts[2]);
+            //    ForHelp.Close(); aFile.Close();
+            //}
 
 
 
@@ -669,10 +670,33 @@ namespace SINS_motion_processing_new_data
             if (_16_09_13_TLM_1zaezd.Checked == true)
             {
                 SINSstate.FreqOutput = 100;
-                if (this.SaratovFullRun.Checked == false)
+
+                if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
                     myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23.dat");
-                else
+                if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && this.SaratWithZalipan.Checked)
+                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_noFilter.dat");
+
+                else if (this.SaratAlignStart.Checked && !this.SaratWithZalipan.Checked)
+                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align.dat");
+                else if (this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
+                {
+                    SINSstate.Saratov_run_Final = true;
+                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_finalAlign.dat");
+                }
+
+                else if (this.SaratAlignStart.Checked && this.SaratWithZalipan.Checked)
+                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align_noFilter.dat");
+                else if (this.SaratENDStart.Checked && this.SaratWithZalipan.Checked)
+                {
+                    SINSstate.Saratov_run_Final = true;
+                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_finalAlign_noFilter.dat");
+                }
+
+                else if (!this.SaratWithZalipan.Checked)
                     myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full.dat");
+                else if (this.SaratWithZalipan.Checked)
+                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full_noFilter.dat");
+
                 SINSstate.Global_file = "Saratov_run_2014_07_23";
             }
         }

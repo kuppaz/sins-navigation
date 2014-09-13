@@ -106,6 +106,9 @@
             this.AccuracyClass_0_2_grph = new System.Windows.Forms.CheckBox();
             this.AccuracyClass_2_0_grph = new System.Windows.Forms.CheckBox();
             this.SaratovFullRun = new System.Windows.Forms.CheckBox();
+            this.SaratAlignStart = new System.Windows.Forms.CheckBox();
+            this.SaratENDStart = new System.Windows.Forms.CheckBox();
+            this.SaratWithZalipan = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -989,11 +992,44 @@
             this.SaratovFullRun.Text = "fullRun";
             this.SaratovFullRun.UseVisualStyleBackColor = true;
             // 
+            // SaratAlignStart
+            // 
+            this.SaratAlignStart.AutoSize = true;
+            this.SaratAlignStart.Location = new System.Drawing.Point(377, 3);
+            this.SaratAlignStart.Name = "SaratAlignStart";
+            this.SaratAlignStart.Size = new System.Drawing.Size(74, 17);
+            this.SaratAlignStart.TabIndex = 69;
+            this.SaratAlignStart.Text = "Align Start";
+            this.SaratAlignStart.UseVisualStyleBackColor = true;
+            // 
+            // SaratENDStart
+            // 
+            this.SaratENDStart.AutoSize = true;
+            this.SaratENDStart.Location = new System.Drawing.Point(377, 23);
+            this.SaratENDStart.Name = "SaratENDStart";
+            this.SaratENDStart.Size = new System.Drawing.Size(75, 17);
+            this.SaratENDStart.TabIndex = 70;
+            this.SaratENDStart.Text = "Align END";
+            this.SaratENDStart.UseVisualStyleBackColor = true;
+            // 
+            // SaratWithZalipan
+            // 
+            this.SaratWithZalipan.AutoSize = true;
+            this.SaratWithZalipan.Location = new System.Drawing.Point(457, 23);
+            this.SaratWithZalipan.Name = "SaratWithZalipan";
+            this.SaratWithZalipan.Size = new System.Drawing.Size(86, 17);
+            this.SaratWithZalipan.TabIndex = 71;
+            this.SaratWithZalipan.Text = "With Zalipan";
+            this.SaratWithZalipan.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 459);
+            this.Controls.Add(this.SaratWithZalipan);
+            this.Controls.Add(this.SaratENDStart);
+            this.Controls.Add(this.SaratAlignStart);
             this.Controls.Add(this.SaratovFullRun);
             this.Controls.Add(this.AccuracyClass_2_0_grph);
             this.Controls.Add(this.AccuracyClass_0_2_grph);
@@ -1134,6 +1170,9 @@
         private System.Windows.Forms.CheckBox AccuracyClass_0_2_grph;
         private System.Windows.Forms.CheckBox AccuracyClass_2_0_grph;
         private System.Windows.Forms.CheckBox SaratovFullRun;
+        private System.Windows.Forms.CheckBox SaratAlignStart;
+        private System.Windows.Forms.CheckBox SaratENDStart;
+        private System.Windows.Forms.CheckBox SaratWithZalipan;
     }
 }
 
