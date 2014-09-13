@@ -151,6 +151,7 @@ namespace Common_Namespace
         public double odotime_prev;
         public bool flag_ControlPointCorrection;
         public double NumberOfFilesForSmoothing;
+        public bool Saratov_run_Final;
 
         public static SINS_State DeepCopy(SINS_State other)
         {

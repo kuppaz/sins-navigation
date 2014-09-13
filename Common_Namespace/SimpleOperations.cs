@@ -255,6 +255,20 @@ namespace Common_Namespace
             MatrixResult[2, 2] = Math.Cos(SINSState.Pitch) * Math.Cos(SINSState.Roll);
             return MatrixResult;
         }
+        public static Matrix A_xs(double Heading, double Roll, double Pitch)
+        {
+            Matrix MatrixResult = new Matrix(3, 3);
+            MatrixResult[0, 0] = Math.Cos(Roll);
+            MatrixResult[0, 1] = 0.0;
+            MatrixResult[0, 2] = Math.Sin(Roll);
+            MatrixResult[1, 0] = Math.Sin(Pitch) * Math.Sin(Roll);
+            MatrixResult[1, 1] = Math.Cos(Pitch);
+            MatrixResult[1, 2] = -Math.Sin(Pitch) * Math.Cos(Roll);
+            MatrixResult[2, 0] = -Math.Cos(Pitch) * Math.Sin(Roll);
+            MatrixResult[2, 1] = Math.Sin(Pitch);
+            MatrixResult[2, 2] = Math.Cos(Pitch) * Math.Cos(Roll);
+            return MatrixResult;
+        }
         public static Matrix A_x0n(double Latitude, double Longitude)
         {
             Matrix MatrixResult = new Matrix(3, 3);
@@ -350,6 +364,21 @@ namespace Common_Namespace
             MatrixResult[2, 0] = 0;
             MatrixResult[2, 1] = -kappa1;
             MatrixResult[2, 2] = 1;
+            return MatrixResult;
+        }
+
+
+        public static Matrix MakeC_forSmoothing(double[] ErrVect, SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(7, SimpleData.iMx);
+
+            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+            MatrixResult[2, 2] = 1.0;
+            MatrixResult[2, 7] = SINSstate.Vx_0[1];
+            MatrixResult[3, 3] = 1.0;
+            MatrixResult[3, 7] = -SINSstate.Vx_0[0];
+
             return MatrixResult;
         }
 
