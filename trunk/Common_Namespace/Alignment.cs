@@ -14,6 +14,10 @@ namespace Common_Namespace
             double[] f_avg = new double[3]; double[] w_avg = new double[3]; double[] w_avg_x = new double[3]; double[] U_s = new double[3];
             Matrix A_xs = new Matrix(3, 3);
 
+            StreamWriter FinalAlignmentParams = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//AlignmentFinal_Params.txt");
+            FinalAlignmentParams.WriteLine(SINSstate.Count + " Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Heading= " + SINSstate.Heading + " Roll= " + SINSstate.Roll + " Pitch= " + SINSstate.Pitch);
+            StreamWriter FinalAlignment = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//AlignmentFinal_Data.txt");
+
             StreamWriter Alignment_avg_rougth = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth.txt");
             StreamWriter Alignment_avg_rougthMovingAVG = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth_MovingAVG.txt");
 
@@ -115,7 +119,7 @@ namespace Common_Namespace
 
                 Pitch = Math.Atan2(f_avg[1], Math.Sqrt(f_avg[0] * f_avg[0] + f_avg[2] * f_avg[2]));
                 Roll = -Math.Atan2(f_avg[0], f_avg[2]);
-                A_xs = SimpleOperations.A_xs(SINSstate);
+                A_xs = SimpleOperations.A_xs(Heading, Roll, Pitch);
                 w_avg_x = Matrix.Multiply(A_xs, w_avg);
 
                 Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
@@ -123,13 +127,20 @@ namespace Common_Namespace
 
                 SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
                 U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
-                if (Math.Abs(w_avg[0] / k - U_s[0]) < 0.000005) { }
-                else
-                {
-                    Heading = Heading - Math.PI;
-                    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                    U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
-                }
+
+                //FinalAlignment.WriteLine(k + " " + SINSstate.Count + " " + Heading + " " + Roll + " " + Pitch + " " + Latitude
+                //    + " " + SINSstate.F_z[0] + " " + SINSstate.F_z[1] + " " + SINSstate.F_z[2]
+                //    + " " + SINSstate.W_z[0] + " " + SINSstate.W_z[1] + " " + SINSstate.W_z[2]
+                //    + " " + U_s[0] + " " + U_s[1] + " " + U_s[2]);
+
+                //if (Math.Abs(w_avg[0] / k - U_s[0]) < 0.000005) { }
+                //else
+                //{
+                //    Heading = Heading - Math.PI;
+                //    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                //    U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
+                //}
+
                 for (int j = 0; j < 3; j++)
                     SINSstate.AlignAlgebraDrifts[j] = w_avg[j] / k - U_s[j];
 
@@ -137,7 +148,8 @@ namespace Common_Namespace
                 {
                     Alignment_avg_rougth.WriteLine(SINSstate.Count.ToString() + " " + (f_avg[0] / k).ToString() + " " + (f_avg[1] / k).ToString() + " " + (f_avg[2] / k).ToString() + " " + (w_avg[0] / k).ToString() + " " + (w_avg[1] / k).ToString() + " " + (w_avg[2] / k).ToString()
                         + " " + Heading.ToString() + " " + Roll.ToString() + " " + Pitch.ToString() + " " + Latitude.ToString() + " " + Otklon.ToString()
-                        + " " + (w_avg_x[0] / k).ToString() + " " + (w_avg_x[1] / k).ToString() + " " + (w_avg_x[2] / k).ToString());
+                        + " " + (w_avg_x[0] / k).ToString() + " " + (w_avg_x[1] / k).ToString() + " " + (w_avg_x[2] / k).ToString()
+                        );
 
                     Alignment_avg_rougthMovingAVG.WriteLine(SINSstate.Time.ToString() + " " + MovingAverageAccGyro[0] + " " + MovingAverageAccGyro[1] + " " + MovingAverageAccGyro[2] + " " + MovingAverageAccGyro[3] + " " + MovingAverageAccGyro[4]
                         + " " + MovingAverageAccGyro[5]);
@@ -192,19 +204,18 @@ namespace Common_Namespace
 
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
-            if (Math.Abs(w_avg[0] - U_s[0]) < 0.000005) { }
-            else
-            {
-                SINSstate.Heading = SINSstate.Heading - Math.PI;
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
-            }
 
-
+            //if (Math.Abs(w_avg[0] - U_s[0]) < 0.000005) { }
+            //else
+            //{
+            //    SINSstate.Heading = SINSstate.Heading - Math.PI;
+            //    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+            //    U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
+            //}
 
 
             for (int j = 0; j < 3; j++)
-                SINSstate.AlignAlgebraDrifts[j] = U_s[j] - w_avg[j];
+                SINSstate.AlignAlgebraDrifts[j] = w_avg[j] - U_s[j] ;
 
             SINSstate.Time_Alignment = SINSstate.Time;
 
@@ -240,10 +251,18 @@ namespace Common_Namespace
                 double long_dif_true = (46.87201806 * SimpleData.ToRadian - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(49.99452656 * SimpleData.ToRadian, SINSstate.Altitude_Start) * Math.Cos(49.99452656 * SimpleData.ToRadian);
                 double SettedHeading = Math.Atan2(long_dif_true, lat_dif_true);
 
+                FinalAlignmentParams.WriteLine("Heading_ALign = " + SINSstate.Heading);
+                FinalAlignmentParams.WriteLine("AlignAlgebraDrifts1=" + SINSstate.AlignAlgebraDrifts[0] + " AlignAlgebraDrifts2=" + SINSstate.AlignAlgebraDrifts[1] + " AlignAlgebraDrifts3=" + SINSstate.AlignAlgebraDrifts[2]);
+                FinalAlignmentParams.WriteLine("");
+
                 if (SINSstate.Time > 10000.0)
                 {
                     SettedHeading = SimpleOperations.CalculateHeadingByTwoDots(49.80892188 * SimpleData.ToRadian, 45.3817334 * SimpleData.ToRadian, SINSstate.GPS_Data.gps_Altitude_prev.Value,
                                         49.80906066 * SimpleData.ToRadian, 45.38113053 * SimpleData.ToRadian, SINSstate.GPS_Data.gps_Altitude.Value);
+
+                    SINSstate.Heading = SettedHeading;
+                    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                    SimpleOperations.CopyArray(U_s, SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude));
                 }
                 else
                 {
@@ -255,7 +274,12 @@ namespace Common_Namespace
                 }
 
                 for (int j = 0; j < 3; j++)
-                    SINSstate.AlignAlgebraDrifts[j] = U_s[j] - w_avg[j];
+                    SINSstate.AlignAlgebraDrifts[j] = w_avg[j] - U_s[j];
+
+                FinalAlignmentParams.WriteLine("Heading_GPS = " + SINSstate.Heading);
+                FinalAlignmentParams.WriteLine("AlignAlgebraDrifts1=" + SINSstate.AlignAlgebraDrifts[0] + " AlignAlgebraDrifts2=" + SINSstate.AlignAlgebraDrifts[1] + " AlignAlgebraDrifts3=" + SINSstate.AlignAlgebraDrifts[2]);
+                FinalAlignmentParams.WriteLine("Noise_Vel_1=" + KalmanVars.Noise_Vel[0] + " Noise_Vel_2=" + KalmanVars.Noise_Vel[1] + " Noise_Vel_3=" + KalmanVars.Noise_Vel[2]);
+                FinalAlignmentParams.WriteLine("Noise_Angl_1=" + KalmanVars.Noise_Angl[0] + " Noise_Angl_2=" + KalmanVars.Noise_Angl[1] + " Noise_Angl_3=" + KalmanVars.Noise_Angl[2]);
 
                 for (int j = 0; j < 3; j++)
                 {
@@ -283,6 +307,7 @@ namespace Common_Namespace
 
             Alignment_avg_rougth.Close();
             Alignment_avg_rougthMovingAVG.Close();
+            FinalAlignmentParams.Close(); FinalAlignment.Close();
             return i;
         }
 

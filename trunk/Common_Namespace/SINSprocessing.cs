@@ -772,7 +772,7 @@ namespace Common_Namespace
 
             if (SINSstate.flag_UseAlgebraDrift)
                 for (int i = 0; i < 3; i++)
-                    Wz[i] = Wz[i] + SINSstate.AlignAlgebraDrifts[i];
+                    Wz[i] = Wz[i] - SINSstate.AlignAlgebraDrifts[i];
 
 
 
