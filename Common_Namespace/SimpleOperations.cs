@@ -269,6 +269,38 @@ namespace Common_Namespace
             MatrixResult[2, 2] = Math.Cos(Pitch) * Math.Cos(Roll);
             return MatrixResult;
         }
+        public static Matrix C_convultion_iMx_12(SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(7, SimpleData.iMx);
+            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+            MatrixResult[2, 2] = 1.0;
+            MatrixResult[2, 6] = SINSstate.Vx_0[1];
+            MatrixResult[3, 3] = 1.0;
+            MatrixResult[3, 6] = -SINSstate.Vx_0[0];
+            MatrixResult[4, 4] = -Math.Cos(SINSstate.Heading);
+            MatrixResult[4, 5] = Math.Sin(SINSstate.Heading);
+            MatrixResult[5, 4] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+            MatrixResult[5, 5] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+            MatrixResult[6, 4] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+            MatrixResult[6, 5] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+            MatrixResult[6, 6] = 1.0;
+            MatrixResult[6, 0] = 1.0 / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
+            return MatrixResult;
+        }
+        public static Matrix ArrayToMatrix(double[] array)
+        {
+            Matrix MatrixResult = new Matrix(Convert.ToInt32(Math.Sqrt(array.Length)), Convert.ToInt32(Math.Sqrt(array.Length)));
+            for (int i = 0; i < Convert.ToInt32(Math.Sqrt(array.Length)); i++)
+            {
+                for (int j = 0; j < Convert.ToInt32(Math.Sqrt(array.Length)); j++)
+                {
+                    MatrixResult[i, j] = array[i * Convert.ToInt32(Math.Sqrt(array.Length)) + j];
+                }
+            }
+            return MatrixResult;
+        }
+
         public static Matrix A_x0n(double Latitude, double Longitude)
         {
             Matrix MatrixResult = new Matrix(3, 3);
@@ -283,6 +315,7 @@ namespace Common_Namespace
             MatrixResult[2, 2] = Math.Sin(Latitude);
             return MatrixResult;
         }
+        
         public static Matrix A_x0n_Gyro(SINS_State SINSState)
         {
             Matrix MatrixResult = new Matrix(3, 3);

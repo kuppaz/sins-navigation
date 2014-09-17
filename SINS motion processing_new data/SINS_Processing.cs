@@ -133,23 +133,6 @@ namespace SINS_motion_processing_new_data
             int LastCountForRead = SINSstate.LastCountForRead;
             myFile.BaseStream.Seek(0, SeekOrigin.Begin);
 
-            //Entry[] EntryStrArray = new Entry[SINSstate.LastCountForRead];
-            ////string[] strReadLine = new string[SINSstate.LastCountForRead];
-            ////string[] strReadLine = System.IO.File.ReadAllLines("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full.dat");
-
-            //for (int i = 0; i < SINSstate.LastCountForRead; i++)
-            //{
-            //    EntryStrArray[i] = new Entry() { str = myFile.ReadLine() };
-            //}
-            //myFile.BaseStream.Seek(0, SeekOrigin.Begin);
-
-            //for (int i = 0; i < SINSstate.LastCountForRead; i++)
-            //{
-            //    InputForSmoothFile.WriteLine(EntryStrArray[SINSstate.LastCountForRead - 1 - i].str);
-            //}
-            //InputForSmoothFile.Close();
-
-
 
 
             if (SINSstate.Global_file.ToLower().Contains("imitator"))
@@ -305,21 +288,6 @@ namespace SINS_motion_processing_new_data
                 if (SINSstate.flag_Smoothing)
                     SINS_Corrected.SINS_Corrected_Processing(l, true, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, OdoModel);
             }
-
-
-
-            //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
-            //{
-            //    ProcHelp.AlgnCnt = 27000 - 4000;
-            //    l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
-
-            //    FileStream aFile = new FileStream("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt", FileMode.Append, FileAccess.Write);
-            //    StreamWriter ForHelp = new StreamWriter(aFile);
-            //    ForHelp.WriteLine("");
-            //    ForHelp.WriteLine("Оценки дрейфов в конце: nu_z1 = " + SINSstate.AlignAlgebraDrifts[0] + ", nu_z2 = " + SINSstate.AlignAlgebraDrifts[1] + ", nu_z3 = " + SINSstate.AlignAlgebraDrifts[2]);
-            //    ForHelp.Close(); aFile.Close();
-            //}
-
 
 
             DateTime end = DateTime.Now;
