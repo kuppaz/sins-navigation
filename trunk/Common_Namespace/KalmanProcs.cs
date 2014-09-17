@@ -8,27 +8,19 @@ namespace Common_Namespace
     public class KalmanProcs
     {
 
-        public static void Smoothing(Kalman_Vars KalmanVars, SINS_State SINSstate, int i)
+        public static void Smoothing(Kalman_Vars KalmanVars, SINS_State SINSstate, int iMx)
         {
-            double[] temp_array_1 = new double[SimpleData.iMx * SimpleData.iMx], temp_array_2 = new double[SimpleData.iMx * SimpleData.iMx];
-
-            double[] ErrorConditionVector_Straight = new double[SimpleData.iMx], CovarianceMatrixS_Straight = new double[SimpleData.iMx * SimpleData.iMx];
-            double[] ErrorConditionVector_Smoothed = new double[SimpleData.iMx], CovarianceMatrixS_Smoothed = new double[SimpleData.iMx * SimpleData.iMx];
-
-            SimpleOperations.CopyArray(ErrorConditionVector_Straight, i, KalmanVars.ErrorConditionVector_Straight);
-            SimpleOperations.CopyArray(CovarianceMatrixS_Straight, i, KalmanVars.CovarianceMatrixS_Straight);
+            double[] temp_array_1 = new double[iMx * iMx], temp_array_2 = new double[iMx * iMx];
 
             unsafe
             {
-                fixed (double* Xb = KalmanVars.ErrorConditionVector_m, Sb = KalmanVars.CovarianceMatrixS_m, Xf = ErrorConditionVector_Straight, Sf = CovarianceMatrixS_Straight,
-                               Xsgl = ErrorConditionVector_Smoothed, Ssgl = CovarianceMatrixS_Smoothed, _temp_1 = temp_array_1, _temp_2 = temp_array_2)
+                fixed (double* Xb = KalmanVars.ErrorVector_m, Sb = KalmanVars.CovarianceMatrix_SP_m, Xf = KalmanVars.ErrorVector_Straight, Sf = KalmanVars.CovarianceMatrix_SP_Straight,
+                               Xsgl = KalmanVars.ErrorVector_Smoothed, Ssgl = KalmanVars.CovarianceMatrix_SP_Smoothed, _temp_1 = temp_array_1, _temp_2 = temp_array_2)
                 {
-                    smooth_sub(Xf, Sf, Xb, Sb, Xsgl, Ssgl, SimpleData.iMx, _temp_1, _temp_2);
+                    smooth_sub(Xf, Sf, Xb, Sb, Xsgl, Ssgl, iMx, _temp_1, _temp_2);
                 }
             }
 
-            SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_Smoothed, i, ErrorConditionVector_Smoothed);
-            SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_Smoothed, i, CovarianceMatrixS_Smoothed);
         }
 
 

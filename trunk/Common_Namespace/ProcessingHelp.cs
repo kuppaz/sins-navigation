@@ -34,52 +34,6 @@ namespace Common_Namespace
 
             ProcHelp.datastring = myFile.ReadLine();
 
-            //if (SINSstate.Global_file.Contains("AZIMUT_T"))
-            //{
-            //    if (SINSstate.firstLineRead == false)
-            //    {
-            //        ProcHelp.datastring = myFile.ReadLine();
-            //        dataArray = ProcHelp.datastring.Split(';');
-            //        SINSstate.Time_prev = Convert.ToDouble(dataArray[0]);
-            //        SINSstate.firstLineRead = true;
-            //        ProcHelp.datastring = myFile.ReadLine();
-            //    }
-
-            //    dataArray = ProcHelp.datastring.Split(';');
-
-            //    SINSstate.Count++;
-            //    SINSstate.Time = Convert.ToDouble(dataArray[0]) - SINSstate.Time_Alignment;
-            //    SINSstate.timeStep = SINSstate.Time - SINSstate.Time_prev;
-            //    if (SINSstate.timeStep < 0.0)
-            //        SINSstate.timeStep = SINSstate.Time + SINSstate.Time_Alignment - SINSstate.Time_prev;
-
-            //    SINSstate.F_z[1] = Convert.ToDouble(dataArray[5]) * 9.81; SINSstate.W_z[1] = Convert.ToDouble(dataArray[2]);
-            //    SINSstate.F_z[2] = Convert.ToDouble(dataArray[6]) * 9.81; SINSstate.W_z[2] = -Convert.ToDouble(dataArray[3]);
-            //    SINSstate.F_z[0] = Convert.ToDouble(dataArray[7]) * 9.81; SINSstate.W_z[0] = Convert.ToDouble(dataArray[4]);
-
-            //    SINSstate.GPS_Data.gps_Latitude.Value = Convert.ToDouble(dataArray[15]);
-            //    SINSstate.GPS_Data.gps_Latitude.isReady = Convert.ToInt32(dataArray[29]);
-            //    SINSstate.GPS_Data.gps_Longitude.Value = Convert.ToDouble(dataArray[16]);
-            //    SINSstate.GPS_Data.gps_Longitude.isReady = Convert.ToInt32(dataArray[29]);
-            //    SINSstate.GPS_Data.gps_Altitude.Value = Convert.ToDouble(dataArray[17]);
-            //    SINSstate.GPS_Data.gps_Altitude.isReady = Convert.ToInt32(dataArray[29]);
-
-            //    SINSstate.GPS_Data.gps_Vn.Value = Convert.ToDouble(dataArray[18]);
-            //    SINSstate.GPS_Data.gps_Vn.isReady = Convert.ToInt32(dataArray[29]);
-            //    SINSstate.GPS_Data.gps_Ve.Value = Convert.ToDouble(dataArray[19]);
-            //    SINSstate.GPS_Data.gps_Ve.isReady = Convert.ToInt32(dataArray[29]);
-            //    SINSstate.GPS_Data.gps_Vup.Value = Convert.ToDouble(dataArray[20]);
-            //    SINSstate.GPS_Data.gps_Vup.isReady = Convert.ToInt32(dataArray[29]);
-
-            //    if (Convert.ToInt32(dataArray[8]) >= -1 || SINSstate.Count <= ProcHelp.AlgnCnt) SINSstate.FLG_Stop = 1;
-            //    else SINSstate.FLG_Stop = 0;
-
-            //    SINSstate.OdometerData.odometer_left.Value = Convert.ToDouble(dataArray[8]) * (-0.1268);
-            //    SINSstate.OdometerData.odometer_left.isReady = Convert.ToInt32(dataArray[28]);
-
-            //    SINSstate.Time_prev = SINSstate.Time;
-            //}
-            //else
             if (SINSstate.Global_file == "Azimut-T_18-Oct-2013_11-05-11" || SINSstate.Global_file == "topo")
             {
                 if (SINSstate.firstLineRead == false)
@@ -119,19 +73,6 @@ namespace Common_Namespace
                 SINSstate.F_z[2] = Convert.ToDouble(dataArray[16]); SINSstate.W_z[2] = Convert.ToDouble(dataArray[13]);
                 SINSstate.F_z[0] = Convert.ToDouble(dataArray[17]); SINSstate.W_z[0] = Convert.ToDouble(dataArray[14]);
 
-                //SINSstate.GPS_Data.gps_Latitude.Value = Convert.ToDouble(dataArray[15]);
-                //SINSstate.GPS_Data.gps_Latitude.isReady = Convert.ToInt32(dataArray[29]);
-                //SINSstate.GPS_Data.gps_Longitude.Value = Convert.ToDouble(dataArray[16]);
-                //SINSstate.GPS_Data.gps_Longitude.isReady = Convert.ToInt32(dataArray[29]);
-                //SINSstate.GPS_Data.gps_Altitude.Value = Convert.ToDouble(dataArray[17]);
-                //SINSstate.GPS_Data.gps_Altitude.isReady = Convert.ToInt32(dataArray[29]);
-
-                //SINSstate.GPS_Data.gps_Vn.Value = Convert.ToDouble(dataArray[18]);
-                //SINSstate.GPS_Data.gps_Vn.isReady = Convert.ToInt32(dataArray[29]);
-                //SINSstate.GPS_Data.gps_Ve.Value = Convert.ToDouble(dataArray[19]);
-                //SINSstate.GPS_Data.gps_Ve.isReady = Convert.ToInt32(dataArray[29]);
-                //SINSstate.GPS_Data.gps_Vup.Value = Convert.ToDouble(dataArray[20]);
-                //SINSstate.GPS_Data.gps_Vup.isReady = Convert.ToInt32(dataArray[29]);
 
                 if ((Convert.ToInt32(dataArray[2]) == 1 && SINSstate.timeStep > 0.5) || SINSstate.Count <= ProcHelp.AlgnCnt)
                     SINSstate.FLG_Stop = 1;
@@ -255,22 +196,6 @@ namespace Common_Namespace
                     SINSstate_OdoMod.Longitude = Convert.ToDouble(dataArray2[23]);
                 }
 
-
-                //FileStream fs = new FileStream("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//_BinTest.bin", FileMode.Open, FileAccess.Write);
-                //BinaryWriter w = new BinaryWriter(fs);
-                //w.BaseStream.Seek(0, SeekOrigin.Begin);
-                //w.Write(SINSstate.Time);
-                //w.Close();
-                //fs.Close();
-
-
-                //FileStream fr = new FileStream("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//_BinTest.bin", FileMode.Open);
-                //BinaryReader wr = new BinaryReader(fr);
-                //while (wr.BaseStream.Position < wr.BaseStream.Length)
-                //{
-                //    double bid = wr.ReadDouble();
-                //}
-                //fr.Close();
             }
 
         }

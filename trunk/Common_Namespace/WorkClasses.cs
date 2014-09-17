@@ -208,23 +208,23 @@ namespace Common_Namespace
         public double[] Measure = new double[SimpleData.iMz];
         public double[] Noize_Z = new double[SimpleData.iMz];
 
-        public double[] ErrorConditionVector_m = new double[SimpleData.iMx];
-        public double[] ErrorConditionVector_p = new double[SimpleData.iMx];
+        public double[] ErrorConditionVector_m = new double[SimpleData.iMx], ErrorVector_m = new double[7];
+        public double[] ErrorConditionVector_p = new double[SimpleData.iMx], ErrorVector_p = new double[7];
         public double[] StringOfMeasure = new double[SimpleData.iMx];
         public double[] KalmanFactor = new double[SimpleData.iMx];
 
         public double[] Matrix_A = new double[SimpleData.iMx * SimpleData.iMx];
         public double[] Matrix_H = new double[SimpleData.iMx * SimpleData.iMz];
         public double[] CovarianceMatrix_P = new double[SimpleData.iMx * SimpleData.iMx];
-        public double[] CovarianceMatrixS_m = new double[SimpleData.iMx * SimpleData.iMx];
-        public double[] CovarianceMatrixS_p = new double[SimpleData.iMx * SimpleData.iMx];
+        public double[] CovarianceMatrixS_m = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_m = new double[7 * 7];
+        public double[] CovarianceMatrixS_p = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_p = new double[7 * 7];
         public double[] CovarianceMatrixNoise = new double[SimpleData.iMx * SimpleData.iMq];
         public double[] TransitionMatrixF = new double[SimpleData.iMx * SimpleData.iMx];
 
-        public double[,] ErrorConditionVector_Straight = new double[100000, SimpleData.iMx];
-        public double[,] ErrorConditionVector_Smoothed = new double[100000, SimpleData.iMx];
-        public double[,] CovarianceMatrixS_Straight = new double[100000, SimpleData.iMx * SimpleData.iMx];
-        public double[,] CovarianceMatrixS_Smoothed = new double[100000, SimpleData.iMx * SimpleData.iMx];
+        public double[] ErrorConditionVector_Straight = new double[SimpleData.iMx], ErrorVector_Straight = new double[7];
+        public double[] ErrorConditionVector_Smoothed = new double[SimpleData.iMx], ErrorVector_Smoothed = new double[7];
+        public double[] CovarianceMatrixS_Straight = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_Straight = new double[7 * 7];
+        public double[] CovarianceMatrixS_Smoothed = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_Smoothed = new double[7 * 7];
 
         public double Noise_Pos;
         public double[] Noise_Vel = new double[3];
