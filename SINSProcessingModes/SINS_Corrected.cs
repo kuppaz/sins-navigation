@@ -31,6 +31,9 @@ namespace SINSProcessingModes
 
 
         public static StreamWriter Smthing_Backward_1, Smthing_Backward_2, Smthing_Backward_3, Smthing_Backward_4;
+        public static StreamWriter Smthing_P_1, Smthing_P_2, Smthing_P_3, Smthing_P_4;
+        public static StreamWriter Smthing_X_1, Smthing_X_2, Smthing_X_3, Smthing_X_4;
+        public static StreamReader Back_Input_File_read, Back_Input_X, Back_Input_P;
         public static int NumberOfIterationForOneForSmoothing = 2000000;
 
 
@@ -41,10 +44,6 @@ namespace SINSProcessingModes
             int t = 0;
 
             StreamWriter Imitator_Telemetric = new StreamWriter("D://SINS Solution//Imitator_Kompas_temp//Work//DataForImitator//Imitator_" + SINSstate.Global_file + ".dat");
-
-            //StreamWriter InputForSmoothFile = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//" + SINSstate.Global_file + "_Back.dat");
-            //FileStream InputForSmoothFile = File.Open("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//" + SINSstate.Global_file + "_Back.dat", FileMode.OpenOrCreate);
-
             
 
             double lambda_last_odo_flg = SINSstate2.Longitude, phi_last_odo_flg = SINSstate2.Latitude;
@@ -78,6 +77,22 @@ namespace SINSProcessingModes
                 Smthing_Backward_2 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_2.txt");
                 Smthing_Backward_3 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_3.txt");
                 Smthing_Backward_4 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_4.txt");
+
+                Smthing_P_1 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_P_1.txt");
+                Smthing_P_2 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_P_2.txt");
+                Smthing_P_3 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_P_3.txt");
+                Smthing_P_4 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_P_4.txt");
+
+                Smthing_X_1 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_X_1.txt");
+                Smthing_X_2 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_X_2.txt");
+                Smthing_X_3 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_X_3.txt");
+                Smthing_X_4 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_X_4.txt");
+            }
+            else
+            {
+                Back_Input_File_read = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Backward_full.txt");
+                Back_Input_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Backward_full_X.txt");
+                Back_Input_P = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Backward_full_P.txt");
             }
             
 
@@ -86,9 +101,13 @@ namespace SINSProcessingModes
             int start_i = 0;
             start_i = l;
 
+            if (Do_Smoothing) start_i = SINSstate.LastCountForRead-1;
+
 
             for (int i = start_i; i <= SINSstate.LastCountForRead; i++)
             {
+                if (Do_Smoothing) { i = i - 2; if (i < l + 1) break; }
+
                 if (SINSstate.flag_UsingClasAlignment == false)
                     if (i < ProcHelp.AlgnCnt) 
                     { 
@@ -96,22 +115,14 @@ namespace SINSProcessingModes
                         continue; 
                     }
 
-                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                if (!Do_Smoothing)
+                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                if (Do_Smoothing)
+                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, Back_Input_File_read, SINSstate, SINSstate_OdoMod);
+
+                
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
                 SINSstate2.Time = SINSstate.Time;
-
-                if (!Do_Smoothing)
-                {
-                    //StreamWriter InputForSmoothFile = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//" + SINSstate.Global_file + "_Back.dat");
-
-                    //InputForSmoothFile.Close();
-
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_Backward_1.WriteLine(ProcHelp.datastring);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_Backward_2.WriteLine(ProcHelp.datastring);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_Backward_3.WriteLine(ProcHelp.datastring);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_Backward_4.WriteLine(ProcHelp.datastring);
-                }
-
 
 
 
@@ -140,6 +151,7 @@ namespace SINSProcessingModes
                     SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
 
 
+                    //---модель с учетом вращения аппарата---
                     //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     //{
                     //    if (SINSstate.Time + SINSstate.Time_Alignment > 4545.679602)
@@ -175,16 +187,21 @@ namespace SINSProcessingModes
                 
                 if (t == 0) 
                 {
-                    start_i = i;
-                    SINSstate.Roll_prev = SINSstate.Roll;
-                    SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z); 
-                    SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
-                    SimpleOperations.CopyArray(SINSstateDinamOdo.F_z_prev, SINSstateDinamOdo.F_z); 
-                    SimpleOperations.CopyArray(SINSstateDinamOdo.W_z_prev, SINSstateDinamOdo.W_z);
-                    SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value; 
-                    SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
-                    SINSstateDinamOdo.OdometerLeftPrev = SINSstateDinamOdo.OdometerData.odometer_left.Value; 
-                    SINSstateDinamOdo.OdometerRightPrev = SINSstateDinamOdo.OdometerData.odometer_right.Value;
+                    if (!Do_Smoothing)
+                    {
+                        start_i = i;
+                        SINSstate.Roll_prev = SINSstate.Roll;
+                        SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
+                        SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
+                        SimpleOperations.CopyArray(SINSstateDinamOdo.F_z_prev, SINSstateDinamOdo.F_z);
+                        SimpleOperations.CopyArray(SINSstateDinamOdo.W_z_prev, SINSstateDinamOdo.W_z);
+                        SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
+                        SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
+                        SINSstateDinamOdo.OdometerLeftPrev = SINSstateDinamOdo.OdometerData.odometer_left.Value;
+                        SINSstateDinamOdo.OdometerRightPrev = SINSstateDinamOdo.OdometerData.odometer_right.Value;
+                    }
+                    if (Do_Smoothing)
+                        i = i + 2;
                     t = 1;
                 }
 
@@ -281,6 +298,33 @@ namespace SINSProcessingModes
                 else
                     SINSstate.flag_KNS = false;
 
+
+
+
+                //--- Сглаживание ---
+                if (Do_Smoothing)
+                {
+                    string[] BackInputX_LineArray = Back_Input_X.ReadLine().Split(' ');
+                    for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
+                        KalmanVars.ErrorVector_Straight[u] = Convert.ToDouble(BackInputX_LineArray[u]);
+
+                    int u2 = 0;
+                    string[] BackInputP_LineArray = Back_Input_P.ReadLine().Split(' ');
+                    for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
+                        for (int u1 = u; u1 < SimpleData.iMx; u1++)
+                        {
+                            KalmanVars.CovarianceMatrix_SP_Straight[u * KalmanVars.ErrorVector_Straight.Length + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
+                            u2++;
+                        }
+
+                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate) 
+                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m) 
+                        * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
+
+
+
+                    KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
+                }
 
 
                 
@@ -382,6 +426,35 @@ namespace SINSProcessingModes
                 /*----------------------------------------------------------------------------------------*/
 
 
+                if (!Do_Smoothing)
+                {
+                    string str_P = "";
+                    //---Делаем свертку до S_X---
+                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p) * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
+                    for (int ii = 0; ii < 7; ii++)
+                        for (int ji = ii; ji < 7; ji++)
+                            str_P += MatrixS_ForNavDeltas[ii, ji].ToString() + " ";
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_P_1.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_P_2.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_P_3.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_P_4.WriteLine(str_P);
+
+                    string str_X;
+                    str_X = SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_X_1.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_X_2.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_X_3.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_X_4.WriteLine(str_X);
+
+                    string StringForBack = "";
+                    StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_Backward_1.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_Backward_2.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_Backward_3.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_Backward_4.WriteLine(StringForBack);
+                }
+
+
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/
                 if (i != (SINSstate.LastCountForRead - 1))
@@ -403,36 +476,59 @@ namespace SINSProcessingModes
 
             }
 
-            Smthing_Backward_1.Close(); Smthing_Backward_2.Close(); Smthing_Backward_3.Close(); Smthing_Backward_4.Close();
+            Smthing_Backward_1.Close(); 
+            Smthing_Backward_2.Close(); 
+            Smthing_Backward_3.Close(); 
+            Smthing_Backward_4.Close();
+
+            Smthing_P_1.Close();
+            Smthing_P_2.Close();
+            Smthing_P_3.Close();
+            Smthing_P_4.Close();
+
+            Smthing_X_1.Close();
+            Smthing_X_2.Close();
+            Smthing_X_3.Close();
+            Smthing_X_4.Close();
 
 
 
 
             if (!Do_Smoothing)
             {
-                StreamReader Smthing_Backward_R;
-                StreamWriter Smthing_Backward = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full.txt");
+                StreamReader Smthing_Backward_R, Smthing_Backward_R_X, Smthing_Backward_R_P;
+                StreamWriter Smthing_Backward = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full.txt"),
+                             Smthing_Backward_X = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_X.txt"),
+                             Smthing_Backward_P = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_P.txt");
 
                 for (int i = Convert.ToInt32(SINSstate.NumberOfFilesForSmoothing); i >= 1; i--)
                 {
                     int j = 0;
-                    string[] strTemp = new string[NumberOfIterationForOneForSmoothing];
+                    string[] strTemp = new string[NumberOfIterationForOneForSmoothing],
+                             strTemp_X = new string[NumberOfIterationForOneForSmoothing],
+                             strTemp_P = new string[NumberOfIterationForOneForSmoothing];
                     Smthing_Backward_R = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_" + i +".txt");
+                    Smthing_Backward_R_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_X_" + i + ".txt");
+                    Smthing_Backward_R_P = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_P_" + i + ".txt");
 
                     for (j = 0; j < NumberOfIterationForOneForSmoothing; j++)
                     {
                         if (Smthing_Backward_R.EndOfStream == true) break;
                         strTemp[j] = Smthing_Backward_R.ReadLine();
+                        strTemp_X[j] = Smthing_Backward_R_X.ReadLine();
+                        strTemp_P[j] = Smthing_Backward_R_P.ReadLine();
                     }
                     for (int j1 = j-1; j1 >= 0; j1--)
                     {
                         Smthing_Backward.WriteLine(strTemp[j1]);
+                        Smthing_Backward_X.WriteLine(strTemp_X[j1]);
+                        Smthing_Backward_P.WriteLine(strTemp_P[j1]);
                     }
 
-                    Smthing_Backward_R.Close();
+                    Smthing_Backward_R.Close(); Smthing_Backward_R_X.Close(); Smthing_Backward_R_P.Close();
                 }
 
-                Smthing_Backward.Close();
+                Smthing_Backward.Close(); Smthing_Backward_X.Close(); Smthing_Backward_P.Close();
             }
 
 
