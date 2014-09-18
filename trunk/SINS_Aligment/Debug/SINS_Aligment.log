@@ -1,4 +1,4 @@
-﻿Build started 09.07.2014 8:54:42.
+﻿Build started 04.09.2014 22:52:15.
      1>Project "D:\SINS Solution\MovingImitator_Azimut\SINS_Aligment\SINS_Aligment.vcxproj" on node 3 (Rebuild target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
      1>ClCompile:
@@ -61,4 +61,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.79
+Time Elapsed 00:00:02.65
