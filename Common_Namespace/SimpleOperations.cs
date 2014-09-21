@@ -300,6 +300,18 @@ namespace Common_Namespace
             }
             return MatrixResult;
         }
+        public static double[] MatrixToArray(Matrix matrix)
+        {
+            double[] array = new double[matrix.Cols*matrix.Rows];
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Cols; j++)
+                {
+                    array[i * matrix.Cols + j] = matrix[i, j];
+                }
+            }
+            return array;
+        }
 
         public static Matrix A_x0n(double Latitude, double Longitude)
         {

@@ -190,10 +190,16 @@ namespace Common_Namespace
 
                 }
 
-                if (dataArray2.Length > 22 && SINSstate.Global_file != "Saratov_run_2014_07_23")
+                if (dataArray2.Length > 22 && SINSstate.Do_Smoothing == true)
                 {
                     SINSstate_OdoMod.Latitude = Convert.ToDouble(dataArray2[22]);
                     SINSstate_OdoMod.Longitude = Convert.ToDouble(dataArray2[23]);
+
+                    if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                    {
+                        SINSstate_OdoMod.Latitude = Convert.ToDouble(dataArray2[23]);
+                        SINSstate_OdoMod.Longitude = Convert.ToDouble(dataArray2[24]);
+                    }
                 }
 
             }
