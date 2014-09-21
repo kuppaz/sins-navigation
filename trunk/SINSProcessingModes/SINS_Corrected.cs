@@ -108,6 +108,8 @@ namespace SINSProcessingModes
             {
                 if (Do_Smoothing) { i = i - 2; if (i < l + 1) break; }
 
+                SINSstate.Do_Smoothing = Do_Smoothing;
+
                 if (SINSstate.flag_UsingClasAlignment == false)
                     if (i < ProcHelp.AlgnCnt) 
                     { 
@@ -305,23 +307,21 @@ namespace SINSProcessingModes
                 if (Do_Smoothing)
                 {
                     string[] BackInputX_LineArray = Back_Input_X.ReadLine().Split(' ');
+
                     for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
                         KalmanVars.ErrorVector_Straight[u] = Convert.ToDouble(BackInputX_LineArray[u]);
 
                     int u2 = 0;
                     string[] BackInputP_LineArray = Back_Input_P.ReadLine().Split(' ');
+
                     for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
+                    {
                         for (int u1 = u; u1 < SimpleData.iMx; u1++)
                         {
                             KalmanVars.CovarianceMatrix_SP_Straight[u * KalmanVars.ErrorVector_Straight.Length + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
                             u2++;
                         }
-
-                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate) 
-                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m) 
-                        * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
-
-
+                    }
 
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
                 }
@@ -434,6 +434,7 @@ namespace SINSProcessingModes
                     for (int ii = 0; ii < 7; ii++)
                         for (int ji = ii; ji < 7; ji++)
                             str_P += MatrixS_ForNavDeltas[ii, ji].ToString() + " ";
+
                     if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_P_1.WriteLine(str_P);
                     if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_P_2.WriteLine(str_P);
                     if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_P_3.WriteLine(str_P);
@@ -513,7 +514,8 @@ namespace SINSProcessingModes
 
                     for (j = 0; j < NumberOfIterationForOneForSmoothing; j++)
                     {
-                        if (Smthing_Backward_R.EndOfStream == true) break;
+                        if (Smthing_Backward_R.EndOfStream == true) 
+                            break;
                         strTemp[j] = Smthing_Backward_R.ReadLine();
                         strTemp_X[j] = Smthing_Backward_R_X.ReadLine();
                         strTemp_P[j] = Smthing_Backward_R_P.ReadLine();

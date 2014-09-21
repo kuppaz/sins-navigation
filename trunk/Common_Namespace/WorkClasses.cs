@@ -152,6 +152,7 @@ namespace Common_Namespace
         public bool flag_ControlPointCorrection;
         public double NumberOfFilesForSmoothing;
         public bool Saratov_run_Final;
+        public bool Do_Smoothing;
 
         public static SINS_State DeepCopy(SINS_State other)
         {
