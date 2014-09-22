@@ -260,7 +260,7 @@ namespace Common_Namespace
 
 
         public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, ParamsForModel OdoModel, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstateDinamOdo, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
-                StreamWriter Nav_FeedbackSolution, StreamWriter Nav_vert_chan_test, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer)
+                StreamWriter Nav_FeedbackSolution, StreamWriter Nav_vert_chan_test, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer, StreamWriter Nav_Smoothed)
         {
             double Lat = 0.0, Long = 0.0;
             double[] Vx_0 = new double[3];
@@ -283,7 +283,7 @@ namespace Common_Namespace
                                  Math.Pow((Long - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
 
 
-            if (i % SINSstate.FreqOutput == 0)
+            if (i % SINSstate.FreqOutput == 0 && SINSstate.Do_Smoothing == false)
                 Speed_Angles.WriteLine(SINSstate.Time + " " + SINSstate.CourseHeading + " " + SINSstate.Heading + " " + SINSstate.CoursePitch 
                     + " " + SINSstate.beta_c + " " + SINSstate.alpha_c + " " + SINSstate.gamma_c
                     + " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1] + " " + Vx_0[0] + " " + Vx_0[1]
@@ -387,7 +387,7 @@ namespace Common_Namespace
             else
             {
                 /*----------------------------------OUTPUT AUTONOMOUS------------------------------------------------------*/
-                if (SINSstate.flag_Autonomous_Solution == true && i % SINSstate.FreqOutput == 0 || SINSstate.flag_Smoothing)
+                if ((SINSstate.flag_Autonomous_Solution == true && i % SINSstate.FreqOutput == 0) || (SINSstate.Do_Smoothing && i % SINSstate.FreqOutput == 0))
                 {
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.OdoTimeStepCount + " " + SINSstate.OdometerVector[1]
                          + " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
@@ -432,6 +432,16 @@ namespace Common_Namespace
                 }
             }
 
+
+            if (SINSstate.Do_Smoothing == true && i % SINSstate.FreqOutput == 0)
+            {
+                ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
+                                        + " " + KalmanVars.ErrorVector_Smoothed[0] + " " + KalmanVars.ErrorVector_Smoothed[1] + " " + KalmanVars.ErrorVector_Smoothed[2]
+                                        + " " + KalmanVars.ErrorVector_Smoothed[3] + " " + KalmanVars.ErrorVector_Smoothed[4] + " " + KalmanVars.ErrorVector_Smoothed[5]
+                                        + " " + KalmanVars.ErrorVector_Smoothed[6]
+                                        ;
+                Nav_Smoothed.WriteLine(ProcHelp.datastring);
+            }
 
             if (i % SINSstate.FreqOutput == 0)
             {
