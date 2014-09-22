@@ -9,13 +9,13 @@ namespace SINSProcessingModes
 {
     public class SINS_Corrected
     {
-        public static StreamWriter Nav_FeedbackSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnFB.txt");
-        public static StreamWriter Nav_EstimateSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnEst.txt");
+        public static StreamWriter Nav_FeedbackSolution;
+        public static StreamWriter Nav_EstimateSolution;
+        public static StreamWriter Nav_Errors;
+        public static StreamWriter Nav_Autonomous;
+        public static StreamWriter Nav_StateErrorsVector;
+        public static StreamWriter Nav_Smoothed;
 
-        public static StreamWriter Nav_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Errs.txt");
-        public static StreamWriter Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Auto.txt");
-
-        public static StreamWriter Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_ErrVct.txt");
         public static StreamWriter ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt");
         public static StreamWriter ForHelp_2 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp_2.txt");
         public static StreamWriter SlippageLog = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//SlippageLog.txt");
@@ -61,10 +61,12 @@ namespace SINSProcessingModes
 
             if (!Do_Smoothing)
             {
-                Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch Correct PositError PositErrStart");
-                Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_x1  V_x2  V_x3  Correct  Yaw YawCor  Roll RollCor  Pitch PitchCor PositError V_abs");
-                Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");
-                DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3 Yaw  Roll  Pitch");
+                Nav_FeedbackSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnFB.txt");
+                Nav_EstimateSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnEst.txt");
+                Nav_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Errs.txt");
+                Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Auto.txt");
+                Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_ErrVct.txt");
+                Nav_Smoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_smoothed_SlnFB.txt");
 
                 string str = "count  dr1 dr2 dV1 dV2 Alpha1_grad Alpha2_grad Beta3_grad Nu_1_grad Nu_2_grad/h Nu_3_grad/h dF_1 dF_2 dF_3";
                 if (SINSstate.flag_iMx_r3_dV3) str = str + " dr3 dV3";
@@ -90,10 +92,24 @@ namespace SINSProcessingModes
             }
             else
             {
-                Back_Input_File_read = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Backward_full.txt");
-                Back_Input_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Backward_full_X.txt");
-                Back_Input_P = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Backward_full_P.txt");
+                Back_Input_File_read = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full.txt");
+                Back_Input_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_X.txt");
+                Back_Input_P = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_P.txt");
+
+                Nav_Smoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_smoothed_SlnFB.txt");
+                Nav_FeedbackSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_SlnFB.txt");
+                Nav_EstimateSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_SlnEst.txt");
+                Nav_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_Errs.txt");
+                Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_Auto.txt");
+                Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_ErrVct.txt");
+
+                Nav_Smoothed.WriteLine("time  count  Latitude Longitude Vx0_1 Vx0_2 Pitch Roll Heading");
             }
+
+            Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch Correct PositError PositErrStart");
+            Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_x1  V_x2  V_x3  Correct  Yaw YawCor  Roll RollCor  Pitch PitchCor PositError V_abs");
+            Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");
+            DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3 Yaw  Roll  Pitch");
             
 
 
@@ -120,7 +136,10 @@ namespace SINSProcessingModes
                 if (!Do_Smoothing)
                     ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
                 if (Do_Smoothing)
+                {
                     ProcessingHelp.ReadSINSStateFromString(ProcHelp, Back_Input_File_read, SINSstate, SINSstate_OdoMod);
+                    SINSstate.timeStep = -Math.Abs(SINSstate.timeStep);
+                }
 
                 
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
@@ -316,12 +335,20 @@ namespace SINSProcessingModes
 
                     for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
                     {
-                        for (int u1 = u; u1 < SimpleData.iMx; u1++)
+                        for (int u1 = u; u1 < KalmanVars.ErrorVector_Straight.Length; u1++)
                         {
                             KalmanVars.CovarianceMatrix_SP_Straight[u * KalmanVars.ErrorVector_Straight.Length + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
                             u2++;
                         }
                     }
+
+                    KalmanVars.ErrorVector_m[0] = SINSstate.Latitude;
+                    KalmanVars.ErrorVector_m[1] = SINSstate.Longitude;
+                    KalmanVars.ErrorVector_m[2] = SINSstate.Vx_0[0];
+                    KalmanVars.ErrorVector_m[3] = SINSstate.Vx_0[1];
+                    KalmanVars.ErrorVector_m[4] = SINSstate.Pitch;
+                    KalmanVars.ErrorVector_m[5] = SINSstate.Roll;
+                    KalmanVars.ErrorVector_m[6] = SINSstate.Heading;
 
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
                 }
@@ -459,7 +486,8 @@ namespace SINSProcessingModes
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/
                 if (i != (SINSstate.LastCountForRead - 1))
-                    ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer);
+                    ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, 
+                        Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed);
 
                 if (i > 10000 && i % 2000 == 0)
                     Console.WriteLine(SINSstate.Count.ToString()
@@ -550,8 +578,9 @@ namespace SINSProcessingModes
             }
 
 
-            ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); 
+            ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); Nav_Autonomous.Close();
             Dif_GK.Close(); Speed_Angles.Close(); Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
+            Nav_Smoothed.Close();
         }
 
 
