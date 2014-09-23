@@ -12,8 +12,12 @@ namespace Common_Namespace
         {
             double[] temp_array_1 = new double[iMx * iMx], temp_array_2 = new double[iMx * iMx];
 
-            Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m) * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
-            KalmanVars.CovarianceMatrix_SP_m = SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas);
+            Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate)
+                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m)
+                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m).Transpose()
+                        * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
+
+            KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
 
             unsafe
             {
@@ -52,8 +56,9 @@ namespace Common_Namespace
 
 
 
-        public static void rsb_rsb(double[] pdP, double[] CovarianceMatrixS, int iMx)
+        public static double[] rsb_rsb(double[] pdP, int iMx)
         {
+            double[] CovarianceMatrixS = new double[iMx * iMx];
             unsafe
             {
                 fixed (double* _pdP = pdP, _CovarianceMatrixS = CovarianceMatrixS)
@@ -61,6 +66,8 @@ namespace Common_Namespace
                     rsb(_pdP, _CovarianceMatrixS, iMx);
                 }
             }
+
+            return CovarianceMatrixS;
         }
 
         public static double Sigmf_Disp(int numb_i, Kalman_Vars KalmanVars)

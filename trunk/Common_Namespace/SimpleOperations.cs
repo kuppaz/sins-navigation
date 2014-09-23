@@ -288,6 +288,7 @@ namespace Common_Namespace
             MatrixResult[6, 0] = 1.0 / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
             return MatrixResult;
         }
+
         public static Matrix ArrayToMatrix(double[] array)
         {
             Matrix MatrixResult = new Matrix(Convert.ToInt32(Math.Sqrt(array.Length)), Convert.ToInt32(Math.Sqrt(array.Length)));
