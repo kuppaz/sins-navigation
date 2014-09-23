@@ -322,13 +322,54 @@ namespace SINSProcessingModes
 
 
 
+                if (!Do_Smoothing)
+                {
+                    string str_P = "";
+                    //---Делаем свертку до S_X---
+                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate)
+                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m) 
+                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m).Transpose()
+                        * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
+
+                    KalmanVars.CovarianceMatrix_SP_Straight = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
+
+                    //SimpleOperations.PrintMatrixToFile(ArrayS_ForNavDeltas, 7, 7);
+
+                    for (int ii = 0; ii < 7; ii++)
+                        for (int ji = ii; ji < 7; ji++)
+                            str_P += KalmanVars.CovarianceMatrix_SP_Straight[ii * 7 + ji].ToString() + " ";
+
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_P_1.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_P_2.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_P_3.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_P_4.WriteLine(str_P);
+
+                    string str_X;
+                    str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_X_1.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_X_2.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_X_3.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_X_4.WriteLine(str_X);
+
+                    string StringForBack = "";
+                    StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_Backward_1.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_Backward_2.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_Backward_3.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_Backward_4.WriteLine(StringForBack);
+                }
+
+
                 //--- Сглаживание ---
                 if (Do_Smoothing)
                 {
                     string[] BackInputX_LineArray = Back_Input_X.ReadLine().Split(' ');
 
-                    for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
-                        KalmanVars.ErrorVector_Straight[u] = Convert.ToDouble(BackInputX_LineArray[u]);
+                    for (int u = 1; u < KalmanVars.ErrorVector_Straight.Length + 1; u++)
+                        KalmanVars.ErrorVector_Straight[u - 1] = Convert.ToDouble(BackInputX_LineArray[u]);
+
+                    double Time_Streight = Convert.ToDouble(BackInputX_LineArray[0]);
+                    double Time_Back = SINSstate.Count;
 
                     int u2 = 0;
                     string[] BackInputP_LineArray = Back_Input_P.ReadLine().Split(' ');
@@ -351,6 +392,10 @@ namespace SINSProcessingModes
                     KalmanVars.ErrorVector_m[6] = SINSstate.Heading;
 
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
+
+                    //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_Straight, 7, 7);
+                    //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_m, 7, 7);
+                    //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_Smoothed, 7, 7);
                 }
 
 
@@ -453,34 +498,7 @@ namespace SINSProcessingModes
                 /*----------------------------------------------------------------------------------------*/
 
 
-                if (!Do_Smoothing)
-                {
-                    string str_P = "";
-                    //---Делаем свертку до S_X---
-                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p) * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
-                    for (int ii = 0; ii < 7; ii++)
-                        for (int ji = ii; ji < 7; ji++)
-                            str_P += MatrixS_ForNavDeltas[ii, ji].ToString() + " ";
-
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_P_1.WriteLine(str_P);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_P_2.WriteLine(str_P);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_P_3.WriteLine(str_P);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_P_4.WriteLine(str_P);
-
-                    string str_X;
-                    str_X = SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_X_1.WriteLine(str_X);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_X_2.WriteLine(str_X);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_X_3.WriteLine(str_X);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_X_4.WriteLine(str_X);
-
-                    string StringForBack = "";
-                    StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_Backward_1.WriteLine(StringForBack);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_Backward_2.WriteLine(StringForBack);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_Backward_3.WriteLine(StringForBack);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_Backward_4.WriteLine(StringForBack);
-                }
+                
 
 
 

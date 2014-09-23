@@ -392,8 +392,8 @@ namespace Common_Namespace
                 pdP[6 * SimpleData.iMx + 8] = pdP[8 * SimpleData.iMx + 6] = pdP[7 * SimpleData.iMx + 7] / SimpleData.U * Math.Cos(SINSstate.Latitude) * SINSstate.A_sx0[2, 0];
                 pdP[6 * SimpleData.iMx + 9] = pdP[9 * SimpleData.iMx + 6] = pdP[7 * SimpleData.iMx + 7] / SimpleData.U * Math.Cos(SINSstate.Latitude) * SINSstate.A_sx0[0, 0];
 
-                KalmanProcs.rsb_rsb(pdP, KalmanVars.CovarianceMatrixS_m, SimpleData.iMx);
-                KalmanProcs.rsb_rsb(pdP, KalmanVars.CovarianceMatrixS_p, SimpleData.iMx);
+                KalmanVars.CovarianceMatrixS_m = KalmanProcs.rsb_rsb(pdP, SimpleData.iMx);
+                KalmanVars.CovarianceMatrixS_p = KalmanProcs.rsb_rsb(pdP, SimpleData.iMx);
             }
         }
 
@@ -624,84 +624,6 @@ namespace Common_Namespace
             }
 
         }
-
-
-        public static void Make_P_for_smoothing(int i, double[,] SystemConditionVector, double[,] CovarianceMatrix_P_Cond, double[] CovarianceMatrixS, double[,] CovarianceMatrix_S_Cond, Kalman_Vars KalmanVars, SINS_State SINSstate)
-        {
-            SystemConditionVector[i, 0] = SINSstate.Latitude;
-            SystemConditionVector[i, 1] = SINSstate.Longitude;
-            SystemConditionVector[i, 2] = SINSstate.Vx_0[0];
-            SystemConditionVector[i, 3] = SINSstate.Vx_0[1];
-            SystemConditionVector[i, 4] = SINSstate.Roll;
-            SystemConditionVector[i, 5] = SINSstate.Pitch;
-            SystemConditionVector[i, 6] = SINSstate.Heading;
-
-            Matrix C = new Matrix(7, SimpleData.iMx);
-            C[0, 1] = 1.0 / SINSstate.R_n;
-            C[1, 0] = Math.Cos(SINSstate.Latitude) / SINSstate.R_e;
-            C[2, 2] = 1.0;
-            C[3, 3] = 1.0;
-            C[4, 4] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-            C[4, 5] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-            C[5, 4] = -Math.Cos(SINSstate.Heading);
-            C[5, 5] = Math.Sin(SINSstate.Heading);
-            C[6, 0] = Math.Sin(SINSstate.Latitude) / Math.Cos(SINSstate.Latitude) / SINSstate.R_e;
-            C[6, 4] = Math.Sin(SINSstate.Heading) * Math.Sin(SINSstate.Pitch) / Math.Cos(SINSstate.Pitch);
-            C[6, 5] = Math.Cos(SINSstate.Heading) * Math.Sin(SINSstate.Pitch) / Math.Cos(SINSstate.Pitch);
-            C[6, 6] = 1.0;
-
-            KalmanProcs.Mult_ss_T(CovarianceMatrixS, KalmanVars.CovarianceMatrix_P);
-
-            for (int ii = 0; ii < SimpleData.iMx; ii++)
-            {
-                for (int j = 0; j < ii; j++)
-                    KalmanVars.CovarianceMatrix_P[ii * SimpleData.iMx + j] = KalmanVars.CovarianceMatrix_P[j * SimpleData.iMx + ii];
-            }
-
-            double[] temp_P = new double[7 * SimpleData.iMx];
-            for (int ii = 0; ii < 7; ii++)
-            {
-                for (int j = 0; j < SimpleData.iMx; j++)
-                {
-                    temp_P[ii * SimpleData.iMx + j] = 0.0;
-                    for (int k = 0; k < SimpleData.iMx; k++)
-                        temp_P[ii * SimpleData.iMx + j] += C[ii, k] * KalmanVars.CovarianceMatrix_P[k * SimpleData.iMx + j];
-                }
-
-            }
-
-            double[] temp_P_2 = new double[7 * SimpleData.iMx];
-            for (int ii = 0; ii < 7; ii++)
-            {
-                for (int j = 0; j < 7; j++)
-                {
-                    temp_P_2[ii * 7 + j] = 0.0;
-                    for (int k = 0; k < SimpleData.iMx; k++)
-                        temp_P_2[ii * 7 + j] += temp_P[ii * SimpleData.iMx + k] * C[j, k];
-
-                }
-            }
-
-            for (int ii = 0; ii < 7; ii++)
-            {
-                for (int j = ii; j < 7; j++)
-                {
-                    double temp = CovarianceMatrix_P_Cond[i, ii * 7 + j];
-                    CovarianceMatrix_P_Cond[i, ii * 7 + j] = (temp_P_2[ii * 7 + j] + temp_P_2[j * 7 + ii]) / 2.0;
-                    double temp2 = CovarianceMatrix_P_Cond[i, ii * 7 + j];
-                    //if(i!=j) P[i*9+j]=0.0;
-                }
-            }
-
-            double[] CovarianceMatrix_P_Cond_vect = new double[7 * 7], CovarianceMatrix_S_Cond_vect = new double[7 * 7];
-            SimpleOperations.CopyArray(CovarianceMatrix_P_Cond_vect, i, CovarianceMatrix_P_Cond);
-            SimpleOperations.CopyArray(CovarianceMatrix_S_Cond_vect, i, CovarianceMatrix_S_Cond);
-
-            KalmanProcs.rsb_rsb(CovarianceMatrix_P_Cond_vect, CovarianceMatrix_S_Cond_vect, 7);
-
-            SimpleOperations.CopyArray(CovarianceMatrix_S_Cond, i, CovarianceMatrix_S_Cond_vect);
-        }
-
 
 
 
