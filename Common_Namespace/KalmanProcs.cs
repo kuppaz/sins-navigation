@@ -12,13 +12,6 @@ namespace Common_Namespace
         {
             double[] temp_array_1 = new double[iMx * iMx], temp_array_2 = new double[iMx * iMx];
 
-            Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate)
-                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m)
-                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m).Transpose()
-                        * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
-
-            KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
-
             unsafe
             {
                 fixed (double* Xb = KalmanVars.ErrorVector_m, Sb = KalmanVars.CovarianceMatrix_SP_m, Xf = KalmanVars.ErrorVector_Straight, Sf = KalmanVars.CovarianceMatrix_SP_Straight,
