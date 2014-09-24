@@ -71,7 +71,24 @@ namespace Common_Namespace
         }
 
 
+        public static void CalcStateErrorsEasySINS(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate_OdoMod, SINS_State SINSstateDinamOdo)
+        {
+            SINSstate.DeltaLatitude = ErrorVector[1] / SINSstate.R_n;
+            SINSstate.DeltaLongitude = ErrorVector[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
 
+            SINSstate.DeltaV_1 = ErrorVector[2] + SINSstate.Vx_0[1] * ErrorVector[6];// + SINSstate.Vx_0[1] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
+            SINSstate.DeltaV_2 = ErrorVector[3] - SINSstate.Vx_0[0] * ErrorVector[6];// -SINSstate.Vx_0[0] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
+
+            if (SINSstate.flag_iMx_r3_dV3)
+            {
+                SINSstate.DeltaAltitude = ErrorVector[SINSstate.iMx_r3_dV3];
+                SINSstate.DeltaV_3 = ErrorVector[SINSstate.iMx_r3_dV3 + 1] + SINSstate.Vx_0[0] * (ErrorVector[5] - ErrorVector[0] / SINSstate.R_e) - SINSstate.Vx_0[1] * (ErrorVector[4] + ErrorVector[1] / SINSstate.R_n);
+            }
+
+            SINSstate.DeltaRoll = -(ErrorVector[4] * Math.Sin(SINSstate.Heading) + ErrorVector[5] * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch);
+            SINSstate.DeltaPitch = -ErrorVector[4] * Math.Cos(SINSstate.Heading) + ErrorVector[5] * Math.Sin(SINSstate.Heading);
+            SINSstate.DeltaHeading = ErrorVector[6] + SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude) + SINSstate.DeltaRoll * Math.Sin(SINSstate.Pitch);
+        }
 
 
         public static void CalcStateErrors(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate_OdoMod, SINS_State SINSstateDinamOdo)

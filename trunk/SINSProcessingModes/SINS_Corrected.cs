@@ -15,8 +15,9 @@ namespace SINSProcessingModes
         public static StreamWriter Nav_Autonomous;
         public static StreamWriter Nav_StateErrorsVector;
         public static StreamWriter Nav_Smoothed;
-
-        public static StreamWriter ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt");
+        
+        public static StreamWriter ForHelpSmoothed;
+        public static StreamWriter ForHelp;
         public static StreamWriter ForHelp_2 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp_2.txt");
         public static StreamWriter SlippageLog = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//SlippageLog.txt");
         public static StreamWriter Nav_vert_chan_test = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Nav_vert_chan_test.txt");
@@ -34,7 +35,7 @@ namespace SINSProcessingModes
         public static StreamWriter Smthing_P_1, Smthing_P_2, Smthing_P_3, Smthing_P_4;
         public static StreamWriter Smthing_X_1, Smthing_X_2, Smthing_X_3, Smthing_X_4;
         public static StreamReader Back_Input_File_read, Back_Input_X, Back_Input_P;
-        public static int NumberOfIterationForOneForSmoothing = 2000000;
+        public static int NumberOfIterationForOneForSmoothing = 500000;
 
 
         //testes//testes
@@ -67,6 +68,7 @@ namespace SINSProcessingModes
                 Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Auto.txt");
                 Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_ErrVct.txt");
                 Nav_Smoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_smoothed_SlnFB.txt");
+                ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt");
 
                 string str = "count  dr1 dr2 dV1 dV2 Alpha1_grad Alpha2_grad Beta3_grad Nu_1_grad Nu_2_grad/h Nu_3_grad/h dF_1 dF_2 dF_3";
                 if (SINSstate.flag_iMx_r3_dV3) str = str + " dr3 dV3";
@@ -92,9 +94,13 @@ namespace SINSProcessingModes
             }
             else
             {
+                SINSstate.odotime_prev = SINSstate.Time;
+
                 Back_Input_File_read = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full.txt");
                 Back_Input_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_X.txt");
                 Back_Input_P = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_P.txt");
+                ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp_back.txt");
+                ForHelpSmoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp_Smoothed.txt");
 
                 Nav_Smoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_smoothed_SlnFB.txt");
                 Nav_FeedbackSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_SlnFB.txt");
@@ -103,7 +109,7 @@ namespace SINSProcessingModes
                 Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_Auto.txt");
                 Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_ErrVct.txt");
 
-                Nav_Smoothed.WriteLine("time  count  Latitude Longitude Vx0_1 Vx0_2 Pitch Roll Heading");
+                Nav_Smoothed.WriteLine("time  count LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch ");
             }
 
             Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch Correct PositError PositErrStart");
@@ -159,6 +165,10 @@ namespace SINSProcessingModes
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
                 SINSstateDinamOdo.OdoTimeStepCount = SINSstate.OdoTimeStepCount;
 
+                //===Проверка на всякий===
+                if (SINSstate.OdoTimeStepCount == 0.0 && SINSstate.OdometerData.odometer_left.isReady == 1)
+                    SINSstate.OdoTimeStepCount = SINSstate.OdoTimeStepCount;
+
                 //--- Формируем вектора измерений одометра для основной и одометрической копии ---//
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {
@@ -170,25 +180,6 @@ namespace SINSProcessingModes
                     SINSstateDinamOdo.OdometerVector = SimpleOperations.NullingOfArray(SINSstateDinamOdo.OdometerVector);
 
                     SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
-
-
-                    //---модель с учетом вращения аппарата---
-                    //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
-                    //{
-                    //    if (SINSstate.Time + SINSstate.Time_Alignment > 4545.679602)
-                    //        SINSstate.Roll = SINSstate.Roll;
-                    //    if (Math.Pow(SINSstate.OdometerVector[1], 2) > 2.0 * 0.71 * 0.71 * Math.Pow(SINSstate.Roll - SINSstate.Roll_prev, 2))
-                    //    {
-                    //        if (i % 10 == 0)
-                    //            ForHelp.WriteLine((SINSstate.OdometerVector[1]
-                    //                - Math.Sign(SINSstate.OdometerVector[1]) * Math.Sqrt((Math.Pow(SINSstate.OdometerVector[1], 2) - 2.0 * 0.71 * 0.71 * Math.Pow(SINSstate.Roll - SINSstate.Roll_prev, 2)))) + " "
-                    //                + (1.0 - Math.Sign(SINSstate.OdometerVector[1]) * Math.Sqrt((Math.Pow(SINSstate.OdometerVector[1], 2) - 2.0 * 0.71 * 0.71 * Math.Pow(SINSstate.Roll - SINSstate.Roll_prev, 2))) / SINSstate.OdometerVector[1]) * 100.0);
-                    //        SINSstate.OdometerVector[1] = Math.Sign(SINSstate.OdometerVector[1]) * Math.Sqrt((Math.Pow(SINSstate.OdometerVector[1], 2) - 2.0 * 0.71 * 0.71 * Math.Pow(SINSstate.Roll - SINSstate.Roll_prev, 2)));
-
-                    //    }
-                    //    SINSstate.Roll_prev = SINSstate.Roll;
-                    //}
-
 
                     if (SINSstate.OdometerVector[1] > 0.01)
                         SINSstate.OdometerVector[1] = SINSstate.OdometerVector[1];
@@ -237,8 +228,6 @@ namespace SINSProcessingModes
 
 
 
-
-
                 if (SINSstate.flag_Odometr_SINS_case == true)
                 {
                     if (SINSstate.flag_FeedbackExist == true && SINSstate.flag_EstimateExist == false) 
@@ -261,8 +250,6 @@ namespace SINSProcessingModes
                 }
                 KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars);
                 KalmanProcs.KalmanForecast(KalmanVars);
-
-
 
 
 
@@ -322,43 +309,7 @@ namespace SINSProcessingModes
 
 
 
-                if (!Do_Smoothing)
-                {
-                    string str_P = "";
-                    //---Делаем свертку до S_X---
-                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate)
-                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m) 
-                        * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m).Transpose()
-                        * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose();
-
-                    KalmanVars.CovarianceMatrix_SP_Straight = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
-
-                    //SimpleOperations.PrintMatrixToFile(ArrayS_ForNavDeltas, 7, 7);
-
-                    for (int ii = 0; ii < 7; ii++)
-                        for (int ji = ii; ji < 7; ji++)
-                            str_P += KalmanVars.CovarianceMatrix_SP_Straight[ii * 7 + ji].ToString() + " ";
-
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_P_1.WriteLine(str_P);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_P_2.WriteLine(str_P);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_P_3.WriteLine(str_P);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_P_4.WriteLine(str_P);
-
-                    string str_X;
-                    str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_X_1.WriteLine(str_X);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_X_2.WriteLine(str_X);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_X_3.WriteLine(str_X);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_X_4.WriteLine(str_X);
-
-                    string StringForBack = "";
-                    StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_Backward_1.WriteLine(StringForBack);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_Backward_2.WriteLine(StringForBack);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_Backward_3.WriteLine(StringForBack);
-                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_Backward_4.WriteLine(StringForBack);
-                }
-
+                //=================================================================
 
                 //--- Сглаживание ---
                 if (Do_Smoothing)
@@ -383,13 +334,22 @@ namespace SINSProcessingModes
                         }
                     }
 
-                    KalmanVars.ErrorVector_m[0] = SINSstate.Latitude;
-                    KalmanVars.ErrorVector_m[1] = SINSstate.Longitude;
-                    KalmanVars.ErrorVector_m[2] = SINSstate.Vx_0[0];
-                    KalmanVars.ErrorVector_m[3] = SINSstate.Vx_0[1];
-                    KalmanVars.ErrorVector_m[4] = SINSstate.Pitch;
-                    KalmanVars.ErrorVector_m[5] = SINSstate.Roll;
-                    KalmanVars.ErrorVector_m[6] = SINSstate.Heading;
+                    SINSprocessing.CalcStateErrorsEasySINS(KalmanVars.ErrorConditionVector_m, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
+
+                    KalmanVars.ErrorVector_m[0] = SINSstate.Latitude    - SINSstate.DeltaLatitude;
+                    KalmanVars.ErrorVector_m[1] = SINSstate.Longitude   - SINSstate.DeltaLongitude;
+                    KalmanVars.ErrorVector_m[2] = SINSstate.Vx_0[0]     - SINSstate.DeltaV_1;
+                    KalmanVars.ErrorVector_m[3] = SINSstate.Vx_0[1]     - SINSstate.DeltaV_2;
+                    KalmanVars.ErrorVector_m[4] = SINSstate.Pitch       - SINSstate.DeltaPitch;
+                    KalmanVars.ErrorVector_m[5] = SINSstate.Roll        - SINSstate.DeltaRoll;
+                    KalmanVars.ErrorVector_m[6] = SINSstate.Heading     - SINSstate.DeltaHeading;
+
+                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m).Transpose()
+                                                * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose()
+                                                ;
+                    KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
 
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
 
@@ -397,9 +357,58 @@ namespace SINSProcessingModes
                     //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_m, 7, 7);
                     //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_Smoothed, 7, 7);
                 }
+                if (!Do_Smoothing)
+                {
+                    string str_P = "";
+                    //---Делаем свертку до S_X---
+                    Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m).Transpose()
+                                                * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose()
+                                                ;
+                    KalmanVars.CovarianceMatrix_SP_Straight = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
+
+                    //SimpleOperations.PrintMatrixToFile(ArrayS_ForNavDeltas, 7, 7);
+
+                    for (int ii = 0; ii < 7; ii++)
+                        for (int ji = ii; ji < 7; ji++)
+                            str_P += KalmanVars.CovarianceMatrix_SP_Straight[ii * 7 + ji].ToString() + " ";
+
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_P_1.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_P_2.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_P_3.WriteLine(str_P);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_P_4.WriteLine(str_P);
+
+                    SINSprocessing.CalcStateErrorsEasySINS(KalmanVars.ErrorConditionVector_m, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
+
+                    double Latitude  = SINSstate.Latitude - SINSstate.DeltaLatitude;
+                    double Longitude = SINSstate.Longitude - SINSstate.DeltaLongitude;
+                    double Vx_01  = SINSstate.Vx_0[0] - SINSstate.DeltaV_1;
+                    double Vx_02 = SINSstate.Vx_0[1] - SINSstate.DeltaV_2;
+                    double Pitch = SINSstate.Pitch - SINSstate.DeltaPitch;
+                    double Roll  = SINSstate.Roll - SINSstate.DeltaRoll;
+                    double Heading = SINSstate.Heading - SINSstate.DeltaHeading;
+
+
+                    string str_X;
+                    str_X = SINSstate.Count + " " + Latitude + " " + Longitude + " " + Vx_01 + " " + Vx_02 + " " + Pitch + " " + Roll + " " + Heading;
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_X_1.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_X_2.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_X_3.WriteLine(str_X);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_X_4.WriteLine(str_X);
+
+                    string StringForBack = "";
+                    StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 1) Smthing_Backward_1.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 2) Smthing_Backward_2.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 3) Smthing_Backward_3.WriteLine(StringForBack);
+                    if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 == 4) Smthing_Backward_4.WriteLine(StringForBack);
+                }
+                //=================================================================
 
 
                 
+
 
                 //-----------------------------------------------------------------------------------------------------------------------------------------
                 //----------------------------ЭТАП КОРРЕКЦИИ start-----------------------------------------------------------------------------------------
@@ -435,7 +444,12 @@ namespace SINSProcessingModes
                     else if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
                         if (SINSstate.flag_UsingOdoPosition == true && SINSstate.add_velocity_to_position == false && SINSstate.flag_KNS == false)
-                            Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstateDinamOdo, ProcHelp);
+                        {
+                            //if (Do_Smoothing)
+                            //    Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstate_OdoMod, ProcHelp);
+                            //else
+                                Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstateDinamOdo, ProcHelp);
+                        }
 
                         if (SINSstate.add_velocity_to_position == true && SINSstate.flag_KNS == false)
                             Odometr_SINS.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
@@ -487,6 +501,15 @@ namespace SINSProcessingModes
                         + " " + Math.Round(Math.Sqrt(Math.Pow(KalmanVars.ErrorConditionVector_p[0], 2) + Math.Pow(KalmanVars.ErrorConditionVector_p[1], 2)), 2)
                         + " " + SimpleOperations.CalculateDistanceBtwDots(SINSstate.GPS_Data.gps_Latitude_prev.Value, SINSstate.GPS_Data.gps_Longitude_prev.Value, SINSstate.GPS_Data.gps_Altitude_prev.Value,
                                         SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value) / (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerData.odometer_left_prev.Value));
+
+                    if (Do_Smoothing)
+                    {
+                        ForHelpSmoothed.WriteLine(Math.Round(SINSstate.Time + SINSstate.Time_Alignment, 4) + " " + Math.Round(SINSstate.OdometerData.odometer_left.Value * 1000 + 3155, 0)
+                        + " " + Math.Round(SINSstate.GPS_Data.gps_Latitude.Value * SimpleData.ToDegree, 8) + " " + Math.Round(SINSstate.GPS_Data.gps_Longitude.Value * SimpleData.ToDegree, 8) + " " + SINSstate.GPS_Data.gps_Altitude.Value
+                        + " " + Math.Round(Math.Sqrt(Math.Pow(KalmanVars.ErrorVector_Smoothed[0] - SINSstate.GPS_Data.gps_Latitude.Value, 2) + Math.Pow(KalmanVars.ErrorVector_Smoothed[1] - SINSstate.GPS_Data.gps_Longitude.Value, 2)), 2)
+                        + " " + SimpleOperations.CalculateDistanceBtwDots(SINSstate.GPS_Data.gps_Latitude_prev.Value, SINSstate.GPS_Data.gps_Longitude_prev.Value, SINSstate.GPS_Data.gps_Altitude_prev.Value,
+                                        SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value) / (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerData.odometer_left_prev.Value));
+                    }
                 }
 
                 //--- Расчет корректирующего вектора состояния ---
@@ -499,7 +522,6 @@ namespace SINSProcessingModes
 
 
                 
-
 
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/
