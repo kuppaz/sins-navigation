@@ -312,8 +312,7 @@ namespace SINSProcessingModes
                     SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
                     for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
                     {
-                        //for (int u1 = u; u1 < KalmanVars.ErrorVector_Straight.Length; u1++)
-                        for (int u1 = u; u1 < u + 1; u1++)
+                        for (int u1 = u; u1 < KalmanVars.ErrorVector_Straight.Length; u1++)
                         {
                             KalmanVars.CovarianceMatrix_SP_Straight[u * KalmanVars.ErrorVector_Straight.Length + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
                             u2++;
@@ -336,7 +335,6 @@ namespace SINSProcessingModes
                                                 * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose()
                                                 ;
                     KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
-                    SimpleOperations.NullingOfNotDiagMatrixElements(KalmanVars.CovarianceMatrix_SP_m, 7);
 
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
 
@@ -372,8 +370,7 @@ namespace SINSProcessingModes
                     KalmanVars.CovarianceMatrix_SP_Straight = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
 
                     for (int ii = 0; ii < 7; ii++)
-                        //for (int ji = ii; ji < 7; ji++)
-                        for (int ji = ii; ji < ii + 1; ji++)
+                        for (int ji = ii; ji < 7; ji++)
                             str_P += KalmanVars.CovarianceMatrix_SP_Straight[ii * 7 + ji].ToString() + " ";
 
                     Smthing_P.WriteLine(str_P);

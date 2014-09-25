@@ -57,6 +57,18 @@ namespace Common_Namespace
 
             return Vect;
         }
+        public static double[] NullingOfBottomMatrix(double[] Vect, int matrixDim)
+        {
+            for (int i = 0; i < matrixDim; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    Vect[i * matrixDim + j] = 0.0;
+                }
+            }
+
+            return Vect;
+        }
 
         //---------------------------------Задается модель поведения движения-------------------------------------------
 
