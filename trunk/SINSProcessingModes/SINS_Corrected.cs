@@ -295,7 +295,6 @@ namespace SINSProcessingModes
 
 
                 //=================================================================
-
                 //--- Сглаживание ---
                 if (Do_Smoothing)
                 {
@@ -310,24 +309,26 @@ namespace SINSProcessingModes
                     int u2 = 0;
                     string[] BackInputP_LineArray = Back_Input_P.ReadLine().Split(' ');
 
+                    SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
                     for (int u = 0; u < KalmanVars.ErrorVector_Straight.Length; u++)
                     {
-                        for (int u1 = u; u1 < KalmanVars.ErrorVector_Straight.Length; u1++)
+                        //for (int u1 = u; u1 < KalmanVars.ErrorVector_Straight.Length; u1++)
+                        for (int u1 = u; u1 < u + 1; u1++)
                         {
                             KalmanVars.CovarianceMatrix_SP_Straight[u * KalmanVars.ErrorVector_Straight.Length + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
                             u2++;
                         }
                     }
 
-                    SINSprocessing.CalcStateErrorsEasySINS(KalmanVars.ErrorConditionVector_m, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
+                    //SINSprocessing.CalcStateErrorsEasySINS(KalmanVars.ErrorConditionVector_m, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
 
-                    KalmanVars.ErrorVector_m[0] = SINSstate.Latitude - SINSstate.DeltaLatitude;
-                    KalmanVars.ErrorVector_m[1] = SINSstate.Longitude - SINSstate.DeltaLongitude;
-                    KalmanVars.ErrorVector_m[2] = SINSstate.Vx_0[0] - SINSstate.DeltaV_1;
-                    KalmanVars.ErrorVector_m[3] = SINSstate.Vx_0[1] - SINSstate.DeltaV_2;
-                    KalmanVars.ErrorVector_m[4] = SINSstate.Pitch - SINSstate.DeltaPitch;
-                    KalmanVars.ErrorVector_m[5] = SINSstate.Roll - SINSstate.DeltaRoll;
-                    KalmanVars.ErrorVector_m[6] = SINSstate.Heading - SINSstate.DeltaHeading;
+                    KalmanVars.ErrorVector_m[0] = SINSstate.Latitude;// -SINSstate.DeltaLatitude;
+                    KalmanVars.ErrorVector_m[1] = SINSstate.Longitude;// - SINSstate.DeltaLongitude;
+                    KalmanVars.ErrorVector_m[2] = SINSstate.Vx_0[0];// - SINSstate.DeltaV_1;
+                    KalmanVars.ErrorVector_m[3] = SINSstate.Vx_0[1];// - SINSstate.DeltaV_2;
+                    KalmanVars.ErrorVector_m[4] = SINSstate.Pitch;// - SINSstate.DeltaPitch;
+                    KalmanVars.ErrorVector_m[5] = SINSstate.Roll;// - SINSstate.DeltaRoll;
+                    KalmanVars.ErrorVector_m[6] = SINSstate.Heading;// - SINSstate.DeltaHeading;
 
                     Matrix MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_12(SINSstate)
                                                 * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_m)
@@ -335,6 +336,7 @@ namespace SINSProcessingModes
                                                 * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose()
                                                 ;
                     KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
+                    SimpleOperations.NullingOfNotDiagMatrixElements(KalmanVars.CovarianceMatrix_SP_m, 7);
 
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
 
@@ -370,23 +372,15 @@ namespace SINSProcessingModes
                     KalmanVars.CovarianceMatrix_SP_Straight = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
 
                     for (int ii = 0; ii < 7; ii++)
-                        for (int ji = ii; ji < 7; ji++)
+                        //for (int ji = ii; ji < 7; ji++)
+                        for (int ji = ii; ji < ii + 1; ji++)
                             str_P += KalmanVars.CovarianceMatrix_SP_Straight[ii * 7 + ji].ToString() + " ";
+
                     Smthing_P.WriteLine(str_P);
                     //-----------------------
 
-                    SINSprocessing.CalcStateErrorsEasySINS(KalmanVars.ErrorConditionVector_m, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
-
-                    double Latitude = SINSstate.Latitude - SINSstate.DeltaLatitude;
-                    double Longitude = SINSstate.Longitude - SINSstate.DeltaLongitude;
-                    double Vx_01 = SINSstate.Vx_0[0] - SINSstate.DeltaV_1;
-                    double Vx_02 = SINSstate.Vx_0[1] - SINSstate.DeltaV_2;
-                    double Pitch = SINSstate.Pitch - SINSstate.DeltaPitch;
-                    double Roll = SINSstate.Roll - SINSstate.DeltaRoll;
-                    double Heading = SINSstate.Heading - SINSstate.DeltaHeading;
-
                     string str_X;
-                    str_X = SINSstate.Count + " " + Latitude + " " + Longitude + " " + Vx_01 + " " + Vx_02 + " " + Pitch + " " + Roll + " " + Heading;
+                    str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
                     Smthing_X.WriteLine(str_X);
                     //-----------------------
 
@@ -435,9 +429,10 @@ namespace SINSProcessingModes
                     {
                         if (SINSstate.flag_UsingOdoPosition == true && SINSstate.add_velocity_to_position == false && SINSstate.flag_KNS == false)
                         {
-                            if (Do_Smoothing)
-                                Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstate_OdoMod, ProcHelp);
-                            else
+                            //---Если корректировать по измерениям, полученным в прямом проходе, то сглаженное решение будет стремиться именно к последнему---
+                            //if (Do_Smoothing)
+                            //    Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstate_OdoMod, ProcHelp);
+                            //else
                                 Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstateDinamOdo, ProcHelp);
                         }
 
@@ -482,7 +477,6 @@ namespace SINSProcessingModes
 
 
 
-                //SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
 
                 if (SINSstate.flag_ControlPointCorrection)
                 {
@@ -491,15 +485,6 @@ namespace SINSProcessingModes
                         + " " + Math.Round(Math.Sqrt(Math.Pow(KalmanVars.ErrorConditionVector_p[0], 2) + Math.Pow(KalmanVars.ErrorConditionVector_p[1], 2)), 2)
                         + " " + SimpleOperations.CalculateDistanceBtwDots(SINSstate.GPS_Data.gps_Latitude_prev.Value, SINSstate.GPS_Data.gps_Longitude_prev.Value, SINSstate.GPS_Data.gps_Altitude_prev.Value,
                                         SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value) / (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerData.odometer_left_prev.Value));
-
-                    if (Do_Smoothing)
-                    {
-                        ForHelpSmoothed.WriteLine(Math.Round(SINSstate.Time + SINSstate.Time_Alignment, 4) + " " + Math.Round(SINSstate.OdometerData.odometer_left.Value * 1000 + 3155, 0)
-                        + " " + Math.Round(SINSstate.GPS_Data.gps_Latitude.Value * SimpleData.ToDegree, 8) + " " + Math.Round(SINSstate.GPS_Data.gps_Longitude.Value * SimpleData.ToDegree, 8) + " " + SINSstate.GPS_Data.gps_Altitude.Value
-                        + " " + Math.Round(Math.Sqrt(Math.Pow(KalmanVars.ErrorVector_Smoothed[0] - SINSstate.GPS_Data.gps_Latitude.Value, 2) + Math.Pow(KalmanVars.ErrorVector_Smoothed[1] - SINSstate.GPS_Data.gps_Longitude.Value, 2)), 2)
-                        + " " + SimpleOperations.CalculateDistanceBtwDots(SINSstate.GPS_Data.gps_Latitude_prev.Value, SINSstate.GPS_Data.gps_Longitude_prev.Value, SINSstate.GPS_Data.gps_Altitude_prev.Value,
-                                        SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value) / (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerData.odometer_left_prev.Value));
-                    }
                 }
 
                 //--- Расчет корректирующего вектора состояния ---
