@@ -644,7 +644,7 @@ namespace SINS_motion_processing_new_data
 
             if (_16_09_13_TLM_1zaezd.Checked == true)
             {
-                SINSstate.FreqOutput = 30;
+                SINSstate.FreqOutput = 1;
 
                 if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
                     myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23.dat");

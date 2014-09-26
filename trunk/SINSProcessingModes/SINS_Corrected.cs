@@ -79,7 +79,7 @@ namespace SINSProcessingModes
             }
             else
             {
-                SINSstate.odotime_prev = SINSstate.Time;
+                SINSstate.odotime_prev = SINSstate.Time+ SINSstate.timeStep;
 
                 Back_Input_File_read = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full.txt");
                 Back_Input_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_X.txt");
@@ -298,6 +298,9 @@ namespace SINSProcessingModes
                 //--- Сглаживание ---
                 if (Do_Smoothing)
                 {
+                    if (Math.Abs(SINSstate.Count - 3225.60) < 0.01)
+                        SINSstate.Count = SINSstate.Count;
+
                     string[] BackInputX_LineArray = Back_Input_X.ReadLine().Split(' ');
 
                     for (int u = 1; u < KalmanVars.ErrorVector_Straight.Length + 1; u++)
@@ -335,6 +338,17 @@ namespace SINSProcessingModes
                                                 * SimpleOperations.C_convultion_iMx_12(SINSstate).Transpose()
                                                 ;
                     KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), 7);
+
+
+                    if (SINSstate.Pitch - KalmanVars.ErrorVector_Straight[4] > Math.PI) KalmanVars.ErrorVector_Straight[4] += 2 * Math.PI;
+                    if (SINSstate.Pitch - KalmanVars.ErrorVector_Straight[4] < -Math.PI) KalmanVars.ErrorVector_Straight[4] -= 2 * Math.PI;
+
+                    if (SINSstate.Roll - KalmanVars.ErrorVector_Straight[5] > Math.PI) KalmanVars.ErrorVector_Straight[5] += 2 * Math.PI;
+                    if (SINSstate.Roll - KalmanVars.ErrorVector_Straight[5] < -Math.PI) KalmanVars.ErrorVector_Straight[5] -= 2 * Math.PI;
+
+                    if (SINSstate.Heading - KalmanVars.ErrorVector_Straight[6] > Math.PI) KalmanVars.ErrorVector_Straight[6] += 2 * Math.PI;
+                    if (SINSstate.Heading - KalmanVars.ErrorVector_Straight[6] < -Math.PI) KalmanVars.ErrorVector_Straight[6] -= 2 * Math.PI;
+
 
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, 7);
 
