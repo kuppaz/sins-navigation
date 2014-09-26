@@ -109,6 +109,8 @@
             this.SaratAlignStart = new System.Windows.Forms.CheckBox();
             this.SaratENDStart = new System.Windows.Forms.CheckBox();
             this.SaratWithZalipan = new System.Windows.Forms.CheckBox();
+            this.iMSmthd_Is_2 = new System.Windows.Forms.CheckBox();
+            this.iMSmthd_Is_7 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1022,11 +1024,35 @@
             this.SaratWithZalipan.Text = "With Zalipan";
             this.SaratWithZalipan.UseVisualStyleBackColor = true;
             // 
+            // iMSmthd_Is_2
+            // 
+            this.iMSmthd_Is_2.AutoSize = true;
+            this.iMSmthd_Is_2.Checked = true;
+            this.iMSmthd_Is_2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.iMSmthd_Is_2.Location = new System.Drawing.Point(815, 388);
+            this.iMSmthd_Is_2.Name = "iMSmthd_Is_2";
+            this.iMSmthd_Is_2.Size = new System.Drawing.Size(85, 17);
+            this.iMSmthd_Is_2.TabIndex = 72;
+            this.iMSmthd_Is_2.Text = "iMSmthd = 2";
+            this.iMSmthd_Is_2.UseVisualStyleBackColor = true;
+            // 
+            // iMSmthd_Is_7
+            // 
+            this.iMSmthd_Is_7.AutoSize = true;
+            this.iMSmthd_Is_7.Location = new System.Drawing.Point(815, 411);
+            this.iMSmthd_Is_7.Name = "iMSmthd_Is_7";
+            this.iMSmthd_Is_7.Size = new System.Drawing.Size(85, 17);
+            this.iMSmthd_Is_7.TabIndex = 73;
+            this.iMSmthd_Is_7.Text = "iMSmthd = 7";
+            this.iMSmthd_Is_7.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 459);
+            this.Controls.Add(this.iMSmthd_Is_7);
+            this.Controls.Add(this.iMSmthd_Is_2);
             this.Controls.Add(this.SaratWithZalipan);
             this.Controls.Add(this.SaratENDStart);
             this.Controls.Add(this.SaratAlignStart);
@@ -1173,6 +1199,8 @@
         private System.Windows.Forms.CheckBox SaratAlignStart;
         private System.Windows.Forms.CheckBox SaratENDStart;
         private System.Windows.Forms.CheckBox SaratWithZalipan;
+        private System.Windows.Forms.CheckBox iMSmthd_Is_2;
+        private System.Windows.Forms.CheckBox iMSmthd_Is_7;
     }
 }
 

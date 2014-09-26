@@ -22,6 +22,7 @@ namespace SINS_motion_processing_new_data
         int iMx = SimpleData.iMx = 25;
         int iMq = SimpleData.iMq = SimpleData.iMx;
         int iMz = SimpleData.iMz = 15;
+        int iMxSmthd = SimpleData.iMxSmthd = 9;
 
         StreamReader myFile;
 
@@ -452,6 +453,10 @@ namespace SINS_motion_processing_new_data
                     iMq = SimpleData.iMq += 1;
             }
 
+            if (this.iMSmthd_Is_2.Checked)
+                iMxSmthd = SimpleData.iMxSmthd = 2;
+            if (this.iMSmthd_Is_7.Checked)
+                iMxSmthd = SimpleData.iMxSmthd = 7;
 
             //if (iMq_eq_iMx.Checked == true)
             //    iMq = SimpleData.iMq = iMx;

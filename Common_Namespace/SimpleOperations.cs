@@ -294,9 +294,18 @@ namespace Common_Namespace
             MatrixResult[2, 2] = Math.Cos(Pitch) * Math.Cos(Roll);
             return MatrixResult;
         }
-        public static Matrix C_convultion_iMx_12(SINS_State SINSstate)
+
+
+        public static Matrix C_convultion_iMx_2(SINS_State SINSstate)
         {
-            Matrix MatrixResult = new Matrix(7, SimpleData.iMx);
+            Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
+            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+            return MatrixResult;
+        }
+        public static Matrix C_convultion_iMx_7(SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
             MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
             MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
             MatrixResult[2, 2] = 1.0;
