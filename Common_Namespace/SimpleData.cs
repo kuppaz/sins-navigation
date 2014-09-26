@@ -8,6 +8,7 @@ namespace Common_Namespace
     public class SimpleData
     {
         public static int iMx;
+        public static int iMxSmthd;
         public static int iMz;
         public static int iMq;
 
