@@ -435,19 +435,23 @@ namespace Common_Namespace
 
             if (SINSstate.Do_Smoothing == true && i % SINSstate.FreqOutput == 0)
             {
+                double Latitude = KalmanVars.ErrorVector_Smoothed[0], Longitude = KalmanVars.ErrorVector_Smoothed[1];
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
-                                        + " " + KalmanVars.ErrorVector_Smoothed[0] + " " + KalmanVars.ErrorVector_Smoothed[1] + " " + KalmanVars.ErrorVector_Smoothed[2]
-                                        + " " + KalmanVars.ErrorVector_Smoothed[3] + " " + KalmanVars.ErrorVector_Smoothed[4] + " " + KalmanVars.ErrorVector_Smoothed[5]
-                                        + " " + KalmanVars.ErrorVector_Smoothed[6]
-                                        ;
-                double Latitude = KalmanVars.ErrorVector_Smoothed[0],
-                    Longitude = KalmanVars.ErrorVector_Smoothed[1],
-                    Pitch = KalmanVars.ErrorVector_Smoothed[4],
-                    Roll = KalmanVars.ErrorVector_Smoothed[5],
-                    Heading = KalmanVars.ErrorVector_Smoothed[6];
+                                        + " " + KalmanVars.ErrorVector_Smoothed[0] + " " + KalmanVars.ErrorVector_Smoothed[1];
 
-                Vx_0[0] = KalmanVars.ErrorVector_Smoothed[2];
-                Vx_0[1] = KalmanVars.ErrorVector_Smoothed[3];
+                double Pitch = 0, Roll = 0, Heading = 0;
+                if (SimpleData.iMxSmthd >= 7)
+                {
+                    Vx_0[0] = KalmanVars.ErrorVector_Smoothed[2];
+                    Vx_0[1] = KalmanVars.ErrorVector_Smoothed[3];
+
+                    Pitch = KalmanVars.ErrorVector_Smoothed[4];
+                    Roll = KalmanVars.ErrorVector_Smoothed[5]; 
+                    Heading = KalmanVars.ErrorVector_Smoothed[6];
+                    ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorVector_Smoothed[2] + " " + KalmanVars.ErrorVector_Smoothed[3]
+                            + " " + KalmanVars.ErrorVector_Smoothed[4] + " " + KalmanVars.ErrorVector_Smoothed[5] + " " + KalmanVars.ErrorVector_Smoothed[6];
+                }
+
 
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                                         //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
