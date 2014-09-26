@@ -197,8 +197,6 @@ namespace SINS_motion_processing_new_data
                 ProcHelp.AlgnCnt = 27000;
                 if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true) 
                     ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
-                ParamStart.Experiment_stdKappa1 = 0.01; //минут
-                ParamStart.Experiment_stdKappa3 = 0.01; //минут
             }
             //if (SINSstate.Global_file == "Saratov_run_2014_07_23") ProcHelp.AlgnCnt = 180000;
 
@@ -649,7 +647,8 @@ namespace SINS_motion_processing_new_data
 
             if (_16_09_13_TLM_1zaezd.Checked == true)
             {
-                SINSstate.FreqOutput = 1;
+                if (SINSstate.FreqOutput == 10)
+                    SINSstate.FreqOutput = 100;
 
                 if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
                     myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23.dat");
