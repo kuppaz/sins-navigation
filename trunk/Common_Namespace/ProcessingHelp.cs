@@ -290,7 +290,7 @@ namespace Common_Namespace
                     + " " + KalmanVars.Matrix_H[4] + " " + KalmanVars.Matrix_H[5] + " " + KalmanVars.Matrix_H[6]);
 
             //--- Вывод всяких СКО ---
-            if (i % 20 == 0 || i == start_i) 
+            if (i % SINSstate.FreqOutput == 0 || i == start_i) 
             {
                 string str = (SINSstate.Time + SINSstate.Time_Alignment).ToString(), str_hat = "";
 
