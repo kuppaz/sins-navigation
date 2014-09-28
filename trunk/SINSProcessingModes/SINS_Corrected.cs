@@ -435,6 +435,10 @@ namespace SINSProcessingModes
                     {
                         KalmanVars.ErrorVector_m[0] = SINSstate.Latitude;
                         KalmanVars.ErrorVector_m[1] = SINSstate.Longitude;
+                        if (SimpleData.iMxSmthd == 3)
+                        {
+                            KalmanVars.ErrorVector_m[2] = SINSstate.Altitude;
+                        }
                     }
                     if (SimpleData.iMxSmthd >= 7)
                     {
@@ -462,6 +466,12 @@ namespace SINSProcessingModes
                                                 * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
                                                 * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
                                                 * SimpleOperations.C_convultion_iMx_2(SINSstate).Transpose()
+                                                ;
+                    if (SimpleData.iMxSmthd == 3)
+                        MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_3(SINSstate)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
+                                                * SimpleOperations.C_convultion_iMx_3(SINSstate).Transpose()
                                                 ;
                     if (SimpleData.iMxSmthd == 7)
                         MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_7(SINSstate)
@@ -505,6 +515,12 @@ namespace SINSProcessingModes
                                                 * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
                                                 * SimpleOperations.C_convultion_iMx_2(SINSstate).Transpose()
                                                 ;
+                    if (SimpleData.iMxSmthd == 3)
+                        MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_3(SINSstate)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
+                                                * SimpleOperations.C_convultion_iMx_3(SINSstate).Transpose()
+                                                ;
                     if (SimpleData.iMxSmthd == 7)
                         MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx_7(SINSstate)
                                                 * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
@@ -523,6 +539,8 @@ namespace SINSProcessingModes
                     string str_X = "";
                     if (SimpleData.iMxSmthd == 2)
                         str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude;
+                    if (SimpleData.iMxSmthd == 3)
+                        str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude;
                     if (SimpleData.iMxSmthd == 7)
                         str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
                     Smthing_X.WriteLine(str_X);
