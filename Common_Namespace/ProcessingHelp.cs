@@ -435,12 +435,17 @@ namespace Common_Namespace
 
             if (SINSstate.Do_Smoothing == true && i % SINSstate.FreqOutput == 0)
             {
-                double Latitude = KalmanVars.ErrorVector_Smoothed[0], Longitude = KalmanVars.ErrorVector_Smoothed[1];
+                double Latitude = KalmanVars.ErrorVector_Smoothed[0], Longitude = KalmanVars.ErrorVector_Smoothed[1], Altitude = 0.0;
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                                         + " " + KalmanVars.ErrorVector_Smoothed[0] + " " + KalmanVars.ErrorVector_Smoothed[1];
 
                 double Pitch = 0, Roll = 0, Heading = 0;
-                if (SimpleData.iMxSmthd >= 7)
+                if (SimpleData.iMxSmthd == 3)
+                {
+                    Altitude = KalmanVars.ErrorVector_Smoothed[2];
+                    ProcHelp.datastring = ProcHelp.datastring + " " + Altitude;
+                }
+                if (SimpleData.iMxSmthd == 7)
                 {
                     Vx_0[0] = KalmanVars.ErrorVector_Smoothed[2];
                     Vx_0[1] = KalmanVars.ErrorVector_Smoothed[3];
@@ -456,7 +461,7 @@ namespace Common_Namespace
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                                         //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
                                         + " " + Math.Round(((Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
-                                        + " " + Math.Round(((Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(Latitude)), 2) + " " + SINSstate.Altitude
+                                        + " " + Math.Round(((Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(Latitude)), 2) + " " + Altitude
                                         + " " + ((Latitude)) + " " + ((Longitude))
                                         + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - Latitude) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - Longitude) * SINSstate.R_e * Math.Cos(Latitude)), 2)

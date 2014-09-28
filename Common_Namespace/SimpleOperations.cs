@@ -303,6 +303,14 @@ namespace Common_Namespace
             MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
             return MatrixResult;
         }
+        public static Matrix C_convultion_iMx_3(SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
+            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+            MatrixResult[2, SINSstate.iMx_r3_dV3] = 1.0;
+            return MatrixResult;
+        }
         public static Matrix C_convultion_iMx_7(SINS_State SINSstate)
         {
             Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
