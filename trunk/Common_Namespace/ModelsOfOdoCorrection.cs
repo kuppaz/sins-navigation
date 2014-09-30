@@ -39,14 +39,11 @@ namespace Common_Namespace
             {
                 SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
 
-                if (SINSstate.Do_Smoothing == false)
-                {
-                    SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-                    SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) / Math.Cos(SINSstate_OdoMod.Latitude);
-                    SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
+                SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+                SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) / Math.Cos(SINSstate_OdoMod.Latitude);
+                SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
 
-                    SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdoSpeed_s);
-                }
+                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdoSpeed_s);
 
                 SINSstate.flag_UsingCorrection = true;
             }

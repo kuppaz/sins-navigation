@@ -52,18 +52,6 @@ namespace SINSProcessingModes
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstateDinamOdo.Altitude;
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist;
 
-                //if (SINSstate.flag_iMx_kappa_13_ds)
-                //{
-                //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 0] = Math.Tan(SINSstateDinamOdo.Latitude) * SINSstateDinamOdo.Ds2_ComulativeByOdoTrack[2, 2] / SINSstateDinamOdo.R_e;
-                //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = SINSstateDinamOdo.Ds2_ComulativeByOdoTrack[2, 0];
-                //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = SINSstateDinamOdo.Ds2_ComulativeByOdoTrack[2, 1];
-                //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = SINSstateDinamOdo.Ds2_ComulativeByOdoTrack[2, 2];
-
-                //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstateDinamOdo.Ds_ComulativeByOdoTrack[2, 2];
-                //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstateDinamOdo.Ds_ComulativeByOdoTrack[2, 0];
-                //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstateDinamOdo.Ds_ComulativeByOdoTrack[2, 1];
-                //}
-
                 KalmanVars.cnt_measures += 1;
             }
 
@@ -385,13 +373,16 @@ namespace SINSProcessingModes
             int iMx = SimpleData.iMx, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model,
                 iMx_r12_odo = SINSstate.iMx_r12_odo;
 
-            SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
+            int tmpCounter = SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
 
             double sqrt_freq = Math.Sqrt(SINSstate.Freq);
             if (SINSstate.flag_iMqDeltaRodo)
             {
-                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 0) * iMq + iMq - 2] = KalmanVars.Noise_Pos * sqrt_freq;
-                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 1) * iMq + iMq - 1] = KalmanVars.Noise_Pos * sqrt_freq;
+                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 0) * iMq + tmpCounter + 0] = KalmanVars.Noise_Pos * sqrt_freq;
+                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 1) * iMq + tmpCounter + 1] = KalmanVars.Noise_Pos * sqrt_freq;
+
+                if (SINSstate.flag_Using_iMx_r_odo_3)
+                    KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 2) * iMq + tmpCounter + 2] = KalmanVars.Noise_Pos * sqrt_freq;
             }
 
             //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, iMx, iMq);

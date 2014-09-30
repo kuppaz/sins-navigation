@@ -153,6 +153,7 @@ namespace Common_Namespace
         public double NumberOfFilesForSmoothing;
         public bool Saratov_run_Final;
         public bool Do_Smoothing;
+        public bool flag_Imitator_Telemetric;
 
         public static SINS_State DeepCopy(SINS_State other)
         {

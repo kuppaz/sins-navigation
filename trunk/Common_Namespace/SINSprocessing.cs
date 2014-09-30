@@ -99,9 +99,14 @@ namespace Common_Namespace
             SINSstate.DeltaV_1 = ErrorVector[2] + SINSstate.Vx_0[1] * ErrorVector[6];// + SINSstate.Vx_0[1] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
             SINSstate.DeltaV_2 = ErrorVector[3] - SINSstate.Vx_0[0] * ErrorVector[6];// -SINSstate.Vx_0[0] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
 
+            //SimpleOperations.PrintVectorToFile(ErrorVector, SimpleData.iMx);
+
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 SINSstate.DeltaAltitude = ErrorVector[SINSstate.iMx_r3_dV3];
+
+                SINSstate.DeltaV_1 += SINSstate.Vx_0[2] * (ErrorVector[0] / SINSstate.R_e - ErrorVector[5]);
+                SINSstate.DeltaV_2 += SINSstate.Vx_0[2] * (ErrorVector[1] / SINSstate.R_n - ErrorVector[4]);
                 SINSstate.DeltaV_3 = ErrorVector[SINSstate.iMx_r3_dV3 + 1] + SINSstate.Vx_0[0] * (ErrorVector[5] - ErrorVector[0] / SINSstate.R_e) - SINSstate.Vx_0[1] * (ErrorVector[4] + ErrorVector[1] / SINSstate.R_n);
             }
 
@@ -389,7 +394,7 @@ namespace Common_Namespace
 
 
 
-            if (SINSstate.flag_Odometr_SINS_case == false)
+            if (false && SINSstate.flag_Odometr_SINS_case == false)
             {
                 for (int i = 0; i < SimpleData.iMx; i++)
                     pdP[i * SimpleData.iMx + i] = KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + i] * KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + i];
@@ -419,7 +424,7 @@ namespace Common_Namespace
 
 
 
-        public static void MatrixNoise_ReDef(SINS_State SINSstate, Kalman_Vars KalmanVars, bool AlignmentFLG)
+        public static int MatrixNoise_ReDef(SINS_State SINSstate, Kalman_Vars KalmanVars, bool AlignmentFLG)
         {
             int iMx = SimpleData.iMx, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model,
                 iMx_r12_odo = SINSstate.iMx_r12_odo;
@@ -454,9 +459,9 @@ namespace Common_Namespace
 
             // так как в векторе состояния дрейфы в проекции на приборные оси, надо задавать соответственно матрицу шумов //
             KalmanVars.CovarianceMatrixNoise[2 * iMq + tmpCounter + 0] = Noise_Vel_in_Mx[0] * sqrt_freq;
-            KalmanVars.CovarianceMatrixNoise[2 * iMq + tmpCounter + 2] = SINSstate.Vx_0[1] * Noise_Angl_in_Mx[0] * sqrt_freq;
+            //KalmanVars.CovarianceMatrixNoise[2 * iMq + tmpCounter + 2] = SINSstate.Vx_0[1] * Noise_Angl_in_Mx[0] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[3 * iMq + tmpCounter + 1] = Noise_Vel_in_Mx[1] * sqrt_freq;
-            KalmanVars.CovarianceMatrixNoise[3 * iMq + tmpCounter + 3] = SINSstate.Vx_0[0] * Noise_Angl_in_Mx[1] * sqrt_freq;
+            //KalmanVars.CovarianceMatrixNoise[3 * iMq + tmpCounter + 3] = SINSstate.Vx_0[0] * Noise_Angl_in_Mx[1] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[4 * iMq + tmpCounter + 2] = Noise_Angl_in_Mx[0] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[5 * iMq + tmpCounter + 3] = Noise_Angl_in_Mx[1] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[6 * iMq + tmpCounter + 4] = Noise_Angl_in_Mx[2] * sqrt_freq;
@@ -484,7 +489,7 @@ namespace Common_Namespace
                     KalmanVars.CovarianceMatrixNoise[(iMx_r3_dV3 + 0) * iMq + tmpCounter + 0] = KalmanVars.Noise_Pos * sqrt_freq;
                     tmpCounter = tmpCounter + 1;
                 }
-                KalmanVars.CovarianceMatrixNoise[(iMx_r3_dV3 + 1) * iMq + tmpCounter + 1] = Noise_Vel_in_Mx[2] * sqrt_freq;
+                KalmanVars.CovarianceMatrixNoise[(iMx_r3_dV3 + 1) * iMq + tmpCounter + 0] = Noise_Vel_in_Mx[2] * sqrt_freq;
                 tmpCounter = tmpCounter + 1;
             }
 
@@ -504,7 +509,7 @@ namespace Common_Namespace
             }
 
 
-
+            return tmpCounter;
             //PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, iMx, iMq);
         }
 
@@ -807,11 +812,8 @@ namespace Common_Namespace
             //--------------------------------------------------------------------------------------
 
             //double GG = SimpleData.Gravity_Normal * (1 + 0.005317099 * Math.Sin(SINSstate.Latitude) * Math.Sin(SINSstate.Latitude)) * SimpleData.A * SimpleData.A / (SimpleData.A + SINSstate.Altitude) / (SimpleData.A + SINSstate.Altitude);
-            if (
-                (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS))
-                ||
-                (SINSstate.flag_OdoSINSWeakConnect_MODIF && (SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode))
-               )
+
+            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS))
             {
                 dVh = SINSstate.F_x[2] - SINSstate.g + (Vx_0[0] + Vx_0_prev[0]) / 2.0 * (2 * u[1] + SINSstate.Omega_x[1]) - (Vx_0[1] + Vx_0_prev[1]) / 2.0 * (2 * u[0] + SINSstate.Omega_x[0]);
                 Vx_0[2] += dVh * SINSstate.timeStep;
@@ -888,12 +890,11 @@ namespace Common_Namespace
 
             if (SINSstate.flag_OdoSINSWeakConnect && (SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode))
             {
-                double[] dS_x = new double[3];
-                SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
-
-                //if (SINSstate.OdoTimeStepCount == 1)
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {
+                    double[] dS_x = new double[3];
+                    SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
+
                     SINSstate.Latitude = SINSstate.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
                     SINSstate.Longitude = SINSstate.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude) / Math.Cos(SINSstate.Latitude);
                     SINSstate.Altitude = SINSstate.Altitude + dS_x[2];
@@ -905,13 +906,23 @@ namespace Common_Namespace
                 SINSstate.Longitude = Math.Atan2(B_x_eta[2, 1], B_x_eta[2, 0]);
                 SINSstate.Latitude = Math.Atan2(B_x_eta[2, 2], Math.Sqrt(B_x_eta[0, 2] * B_x_eta[0, 2] + B_x_eta[1, 2] * B_x_eta[1, 2]));
                 Azimth = Math.Atan2(B_x_eta[0, 2], B_x_eta[1, 2]);
-                SINSstate.Altitude_prev = SINSstate.Altitude;
-                SINSstate.Altitude = Altitude;
+
+                if (SINSstate.flag_OdoSINSWeakConnect_MODIF && (SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode))
+                {
+                    if (SINSstate.OdometerData.odometer_left.isReady == 1)
+                    {
+                        double[] dS_x = new double[3];
+                        SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
+
+                        SINSstate.Altitude = SINSstate.Altitude + dS_x[2];
+                    }
+                }
+                else
+                {
+                    SINSstate.Altitude_prev = SINSstate.Altitude;
+                    SINSstate.Altitude = Altitude;
+                }
             }
-
-
-
-
 
 
 
@@ -964,331 +975,6 @@ namespace Common_Namespace
 
         }
 
-
-
-        public static void bins(SINS_State SINSstate)
-        {
-            // локальные параметры, которые надо сохранять от обращения к обращению
-            // static int init=0;    // признак инициализации
-            Matrix AT = new Matrix(3, 3), dAT = new Matrix(3, 3), D = new Matrix(3, 3), B = new Matrix(3, 3);
-            Matrix C = new Matrix(3, 3);  //матрица трехгранника Земли относительно инерц.-ого
-
-            double[] omx = new double[3], u = new double[3], fzlast = new double[3], omlast = new double[3], fz = new double[3], fx = new double[3], om = new double[3];   //абсолютная угловая скорость модельного
-            double time1;
-
-            double dVx, dVy, dVh, dh, Rx, Ry;
-
-            if (SINSstate.init_bins == false)
-            {
-                SINSstate.init_bins = true;
-
-                SINSstate.Azimth = -SINSstate.Heading + Math.PI / 2.0;
-                SINSstate.GyroHeading = Math.PI / 2.0;
-
-                SINSstate.A_sx_Gyro = SimpleOperations.A_sx0_Gyro(SINSstate);
-                SINSstate.A_xs_Gyro = SINSstate.A_sx_Gyro.Transpose();
-                SINSstate.A_xn_Gyro = SimpleOperations.A_x0n_Gyro(SINSstate);
-                SINSstate.A_nx_Gyro = SINSstate.A_xn_Gyro.Transpose();
-
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx_Gyro, SINSstate.A_xn_Gyro);
-            }
-
-            // ********************************
-            // Обработка на одном такте
-            // ********************************
-
-            time1 = SINSstate.Time;
-
-            u[0] = SimpleData.U * Math.Cos(SINSstate.Latitude) * Math.Sin(SINSstate.Azimth);
-            u[1] = SimpleData.U * Math.Cos(SINSstate.Latitude) * Math.Cos(SINSstate.Azimth);
-            u[2] = SimpleData.U * Math.Sin(SINSstate.Latitude);
-
-
-            fz[0] = SINSstate.F_z[0];
-            fz[1] = SINSstate.F_z[1];
-            fz[2] = SINSstate.F_z[2];
-
-            om[0] = SINSstate.W_z[0];
-            om[1] = SINSstate.W_z[1];
-            om[2] = SINSstate.W_z[2];
-
-            double Vx = SINSstate.Vx[0];
-            double Vy = SINSstate.Vx[1];
-            double Vh = SINSstate.Vx[2];
-
-            for (int i = 0; i < 3; i++)
-            {
-                omlast[i] = SINSstate.W_z_prev[i];
-                fzlast[i] = SINSstate.F_z_prev[i];
-                for (int j = 0; j < 3; j++)
-                {
-                    AT[i, j] = SINSstate.AT[i, j];
-                    B[i, j] = SINSstate.A_xn_Gyro[i, j];
-                }
-            }
-
-
-            // ***********************************************************************
-            // Определение ориентации приборного трехгранника относительно модельного
-            //                     T
-            // D = B C AT  путем решения ур-ний Пуассона
-            // **********************************************************************/
-            //{
-            for (int i = 0; i < 3; i++)
-            {
-                om[i] = om[i] - SINSstate.AlignAlgebraDrifts[i];// -drzg[i];
-            }
-
-
-            double ommod, dlt, dlt2;
-            ommod = Math.Sqrt((om[0] + omlast[0]) * (om[0] + omlast[0]) / 4.0 + (om[1] + omlast[1]) * (om[1] + omlast[1]) / 4.0 + (om[2] + omlast[2]) * (om[2] + omlast[2]) / 4.0);
-            dlt = Math.Sin(ommod * SINSstate.timeStep) / ommod;
-            dlt2 = (1.0 - Math.Cos(ommod * SINSstate.timeStep)) / (ommod * ommod);
-
-            if (true)
-            {
-                dAT[0, 2] = AT[0, 2] * (1.0 - (om[1] * omlast[1] + om[2] * omlast[2]) * dlt2)
-                     + AT[1, 2] * ((om[2] + omlast[2]) * dlt / 2.0 + om[1] * omlast[0] * dlt2)
-                     - AT[2, 2] * ((om[1] + omlast[1]) * dlt / 2.0 - om[2] * omlast[0] * dlt2);
-
-                dAT[1, 2] = -AT[0, 2] * ((om[2] + omlast[2]) * dlt / 2.0 - om[0] * omlast[1] * dlt2)
-                     + AT[1, 2] * (1.0 - (om[0] * omlast[0] + om[2] * omlast[2]) * dlt2)
-                     + AT[2, 2] * ((om[0] + omlast[0]) * dlt / 2.0 + om[2] * omlast[1] * dlt2);
-
-                dAT[2, 2] = AT[0, 2] * ((om[1] + omlast[1]) * dlt / 2.0 + om[0] * omlast[2] * dlt2)
-                     - AT[1, 2] * ((om[0] + omlast[0]) * dlt / 2.0 - om[1] * omlast[2] * dlt2)
-                     + AT[2, 2] * (1.0 - (om[0] * omlast[0] + om[1] * omlast[1]) * dlt2);
-
-                dAT[0, 1] = AT[0, 1] * (1.0 - (om[1] * omlast[1] + om[2] * omlast[2]) * dlt2)
-                     + AT[1, 1] * ((om[2] + omlast[2]) * dlt / 2.0 + om[1] * omlast[0] * dlt2)
-                     - AT[2, 1] * ((om[1] + omlast[1]) * dlt / 2.0 - om[2] * omlast[0] * dlt2);
-
-                dAT[1, 1] = -AT[0, 1] * ((om[2] + omlast[2]) * dlt / 2.0 - om[0] * omlast[1] * dlt2)
-                     + AT[1, 1] * (1.0 - (om[0] * omlast[0] + om[2] * omlast[2]) * dlt2)
-                     + AT[2, 1] * ((om[0] + omlast[0]) * dlt / 2.0 + om[2] * omlast[1] * dlt2);
-
-                dAT[2, 1] = AT[0, 1] * ((om[1] + omlast[1]) * dlt / 2.0 + om[0] * omlast[2] * dlt2)
-                     - AT[1, 1] * ((om[0] + omlast[0]) * dlt / 2.0 - om[1] * omlast[2] * dlt2)
-                     + AT[2, 1] * (1.0 - (om[0] * omlast[0] + om[1] * omlast[1]) * dlt2);
-
-                for (int i = 0; i < 3; i++)
-                    for (int j = 1; j < 3; j++)
-                        AT[i, j] = dAT[i, j];
-
-                AT[0, 0] = AT[1, 1] * AT[2, 2] - AT[1, 2] * AT[2, 1];
-                AT[1, 0] = AT[2, 1] * AT[0, 2] - AT[2, 2] * AT[0, 1];
-                AT[2, 0] = AT[0, 1] * AT[1, 2] - AT[0, 2] * AT[1, 1];
-            }
-            else
-            {
-                double[] FZ = new double[3], WZ = new double[3];
-                for (int i = 0; i < 3; i++)
-                {
-                    FZ[i] = (fz[i] + fzlast[i]) / 2.0;
-                    WZ[i] = (om[i] + omlast[i]) / 2.0;
-                }
-
-                Matrix Hat1 = Matrix.SkewSymmetricMatrix(WZ);
-                Matrix Hat2 = Matrix.SkewSymmetricMatrixSquare(WZ);
-                Matrix E = Matrix.UnitMatrix(3);
-
-                CopyMatrix(dAT, (E + Hat1 * dlt + Hat2 * dlt2));
-                CopyMatrix(AT, dAT * AT);
-            }
-
-
-            C[0, 0] = C[1, 1] = Math.Cos(SimpleData.U * time1);
-            C[0, 1] = Math.Sin(SimpleData.U * time1); C[1, 0] = -Math.Sin(SimpleData.U * time1);
-            C[2, 2] = 1.0;
-
-            // ****************
-            // B C
-            // ****************/
-
-            Matrix a = new Matrix(3, 3);
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    a[i, j] = 0.0;
-                    for (int k = 0; k < 3; k++)
-                        a[i, j] += B[i, k] * C[k, j];
-                }
-            }
-            // 
-            // ********   определение навигационных параметров
-            //проекции кажущихся ускорений на оси модельного трехгранника
-
-
-            // ****************
-            //  T
-            // B C A
-            // ****************
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    D[i, j] = 0.0;
-                    for (int k = 0; k < 3; k++)
-                        D[i, j] += a[i, k] * AT[j, k];
-                }
-            }
-
-
-            for (int i = 0; i < 3; i++)
-            {
-                fx[i] = 0.0;
-                for (int j = 0; j < 3; j++)
-                    fx[i] += D[i, j] * (fz[j] + fzlast[j]) / 2.0;
-                //for(j=0;j<3;j++) fx[i]+=D[i,j]*fz[j];
-            }
-            // Определение скорости
-            /*
-
-            // ****************
-        //  T
-        // B C A
-        // ****************
-            for(i=0;i<3;i++)
-            {
-               for(j=0;j<3;j++)
-               {
-              D[i,j]=0.0;
-              for(k=0;k<3;k++) D[i,j]+=a[i,k]*AT[j,k];
-               }
-            }
-            */
-
-            //Vh=KoiInp.Vodo[2];
-            Vh = 0.0;
-            dVx = fx[0] + Vy * (2.0 * u[2]) - Vh * (2.0 * u[1] + SINSstate.Omega_x[1]);
-            dVy = fx[1] - Vx * (2.0 * u[2]) + Vh * (2.0 * u[0] + SINSstate.Omega_x[0]);
-            Vx += dVx * SINSstate.timeStep;
-            Vy += dVy * SINSstate.timeStep;
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //K1=2.0/Tvert;
-            //K2=(1.0/Tvert)*(1.0/Tvert);
-
-
-            //dVh=fx[2] -G*(1.0+Beta*sin(fi)*sin(fi))*Aa*Aa/((Aa+h)*(Aa+h))
-            //+(Vx+Vxlast)/2.0*(2.0*u[1]+Omx2)-(Vy+Vylast)/2.0*(2.0*u[0]+Omx1);
-            //+K2*(h_gps-h) ;
-
-            //	dVh=fx[2] -G*(1.0+Beta*sin(fi)*sin(fi))*Aa*Aa/((Aa+h)*(Aa+h))
-            //	+KoiOut.V1Est*(2.0*u[1]+Omx2)-KoiOut.V2Est*(2.0*u[0]+Omx1);
-
-
-            //Vh+=dVh*dtau;
-            //    Vh=KoiInp.Vodo[2];
-            //dh= (Vh+Vhlast)/2.0;
-            //  //+K1*(h_gps-h);
-
-            //h=h+dh*dtau;
-
-            //	 h=KoiInp.Pgps[2];
-
-
-
-            // определение углов курса,крена,тангажа
-            double kren = -Math.Atan2(D[2, 0], D[2, 2]);
-            double tang = Math.Atan2(D[2, 1], Math.Sqrt(D[2, 0] * D[2, 0] + D[2, 2] * D[2, 2]));
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            /////if(fabs(D[1,0])>0.1)
-
-            double gkurs = Math.Atan2(D[0, 1], D[1, 1]);
-            /////    else gkurs = gkurslast;
-
-            if (gkurs >= 3.14159265358) gkurs = gkurs - 2.0 * 3.14159265358;
-            if (gkurs < -3.14159265358) gkurs = gkurs + 2.0 * 3.14159265358;
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            //ncb =0;
-
-            // Определение относительной угловой скорости
-            Rx = 6378137.0 / (1.0 - 0.5 * 0.0066943799901413 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) + 0.0066943799901413 * Math.Pow(Math.Cos(SINSstate.Latitude) * Math.Sin(SINSstate.Azimth), 2) - SINSstate.Altitude / 6378137.0);
-            Ry = 6378137.0 / (1.0 - 0.5 * 0.0066943799901413 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) + 0.0066943799901413 * Math.Pow(Math.Cos(SINSstate.Latitude) * Math.Cos(SINSstate.Azimth), 2) - SINSstate.Altitude / 6378137.0);
-            SINSstate.Omega_x[0] = -(Vy + SINSstate.Vx_prev[1]) / 2.0 / Ry - (Vx + SINSstate.Vx_prev[0]) / 2.0 / 6378137.0 * 0.0066943799901413 * B[0, 2] * B[1, 2];
-            SINSstate.Omega_x[1] = (Vx + SINSstate.Vx_prev[0]) / 2.0 / Rx + (Vy + SINSstate.Vx_prev[1]) / 2.0 / 6378137.0 * 0.0066943799901413 * B[0, 2] * B[1, 2];
-
-
-
-            // Определение абсолютной угловой скорости
-            omx[0] = u[0] + SINSstate.Omega_x[0];//-drzg[0];
-            omx[1] = u[1] + SINSstate.Omega_x[1];//-drzg[1];
-            omx[2] = u[2];
-
-            // ***********************************************************************
-            // Определение ориентации модельного трехгранника относительно Земли
-            //                     путем решения ур-ний Пуассона
-            // **********************************************************************/
-            dAT[0, 2] = -B[2, 2] * SINSstate.Omega_x[1];
-            dAT[1, 2] = B[2, 2] * SINSstate.Omega_x[0];
-            dAT[2, 2] = B[0, 2] * SINSstate.Omega_x[1] - B[1, 2] * SINSstate.Omega_x[0];
-
-            dAT[0, 1] = -B[2, 1] * SINSstate.Omega_x[1];
-            dAT[1, 1] = B[2, 1] * SINSstate.Omega_x[0];
-            dAT[2, 1] = B[0, 1] * SINSstate.Omega_x[1] - B[1, 1] * SINSstate.Omega_x[0];
-
-            for (int i = 0; i < 3; i++)
-                for (int j = 1; j < 3; j++)
-                    B[i, j] += dAT[i, j] * SINSstate.timeStep;
-
-            B[0, 0] = B[1, 1] * B[2, 2] - B[1, 2] * B[2, 1];
-            B[1, 0] = B[2, 1] * B[0, 2] - B[2, 2] * B[0, 1];
-            B[2, 0] = B[0, 1] * B[1, 2] - B[0, 2] * B[1, 1];
-
-            // определение географических координат
-            SINSstate.Longitude = Math.Atan2(B[2, 1], B[2, 0]);
-            SINSstate.Latitude = Math.Atan2(B[2, 2], Math.Sqrt(B[0, 2] * B[0, 2] + B[1, 2] * B[1, 2]));
-            SINSstate.Azimth = Math.Atan2(B[0, 2], B[1, 2]);
-
-            SINSstate.Heading = gkurs - SINSstate.Azimth;
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //    otlvn_ = eps;
-
-            if (SINSstate.Heading >= 3.14159265358)// привед к +-pi
-                SINSstate.Heading -= 2.0 * 3.14159265358;
-            else
-                if (SINSstate.Heading < -3.14159265358)
-                    SINSstate.Heading += 2.0 * 3.14159265358;
-
-
-
-
-            CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
-            CopyArray(SINSstate.W_z_prev, om);
-
-            CopyArray(SINSstate.Vx_prev, SINSstate.Vx);
-            SINSstate.Vx[0] = Vx;
-            SINSstate.Vx[1] = Vy;
-
-            SINSstate.Vx_0[1] = Vx * Math.Sin(SINSstate.Azimth) + Vy * Math.Cos(SINSstate.Azimth);
-            SINSstate.Vx_0[0] = Vx * Math.Cos(SINSstate.Azimth) - Vy * Math.Sin(SINSstate.Azimth);
-
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    SINSstate.AT[i, j] = AT[i, j];
-                    SINSstate.A_xn_Gyro[i, j] = B[i, j];
-                    SINSstate.A_xs_Gyro[i, j] = D[i, j];
-                }
-            }
-            SINSstate.A_sx_Gyro = SINSstate.A_xs_Gyro.Transpose();
-            SINSstate.A_nx_Gyro = SINSstate.A_xn_Gyro.Transpose();
-
-            SINSstate.R_e = Rx;
-            SINSstate.R_n = Ry;
-            SINSstate.u_x = U_x0(SINSstate.Latitude);
-
-            CopyArray(SINSstate.W_x, SINSstate.A_xs_Gyro * SINSstate.W_z);
-
-            //if ((SINSstate.F_z[1] + 0.16209) < 0.00001 && (SINSstate.F_z[2] - 9.68803) < 0.00001 && (SINSstate.F_z[0] + 0.02226) < 0.00001)
-            //    Rx = Rx;
-
-        }
 
 
 

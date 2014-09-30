@@ -483,6 +483,7 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_iMqVarkappa13 = iMqVarkappa13.Checked;
             SINSstate.flag_iMqKappa = iMqKappa.Checked;
             SINSstate.flag_iMqDeltaRodo = iMqDeltaRodo.Checked;
+            SINSstate.flag_Imitator_Telemetric = Imitator_Telemetric.Checked;
 
             if (SINSstate.flag_iMx_r3_dV3)
                 SINSstate.iMx_r3_dV3 = value_iMx_r3_dV3;
