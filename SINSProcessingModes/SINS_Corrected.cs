@@ -361,7 +361,7 @@ namespace SINSProcessingModes
 
 
                 //====Вывод данных для телеметрического имитатора====
-                if (true && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23")
+                if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23")
                 {
                     double tmpRoundFreq50 = Math.Round(1.0 / SINSstate.Freq / 50.0, 0) * 50.0;
                     int tmpFreqOut10 = Convert.ToInt32(tmpRoundFreq50 / 10.0);
@@ -577,9 +577,12 @@ namespace SINSProcessingModes
 
             }
 
-            Smthing_Backward.Close();
-            Smthing_P.Close();
-            Smthing_X.Close();
+            if (SINSstate.flag_Smoothing)
+            {
+                Smthing_Backward.Close();
+                Smthing_P.Close();
+                Smthing_X.Close();
+            }
 
 
 
