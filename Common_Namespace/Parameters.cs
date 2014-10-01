@@ -693,6 +693,69 @@ namespace Common_Namespace
                 SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
                 SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
             }
+
+
+
+
+            if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            {
+                SINSstate.odo_min_increment = 0.05;
+                SINSstate.timeStep = SINSstate.Freq = 0.01048;
+                SINSstate.Odo_Limit_Measures = 5;
+
+                SINSstate.dV_q = 2.5;
+
+                SINSstate.DoHaveControlPoints = true;
+                SINSstate.NumberOfControlPoints = 3;
+
+                KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
+                KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
+                KalmanVars.OdoNoise_STOP = 0.1;
+
+                KalmanVars.Noise_OdoScale = 0.0001;
+                KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
+
+                KalmanVars.Noise_Pos = 1.1;
+                KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_Accel = 0.0000002;
+
+                KalmanVars.Noise_Vel[0] = 0.018753088045385325 * 5.0;
+                KalmanVars.Noise_Vel[1] = 0.046920428633358685 * 5.0;
+                KalmanVars.Noise_Vel[2] = 0.020567260619134466 * 5.0;
+                KalmanVars.Noise_Angl[0] = 0.00048807614752048833 * 5.0;
+                KalmanVars.Noise_Angl[1] = 0.00022961657528698543 * 5.0;
+                KalmanVars.Noise_Angl[2] = 0.00017241959044350872 * 5.0;
+
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 0.812813327816345;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 0.871755714190012;
+                ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 29.09;
+
+
+                ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
+                ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
+
+                //Углы найденные подбором минимизацией максимальной ошибки по позиции.
+                SINSstate.Heading = -97.22511608 * SimpleData.ToRadian;
+                SINSstate.Roll = 84.89868983 * SimpleData.ToRadian;
+                SINSstate.Pitch = -0.40042023 * SimpleData.ToRadian;
+
+                SINSstate.alpha_x = 0.0 * SimpleData.ToRadian;
+                //SINSstate.alpha_y = 1.0 * SimpleData.ToRadian;
+                SINSstate.alpha_z = 0.0 * SimpleData.ToRadian;
+
+                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
+                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
+                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
+                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
+                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
+                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
+
+                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
+                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+
+                SINSstate.Time_Alignment = 12592.685164;
+            }
         }
     }
 }

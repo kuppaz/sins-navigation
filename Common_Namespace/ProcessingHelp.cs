@@ -131,7 +131,7 @@ namespace Common_Namespace
                 SINSstate.F_z[0] = Convert.ToDouble(dataArray2[3]); SINSstate.W_z[0] = Convert.ToDouble(dataArray2[6]);
 
                 //Юстировочные углы
-                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "ktn004_21.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23")
+                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "ktn004_21.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
                 {
                     double[] fz = new double[3], Wz = new double[3];
 
@@ -181,7 +181,7 @@ namespace Common_Namespace
                 //    SINSstate.OdometerData.odometer_right.Value -= 50735.7232;
                 //}
 
-                if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                if (SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
                 {
                     SINSstate.timeStep = SINSstate.Freq = Convert.ToDouble(dataArray2[22]);
                     SINSstate.Time = Convert.ToDouble(dataArray2[0]) - SINSstate.Time_Alignment;
@@ -195,7 +195,7 @@ namespace Common_Namespace
                     SINSstate_OdoMod.Latitude = Convert.ToDouble(dataArray2[22]);
                     SINSstate_OdoMod.Longitude = Convert.ToDouble(dataArray2[23]);
 
-                    if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                    if (SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
                     {
                         SINSstate_OdoMod.Latitude = Convert.ToDouble(dataArray2[23]);
                         SINSstate_OdoMod.Longitude = Convert.ToDouble(dataArray2[24]);

@@ -119,7 +119,7 @@ namespace SINS_motion_processing_new_data
             this.DefineClassElementAndFlags();
             this.SelectDataIn();                                                                            //---выбор входного набора данных---//
 
-            StreamWriter InputForSmoothFile = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//" + SINSstate.Global_file + "_Back.dat");
+            //StreamWriter InputForSmoothFile = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//" + SINSstate.Global_file + "_Back.dat");
 
             //Вычисляем LastCountForRead
             SINSstate.LastCountForRead = -20;
@@ -198,7 +198,7 @@ namespace SINS_motion_processing_new_data
                 if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true) 
                     ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
             }
-            //if (SINSstate.Global_file == "Saratov_run_2014_07_23") ProcHelp.AlgnCnt = 180000;
+            if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS") ProcHelp.AlgnCnt = 0;
 
             if (SINSstate.Global_file == "AZIMUT_T_2013_10_18_12_55") ProcHelp.AlgnCnt = 22000;
             if (SINSstate.Global_file == "Azimut_514_08Nov2013_11_15") ProcHelp.AlgnCnt = 95000;
@@ -217,9 +217,9 @@ namespace SINS_motion_processing_new_data
             {
                 SINSstate2 = SINS_State.DeepCopy(SINSstate);
 
-                if (SINSstate.flag_UsingNavAlignment == true)
+                if (SINSstate.flag_UsingNavAlignment == true && ProcHelp.AlgnCnt != 0)
                     l = SINSAlignment_Navigantion.SINS_Alignment_Navigation(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
-                else if (SINSstate.flag_UsingClasAlignment == true)
+                else if (SINSstate.flag_UsingClasAlignment == true && ProcHelp.AlgnCnt != 0)
                     l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
 
                 if (SINSstate.flag_AccuracyClass_0_02grph)
@@ -683,6 +683,15 @@ namespace SINS_motion_processing_new_data
 
                 SINSstate.Global_file = "Saratov_run_2014_07_23";
             }
+
+            if (Saratov_run_2014_07_23_middle_interval_GPS.Checked == true)
+            {
+                if (SINSstate.FreqOutput == 10)
+                    SINSstate.FreqOutput =100;
+
+                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_middle_interval_GPS.dat");
+                SINSstate.Global_file = "Saratov_run_2014_07_23_middle_interval_GPS";
+            }
         }
 
 
@@ -946,6 +955,16 @@ namespace SINS_motion_processing_new_data
             {
                 CheckedTrueDataIn();
                 this.Azimut_514_08Nov2013_11_15.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+
+        private void Saratov_run_2014_07_23_middle_interval_GPS_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.Saratov_run_2014_07_23_middle_interval_GPS.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.Saratov_run_2014_07_23_middle_interval_GPS.Enabled = true;
             }
             else CheckedFalseDataIn();
         }
@@ -1271,6 +1290,8 @@ namespace SINS_motion_processing_new_data
         {
 
         }
+
+        
 
         
 
