@@ -148,7 +148,7 @@ namespace SINSProcessingModes
                 SimpleOperations.CopyArray(SINSstateDinamOdo.W_z, SINSstate.W_z);
 
                 SINSstate.OdoTimeStepCount++;
-                if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                if (SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
                 SINSstateDinamOdo.OdoTimeStepCount = SINSstate.OdoTimeStepCount;
 
@@ -361,7 +361,7 @@ namespace SINSProcessingModes
 
 
                 //====Вывод данных для телеметрического имитатора====
-                if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23")
+                if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23" && SINSstate.Global_file != "Saratov_run_2014_07_23_middle_interval_GPS")
                 {
                     double tmpRoundFreq50 = Math.Round(1.0 / SINSstate.Freq / 50.0, 0) * 50.0;
                     int tmpFreqOut10 = Convert.ToInt32(tmpRoundFreq50 / 10.0);
@@ -486,6 +486,18 @@ namespace SINSProcessingModes
                     //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_Straight, SimpleData.iMxSmthd, SimpleData.iMxSmthd);
                     //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_m, SimpleData.iMxSmthd, SimpleData.iMxSmthd);
                     //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrix_SP_Smoothed, SimpleData.iMxSmthd, SimpleData.iMxSmthd);
+
+                    if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+                    {
+                        ForHelpSmoothed.WriteLine("Ошибка сглаживания в выколотой точке в момент времени " + SINSstate.Count + " = " +
+                            Math.Sqrt(
+                                Math.Pow((ProcHelp.LatSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[0]) * SINSstate.R_n, 2)
+                                + Math.Pow((ProcHelp.LongSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[1]) * SINSstate.R_e * Math.Cos(KalmanVars.ErrorVector_m[0]), 2)
+                                )
+                            );
+                        double tt = Math.Pow((ProcHelp.LatSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[0]) * SINSstate.R_n, 2)
+                                + Math.Pow((ProcHelp.LongSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[1]) * SINSstate.R_e * Math.Cos(KalmanVars.ErrorVector_m[0]), 2);
+                    }
                 }
                 //=============================================================================================
                 if (!Do_Smoothing && SINSstate.flag_Smoothing)
@@ -582,6 +594,7 @@ namespace SINSProcessingModes
                 Smthing_Backward.Close();
                 Smthing_P.Close();
                 Smthing_X.Close();
+                ForHelpSmoothed.Close();
             }
 
 
@@ -645,6 +658,7 @@ namespace SINSProcessingModes
             ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); Nav_Autonomous.Close();
             Dif_GK.Close(); Speed_Angles.Close(); Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
             Nav_Smoothed.Close();
+          
         }
 
 
@@ -766,6 +780,33 @@ namespace SINSProcessingModes
                     if (Math.Abs(SINSstate.GPS_Data.gps_Latitude.Value - 0.87256909644) > 0.00000001 && Math.Abs(SINSstate.GPS_Data.gps_Longitude.Value - 0.81807104) > 0.000001
                         //&& Math.Abs(SINSstate.GPS_Data.gps_Latitude.Value - 0.87175577231) > 0.000001 && Math.Abs(SINSstate.GPS_Data.gps_Longitude.Value - 0.812813870) > 0.000001
                         )
+                    {
+                        if (SINSstate.flag_Odometr_SINS_case == true)
+                            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        else
+                            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        SINSstate.flag_UsingCorrection = true;
+
+                        SINSstate.flag_ControlPointCorrection = true;
+                    }
+                    else
+                        SINSstate.Count = SINSstate.Count;
+                }
+            }
+
+            if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
+            {
+                //SINSstate.counter_GPS_marks
+                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+                {
+                    //13546.283195 - 1
+                    //14615.745918 - 2
+                    //15519.99802 - 3
+                    //16413.823246 - 4
+                    //17335.874867 - 5
+                    //18246.793246 - 6
+                    //19219.215453 - 7
+                    if (SINSstate.Count != 14615.745918)
                     {
                         if (SINSstate.flag_Odometr_SINS_case == true)
                             Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);

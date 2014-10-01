@@ -111,6 +111,7 @@
             this.SaratWithZalipan = new System.Windows.Forms.CheckBox();
             this.iMSmthd_Is_2 = new System.Windows.Forms.CheckBox();
             this.iMSmthd_Is_7 = new System.Windows.Forms.CheckBox();
+            this.Saratov_run_2014_07_23_middle_interval_GPS = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -852,7 +853,7 @@
             // AZIMUT_T_12_32_16_09_13_TLM_2z
             // 
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.AutoSize = true;
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Location = new System.Drawing.Point(235, 46);
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Location = new System.Drawing.Point(235, 92);
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Name = "AZIMUT_T_12_32_16_09_13_TLM_2z";
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Size = new System.Drawing.Size(182, 17);
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.TabIndex = 54;
@@ -874,7 +875,7 @@
             // Azimut_514_08Nov2013_11_15
             // 
             this.Azimut_514_08Nov2013_11_15.AutoSize = true;
-            this.Azimut_514_08Nov2013_11_15.Location = new System.Drawing.Point(235, 86);
+            this.Azimut_514_08Nov2013_11_15.Location = new System.Drawing.Point(235, 115);
             this.Azimut_514_08Nov2013_11_15.Name = "Azimut_514_08Nov2013_11_15";
             this.Azimut_514_08Nov2013_11_15.Size = new System.Drawing.Size(179, 17);
             this.Azimut_514_08Nov2013_11_15.TabIndex = 57;
@@ -1046,11 +1047,23 @@
             this.iMSmthd_Is_7.Text = "iMSmthd = 7";
             this.iMSmthd_Is_7.UseVisualStyleBackColor = true;
             // 
+            // Saratov_run_2014_07_23_middle_interval_GPS
+            // 
+            this.Saratov_run_2014_07_23_middle_interval_GPS.AutoSize = true;
+            this.Saratov_run_2014_07_23_middle_interval_GPS.Location = new System.Drawing.Point(235, 47);
+            this.Saratov_run_2014_07_23_middle_interval_GPS.Name = "Saratov_run_2014_07_23_middle_interval_GPS";
+            this.Saratov_run_2014_07_23_middle_interval_GPS.Size = new System.Drawing.Size(148, 17);
+            this.Saratov_run_2014_07_23_middle_interval_GPS.TabIndex = 74;
+            this.Saratov_run_2014_07_23_middle_interval_GPS.Text = "topo middle_interval_GPS";
+            this.Saratov_run_2014_07_23_middle_interval_GPS.UseVisualStyleBackColor = true;
+            this.Saratov_run_2014_07_23_middle_interval_GPS.CheckedChanged += new System.EventHandler(this.Saratov_run_2014_07_23_middle_interval_GPS_CheckedChanged);
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 459);
+            this.Controls.Add(this.Saratov_run_2014_07_23_middle_interval_GPS);
             this.Controls.Add(this.iMSmthd_Is_7);
             this.Controls.Add(this.iMSmthd_Is_2);
             this.Controls.Add(this.SaratWithZalipan);
@@ -1201,6 +1214,7 @@
         private System.Windows.Forms.CheckBox SaratWithZalipan;
         private System.Windows.Forms.CheckBox iMSmthd_Is_2;
         private System.Windows.Forms.CheckBox iMSmthd_Is_7;
+        private System.Windows.Forms.CheckBox Saratov_run_2014_07_23_middle_interval_GPS;
     }
 }
 
