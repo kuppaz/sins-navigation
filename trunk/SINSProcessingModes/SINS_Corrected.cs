@@ -594,7 +594,7 @@ namespace SINSProcessingModes
                 Smthing_Backward.Close();
                 Smthing_P.Close();
                 Smthing_X.Close();
-                ForHelpSmoothed.Close();
+                if(Do_Smoothing) ForHelpSmoothed.Close();
             }
 
 
@@ -779,6 +779,7 @@ namespace SINSProcessingModes
 
                     if (Math.Abs(SINSstate.GPS_Data.gps_Latitude.Value - 0.87256909644) > 0.00000001 && Math.Abs(SINSstate.GPS_Data.gps_Longitude.Value - 0.81807104) > 0.000001
                         //&& Math.Abs(SINSstate.GPS_Data.gps_Latitude.Value - 0.87175577231) > 0.000001 && Math.Abs(SINSstate.GPS_Data.gps_Longitude.Value - 0.812813870) > 0.000001
+                        && SINSstate.Count != 15519.99802
                         )
                     {
                         if (SINSstate.flag_Odometr_SINS_case == true)
@@ -806,7 +807,7 @@ namespace SINSProcessingModes
                     //17335.874867 - 5
                     //18246.793246 - 6
                     //19219.215453 - 7
-                    if (SINSstate.Count != 14615.745918)
+                    if (SINSstate.Count != 15519.99802)
                     {
                         if (SINSstate.flag_Odometr_SINS_case == true)
                             Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
