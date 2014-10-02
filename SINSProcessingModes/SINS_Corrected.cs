@@ -778,8 +778,7 @@ namespace SINSProcessingModes
                         SINSstate.Count = SINSstate.Count;
 
                     if (Math.Abs(SINSstate.GPS_Data.gps_Latitude.Value - 0.87256909644) > 0.00000001 && Math.Abs(SINSstate.GPS_Data.gps_Longitude.Value - 0.81807104) > 0.000001
-                        //&& Math.Abs(SINSstate.GPS_Data.gps_Latitude.Value - 0.87175577231) > 0.000001 && Math.Abs(SINSstate.GPS_Data.gps_Longitude.Value - 0.812813870) > 0.000001
-                        && SINSstate.Count != 15519.99802
+                        && SINSstate.Count != 20104.108398
                         )
                     {
                         if (SINSstate.flag_Odometr_SINS_case == true)
@@ -794,7 +793,10 @@ namespace SINSProcessingModes
                         SINSstate.Count = SINSstate.Count;
                 }
             }
-
+//51882.017348 51282.781305 50314.277559 49810.665254 48625.735469 47773.739895 46969.706109 46099.38973  45275.137785 44455.564773 42015.698887 40798.997098 38318.319723 37522.01148 36624.152871
+//35772.02007  35084.502238 34243.279719 33450.816234 32439.517395 31374.969328 30586.404395 29612.362965 28841.333672 8066.56118   27237.678469 26396.367391 24978.914531 24344.341156 23488.823863
+//22662.080605 21846.975871 20959.275109 20104.108398 19219.215453 18246.793246 17335.874867 16413.823246 15519.99802 14615.745918 13546.283195 12591.799629 9717.100547  8813.435602  6404.147453 
+//6031.383219  5654.336258  5265.48943 4881.444133  3604.662328  3181.956188  3171.288992 
             if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
             {
                 //SINSstate.counter_GPS_marks
