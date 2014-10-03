@@ -452,11 +452,9 @@ namespace SINS_motion_processing_new_data
             }
 
             if (this.iMSmthd_Is_2.Checked)
-            {
                 iMxSmthd = SimpleData.iMxSmthd = 2;
-                if (this.iMx_r_3_dV_3.Checked)
-                    iMxSmthd = SimpleData.iMxSmthd = 3;
-            }
+            if (this.iMSmthd_Is_4.Checked)
+                iMxSmthd = SimpleData.iMxSmthd = 4;
             if (this.iMSmthd_Is_7.Checked)
                 iMxSmthd = SimpleData.iMxSmthd = 7;
 

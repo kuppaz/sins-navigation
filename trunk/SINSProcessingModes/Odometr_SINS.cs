@@ -260,6 +260,7 @@ namespace SINSProcessingModes
                 KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 6] = -SINSstate.Vx_0[0];
                 KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 0] = -SINSstate.Omega_x[2];
 
+                
                 if (SINSstate.flag_iMx_r3_dV3)
                 {
                     KalmanVars.Matrix_A[iMx_r12_odo * iMx + 0] += SINSstate.Vx_0[2] / SINSstate.R_e;

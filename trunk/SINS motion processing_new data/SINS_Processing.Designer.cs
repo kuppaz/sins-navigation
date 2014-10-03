@@ -112,6 +112,7 @@
             this.iMSmthd_Is_2 = new System.Windows.Forms.CheckBox();
             this.iMSmthd_Is_7 = new System.Windows.Forms.CheckBox();
             this.Saratov_run_2014_07_23_middle_interval_GPS = new System.Windows.Forms.CheckBox();
+            this.iMSmthd_Is_4 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1058,11 +1059,22 @@
             this.Saratov_run_2014_07_23_middle_interval_GPS.UseVisualStyleBackColor = true;
             this.Saratov_run_2014_07_23_middle_interval_GPS.CheckedChanged += new System.EventHandler(this.Saratov_run_2014_07_23_middle_interval_GPS_CheckedChanged);
             // 
+            // iMSmthd_Is_4
+            // 
+            this.iMSmthd_Is_4.AutoSize = true;
+            this.iMSmthd_Is_4.Location = new System.Drawing.Point(907, 388);
+            this.iMSmthd_Is_4.Name = "iMSmthd_Is_4";
+            this.iMSmthd_Is_4.Size = new System.Drawing.Size(85, 17);
+            this.iMSmthd_Is_4.TabIndex = 75;
+            this.iMSmthd_Is_4.Text = "iMSmthd = 4";
+            this.iMSmthd_Is_4.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 459);
+            this.Controls.Add(this.iMSmthd_Is_4);
             this.Controls.Add(this.Saratov_run_2014_07_23_middle_interval_GPS);
             this.Controls.Add(this.iMSmthd_Is_7);
             this.Controls.Add(this.iMSmthd_Is_2);
@@ -1215,6 +1227,7 @@
         private System.Windows.Forms.CheckBox iMSmthd_Is_2;
         private System.Windows.Forms.CheckBox iMSmthd_Is_7;
         private System.Windows.Forms.CheckBox Saratov_run_2014_07_23_middle_interval_GPS;
+        private System.Windows.Forms.CheckBox iMSmthd_Is_4;
     }
 }
 
