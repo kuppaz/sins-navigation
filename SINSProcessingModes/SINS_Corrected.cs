@@ -406,8 +406,9 @@ namespace SINSProcessingModes
 
 
 
-                //===============================================================================
-                //============================Сглаживание========================================
+
+                //==============================================================================================================================================================
+                //====================================================================Сглаживание================================================================================
                 if (Do_Smoothing && SINSstate.flag_Smoothing)
                 {
                     string[] BackInputX_LineArray = Back_Input_X.ReadLine().Split(' ');
@@ -430,8 +431,6 @@ namespace SINSProcessingModes
                             u2++;
                         }
                     }
-
-                    //SINSprocessing.CalcStateErrorsEasySINS(KalmanVars.ErrorConditionVector_m, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
 
                     if (SimpleData.iMxSmthd >= 2)
                     {
@@ -464,7 +463,6 @@ namespace SINSProcessingModes
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
                                             * SimpleOperations.C_convultion_iMx(SINSstate).Transpose()
                                             ;
-                                                ;
                     KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), SimpleData.iMxSmthd);
 
                     //==============================================================//
@@ -493,13 +491,11 @@ namespace SINSProcessingModes
                                 + Math.Pow((ProcHelp.LongSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[1]) * SINSstate.R_e * Math.Cos(KalmanVars.ErrorVector_m[0]), 2)
                                 )
                             );
-                        double tt = Math.Pow((ProcHelp.LatSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[0]) * SINSstate.R_n, 2)
-                                + Math.Pow((ProcHelp.LongSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[1]) * SINSstate.R_e * Math.Cos(KalmanVars.ErrorVector_m[0]), 2);
                     }
 
 
 
-                    //===Vertical Channel===//
+                    //===================Vertical Channel===================//
                     if (SINSstate.flag_iMx_r3_dV3)
                     {
                         KalmanVars.ErrorVector_m[0] = SINSstate.Altitude;
@@ -522,7 +518,7 @@ namespace SINSProcessingModes
                         SINSstate_Smooth.Altitude = KalmanVars.ErrorVector_Smoothed[0];
                     }
                 }
-                //=============================================================================================
+                //==============================================================================================================================================================
                 if (!Do_Smoothing && SINSstate.flag_Smoothing)
                 {
                     if (i == start_i || Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 != Math.Floor((i - 1) / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1)
@@ -558,16 +554,12 @@ namespace SINSProcessingModes
 
                     if (SINSstate.flag_iMx_r3_dV3)
                     {
-                        Matrix MatrixS_ForNavDeltas_r3 = new Matrix(1, 1);
+                        Matrix MatrixS_ForNavDeltas_r3 = new Matrix(2, 2);
                         MatrixS_ForNavDeltas_r3 = SimpleOperations.C_convultion_iMx_r3(SINSstate)
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
                                             * SimpleOperations.C_convultion_iMx_r3(SINSstate).Transpose()
                                             ;
-
-                        //SimpleOperations.PrintVectorToFile(SimpleOperations.MatrixToArray(SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_iMx_r3(SINSstate).Transpose()), SimpleData.iMx);
-
-
                         double[] ArrayS_ForNavDeltas_r3_SP = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), 1);
                         str_P += ArrayS_ForNavDeltas_r3_SP[0].ToString();
                     }
@@ -582,6 +574,12 @@ namespace SINSProcessingModes
                         if (SINSstate.flag_iMx_r3_dV3)
                             str_X = str_X + " " + SINSstate.Altitude;
                     }
+                    if (SimpleData.iMxSmthd == 4)
+                    {
+                        str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1];
+                        if (SINSstate.flag_iMx_r3_dV3)
+                            str_X = str_X + " " + SINSstate.Altitude + " " + SINSstate.Vx_0[2];
+                    }
                     if (SimpleData.iMxSmthd == 7)
                         str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
                     Smthing_X.WriteLine(str_X);
@@ -591,9 +589,10 @@ namespace SINSProcessingModes
                     StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
                     Smthing_Backward.WriteLine(StringForBack);
                 }
-                //============================Сглаживание END========================================
-                //===================================================================================
+                //=========================================================================Сглаживание END=======================================================================
+                //==============================================================================================================================================================
                 
+
 
 
 
@@ -761,7 +760,7 @@ namespace SINSProcessingModes
             if (SINSstate.Global_file == "ktn004_15.03.2012")
             {
                 if (
-                    SINSstate.GPS_Data.gps_Latitude.isReady == 1
+                    SINSstate.GPS_Data.gps_Latitude.isReady == 1 && SINSstate.GPS_CounterOfPoints % 10 == 0
                     //SINSstate.Count > 160152 && SINSstate.Count <= 160159 && SINSstate.GPS_Data.gps_Latitude.isReady == 1 //Стоянка
                     //SINSstate.Count > 78372 && SINSstate.Count <= 78412 && SINSstate.GPS_Data.gps_Latitude.isReady == 1 //Движение
                     //SINSstate.Count > 108362 && SINSstate.Count <= 108462 && SINSstate.GPS_Data.gps_Latitude.isReady == 1 //Движение
@@ -799,6 +798,11 @@ namespace SINSProcessingModes
 
 
 
+            //51882.017348 51282.781305 50314.277559 49810.665254 48625.735469 46969.706109 46099.38973  45275.137785 44455.564773 42015.698887 40798.997098 38318.319723 37522.01148 36624.152871
+            //35772.02007  35084.502238 33450.816234 32439.517395 31374.969328 30586.404395 28841.333672 8066.56118   27237.678469 26396.367391 24978.914531 24344.341156 23488.823863
+            // 21846.975871 20959.275109 19219.215453 18246.793246 17335.874867 16413.823246 14615.745918 13546.283195 12591.799629 9717.100547  8813.435602  6404.147453 
+            //5654.336258  5265.48943 4881.444133  3604.662328  3181.956188  3171.288992 
+
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
                 if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
@@ -822,10 +826,7 @@ namespace SINSProcessingModes
                         SINSstate.Count = SINSstate.Count;
                 }
             }
-//51882.017348 51282.781305 50314.277559 49810.665254 48625.735469 47773.739895 46969.706109 46099.38973  45275.137785 44455.564773 42015.698887 40798.997098 38318.319723 37522.01148 36624.152871
-//35772.02007  35084.502238 34243.279719 33450.816234 32439.517395 31374.969328 30586.404395 29612.362965 28841.333672 8066.56118   27237.678469 26396.367391 24978.914531 24344.341156 23488.823863
-//22662.080605 21846.975871 20959.275109 20104.108398 19219.215453 18246.793246 17335.874867 16413.823246 15519.99802 14615.745918 13546.283195 12591.799629 9717.100547  8813.435602  6404.147453 
-//6031.383219  5654.336258  5265.48943 4881.444133  3604.662328  3181.956188  3171.288992 
+            
             if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
             {
                 //SINSstate.counter_GPS_marks

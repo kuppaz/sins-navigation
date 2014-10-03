@@ -154,6 +154,7 @@ namespace Common_Namespace
         public bool Saratov_run_Final;
         public bool Do_Smoothing;
         public bool flag_Imitator_Telemetric;
+        public int GPS_CounterOfPoints = 0;
 
         public static SINS_State DeepCopy(SINS_State other)
         {
