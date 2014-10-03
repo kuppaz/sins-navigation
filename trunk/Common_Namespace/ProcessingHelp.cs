@@ -163,6 +163,9 @@ namespace Common_Namespace
                 SINSstate.GPS_Data.gps_Altitude.Value = Convert.ToDouble(dataArray2[11]);
                 SINSstate.GPS_Data.gps_Altitude.isReady = Convert.ToInt32(dataArray2[12]);
 
+                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+                    SINSstate.GPS_CounterOfPoints++;
+
                 SINSstate.GPS_Data.gps_Vn.Value = Convert.ToDouble(dataArray2[13]);
                 SINSstate.GPS_Data.gps_Vn.isReady = Convert.ToInt32(dataArray2[14]);
                 SINSstate.GPS_Data.gps_Ve.Value = Convert.ToDouble(dataArray2[15]);
