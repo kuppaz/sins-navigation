@@ -296,40 +296,42 @@ namespace Common_Namespace
         }
 
 
-        public static Matrix C_convultion_iMx_2(SINS_State SINSstate)
+        public static Matrix C_convultion_iMx(SINS_State SINSstate)
         {
             Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
-            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
-            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+
+            if (SimpleData.iMxSmthd == 2)
+            {
+                MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+                MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+            }
+            else if (SimpleData.iMxSmthd == 7)
+            {
+                MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+                MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+                MatrixResult[2, 2] = 1.0;
+                MatrixResult[2, 6] = SINSstate.Vx_0[1];
+                MatrixResult[3, 3] = 1.0;
+                MatrixResult[3, 6] = -SINSstate.Vx_0[0];
+                MatrixResult[4, 4] = -Math.Cos(SINSstate.Heading);
+                MatrixResult[4, 5] = Math.Sin(SINSstate.Heading);
+                MatrixResult[5, 4] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+                MatrixResult[5, 5] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+                MatrixResult[6, 4] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+                MatrixResult[6, 5] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+                MatrixResult[6, 6] = 1.0;
+                MatrixResult[6, 0] = 1.0 / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
+            }
             return MatrixResult;
         }
-        public static Matrix C_convultion_iMx_3(SINS_State SINSstate)
+        public static Matrix C_convultion_iMx_r3(SINS_State SINSstate)
         {
-            Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
-            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
-            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-            MatrixResult[2, SINSstate.iMx_r3_dV3] = 1.0;
+            Matrix MatrixResult = new Matrix(1, SimpleData.iMx);
+            MatrixResult[0, SINSstate.iMx_r3_dV3] = 1.0;
             return MatrixResult;
         }
-        public static Matrix C_convultion_iMx_7(SINS_State SINSstate)
-        {
-            Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
-            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
-            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-            MatrixResult[2, 2] = 1.0;
-            MatrixResult[2, 6] = SINSstate.Vx_0[1];
-            MatrixResult[3, 3] = 1.0;
-            MatrixResult[3, 6] = -SINSstate.Vx_0[0];
-            MatrixResult[4, 4] = -Math.Cos(SINSstate.Heading);
-            MatrixResult[4, 5] = Math.Sin(SINSstate.Heading);
-            MatrixResult[5, 4] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-            MatrixResult[5, 5] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-            MatrixResult[6, 4] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-            MatrixResult[6, 5] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-            MatrixResult[6, 6] = 1.0;
-            MatrixResult[6, 0] = 1.0 / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
-            return MatrixResult;
-        }
+
+
 
         public static Matrix ArrayToMatrix(double[] array)
         {

@@ -259,7 +259,7 @@ namespace Common_Namespace
 
 
 
-        public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, ParamsForModel OdoModel, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstateDinamOdo, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
+        public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, ParamsForModel OdoModel, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstateDinamOdo, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
                 StreamWriter Nav_FeedbackSolution, StreamWriter Nav_vert_chan_test, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer, StreamWriter Nav_Smoothed)
         {
             double Lat = 0.0, Long = 0.0;
@@ -435,40 +435,17 @@ namespace Common_Namespace
 
             if (SINSstate.Do_Smoothing == true && i % SINSstate.FreqOutput == 0)
             {
-                double Latitude = KalmanVars.ErrorVector_Smoothed[0], Longitude = KalmanVars.ErrorVector_Smoothed[1], Altitude = 0.0;
-                ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
-                                        + " " + KalmanVars.ErrorVector_Smoothed[0] + " " + KalmanVars.ErrorVector_Smoothed[1];
-
-                double Pitch = 0, Roll = 0, Heading = 0;
-                if (SimpleData.iMxSmthd == 3)
-                {
-                    Altitude = KalmanVars.ErrorVector_Smoothed[2];
-                    ProcHelp.datastring = ProcHelp.datastring + " " + Altitude;
-                }
-                if (SimpleData.iMxSmthd == 7)
-                {
-                    Vx_0[0] = KalmanVars.ErrorVector_Smoothed[2];
-                    Vx_0[1] = KalmanVars.ErrorVector_Smoothed[3];
-
-                    Pitch = KalmanVars.ErrorVector_Smoothed[4];
-                    Roll = KalmanVars.ErrorVector_Smoothed[5]; 
-                    Heading = KalmanVars.ErrorVector_Smoothed[6];
-                    ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorVector_Smoothed[2] + " " + KalmanVars.ErrorVector_Smoothed[3]
-                            + " " + KalmanVars.ErrorVector_Smoothed[4] + " " + KalmanVars.ErrorVector_Smoothed[5] + " " + KalmanVars.ErrorVector_Smoothed[6];
-                }
-
-
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                                         //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
-                                        + " " + Math.Round(((Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
-                                        + " " + Math.Round(((Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(Latitude)), 2) + " " + Altitude
-                                        + " " + ((Latitude)) + " " + ((Longitude))
-                                        + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - Latitude) * SINSstate.R_n), 2)
-                                        + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - Longitude) * SINSstate.R_e * Math.Cos(Latitude)), 2)
+                                        + " " + Math.Round(((SINSstate_Smooth.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
+                                        + " " + Math.Round(((SINSstate_Smooth.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude)), 2) + " " + SINSstate_Smooth.Altitude
+                                        + " " + ((SINSstate_Smooth.Latitude)) + " " + ((SINSstate_Smooth.Longitude))
+                                        + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate_Smooth.Latitude) * SINSstate.R_n), 2)
+                                        + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_Smooth.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude)), 2)
                                         + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
-                                        + " " + Math.Round(Vx_0[0], 3) + " " + Math.Round(Vx_0[1], 3) + " " + Math.Round(Vx_0[2], 3)
-                                        + " " + Math.Round((Heading * SimpleData.ToDegree), 8)
-                                        + " " + Math.Round((Roll * SimpleData.ToDegree), 8) + " " + Math.Round((Pitch * SimpleData.ToDegree), 8)
+                                        + " " + Math.Round(SINSstate_Smooth.Vx_0[0], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[1], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[2], 3)
+                                        + " " + Math.Round((SINSstate_Smooth.Heading * SimpleData.ToDegree), 8)
+                                        + " " + Math.Round((SINSstate_Smooth.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate_Smooth.Pitch * SimpleData.ToDegree), 8)
                                         //+ " " + ProcHelp.corrected + " " + SINSstate.OdometerData.odometer_left.isReady
                                         //+ " " + ProcHelp.distance + " " + ProcHelp.distance_from_start + " " + SINSstate.FLG_Stop
                                         //+ " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1]
