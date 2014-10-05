@@ -303,7 +303,7 @@ namespace SINSProcessingModes
 
 
 
-                //-----------------------------------------------------------------------------------------------------------------------------------------
+                //---------------------------------------------------------------------------------------------------------------------------------------
                 //----------------------------ЭТАП КОРРЕКЦИИ start-----------------------------------------------------------------------------------------
                 KalmanVars.cnt_measures = 0;
                 for (int u = 0; u < SimpleData.iMx * SimpleData.iMz; u++) KalmanVars.Matrix_H[u] = 0.0;
@@ -437,10 +437,13 @@ namespace SINSProcessingModes
                         KalmanVars.ErrorVector_m[0] = SINSstate.Latitude;
                         KalmanVars.ErrorVector_m[1] = SINSstate.Longitude;
                     }
-                    if (SimpleData.iMxSmthd >= 7)
+                    if (SimpleData.iMxSmthd >= 4)
                     {
                         KalmanVars.ErrorVector_m[2] = SINSstate.Vx_0[0];
                         KalmanVars.ErrorVector_m[3] = SINSstate.Vx_0[1];
+                    }
+                    if (SimpleData.iMxSmthd >= 7)
+                    {
                         KalmanVars.ErrorVector_m[4] = SINSstate.Pitch;
                         KalmanVars.ErrorVector_m[5] = SINSstate.Roll;
                         KalmanVars.ErrorVector_m[6] = SINSstate.Heading;
@@ -474,10 +477,13 @@ namespace SINSProcessingModes
                         SINSstate_Smooth.Latitude = KalmanVars.ErrorVector_Smoothed[0];
                         SINSstate_Smooth.Longitude = KalmanVars.ErrorVector_Smoothed[1];
                     }
+                    if (SimpleData.iMxSmthd >= 4)
+                    {
+                        SINSstate_Smooth.Vx_0[0] = KalmanVars.ErrorVector_Smoothed[2];
+                        SINSstate_Smooth.Vx_0[1]= KalmanVars.ErrorVector_Smoothed[3];
+                    }
                     if (SimpleData.iMxSmthd >= 7)
                     {
-                        SINSstate_Smooth.Vx_0[0] = KalmanVars.ErrorVector_m[2];
-                        SINSstate_Smooth.Vx_0[1] = KalmanVars.ErrorVector_m[3];
                         SINSstate_Smooth.Pitch = KalmanVars.ErrorVector_m[4];
                         SINSstate_Smooth.Roll = KalmanVars.ErrorVector_m[5];
                         SINSstate_Smooth.Heading = KalmanVars.ErrorVector_m[6];
@@ -498,24 +504,44 @@ namespace SINSProcessingModes
                     //===================Vertical Channel===================//
                     if (SINSstate.flag_iMx_r3_dV3)
                     {
-                        KalmanVars.ErrorVector_m[0] = SINSstate.Altitude;
-                        KalmanVars.ErrorVector_Straight[0] = Convert.ToDouble(BackInputX_LineArray[SimpleData.iMxSmthd + 1]);
-                        KalmanVars.CovarianceMatrix_SP_Straight[0] = Convert.ToDouble(BackInputP_LineArray[SimpleData.iMxSmthd * SimpleData.iMxSmthd-1]);
+                        int dimVertical = 0;
+                        if (SimpleData.iMxSmthd == 4)
+                            dimVertical = 2;
+                        if (SimpleData.iMxSmthd == 2)
+                            dimVertical = 1;
 
-                        Matrix MatrixS_ForNavDeltas_r3 = new Matrix(1, 1);
+                        for (int u = 0; u < dimVertical; u++)
+                            KalmanVars.ErrorVector_Straight[u] = Convert.ToDouble(BackInputX_LineArray[SimpleData.iMxSmthd + 1 + u]);
+
+                        KalmanVars.ErrorVector_m[0] = SINSstate.Altitude;
+                        if (dimVertical == 2)
+                            KalmanVars.ErrorVector_m[1] = SINSstate.Vx_0[2];
+
+                        SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
+                        for (int u = 0; u < dimVertical; u++)
+                        {
+                            for (int u1 = u; u1 < dimVertical; u1++)
+                            {
+                                KalmanVars.CovarianceMatrix_SP_Straight[u * dimVertical + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
+                                u2++;
+                            }
+                        }
+
+                        Matrix MatrixS_ForNavDeltas_r3 = new Matrix(dimVertical, dimVertical);
                         MatrixS_ForNavDeltas_r3 = SimpleOperations.C_convultion_iMx_r3(SINSstate)
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
                                             * SimpleOperations.C_convultion_iMx_r3(SINSstate).Transpose()
                                             ;
-                        double[] ArrayS_ForNavDeltas_r3_SP = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), 1);
-                        KalmanVars.CovarianceMatrix_SP_m[0] = ArrayS_ForNavDeltas_r3_SP[0];
+                        KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), dimVertical);
 
                         //==============================================================//
-                        KalmanProcs.Smoothing(KalmanVars, SINSstate, 1);
+                        KalmanProcs.Smoothing(KalmanVars, SINSstate, dimVertical);
                         //==============================================================//
 
                         SINSstate_Smooth.Altitude = KalmanVars.ErrorVector_Smoothed[0];
+                        if (SimpleData.iMxSmthd == 4)
+                            SINSstate_Smooth.Vx_0[2] = KalmanVars.ErrorVector_Smoothed[1];
                     }
                 }
                 //==============================================================================================================================================================
@@ -554,14 +580,21 @@ namespace SINSProcessingModes
 
                     if (SINSstate.flag_iMx_r3_dV3)
                     {
-                        Matrix MatrixS_ForNavDeltas_r3 = new Matrix(2, 2);
-                        MatrixS_ForNavDeltas_r3 = SimpleOperations.C_convultion_iMx_r3(SINSstate)
+                        Matrix MatrixS_ForNavDeltas_r3 = SimpleOperations.C_convultion_iMx_r3(SINSstate)
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
                                             * SimpleOperations.C_convultion_iMx_r3(SINSstate).Transpose()
                                             ;
-                        double[] ArrayS_ForNavDeltas_r3_SP = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), 1);
-                        str_P += ArrayS_ForNavDeltas_r3_SP[0].ToString();
+                        if (SimpleData.iMxSmthd == 4)
+                        {
+                            double[] ArrayS_ForNavDeltas_r3_SP = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), 2);
+                            str_P += ArrayS_ForNavDeltas_r3_SP[0].ToString() + " " + ArrayS_ForNavDeltas_r3_SP[1].ToString() + " " + ArrayS_ForNavDeltas_r3_SP[3].ToString();
+                        }
+                        else if (SimpleData.iMxSmthd == 2)
+                        {
+                            double[] ArrayS_ForNavDeltas_r3_SP = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), 1);
+                            str_P += ArrayS_ForNavDeltas_r3_SP[0].ToString();
+                        }
                     }
 
                     Smthing_P.WriteLine(str_P);
