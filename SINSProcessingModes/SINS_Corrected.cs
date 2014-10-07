@@ -22,6 +22,8 @@ namespace SINSProcessingModes
         public static StreamWriter SlippageLog = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//SlippageLog.txt");
         public static StreamWriter Nav_vert_chan_test = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Nav_vert_chan_test.txt");
         public static StreamWriter Dif_GK = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Dif_GK.txt");
+        public static StreamWriter KMLFileOut;
+        public static StreamWriter KMLFileOutSmthd;
 
 
         public static StreamWriter Dif_GK_SM = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Dif_GK_SM.txt");
@@ -69,6 +71,10 @@ namespace SINSProcessingModes
                 Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_ErrVct.txt");
                 Nav_Smoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_smoothed_SlnFB.txt");
                 ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt");
+                KMLFileOut = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Forward.kml");
+                KMLFileOutSmthd = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Smoothed.kml");
+
+                FillKMLOutputFile(KMLFileOut, "Start", "Forward");
 
                 string str = "count  dr1 dr2 dV1 dV2 Alpha1_grad Alpha2_grad Beta3_grad Nu_1_grad Nu_2_grad/h Nu_3_grad/h dF_1 dF_2 dF_3";
                 if (SINSstate.flag_iMx_r3_dV3) str = str + " dr3 dV3";
@@ -93,10 +99,15 @@ namespace SINSProcessingModes
                 Nav_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_Errs.txt");
                 Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_Auto.txt");
                 Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_ErrVct.txt");
+                KMLFileOut = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Back.kml");
+                KMLFileOutSmthd = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Smoothed.kml");
 
                 Nav_Smoothed.WriteLine("time  count LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch ");
+
+                FillKMLOutputFile(KMLFileOut, "Start", "Backward");
             }
 
+            FillKMLOutputFile(KMLFileOutSmthd, "Start", "Smoothing");
             Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch Correct PositError PositErrStart");
             Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_x1  V_x2  V_x3  Correct  Yaw YawCor  Roll RollCor  Pitch PitchCor PositError V_abs");
             Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");
@@ -632,7 +643,7 @@ namespace SINSProcessingModes
                 /*------------------------------------OUTPUT-------------------------------------------------*/
                 if (i != (SINSstate.LastCountForRead - 1))
                     ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
-                        Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed);
+                        Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
 
                 if (i > 10000 && i % 2000 == 0)
                     Console.WriteLine(SINSstate.Count.ToString()
@@ -715,11 +726,13 @@ namespace SINSProcessingModes
                 ForHelp.WriteLine("Оценки дрейфов в начале: nu_z1 = " + SINSstate.AlignAlgebraDrifts[0] + ", nu_z2 = " + SINSstate.AlignAlgebraDrifts[1] + ", nu_z3 = " + SINSstate.AlignAlgebraDrifts[2]);
             }
 
+            FillKMLOutputFile(KMLFileOut, "End", "");
+            FillKMLOutputFile(KMLFileOutSmthd, "End", "");
 
             ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); Nav_Autonomous.Close();
             Dif_GK.Close(); Speed_Angles.Close(); Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
             Nav_Smoothed.Close();
-          
+            KMLFileOut.Close(); KMLFileOutSmthd.Close();
         }
 
 
@@ -885,6 +898,70 @@ namespace SINSProcessingModes
                     else
                         SINSstate.Count = SINSstate.Count;
                 }
+            }
+        }
+
+        public static void FillKMLOutputFile(StreamWriter KMLFileOut, string Part, string Mode)
+        {
+            if (Part == "Start")
+            {
+                KMLFileOut.WriteLine("<?xml version='1.0' encoding='UTF-8'?>                                                 ");
+                KMLFileOut.WriteLine("<kml xmlns='http://earth.google.com/kml/2.2'>                                          ");
+                KMLFileOut.WriteLine("<Document>                                                                             ");
+                KMLFileOut.WriteLine("<name>NavLab Nikitin Markers</name>                                                    ");
+                KMLFileOut.WriteLine("<visibility>1</visibility>                                                             ");
+                KMLFileOut.WriteLine("<open>1</open>                                                                         ");
+                KMLFileOut.WriteLine("<Style id='MarkerIcon'>                                                                ");
+                KMLFileOut.WriteLine("        <IconStyle>                                                                    ");
+                KMLFileOut.WriteLine("        <scale>1</scale>                                                               ");
+                KMLFileOut.WriteLine("            <Icon>                                                                     ");
+                KMLFileOut.WriteLine("                <href>http://maps.google.com/mapfiles/kml/shapes/cross-hairs.png</href>");
+                KMLFileOut.WriteLine("            </Icon>                                                                    ");
+                KMLFileOut.WriteLine("        </IconStyle>                                                                   ");
+                KMLFileOut.WriteLine("</Style>                                                                               ");
+                KMLFileOut.WriteLine("<Style id='MarkerLine'>                                                                ");
+                KMLFileOut.WriteLine("        <LineStyle>                                                                    ");
+                if (Mode == "Smoothing")
+                {
+                    KMLFileOut.WriteLine("                <color>ffff5555</color>                                                ");
+                    KMLFileOut.WriteLine("                <width>2</width>                                                       ");
+                }
+                if (Mode == "Forward")
+                {
+                    KMLFileOut.WriteLine("                <color>ff000000</color>                                                ");
+                    KMLFileOut.WriteLine("                <width>2</width>                                                       ");
+                }
+                if (Mode == "Backward")
+                {
+                    KMLFileOut.WriteLine("                <color>ff0000ff</color>                                                ");
+                    KMLFileOut.WriteLine("                <width>2</width>                                                       ");
+                }
+                KMLFileOut.WriteLine("        </LineStyle>                                                                   ");
+                KMLFileOut.WriteLine("</Style>                                                                               ");
+                KMLFileOut.WriteLine("<Folder>                                                                               ");
+                KMLFileOut.WriteLine("        <name>Path</name>                                                              ");
+                KMLFileOut.WriteLine("        <visibility>1</visibility>                                                     ");
+                KMLFileOut.WriteLine("        <open>0</open>                                                                 ");
+                KMLFileOut.WriteLine("        <Placemark>                                                                    ");
+                KMLFileOut.WriteLine("            <name>Markers</name>                                                       ");
+                KMLFileOut.WriteLine("                <visibility>1</visibility>                                             ");
+                KMLFileOut.WriteLine("                <description>The markers scheme</description>                          ");
+                KMLFileOut.WriteLine("                <styleUrl>#MarkerLine</styleUrl>                                       ");
+                KMLFileOut.WriteLine("                <LineString>                                                           ");
+                KMLFileOut.WriteLine("                    <extrude>0</extrude>                                               ");
+                KMLFileOut.WriteLine("                    <tessellate>1</tessellate>                                         ");
+                KMLFileOut.WriteLine("                    <altitudeMode>clampToGround</altitudeMode>                         ");
+                KMLFileOut.WriteLine("                    <coordinates>                                                      ");
+            }
+            else if (Part == "End")
+            {
+                KMLFileOut.WriteLine("                   </coordinates>");
+                KMLFileOut.WriteLine(" 	           </LineString>       ");
+                KMLFileOut.WriteLine("		</Placemark>               ");
+                KMLFileOut.WriteLine("</Folder>                        ");
+                KMLFileOut.WriteLine("</Document>                      ");
+                KMLFileOut.WriteLine("</kml>                           ");
+
             }
         }
     }

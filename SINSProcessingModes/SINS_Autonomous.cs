@@ -24,6 +24,7 @@ namespace SINSProcessingModes
             StreamWriter ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt");
             StreamWriter STD_data = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_STD.txt");
             StreamWriter Nav_vert_chan_test = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Nav_vert_chan_test.txt");
+            StreamWriter KMLFileOut = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut.kml");
 
             StreamWriter Speed_Angles = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Speed_Angles.txt");
             StreamWriter DinamicOdometer = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//DinamicOdometer.txt");
@@ -105,7 +106,7 @@ namespace SINSProcessingModes
                         + ",  Vx_1=" + Math.Round(SINSstate.Vx_0[0], 2) + ",  Vx_2=" + Math.Round(SINSstate.Vx_0[1], 3)
                         );
 
-                ProcessingHelp.OutPutInfo(i, i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles);
+                ProcessingHelp.OutPutInfo(i, i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut);
 
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {

@@ -597,8 +597,8 @@ namespace Common_Namespace
                 KalmanVars.Matrix_A[1 * iMx + 4] += SINSstate.Vx_0[2];
                 KalmanVars.Matrix_A[1 * iMx + iMx_r3_dV3] = SINSstate.Omega_x[0];
 
-                //KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 0] = SINSstate.Omega_x[1] - SINSstate.Vx_0[0] / SINSstate.R_e;
-                //KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 1] = -SINSstate.Omega_x[0] - SINSstate.Vx_0[1] / SINSstate.R_n;
+                KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 0] = SINSstate.Omega_x[1] - SINSstate.Vx_0[0] / SINSstate.R_e;
+                KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 1] = -SINSstate.Omega_x[0] - SINSstate.Vx_0[1] / SINSstate.R_n;
                 KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 4] = -SINSstate.Vx_0[1];
                 KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 5] = SINSstate.Vx_0[0];
                 KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + iMx_r3_dV3 + 1] = 1.0;
