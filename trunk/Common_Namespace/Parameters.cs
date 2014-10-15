@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Common_Namespace
 {
@@ -692,6 +693,22 @@ namespace Common_Namespace
 
                 SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
                 SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+
+
+                string str_markers = "";
+                StreamReader Markers = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Markers.csv");
+                str_markers = Markers.ReadLine();
+                str_markers = Markers.ReadLine();
+
+                for (int i = 0; ; i++)
+                {
+                    if (Markers.EndOfStream == true) break;
+
+                    str_markers = Markers.ReadLine();
+                    string[] str_markers_array = str_markers.Split(' ');
+                    SINSstate.MarkersStringTime[i] = Convert.ToDouble(str_markers_array[1]);
+                    SINSstate.MarkersStringArray[i] = str_markers;
+                }
             }
 
 

@@ -12,16 +12,29 @@ namespace Common_Namespace
         {
             double[] temp_array_1 = new double[iMx * iMx], temp_array_2 = new double[iMx * iMx];
 
-            unsafe
+            if (iMx == 1)
             {
-                fixed (double* Xb = KalmanVars.ErrorVector_m, Sb = KalmanVars.CovarianceMatrix_SP_m, Xf = KalmanVars.ErrorVector_Straight, Sf = KalmanVars.CovarianceMatrix_SP_Straight,
-                               Xsgl = KalmanVars.ErrorVector_Smoothed, Ssgl = KalmanVars.CovarianceMatrix_SP_Smoothed, _temp_1 = temp_array_1, _temp_2 = temp_array_2)
+                KalmanVars.ErrorVector_Smoothed[0] =
+                    (Math.Pow(KalmanVars.CovarianceMatrix_SP_m[0], 2) * KalmanVars.ErrorVector_Straight[0]
+                    + Math.Pow(KalmanVars.CovarianceMatrix_SP_Straight[0], 2) * KalmanVars.ErrorVector_m[0]
+                    ) /
+                    (Math.Pow(KalmanVars.CovarianceMatrix_SP_m[0], 2) + Math.Pow(KalmanVars.CovarianceMatrix_SP_Straight[0], 2))
+                    ;
+            }
+            else
+            {
+                unsafe
                 {
-                    smooth_sub(Xf, Sf, Xb, Sb, Xsgl, Ssgl, iMx, _temp_1, _temp_2);
+                    fixed (double* Xb = KalmanVars.ErrorVector_m, Sb = KalmanVars.CovarianceMatrix_SP_m, Xf = KalmanVars.ErrorVector_Straight, Sf = KalmanVars.CovarianceMatrix_SP_Straight,
+                                   Xsgl = KalmanVars.ErrorVector_Smoothed, Ssgl = KalmanVars.CovarianceMatrix_SP_Smoothed, _temp_1 = temp_array_1, _temp_2 = temp_array_2)
+                    {
+                        smooth_sub(Xf, Sf, Xb, Sb, Xsgl, Ssgl, iMx, _temp_1, _temp_2);
+                    }
                 }
             }
 
         }
+
 
 
 

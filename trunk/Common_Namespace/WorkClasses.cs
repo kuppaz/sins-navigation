@@ -156,6 +156,9 @@ namespace Common_Namespace
         public bool flag_Imitator_Telemetric;
         public int GPS_CounterOfPoints = 0;
 
+        public string[] MarkersStringArray = new string[1000];
+        public double[] MarkersStringTime = new double[1000];
+
         public static SINS_State DeepCopy(SINS_State other)
         {
             using (MemoryStream ms = new MemoryStream())
