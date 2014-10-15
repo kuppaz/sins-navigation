@@ -659,8 +659,8 @@ namespace SINS_motion_processing_new_data
                     myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_noFilter.dat");
 
                 else if (this.SaratAlignStart.Checked && !this.SaratWithZalipan.Checked)
-                    //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align.dat");
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align_FULL.dat");
+                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align.dat");
+                    //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align_FULL.dat");
                 else if (this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
                 {
                     SINSstate.Saratov_run_Final = true;
