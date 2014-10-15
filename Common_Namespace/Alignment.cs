@@ -94,7 +94,7 @@ namespace Common_Namespace
                 for (int u = 0; u < 6; u++)
                     MovingAverageAccGyro[u] = MovingAverageAccGyro[u] / MovingWindow;
 
-               
+
 
                 //---Считаем максимальное отклонение от текущего среднего по max_cnt_jj съемам данных----
                 for (int ij = 1; ij < max_cnt_jj; ij++)
@@ -199,8 +199,34 @@ namespace Common_Namespace
             A_xs = SimpleOperations.A_xs(SINSstate);
             w_avg_x = Matrix.Multiply(A_xs, w_avg);
 
-            SINSstate.Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
-            Latitude = Math.Atan2(w_avg_x[2], Math.Sqrt(w_avg_x[1] * w_avg_x[1] + w_avg_x[0] * w_avg_x[0]));
+
+
+
+
+            if (false)
+            {
+                SINSstate.Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
+                Latitude = Math.Atan2(w_avg_x[2], Math.Sqrt(w_avg_x[1] * w_avg_x[1] + w_avg_x[0] * w_avg_x[0]));
+            }
+            else
+            {
+                double[] l1 = new double[3], l2 = new double[3], l3 = new double[3];
+                l3[0] = A_xs[2, 0]; l3[1] = A_xs[2, 1]; l3[2] = A_xs[2, 2];
+                for( int ij = 0; ij < 3; ij++)
+	             {
+                     l2[ij] = (w_avg[ij] - SimpleData.U * l3[ij] * Math.Sin(SINSstate.Latitude)) / (SimpleData.U * Math.Cos(SINSstate.Latitude));
+	             }
+
+	             l1[0] = -l2[2]*l3[1] + l2[1]*l3[2];
+	             l1[1] =  l2[2]*l3[0] - l2[0]*l3[2];
+	             l1[2] = -l2[1]*l3[0] + l2[0]*l3[1];
+
+                 SINSstate.Heading = Math.Atan2(l1[1], l1[2]);
+            }
+
+
+
+
 
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
@@ -215,7 +241,7 @@ namespace Common_Namespace
 
 
             for (int j = 0; j < 3; j++)
-                SINSstate.AlignAlgebraDrifts[j] = w_avg[j] - U_s[j] ;
+                SINSstate.AlignAlgebraDrifts[j] = w_avg[j] - U_s[j];
 
             SINSstate.Time_Alignment = SINSstate.Time;
 
@@ -289,7 +315,7 @@ namespace Common_Namespace
                     //KalmanVars.Noise_Angl[j] = KalmanVars.Noise_Angl.Max();
                 }
             }
-            
+
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
 
 
