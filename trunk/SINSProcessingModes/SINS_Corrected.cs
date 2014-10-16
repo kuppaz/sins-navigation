@@ -851,13 +851,37 @@ namespace SINSProcessingModes
 
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
-                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+                SINSstate.flag_true_Marker = false;
+
+                for (int i = 0; i < SINSstate.MarkersInputCount; i++)
+                    if (Math.Abs(SINSstate.Count - SINSstate.MarkersInputData[i, 1]) < 0.01 && (SINSstate.MarkerNumberLastUsed != i || i == 0))
+                    {
+                        SINSstate.flag_true_Marker = true;
+                        SINSstate.MarkerNumberLastUsed = i;
+                        break;
+                    }
+
+                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1 && SINSstate.flag_true_Marker == false)
                 {
+                    SINSstate.flag_true_Marker = SINSstate.flag_true_Marker;
+                    SINSstate.GPS_Data.gps_Latitude.isReady = 2;
+                }
+                if (SINSstate.GPS_Data.gps_Latitude.isReady != 1 && SINSstate.flag_true_Marker == true)
+                    SINSstate.flag_true_Marker = SINSstate.flag_true_Marker;
+
+
+                if (SINSstate.flag_true_Marker == true)
+                {
+                    SINSstate.GPS_Data.gps_Latitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.MarkersInputData[SINSstate.MarkerNumberLastUsed, 2] * SimpleData.ToRadian;
+                    SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.MarkersInputData[SINSstate.MarkerNumberLastUsed, 3] * SimpleData.ToRadian;
+                    SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.MarkersInputData[SINSstate.MarkerNumberLastUsed, 4];
+
                     if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 12591.7996) < 0.1)
                         SINSstate.Count = SINSstate.Count;
 
                     if (Math.Abs(SINSstate.GPS_Data.gps_Latitude.Value - 0.87256909644) > 0.00000001 && Math.Abs(SINSstate.GPS_Data.gps_Longitude.Value - 0.81807104) > 0.000001
-                        && SINSstate.Count != 20104.108398
+                        //&& SINSstate.Count != 20104.108398
                         )
                     {
                         if (SINSstate.flag_Odometr_SINS_case == true)
