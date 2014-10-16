@@ -706,8 +706,11 @@ namespace Common_Namespace
 
                     str_markers = Markers.ReadLine();
                     string[] str_markers_array = str_markers.Split(' ');
-                    SINSstate.MarkersStringTime[i] = Convert.ToDouble(str_markers_array[1]);
-                    SINSstate.MarkersStringArray[i] = str_markers;
+
+                    for (int j = 0; j < str_markers_array.Count(); j++)
+                        SINSstate.MarkersInputData[i, j] = Convert.ToDouble(str_markers_array[j]);
+
+                    SINSstate.MarkersInputCount++;
                 }
             }
 
