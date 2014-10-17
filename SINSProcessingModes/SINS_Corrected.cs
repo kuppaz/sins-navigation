@@ -871,6 +871,7 @@ namespace SINSProcessingModes
 
 
                 if (SINSstate.flag_true_Marker == true)
+                //if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                 {
                     SINSstate.GPS_Data.gps_Latitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.MarkersInputData[SINSstate.MarkerNumberLastUsed, 2] * SimpleData.ToRadian;
