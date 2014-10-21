@@ -203,7 +203,7 @@ namespace Common_Namespace
 
 
 
-            if (false)
+            if (true)
             {
                 SINSstate.Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
                 Latitude = Math.Atan2(w_avg_x[2], Math.Sqrt(w_avg_x[1] * w_avg_x[1] + w_avg_x[0] * w_avg_x[0]));
@@ -212,16 +212,22 @@ namespace Common_Namespace
             {
                 double[] l1 = new double[3], l2 = new double[3], l3 = new double[3];
                 l3[0] = A_xs[2, 0]; l3[1] = A_xs[2, 1]; l3[2] = A_xs[2, 2];
-                for( int ij = 0; ij < 3; ij++)
-	             {
-                     l2[ij] = (w_avg[ij] - SimpleData.U * l3[ij] * Math.Sin(SINSstate.Latitude)) / (SimpleData.U * Math.Cos(SINSstate.Latitude));
-	             }
+                for (int ij = 0; ij < 3; ij++)
+                {
+                    l2[ij] = (w_avg[ij] - SimpleData.U * l3[ij] * Math.Sin(SINSstate.Latitude)) / (SimpleData.U * Math.Cos(SINSstate.Latitude));
+                }
 
-	             l1[0] = -l2[2]*l3[1] + l2[1]*l3[2];
-	             l1[1] =  l2[2]*l3[0] - l2[0]*l3[2];
-	             l1[2] = -l2[1]*l3[0] + l2[0]*l3[1];
+                double l2_mod = Math.Sqrt(l2[0] * l2[0] + l2[1] * l2[1] + l2[2] * l2[2]);
+                l2[0] = l2[0] / l2_mod;
+                l2[1] = l2[1] / l2_mod;
+                l2[2] = l2[2] / l2_mod;
 
-                 SINSstate.Heading = Math.Atan2(l1[1], l1[2]);
+                l1[0] = -l2[2] * l3[1] + l2[1] * l3[2];
+                l1[1] = l2[2] * l3[0] - l2[0] * l3[2];
+                l1[2] = -l2[1] * l3[0] + l2[0] * l3[1];
+
+                SINSstate.Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
+                SINSstate.Heading = Math.Atan2(l1[1], l1[2]);
             }
 
 

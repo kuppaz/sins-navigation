@@ -197,6 +197,14 @@ namespace SINS_motion_processing_new_data
                 ProcHelp.AlgnCnt = 27000;
                 if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true) 
                     ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
+
+                //Experiment_stdKappa1 - сильно влияеет на решение!!!!
+                ParamStart.Experiment_stdKappa1 = 0.01; //минут
+                ParamStart.Experiment_stdKappa3 = 0.01; //минут
+                ParamStart.Experiment_stdR = 0.10;
+                ParamStart.Experiment_stdOdoR = 0.1; // метров
+                ParamStart.Experiment_stdV = 0.01;
+                ParamStart.Experiment_stdScale = 0.0005;
             }
             if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS") ProcHelp.AlgnCnt = 0;
 
