@@ -113,6 +113,9 @@
             this.iMSmthd_Is_7 = new System.Windows.Forms.CheckBox();
             this.Saratov_run_2014_07_23_middle_interval_GPS = new System.Windows.Forms.CheckBox();
             this.iMSmthd_Is_4 = new System.Windows.Forms.CheckBox();
+            this.saratovOdoVirtual_1 = new System.Windows.Forms.CheckBox();
+            this.saratovOdoVirtual_2 = new System.Windows.Forms.CheckBox();
+            this.saratovWithVirtualMarksInside = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -854,7 +857,7 @@
             // AZIMUT_T_12_32_16_09_13_TLM_2z
             // 
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.AutoSize = true;
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Location = new System.Drawing.Point(235, 92);
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Location = new System.Drawing.Point(235, 97);
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Name = "AZIMUT_T_12_32_16_09_13_TLM_2z";
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Size = new System.Drawing.Size(182, 17);
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.TabIndex = 54;
@@ -1051,7 +1054,7 @@
             // Saratov_run_2014_07_23_middle_interval_GPS
             // 
             this.Saratov_run_2014_07_23_middle_interval_GPS.AutoSize = true;
-            this.Saratov_run_2014_07_23_middle_interval_GPS.Location = new System.Drawing.Point(235, 47);
+            this.Saratov_run_2014_07_23_middle_interval_GPS.Location = new System.Drawing.Point(235, 55);
             this.Saratov_run_2014_07_23_middle_interval_GPS.Name = "Saratov_run_2014_07_23_middle_interval_GPS";
             this.Saratov_run_2014_07_23_middle_interval_GPS.Size = new System.Drawing.Size(148, 17);
             this.Saratov_run_2014_07_23_middle_interval_GPS.TabIndex = 74;
@@ -1069,11 +1072,44 @@
             this.iMSmthd_Is_4.Text = "iMSmthd = 4";
             this.iMSmthd_Is_4.UseVisualStyleBackColor = true;
             // 
+            // saratovOdoVirtual_1
+            // 
+            this.saratovOdoVirtual_1.AutoSize = true;
+            this.saratovOdoVirtual_1.Location = new System.Drawing.Point(457, 42);
+            this.saratovOdoVirtual_1.Name = "saratovOdoVirtual_1";
+            this.saratovOdoVirtual_1.Size = new System.Drawing.Size(84, 17);
+            this.saratovOdoVirtual_1.TabIndex = 76;
+            this.saratovOdoVirtual_1.Text = "OdoVirtual 1";
+            this.saratovOdoVirtual_1.UseVisualStyleBackColor = true;
+            // 
+            // saratovOdoVirtual_2
+            // 
+            this.saratovOdoVirtual_2.AutoSize = true;
+            this.saratovOdoVirtual_2.Location = new System.Drawing.Point(457, 54);
+            this.saratovOdoVirtual_2.Name = "saratovOdoVirtual_2";
+            this.saratovOdoVirtual_2.Size = new System.Drawing.Size(84, 17);
+            this.saratovOdoVirtual_2.TabIndex = 77;
+            this.saratovOdoVirtual_2.Text = "OdoVirtual 2";
+            this.saratovOdoVirtual_2.UseVisualStyleBackColor = true;
+            // 
+            // saratovWithVirtualMarksInside
+            // 
+            this.saratovWithVirtualMarksInside.AutoSize = true;
+            this.saratovWithVirtualMarksInside.Location = new System.Drawing.Point(322, 39);
+            this.saratovWithVirtualMarksInside.Name = "saratovWithVirtualMarksInside";
+            this.saratovWithVirtualMarksInside.Size = new System.Drawing.Size(112, 17);
+            this.saratovWithVirtualMarksInside.TabIndex = 78;
+            this.saratovWithVirtualMarksInside.Text = "With Virtual Marks";
+            this.saratovWithVirtualMarksInside.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 459);
+            this.Controls.Add(this.saratovWithVirtualMarksInside);
+            this.Controls.Add(this.saratovOdoVirtual_2);
+            this.Controls.Add(this.saratovOdoVirtual_1);
             this.Controls.Add(this.iMSmthd_Is_4);
             this.Controls.Add(this.Saratov_run_2014_07_23_middle_interval_GPS);
             this.Controls.Add(this.iMSmthd_Is_7);
@@ -1228,6 +1264,9 @@
         private System.Windows.Forms.CheckBox iMSmthd_Is_7;
         private System.Windows.Forms.CheckBox Saratov_run_2014_07_23_middle_interval_GPS;
         private System.Windows.Forms.CheckBox iMSmthd_Is_4;
+        private System.Windows.Forms.CheckBox saratovOdoVirtual_1;
+        private System.Windows.Forms.CheckBox saratovOdoVirtual_2;
+        private System.Windows.Forms.CheckBox saratovWithVirtualMarksInside;
     }
 }
 
