@@ -130,9 +130,21 @@ namespace SINS_motion_processing_new_data
                 if (myFile.EndOfStream) break;
                 SINSstate.LastCountForRead++;
                 maxStrLength = Math.Max(maxStrLength, tmpstr.Length);
+
+                //рамки, чтобы можно было сверяться с Паневым
+                if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                {
+                    string[] dataArray = tmpstr.Split(' ');
+                    double time = Convert.ToDouble(dataArray[0]);
+
+                    if (time > 51450) 
+                        break;
+                }
             }
             int LastCountForRead = SINSstate.LastCountForRead;
-            myFile.BaseStream.Seek(0, SeekOrigin.Begin);
+            //myFile.BaseStream.Seek(0, SeekOrigin.Begin);
+            myFile.Close();
+            this.SelectDataIn();
 
 
 
@@ -194,7 +206,7 @@ namespace SINS_motion_processing_new_data
             if (SINSstate.Global_file == "Azimut-T_18-Oct-2013_11-05-11") ProcHelp.AlgnCnt = 38000;
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
-                ProcHelp.AlgnCnt = 27000;
+                ProcHelp.AlgnCnt = 27320;
                 if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true) 
                     ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
 
@@ -684,7 +696,16 @@ namespace SINS_motion_processing_new_data
                 }
 
                 else if (!this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full.dat");
+                {
+                    if (this.saratovOdoVirtual_1.Checked)
+                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full_odo_1.dat");
+                    else if (this.saratovOdoVirtual_2.Checked)
+                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full_odo_2.dat");
+                    else if (this.saratovWithVirtualMarksInside.Checked)
+                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Virtual_full.dat");
+                    else
+                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full.dat");
+                }
                 else if (this.SaratWithZalipan.Checked)
                     myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full_noFilter.dat");
 

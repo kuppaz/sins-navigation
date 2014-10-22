@@ -39,6 +39,23 @@ namespace SINSProcessingModes
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstateDinamOdo.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstateDinamOdo.Latitude) * SINSstate.R_n;
 
+
+
+
+            //double[] deltaOdoVSsins = new double[3], deltaOdoVSsins_x = new double[3];
+            //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+            //{
+            //    deltaOdoVSsins[0] = 0.617;
+            //    deltaOdoVSsins[1] = -0.917;
+            //    SimpleOperations.CopyArray(deltaOdoVSsins_x, SINSstate.A_x0s * deltaOdoVSsins);
+
+            //    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] += deltaOdoVSsins_x[0];
+            //    KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] += deltaOdoVSsins_x[1];
+            //}
+
+
+
+
             KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist;
             KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist;
 
@@ -52,6 +69,11 @@ namespace SINSProcessingModes
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstateDinamOdo.Altitude;
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist;
                 //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
+
+                //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                //{
+                //    KalmanVars.Measure[(KalmanVars.cnt_measures + 2)] += deltaOdoVSsins_x[2];
+                //}
 
                 KalmanVars.cnt_measures += 1;
             }

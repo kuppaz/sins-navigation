@@ -280,6 +280,7 @@ namespace Common_Namespace
                 SimpleOperations.CopyArray(Vx_0, SINSstate2.Vx_0); 
             }
 
+
             ProcHelp.distance = Math.Sqrt(Math.Pow((Lat - ProcHelp.LatSNS * SimpleData.ToRadian) * SimpleOperations.RadiusN(Lat, SINSstate.Altitude), 2) +
                                  Math.Pow((Long - ProcHelp.LongSNS * SimpleData.ToRadian) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
             ProcHelp.distance_from_start = Math.Sqrt(Math.Pow((Lat - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(Lat, SINSstate.Altitude), 2) +
@@ -454,6 +455,9 @@ namespace Common_Namespace
                                         //+ " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1]
                                         //+ " " + SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0)
                                         ;
+                if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                    ProcHelp.datastring = ProcHelp.datastring + " " + Math.Round(SINSstate.Count);
+
                 Nav_Smoothed.WriteLine(ProcHelp.datastring);
             }
 
