@@ -159,6 +159,7 @@ namespace Common_Namespace
         public bool flag_true_Marker = false;
         public int MarkersInputCount = 0, MarkerNumberLastUsed = 0;
         public double[,] MarkersInputData = new double[1000, 7];
+        public double CountPrev;
 
         public static SINS_State DeepCopy(SINS_State other)
         {

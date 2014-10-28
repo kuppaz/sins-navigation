@@ -646,9 +646,11 @@ namespace SINSProcessingModes
                         Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
                 else if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
-                    if (SINSstate.Count - Math.Round(SINSstate.Count) < 0.02 && SINSstate.Count - Math.Round(SINSstate.Count) > 0
-                        && SINSstate.Count - SINSstate.timeStep < Math.Round(SINSstate.Count))
+                    if (Math.Abs(SINSstate.Count - Math.Round(SINSstate.Count)) < 0.01// && SINSstate.Count - Math.Round(SINSstate.Count) > 0
+                        && Math.Abs(SINSstate.CountPrev - SINSstate.Count) > 0.5
+                        )
                     {
+                        SINSstate.CountPrev = SINSstate.Count;
                         SINSstate.FreqOutput = 1;
                         ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
                             Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
