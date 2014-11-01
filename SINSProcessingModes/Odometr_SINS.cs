@@ -45,9 +45,13 @@ namespace SINSProcessingModes
             //double[] deltaOdoVSsins = new double[3], deltaOdoVSsins_x = new double[3];
             //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             //{
-            //    deltaOdoVSsins[0] = 0.617;
+            //    deltaOdoVSsins[0] = 0.617 * Math.Cos(11.25 * SimpleData.ToRadian);
             //    deltaOdoVSsins[1] = -0.917;
+            //    deltaOdoVSsins[2] = 0.617 * Math.Sin(11.25 * SimpleData.ToRadian);
             //    SimpleOperations.CopyArray(deltaOdoVSsins_x, SINSstate.A_x0s * deltaOdoVSsins);
+
+            //    for (int i = 0; i < 3; i++)
+            //        deltaOdoVSsins[i] = deltaOdoVSsins[i];
 
             //    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] += deltaOdoVSsins_x[0];
             //    KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] += deltaOdoVSsins_x[1];
