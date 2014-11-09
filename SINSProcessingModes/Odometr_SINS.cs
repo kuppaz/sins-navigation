@@ -115,8 +115,8 @@ namespace SINSProcessingModes
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - Longitude_CP) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - Latitude_CP) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 0.01;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.01;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 1.01;
 
             KalmanVars.cnt_measures += 2;
 
@@ -124,7 +124,7 @@ namespace SINSProcessingModes
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.01;
 
                 KalmanVars.cnt_measures += 1;
             }
@@ -136,8 +136,8 @@ namespace SINSProcessingModes
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstateDinamOdo.Longitude - Longitude_CP) * SINSstateDinamOdo.R_e * Math.Cos(SINSstateDinamOdo.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstateDinamOdo.Latitude - Latitude_CP) * SINSstateDinamOdo.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 0.01;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.01;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 1.01;
 
             KalmanVars.cnt_measures += 2;
 
@@ -145,7 +145,7 @@ namespace SINSProcessingModes
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 2] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstateDinamOdo.Altitude - Altitude_CP;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.01;
 
                 KalmanVars.cnt_measures += 1;
             }
