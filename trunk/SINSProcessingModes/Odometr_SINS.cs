@@ -82,6 +82,17 @@ namespace SINSProcessingModes
                 KalmanVars.cnt_measures += 1;
             }
 
+            //---ДОПОЛНИТЕЛЬНОЕ измерение по вертикальной скорости---
+            if (SINSstate.flag_iMx_r3_dV3 && SINSstate.add_velocity_to_position)
+            {
+                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Vx_0[2] - SINSstateDinamOdo.Vx_0[2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3 + 1] = 1.0;
+
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_V;
+
+                KalmanVars.cnt_measures += 1;
+            }
+
 
         }
 
