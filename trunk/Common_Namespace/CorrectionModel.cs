@@ -24,8 +24,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - Longitude_CP) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - Latitude_CP) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 0.01;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.01;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 1.01;
 
             KalmanVars.cnt_measures += 2;
 
@@ -33,7 +33,7 @@ namespace Common_Namespace
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.01;
 
                 KalmanVars.cnt_measures += 1;
             }
@@ -59,8 +59,8 @@ namespace Common_Namespace
                 KalmanVars.Measure[KalmanVars.cnt_measures + 0] = (SINSstate_OdoMod.Longitude - Longitude_CP) * SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) * Math.Cos(SINSstate_OdoMod.Latitude);
                 KalmanVars.Measure[KalmanVars.cnt_measures + 1] = (SINSstate_OdoMod.Latitude - Latitude_CP) * SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
 
-                KalmanVars.Noize_Z[KalmanVars.cnt_measures + 0] = 0.01;
-                KalmanVars.Noize_Z[KalmanVars.cnt_measures + 1] = 0.01;
+                KalmanVars.Noize_Z[KalmanVars.cnt_measures + 0] = 1.01;
+                KalmanVars.Noize_Z[KalmanVars.cnt_measures + 1] = 1.01;
 
                 KalmanVars.cnt_measures += 2;
 
@@ -76,7 +76,7 @@ namespace Common_Namespace
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = SINSstate.Ds_ComulativeByOdoTrack[2, 1];
 
                     KalmanVars.Measure[KalmanVars.cnt_measures + 0] = SINSstate_OdoMod.Altitude - Altitude_CP;
-                    KalmanVars.Noize_Z[KalmanVars.cnt_measures + 0] = 0.01;
+                    KalmanVars.Noize_Z[KalmanVars.cnt_measures + 0] = 1.01;
 
                     KalmanVars.cnt_measures += 1;
                 }

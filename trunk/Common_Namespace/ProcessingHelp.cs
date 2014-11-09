@@ -118,6 +118,11 @@ namespace Common_Namespace
                     }
                 }
 
+                if (SINSstate.firstLineRead == false)
+                {
+                    SINSstate.OdometerLeftPrev = Convert.ToDouble(dataArray2[18]);
+                    SINSstate.firstLineRead = true;
+                }
 
                 //SINSstate.Time = Convert.ToDouble(dataArray2[0]);
                 SINSstate.Count = Convert.ToDouble(dataArray2[0]);
