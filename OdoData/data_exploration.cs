@@ -26,8 +26,8 @@ namespace OdoData
 
         StreamReader myFile;
 
-        StreamWriter Odo_Explaration = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Odo_Explaration.dat");
-        StreamWriter ExplarationLog = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ExplarationLog.dat");
+        StreamWriter Odo_Explaration = new StreamWriter(SimpleData.PathOutputString + "Odo_Explaration.dat");
+        StreamWriter ExplarationLog = new StreamWriter(SimpleData.PathOutputString + "ExplarationLog.dat");
         StreamWriter enjoy_parse = new StreamWriter("D://enjoy_parse.txt");
 
 
@@ -280,11 +280,11 @@ namespace OdoData
             //myFile = new StreamReader("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//MovingImitator_Azimut//SINS motion processing_new data//All_data//povorot_12-Sep-2012,13-26-38_dat.dat");
             //myFile = new StreamReader("D://Ботва//Postgraduate//1#_Scientific work//1#_Software//1#_Mine//Motion Imitator//MovingImitator//SINS motion processing_new data//ktn004_marsh16_repeat_21-Mar-2012,17-21-07_dat.txt");
 
-            myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//120222_AzimutB_210530_Race_4_Control_3-6-2_11-49-20_dat.dat"); last_count = 77000;
-            //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//120222_AzimutB_210530_Race_2_Adjustment_6-3_DPCnotCal_10-27-49_dat.dat"); last_count = 55370;
-            //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//120222_AzimutB_210530_Race_3_Adjustment_6-3_11-19-46_dat.dat"); last_count = 51525;
-            //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//120222_AzimutB_210530_Race_5_Control_2-3_12-26-56_dat.dat"); last_count = 66100;
-            //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//120222_AzimutB_210530_Race_6_Control_3-2_12-55-50_dat.dat"); last_count = 47000;
+            myFile = new StreamReader(SimpleData.PathInputString + "120222_AzimutB_210530_Race_4_Control_3-6-2_11-49-20_dat.dat"); last_count = 77000;
+            //myFile = new StreamReader(PathInputString + "120222_AzimutB_210530_Race_2_Adjustment_6-3_DPCnotCal_10-27-49_dat.dat"); last_count = 55370;
+            //myFile = new StreamReader(PathInputString + "120222_AzimutB_210530_Race_3_Adjustment_6-3_11-19-46_dat.dat"); last_count = 51525;
+            //myFile = new StreamReader(PathInputString + "120222_AzimutB_210530_Race_5_Control_2-3_12-26-56_dat.dat"); last_count = 66100;
+            //myFile = new StreamReader(PathInputString + "120222_AzimutB_210530_Race_6_Control_3-2_12-55-50_dat.dat"); last_count = 47000;
 
             //StreamReader myFile = new StreamReader("D://enjoy2.txt");
             //myFile.ReadLine();

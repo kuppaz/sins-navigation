@@ -66,7 +66,7 @@ namespace MovingImitator
             StreamWriter ExitInfoClear = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//Imitator_data//ExitInfoClear.dat");
             ExitInfoClear.WriteLine("Time \t f_s1 \t f_s2 \t f_s3 \t W_s1 \t W_s2 \t W_s3 \t Velocity_s[0] \t Velocity_s[1] \t Velocity_s[2] \t Velocity_x0_1 \t Velocity_x0_2 \t Velocity_x0_3 CourseHeading  CoursePitch  beta_c  alpha_c  gamma_c  \t Heading \t Roll \t Pitch \t Latitude \t Longitude \t Altitude \t OdoLatitude \t OdoLongitude \t OdoAltitude");
 
-            StreamWriter Imitator_Data_for_Process = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Imitator_Analytic_Clear.dat");
+            StreamWriter Imitator_Data_for_Process = new StreamWriter(SimpleData.PathInputString + "Imitator_Analytic_Clear.dat");
             //Imitator_Data_for_Process.WriteLine("Count Fx[m/s^2] Fy[m/s^2] Fz[m/s^2] omega_x[r/s] omega_y[r/s] omega_z[r/s] Lat[d] isN Lon[d] isN Hei[m] isN Vn[m/s] isN Ve[m/s] isN StopFLG odo_left odo_left_flag odo_right odo_right_flag");
 
             //Выставление начальных условий для вектора углов ориентации
@@ -608,7 +608,7 @@ namespace MovingImitator
         private void TelemetricImitator_Click(object sender, EventArgs e)
         {
             StreamReader Imitator_Telemetric = new StreamReader("D://SINS Solution//MovingImitator_Azimut//Imitator_data//TelemetricData_Condition.txt");
-            StreamWriter OutPutFile = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Imitator_Telemetric.txt");
+            StreamWriter OutPutFile = new StreamWriter(SimpleData.PathInputString + "Imitator_Telemetric.txt");
 
             SINS_State SINSstate = new SINS_State();
 

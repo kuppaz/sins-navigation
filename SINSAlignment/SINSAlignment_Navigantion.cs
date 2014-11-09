@@ -17,10 +17,10 @@ namespace SINSAlignment
             SimpleData.iMq = 5;
             SimpleData.iMz = 7;
 
-            StreamWriter Alignment_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_Errors.txt");
-            StreamWriter Alignment_SINSstate = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_SINSstate.txt");
-            StreamWriter Alignment_Corrected_State = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_Corrected_State.txt");
-            StreamWriter Alignment_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_StateErrorsVector.txt");
+            StreamWriter Alignment_Errors = new StreamWriter(SimpleData.PathOutputString + "Alignment_Errors.txt");
+            StreamWriter Alignment_SINSstate = new StreamWriter(SimpleData.PathOutputString + "Alignment_SINSstate.txt");
+            StreamWriter Alignment_Corrected_State = new StreamWriter(SimpleData.PathOutputString + "Alignment_Corrected_State.txt");
+            StreamWriter Alignment_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "Alignment_StateErrorsVector.txt");
 
             Alignment_Errors.WriteLine("dR1  dR2  dV1  dV2  Alpha1 Alpha2 Beta3  Nu1  Nu2  Nu3  dF1  dF2  dF3");
             Alignment_Corrected_State.WriteLine("Time  Count  LatCrtd Lat  LongCrtd    Long  AltitudeCrtd V1 V2 V3 Heading HeadingCor Roll RollCor  Pitch PitchCor");

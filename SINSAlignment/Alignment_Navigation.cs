@@ -34,8 +34,8 @@ namespace SINSAlignment
         }
 
 
-        public static StreamWriter Alignment_Scalyar = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_Scalyar.dat");
-        StreamWriter Alignment_Measures = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_Measures.dat");
+        public static StreamWriter Alignment_Scalyar = new StreamWriter(SimpleData.PathOutputString + "Alignment_Scalyar.dat");
+        StreamWriter Alignment_Measures = new StreamWriter(SimpleData.PathOutputString + "Alignment_Measures.dat");
 
         public static void Make_H(Kalman_Vars KalmanVars, SINS_State SINSstate)
         {

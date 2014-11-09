@@ -119,7 +119,7 @@ namespace SINS_motion_processing_new_data
             this.DefineClassElementAndFlags();
             this.SelectDataIn();                                                                            //---выбор входного набора данных---//
 
-            //StreamWriter InputForSmoothFile = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//" + SINSstate.Global_file + "_Back.dat");
+            //StreamWriter InputForSmoothFile = new StreamWriter(SimpleData.PathInputString + "" + SINSstate.Global_file + "_Back.dat");
 
             //Вычисляем LastCountForRead
             SINSstate.LastCountForRead = -20;
@@ -574,34 +574,34 @@ namespace SINS_motion_processing_new_data
         {
             if (Azimut_14_08_2012.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//AzimutB_210530_Other_120814_Autolab_10-31-26_2.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120814_Autolab_10-31-26_2.dat");
                 SINSstate.Global_file = "Azimut_14.08.2012";
             }
             else if (Azimut_15_08_2012.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//AzimutB_210530_Other_120815_Autolab_DPC_100Hz_14-40-04.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120815_Autolab_DPC_100Hz_14-40-04.dat");
                 SINSstate.Global_file = "Azimut_15.08.2012";
             }
             else if (Azimut_24_08_2012.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//AzimutB_210530_Other_120824_Autolab_Circle_AzimutKama_12-07-25.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120824_Autolab_Circle_AzimutKama_12-07-25.dat");
                 SINSstate.Global_file = "Azimut_24.08.2012";
             }
             else if (Azimut_29_08_2012.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//AzimutB_210530_Other_120829_Autolab_Circle_09-21-35.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120829_Autolab_Circle_09-21-35.dat");
                 SINSstate.Global_file = "Azimut_29.08.2012";
             }
             else if (Kama_04_09_2012.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Kama_120904_04-Sep-2012,14-44-11.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "Kama_120904_04-Sep-2012,14-44-11.dat");
                 SINSstate.Global_file = "Kama_04.09.2012";
                 for (int i = 0; i < 14649; i++) myFile.ReadLine();
             }
 
             else if (ktn004_21_03_2012.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//ktn004_marsh16_repeat_21-Mar-2012,17-21-07_dat.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "ktn004_marsh16_repeat_21-Mar-2012,17-21-07_dat.dat");
                 SINSstate.Global_file = "ktn004_21.03.2012";
             }
             else if (ktn004_15_03_2012.Checked == true)
@@ -609,13 +609,13 @@ namespace SINS_motion_processing_new_data
                 SINSstate.Global_file = "ktn004_15.03.2012";
                 if (this.Imitator_Telemetric.Checked == true)
                 {
-                    this.GlobalPrefixTelemetric = "D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//TelemetricData//Telemetric_Imitator_" + SINSstate.Global_file;
+                    this.GlobalPrefixTelemetric = SimpleData.PathInputString + "TelemetricData//Telemetric_Imitator_" + SINSstate.Global_file;
                     this.DataInCheck(this.GlobalPrefixTelemetric);
                     SINSstate.Global_file = "Imitator_Telemetric";
                 }
                 else
                 {
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//ktn004_static4hour_marsh_sns_15-Mar-2012,16-29-45_dat.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "ktn004_static4hour_marsh_sns_15-Mar-2012,16-29-45_dat.dat");
                 }
             }
             else if (Imitator_Data.Checked == true)
@@ -623,13 +623,13 @@ namespace SINS_motion_processing_new_data
                 SINSstate.Global_file = "Imitator_Data";
                 if (this.Imitator_Telemetric.Checked == true)
                 {
-                    this.GlobalPrefixTelemetric = "D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//TelemetricData//Telemetric_Imitator_" + SINSstate.Global_file;
+                    this.GlobalPrefixTelemetric = SimpleData.PathInputString + "TelemetricData//Telemetric_Imitator_" + SINSstate.Global_file;
                     this.DataInCheck(this.GlobalPrefixTelemetric);
                     SINSstate.Global_file = "Imitator_Telemetric";
                 }
                 else
                 {
-                    this.GlobalPrefixTelemetric = "D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Imitator_Analytic";
+                    this.GlobalPrefixTelemetric = SimpleData.PathInputString + "Imitator_Analytic";
                     this.DataInCheck(this.GlobalPrefixTelemetric);
                 }
             }
@@ -639,7 +639,7 @@ namespace SINS_motion_processing_new_data
             //МИНСКИЕ ЗАЕЗДЫ
             if (Azimuth_minsk_race_4_3to6to2.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//120222_AzimutB_210530_Race_4_Control_3-6-2_11-49-20_dat.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "120222_AzimutB_210530_Race_4_Control_3-6-2_11-49-20_dat.dat");
                 SINSstate.Global_file = "Azimuth_minsk_race_4_3to6to2";
             }
 
@@ -648,8 +648,8 @@ namespace SINS_motion_processing_new_data
             //if (_16_09_13_TLM_1zaezd.Checked == true)
             //{
             //    SINSstate.FreqOutput = 100;
-            //    //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Topo_Saratov//topo_short.dat");
-            //    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Topo_Saratov//topo.xch");
+            //    //myFile = new StreamReader(SimpleData.PathInputString + "Topo_Saratov//topo_short.dat");
+            //    myFile = new StreamReader(SimpleData.PathInputString + "Topo_Saratov//topo.xch");
             //    SINSstate.Global_file = "Azimut-T_18-Oct-2013_11-05-11";
             //}
 
@@ -657,12 +657,12 @@ namespace SINS_motion_processing_new_data
 
             if (AZIMUT_T_12_32_16_09_13_TLM_2z.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Azimut-T//Azimut-T_18-Oct-2013_12-56-43.txt");
+                myFile = new StreamReader(SimpleData.PathInputString + "Azimut-T//Azimut-T_18-Oct-2013_12-56-43.txt");
                 SINSstate.Global_file = "AZIMUT_T_2013_10_18_12_55";
             }
             if (Azimut_514_08Nov2013_11_15.Checked == true)
             {
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Azimut-10B//Azimut_514_08Nov2013_11_15.txt");
+                myFile = new StreamReader(SimpleData.PathInputString + "Azimut-10B//Azimut_514_08Nov2013_11_15.txt");
                 SINSstate.Global_file = "Azimut_514_08Nov2013_11_15";
             }
 
@@ -674,40 +674,40 @@ namespace SINS_motion_processing_new_data
                     SINSstate.FreqOutput = 100;
 
                 if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23.dat");
                 else if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_noFilter.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_noFilter.dat");
 
                 else if (this.SaratAlignStart.Checked && !this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align.dat");
-                    //myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align_FULL.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align.dat");
+                    //myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align_FULL.dat");
                 else if (this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
                 {
                     SINSstate.Saratov_run_Final = true;
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_finalAlign.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_finalAlign.dat");
                 }
 
                 else if (this.SaratAlignStart.Checked && this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Align_noFilter.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align_noFilter.dat");
                 else if (this.SaratENDStart.Checked && this.SaratWithZalipan.Checked)
                 {
                     SINSstate.Saratov_run_Final = true;
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_finalAlign_noFilter.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_finalAlign_noFilter.dat");
                 }
 
                 else if (!this.SaratWithZalipan.Checked)
                 {
                     if (this.saratovOdoVirtual_1.Checked)
-                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full_odo_1.dat");
+                        myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_full_odo_1.dat");
                     else if (this.saratovOdoVirtual_2.Checked)
-                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full_odo_2.dat");
+                        myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_full_odo_2.dat");
                     else if (this.saratovWithVirtualMarksInside.Checked)
-                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Virtual_full.dat");
+                        myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Virtual_full.dat");
                     else
-                        myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full.dat");
+                        myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_full.dat");
                 }
                 else if (this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_full_noFilter.dat");
+                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_full_noFilter.dat");
 
                 SINSstate.Global_file = "Saratov_run_2014_07_23";
             }
@@ -717,7 +717,7 @@ namespace SINS_motion_processing_new_data
                 if (SINSstate.FreqOutput == 10)
                     SINSstate.FreqOutput =100;
 
-                myFile = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_middle_interval_GPS.dat");
+                myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_middle_interval_GPS.dat");
                 SINSstate.Global_file = "Saratov_run_2014_07_23_middle_interval_GPS";
             }
         }

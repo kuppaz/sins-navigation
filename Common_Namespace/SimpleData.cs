@@ -7,6 +7,14 @@ namespace Common_Namespace
 {
     public class SimpleData
     {
+        public static string PathInputString = "D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//",
+                             PathOutputString = "D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//",
+                             PathTelemetricString = "D://SINS Solution//Imitator_Kompas_temp//Work//DataForImitator//Imitator_";
+
+        //public static string PathInputString = "",
+        //                     PathOutputString = "",
+        //                     PathTelemetricString = "Imitator_";
+
         public static int iMx;
         public static int iMxSmthd;
         public static int iMz;
