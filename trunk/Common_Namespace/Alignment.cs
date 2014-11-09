@@ -14,12 +14,12 @@ namespace Common_Namespace
             double[] f_avg = new double[3]; double[] w_avg = new double[3]; double[] w_avg_x = new double[3]; double[] U_s = new double[3];
             Matrix A_xs = new Matrix(3, 3);
 
-            StreamWriter FinalAlignmentParams = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//AlignmentFinal_Params.txt");
+            StreamWriter FinalAlignmentParams = new StreamWriter(SimpleData.PathOutputString + "Alignment//AlignmentFinal_Params.txt");
             FinalAlignmentParams.WriteLine(SINSstate.Count + " Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Heading= " + SINSstate.Heading + " Roll= " + SINSstate.Roll + " Pitch= " + SINSstate.Pitch);
-            StreamWriter FinalAlignment = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//AlignmentFinal_Data.txt");
+            StreamWriter FinalAlignment = new StreamWriter(SimpleData.PathOutputString + "Alignment//AlignmentFinal_Data.txt");
 
-            StreamWriter Alignment_avg_rougth = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth.txt");
-            StreamWriter Alignment_avg_rougthMovingAVG = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_avg_rougth_MovingAVG.txt");
+            StreamWriter Alignment_avg_rougth = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_avg_rougth.txt");
+            StreamWriter Alignment_avg_rougthMovingAVG = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_avg_rougth_MovingAVG.txt");
 
             double[] array_sigma_f_1 = new double[200000];
             double[] array_sigma_f_2 = new double[200000];

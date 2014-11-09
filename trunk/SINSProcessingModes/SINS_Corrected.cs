@@ -18,19 +18,18 @@ namespace SINSProcessingModes
 
         public static StreamWriter ForHelpSmoothed;
         public static StreamWriter ForHelp;
-        public static StreamWriter ForHelp_2 = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp_2.txt");
-        public static StreamWriter SlippageLog = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//SlippageLog.txt");
-        public static StreamWriter Nav_vert_chan_test = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Nav_vert_chan_test.txt");
-        public static StreamWriter Dif_GK = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Dif_GK.txt");
+        public static StreamWriter ForHelp_2 = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_2.txt");
+        public static StreamWriter SlippageLog = new StreamWriter(SimpleData.PathOutputString + "Debaging//SlippageLog.txt");
+        public static StreamWriter Dif_GK = new StreamWriter(SimpleData.PathOutputString + "Debaging//Dif_GK.txt");
         public static StreamWriter KMLFileOut;
         public static StreamWriter KMLFileOutSmthd;
 
 
-        public static StreamWriter Dif_GK_SM = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Dif_GK_SM.txt");
-        public static StreamWriter STD_data = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_STD.txt");
-        public static StreamWriter Kinematic_solution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Kinem.txt");
-        public static StreamWriter Speed_Angles = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Speed_Angles.txt");
-        public static StreamWriter DinamicOdometer = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//DinamicOdometer.txt");
+        public static StreamWriter Dif_GK_SM = new StreamWriter(SimpleData.PathOutputString + "Debaging//Dif_GK_SM.txt");
+        public static StreamWriter STD_data = new StreamWriter(SimpleData.PathOutputString + "Debaging//S_STD.txt");
+        public static StreamWriter Kinematic_solution = new StreamWriter(SimpleData.PathOutputString + "S_Kinem.txt");
+        public static StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Debaging//Speed_Angles.txt");
+        public static StreamWriter DinamicOdometer = new StreamWriter(SimpleData.PathOutputString + "DinamicOdometer.txt");
 
 
         public static StreamWriter Smthing_Backward;
@@ -46,7 +45,7 @@ namespace SINSProcessingModes
         {
             int t = 0;
 
-            StreamWriter Imitator_Telemetric = new StreamWriter("D://SINS Solution//Imitator_Kompas_temp//Work//DataForImitator//Imitator_" + SINSstate.Global_file + ".dat");
+            StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
 
 
             double lambda_last_odo_flg = SINSstate2.Longitude, phi_last_odo_flg = SINSstate2.Latitude;
@@ -64,15 +63,15 @@ namespace SINSProcessingModes
 
             if (!Do_Smoothing)
             {
-                Nav_FeedbackSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnFB.txt");
-                Nav_EstimateSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnEst.txt");
-                Nav_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Errs.txt");
-                Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Auto.txt");
-                Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_ErrVct.txt");
-                Nav_Smoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_smoothed_SlnFB.txt");
-                ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt");
-                KMLFileOut = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Forward.kml");
-                KMLFileOutSmthd = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Smoothed.kml");
+                Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnFeedBack.txt");
+                Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnEstimate.txt");
+                Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S_Errors.txt");
+                Nav_Autonomous = new StreamWriter(SimpleData.PathOutputString + "S_Autonomous.txt");
+                Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S_ErrVect.txt");
+                Nav_Smoothed = new StreamWriter(SimpleData.PathOutputString + "S_smoothed_SlnFeedBack.txt");
+                ForHelp = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp.txt");
+                KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Forward.kml");
+                KMLFileOutSmthd = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Smoothed.kml");
 
                 FillKMLOutputFile(KMLFileOut, "Start", "Forward");
 
@@ -87,20 +86,20 @@ namespace SINSProcessingModes
             {
                 SINSstate.odotime_prev = SINSstate.Time+ SINSstate.timeStep;
 
-                Back_Input_File_read = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full.txt");
-                Back_Input_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_X.txt");
-                Back_Input_P = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_P.txt");
-                ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp_back.txt");
-                ForHelpSmoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp_Smoothed.txt");
+                Back_Input_File_read = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full.txt");
+                Back_Input_X = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_X.txt");
+                Back_Input_P = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_P.txt");
+                ForHelp = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_back.txt");
+                ForHelpSmoothed = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_Smoothed.txt");
 
-                Nav_Smoothed = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_smoothed_SlnFB.txt");
-                Nav_FeedbackSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_SlnFB.txt");
-                Nav_EstimateSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_SlnEst.txt");
-                Nav_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_Errs.txt");
-                Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_Auto.txt");
-                Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_back_ErrVct.txt");
-                KMLFileOut = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Back.kml");
-                KMLFileOutSmthd = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut_Smoothed.kml");
+                Nav_Smoothed = new StreamWriter(SimpleData.PathOutputString + "S_smoothed_SlnFeedBack.txt");
+                Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S_back_SlnFeedBack.txt");
+                Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S_back_SlnEstimate.txt");
+                Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S_back_Errors.txt");
+                Nav_Autonomous = new StreamWriter(SimpleData.PathOutputString + "S_back_Autonomous.txt");
+                Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S_back_ErrVct.txt");
+                KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Back.kml");
+                KMLFileOutSmthd = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Smoothed.kml");
 
                 Nav_Smoothed.WriteLine("time  count LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch ");
 
@@ -561,7 +560,7 @@ namespace SINSProcessingModes
                     if (i == start_i || Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 != Math.Floor((i - 1) / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1)
                     {
                         int int_file_back = Convert.ToInt32(Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing))) + 1;
-                        string str_dir_file = "D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//";
+                        string str_dir_file = SimpleData.PathOutputString + "For Smoothing temp files//";
 
                         if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 != 1)
                         {
@@ -643,7 +642,7 @@ namespace SINSProcessingModes
                 /*------------------------------------OUTPUT-------------------------------------------------*/
                 if (i != (SINSstate.LastCountForRead - 1) && SINSstate.Global_file != "Saratov_run_2014_07_23")
                     ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
-                        Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
+                        Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
                 else if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     if (Math.Abs(SINSstate.Count - Math.Round(SINSstate.Count)) < 0.01// && SINSstate.Count - Math.Round(SINSstate.Count) > 0
@@ -653,7 +652,7 @@ namespace SINSProcessingModes
                         SINSstate.CountPrev = SINSstate.Count;
                         SINSstate.FreqOutput = 1;
                         ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
-                            Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
+                            Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
                     }
                 }
 
@@ -688,9 +687,9 @@ namespace SINSProcessingModes
             if (!Do_Smoothing && SINSstate.flag_Smoothing)
             {
                 StreamReader Smthing_Backward_R, Smthing_Backward_R_X, Smthing_Backward_R_P;
-                StreamWriter Smthing_Backward_full = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full.txt"),
-                             Smthing_Backward_X = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_X.txt"),
-                             Smthing_Backward_P = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_full_P.txt");
+                StreamWriter Smthing_Backward_full = new StreamWriter(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full.txt"),
+                             Smthing_Backward_X = new StreamWriter(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_X.txt"),
+                             Smthing_Backward_P = new StreamWriter(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_P.txt");
 
                 for (int i = Convert.ToInt32(SINSstate.NumberOfFilesForSmoothing); i >= 1; i--)
                 {
@@ -698,9 +697,9 @@ namespace SINSProcessingModes
                     string[] strTemp = new string[NumberOfIterationForOneForSmoothing],
                              strTemp_X = new string[NumberOfIterationForOneForSmoothing],
                              strTemp_P = new string[NumberOfIterationForOneForSmoothing];
-                    Smthing_Backward_R = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_" + i + ".txt");
-                    Smthing_Backward_R_X = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_X_" + i + ".txt");
-                    Smthing_Backward_R_P = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//For Smoothing temp files//Backward_P_" + i + ".txt");
+                    Smthing_Backward_R = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_" + i + ".txt");
+                    Smthing_Backward_R_X = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_X_" + i + ".txt");
+                    Smthing_Backward_R_P = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_P_" + i + ".txt");
 
                     for (j = 0; j < NumberOfIterationForOneForSmoothing; j++)
                     {
@@ -742,7 +741,8 @@ namespace SINSProcessingModes
             FillKMLOutputFile(KMLFileOutSmthd, "End", "");
 
             ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); Nav_Autonomous.Close();
-            Dif_GK.Close(); Speed_Angles.Close(); Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
+            //Dif_GK.Close(); 
+            Speed_Angles.Close(); Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
             Nav_Smoothed.Close();
             KMLFileOut.Close(); KMLFileOutSmthd.Close();
         }

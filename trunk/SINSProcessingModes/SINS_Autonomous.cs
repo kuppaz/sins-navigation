@@ -16,18 +16,17 @@ namespace SINSProcessingModes
 
             double[,] distance_GK_Sarat = new double[5, 46];
 
-            StreamWriter Nav_FeedbackSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnFB.txt");
-            StreamWriter Nav_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Errs.txt");
-            StreamWriter Nav_Autonomous = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_Auto.txt");
-            StreamWriter Nav_EstimateSolution = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_SlnEst.txt");
-            StreamWriter Nav_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_ErrVct.txt");
-            StreamWriter ForHelp = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//ForHelp.txt");
-            StreamWriter STD_data = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//S_STD.txt");
-            StreamWriter Nav_vert_chan_test = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Nav_vert_chan_test.txt");
-            StreamWriter KMLFileOut = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//KMLFileOut.kml");
+            StreamWriter Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnFB.txt");
+            StreamWriter Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S_Errs.txt");
+            StreamWriter Nav_Autonomous = new StreamWriter(SimpleData.PathOutputString + "S_Auto.txt");
+            StreamWriter Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnEst.txt");
+            StreamWriter Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S_ErrVct.txt");
+            StreamWriter ForHelp = new StreamWriter(SimpleData.PathOutputString + "ForHelp.txt");
+            StreamWriter STD_data = new StreamWriter(SimpleData.PathOutputString + "S_STD.txt");
+            StreamWriter KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFileOut.kml");
 
-            StreamWriter Speed_Angles = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Speed_Angles.txt");
-            StreamWriter DinamicOdometer = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//DinamicOdometer.txt");
+            StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Speed_Angles.txt");
+            StreamWriter DinamicOdometer = new StreamWriter(SimpleData.PathOutputString + "DinamicOdometer.txt");
 
             Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");
             Nav_Autonomous.WriteLine("Time OdoCnt OdoV Latitude Longitude Altitude LatSNS-Lat LngSNS-Lng LatSNS LongSNS LatSNSrad LongSNSrad SpeedSNS V_x1  V_x2  V_x3 Yaw  Roll  Pitch PosError PosError_Start Azimth");
@@ -106,7 +105,7 @@ namespace SINSProcessingModes
                         + ",  Vx_1=" + Math.Round(SINSstate.Vx_0[0], 2) + ",  Vx_2=" + Math.Round(SINSstate.Vx_0[1], 3)
                         );
 
-                ProcessingHelp.OutPutInfo(i, i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_vert_chan_test, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut);
+                ProcessingHelp.OutPutInfo(i, i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut);
 
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {

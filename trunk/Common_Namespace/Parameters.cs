@@ -696,7 +696,7 @@ namespace Common_Namespace
 
 
                 string str_markers = "";
-                StreamReader Markers = new StreamReader("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//All_data//Saratov_run_2014_07_23_Markers.csv");
+                StreamReader Markers = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Markers.csv");
                 str_markers = Markers.ReadLine();
                 str_markers = Markers.ReadLine();
 

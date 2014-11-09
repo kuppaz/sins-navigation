@@ -17,11 +17,11 @@ namespace SINSAlignment
             int iMq = 3;
             int iMz = 7;
 
-            StreamWriter Alignment_Errors = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_Errors.txt");
-            StreamWriter Alignment_SINSstate = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_SINSstate.txt");
-            StreamWriter Alignment_Corrected_State = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_Corrected_State.txt");
-            StreamWriter Alignment_StateErrorsVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_StateErrorsVector.txt");
-            StreamWriter Alignment_STD_Data = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//Alignment_STD_Data.txt");
+            StreamWriter Alignment_Errors = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_Errors.txt");
+            StreamWriter Alignment_SINSstate = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_SINSstate.txt");
+            StreamWriter Alignment_Corrected_State = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_Corrected_State.txt");
+            StreamWriter Alignment_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_StateErrorsVector.txt");
+            StreamWriter Alignment_STD_Data = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_STD_Data.txt");
 
             Alignment_Errors.WriteLine("DeltaHeading DeltaRoll DeltaPitch");
             Alignment_StateErrorsVector.WriteLine("Time Beta1 Beta2 Beta3  dF1  dF2  dF3 Nu1  Nu2  Nu3  ");

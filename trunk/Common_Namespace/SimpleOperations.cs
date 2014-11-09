@@ -498,7 +498,7 @@ namespace Common_Namespace
 
         public static void PrintMatrixToFile(double[] Matrix, int dim_str, int dim_colls)
         {
-            StreamWriter PrintMatrix = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//PrintMatrix.txt");
+            StreamWriter PrintMatrix = new StreamWriter(SimpleData.PathOutputString + "PrintMatrix.txt");
             for (int j = 0; j < dim_str; j++)
             {
                 string str_odo = null;
@@ -514,7 +514,7 @@ namespace Common_Namespace
 
         public static void PrintVectorToFile(double[] Vector, int dim)
         {
-            StreamWriter PrintVector = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//SINS motion processing_new data//Output//PrintVector.txt");
+            StreamWriter PrintVector = new StreamWriter(SimpleData.PathOutputString + "PrintVector.txt");
             for (int j = 0; j < dim; j++)
             {
                 string str_odo = null;
