@@ -68,6 +68,7 @@ namespace Common_Namespace
             SINSstate.Omega_x[2] = Math.Tan(SINSstate.Latitude) * SINSstate.Omega_x[1];
 
             SINSstate.g = 9.78049 * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014;
+            SINSstate.g -= 2 * 0.000001538 *SINSstate.Altitude;
         }
 
 
