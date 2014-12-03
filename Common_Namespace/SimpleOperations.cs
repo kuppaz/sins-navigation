@@ -202,6 +202,20 @@ namespace Common_Namespace
             MatrixResult[2, 2] = Math.Cos(Angles[2]) * Math.Cos(Angles[1]);
             return MatrixResult;
         }
+        public static Matrix A_sx0(double Heading, double Roll, double Pitch)
+        {
+            Matrix MatrixResult = new Matrix(3, 3);
+            MatrixResult[0, 0] = Math.Cos(Heading) * Math.Cos(Roll) + Math.Sin(Heading) * Math.Sin(Pitch) * Math.Sin(Roll);
+            MatrixResult[0, 1] = -Math.Sin(Heading) * Math.Cos(Roll) + Math.Cos(Heading) * Math.Sin(Pitch) * Math.Sin(Roll);
+            MatrixResult[0, 2] = -Math.Cos(Pitch) * Math.Sin(Roll);
+            MatrixResult[1, 0] = Math.Sin(Heading) * Math.Cos(Pitch);
+            MatrixResult[1, 1] = Math.Cos(Heading) * Math.Cos(Pitch);
+            MatrixResult[1, 2] = Math.Sin(Pitch);
+            MatrixResult[2, 0] = Math.Cos(Heading) * Math.Sin(Roll) - Math.Sin(Heading) * Math.Sin(Pitch) * Math.Cos(Roll);
+            MatrixResult[2, 1] = -Math.Sin(Heading) * Math.Sin(Roll) - Math.Cos(Heading) * Math.Sin(Pitch) * Math.Cos(Roll);
+            MatrixResult[2, 2] = Math.Cos(Pitch) * Math.Cos(Roll);
+            return MatrixResult;
+        }
         public static Matrix A_sx0(SINS_State SINSState)
         {
             Matrix MatrixResult = new Matrix(3, 3);

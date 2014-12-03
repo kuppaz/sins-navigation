@@ -125,7 +125,7 @@ namespace Common_Namespace
                 Heading = -Math.Atan2(w_avg_x[0], w_avg_x[1]);
                 Latitude = Math.Atan2(w_avg_x[2], Math.Sqrt(w_avg_x[1] * w_avg_x[1] + w_avg_x[0] * w_avg_x[0]));
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                SINSstate.A_sx0 = SimpleOperations.A_sx0(Heading, Roll, Pitch);
                 U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
 
                 //FinalAlignment.WriteLine(k + " " + SINSstate.Count + " " + Heading + " " + Roll + " " + Pitch + " " + Latitude
@@ -133,7 +133,7 @@ namespace Common_Namespace
                 //    + " " + SINSstate.W_z[0] + " " + SINSstate.W_z[1] + " " + SINSstate.W_z[2]
                 //    + " " + U_s[0] + " " + U_s[1] + " " + U_s[2]);
 
-                if (Math.Abs(w_avg_x[0] / k - U_s[0]) < 0.000005) { }
+                if (Math.Abs(w_avg[0] / k - U_s[0]) < 0.000005) { }
                 else
                 {
                     Heading = Heading - Math.PI;
