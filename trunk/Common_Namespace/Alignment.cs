@@ -133,13 +133,13 @@ namespace Common_Namespace
                 //    + " " + SINSstate.W_z[0] + " " + SINSstate.W_z[1] + " " + SINSstate.W_z[2]
                 //    + " " + U_s[0] + " " + U_s[1] + " " + U_s[2]);
 
-                //if (Math.Abs(w_avg[0] / k - U_s[0]) < 0.000005) { }
-                //else
-                //{
-                //    Heading = Heading - Math.PI;
-                //    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                //    U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
-                //}
+                if (Math.Abs(w_avg_x[0] / k - U_s[0]) < 0.000005) { }
+                else
+                {
+                    Heading = Heading - Math.PI;
+                    SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+                    U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
+                }
 
                 for (int j = 0; j < 3; j++)
                     SINSstate.AlignAlgebraDrifts[j] = w_avg[j] / k - U_s[j];
