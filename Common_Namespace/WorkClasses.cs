@@ -160,6 +160,7 @@ namespace Common_Namespace
         public int MarkersInputCount = 0, MarkerNumberLastUsed = 0;
         public double[,] MarkersInputData = new double[1000, 7];
         public double CountPrev;
+        public bool flag_AccuracyClass_0_0grph;
 
         public static SINS_State DeepCopy(SINS_State other)
         {

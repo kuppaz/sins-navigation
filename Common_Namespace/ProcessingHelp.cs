@@ -17,7 +17,8 @@ namespace Common_Namespace
 
         public static void DefSNSData(Proc_Help ProcHelp, SINS_State SINSstate)
         {
-            if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+            //if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+            if (SINSstate.GPS_Data.gps_Latitude.Value > 0.1)
             {
                 ProcHelp.LatSNS = SINSstate.GPS_Data.gps_Latitude.Value * 180 / Math.PI;
                 ProcHelp.LongSNS = SINSstate.GPS_Data.gps_Longitude.Value * 180 / Math.PI;

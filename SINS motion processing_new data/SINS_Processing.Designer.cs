@@ -116,6 +116,7 @@
             this.saratovOdoVirtual_1 = new System.Windows.Forms.CheckBox();
             this.saratovOdoVirtual_2 = new System.Windows.Forms.CheckBox();
             this.saratovWithVirtualMarksInside = new System.Windows.Forms.CheckBox();
+            this.AccuracyClass_0_0grph = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -952,7 +953,7 @@
             // 
             this.AccuracyClass_NoErr.AutoSize = true;
             this.AccuracyClass_NoErr.Enabled = false;
-            this.AccuracyClass_NoErr.Location = new System.Drawing.Point(250, 365);
+            this.AccuracyClass_NoErr.Location = new System.Drawing.Point(250, 347);
             this.AccuracyClass_NoErr.Name = "AccuracyClass_NoErr";
             this.AccuracyClass_NoErr.Size = new System.Drawing.Size(129, 17);
             this.AccuracyClass_NoErr.TabIndex = 64;
@@ -1102,11 +1103,22 @@
             this.saratovWithVirtualMarksInside.Text = "With Virtual Marks";
             this.saratovWithVirtualMarksInside.UseVisualStyleBackColor = true;
             // 
+            // AccuracyClass_0_0grph
+            // 
+            this.AccuracyClass_0_0grph.AutoSize = true;
+            this.AccuracyClass_0_0grph.Location = new System.Drawing.Point(250, 365);
+            this.AccuracyClass_0_0grph.Name = "AccuracyClass_0_0grph";
+            this.AccuracyClass_0_0grph.Size = new System.Drawing.Size(152, 17);
+            this.AccuracyClass_0_0grph.TabIndex = 79;
+            this.AccuracyClass_0_0grph.Text = "AccuracyClass- 0.0 grad/h";
+            this.AccuracyClass_0_0grph.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1036, 459);
+            this.Controls.Add(this.AccuracyClass_0_0grph);
             this.Controls.Add(this.saratovWithVirtualMarksInside);
             this.Controls.Add(this.saratovOdoVirtual_2);
             this.Controls.Add(this.saratovOdoVirtual_1);
@@ -1267,6 +1279,7 @@
         private System.Windows.Forms.CheckBox saratovOdoVirtual_1;
         private System.Windows.Forms.CheckBox saratovOdoVirtual_2;
         private System.Windows.Forms.CheckBox saratovWithVirtualMarksInside;
+        private System.Windows.Forms.CheckBox AccuracyClass_0_0grph;
     }
 }
 
