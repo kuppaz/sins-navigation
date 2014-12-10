@@ -46,6 +46,11 @@ namespace Common_Namespace
                 Params_df_s = ParamStart.Modeling_Params_df_s; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
                 Params_dnu_s = ParamStart.Modeling_Params_dnu_s; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
 
+                if (SINSstate.flag_AccuracyClass_0_0grph)
+                {
+                    Params_df_0 = 0.0; //далее умножается G
+                    Params_dnu_0 = 0.001; //град/час
+                }
                 if (SINSstate.flag_AccuracyClass_0_02grph)
                 {
                     Params_df_0 = 1E-5; //далее умножается G
@@ -64,7 +69,7 @@ namespace Common_Namespace
             }
             //----------------------------------------------------------------------------------------//
 
-            outFile.WriteLine("Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Height= " + SINSstate.Altitude + " SINS_Freq= 100.0" + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
+            outFile.WriteLine("Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Height= " + SINSstate.Altitude + " SINS_Freq= " + 1.0 / SINSstate.timeStep + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
                 + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement
                 + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString() + " Roll= " + SINSstate.Roll + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString());
 

@@ -760,6 +760,15 @@ namespace SINSProcessingModes
             SINSstate.flag_ControlPointCorrection = false;
 
 
+            //COMMON IMITATOR EACH isReady 5.5 km
+            if (SINSstate.Global_file == "Imitator_Data")
+            {
+                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+                {
+                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                    SINSstate.flag_UsingCorrection = true;
+                }
+            }
             //SQUARE 5.5 km
             //if (SINSstate.Global_file == "Imitator_Data")
             //{
@@ -770,22 +779,22 @@ namespace SINSProcessingModes
             //    }
             //}
             //CALIBR 200 METERS THEN RUN
-            if (SINSstate.Global_file == "Imitator_Data")
-            {
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 135.32) < 0.001)
-                {
-                    if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959946460438717, 0.645798564231763, 100.0);
-                    else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959946460438717, 0.645798564231763, 100.0);
-                    SINSstate.flag_UsingCorrection = true;
-                }
-                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 370.00) < 0.001)
-                //{
-                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.9598413385365, 0.645991245362916, 100.0);
-                //    SINSstate.flag_UsingCorrection = true;
-                //}
-            }
+            //if (SINSstate.Global_file == "Imitator_Data")
+            //{
+            //    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 135.32) < 0.001)
+            //    {
+            //        if (SINSstate.flag_Odometr_SINS_case == true)
+            //            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959946460438717, 0.645798564231763, 100.0);
+            //        else
+            //            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959946460438717, 0.645798564231763, 100.0);
+            //        SINSstate.flag_UsingCorrection = true;
+            //    }
+            //    //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 370.00) < 0.001)
+            //    //{
+            //    //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.9598413385365, 0.645991245362916, 100.0);
+            //    //    SINSstate.flag_UsingCorrection = true;
+            //    //}
+            //}
             //BY CIRCLE
             //if (SINSstate.Global_file == "Imitator_Data")
             //{

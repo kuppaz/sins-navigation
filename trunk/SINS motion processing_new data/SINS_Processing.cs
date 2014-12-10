@@ -100,13 +100,13 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdKappa1 = 20.0; //минут
             ParamStart.Imitator_stdKappa3 = 20.0; //минут
 
-            ParamStart.Modeling_Params_OdoKappa1 = 1 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoKappa3 = -2 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoIncrement = 10.0; // в сантиметрах
-            ParamStart.Modeling_Params_OdoScaleErr = 1.02;
+            ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
+            ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
+            ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах
+            ParamStart.Modeling_Params_OdoScaleErr = 1.002;
             ParamStart.Modeling_Params_OdoFrequency = 5;
-            ParamStart.Modeling_Params_df_s = 100.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
-            ParamStart.Modeling_Params_dnu_s = 10000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
+            ParamStart.Modeling_Params_df_s = 1000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
+            ParamStart.Modeling_Params_dnu_s = 100000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
@@ -158,9 +158,10 @@ namespace SINS_motion_processing_new_data
                 {
                     ImitatorHeaderReadAndApply();
                     if ((SINSstate.stdNu == 0.2 && SINSstate.flag_AccuracyClass_0_2_grph == false)
+                        || (SINSstate.stdNu < 0.0001 && SINSstate.flag_AccuracyClass_0_0grph == false)
                         || (SINSstate.stdNu == 0.02 && SINSstate.flag_AccuracyClass_0_02grph == false)
                         || (SINSstate.stdNu == 2.0 && SINSstate.flag_AccuracyClass_2_0_grph == false)
-                        || (SINSstate.stdNu < 0.001 && SINSstate.flag_AccuracyClass_NoErr == false))
+                        || (SINSstate.stdNu < 0.0001 && SINSstate.flag_AccuracyClass_NoErr == false))
                     {
                         myFile.Close();
                         myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Clear.dat");
@@ -242,6 +243,11 @@ namespace SINS_motion_processing_new_data
                 else if (SINSstate.flag_UsingClasAlignment == true && ProcHelp.AlgnCnt != 0)
                     l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
 
+                if (SINSstate.flag_AccuracyClass_0_0grph)
+                {
+                    SINSstate.stdF = 0.0; //далее умножается G
+                    SINSstate.stdNu = 0.0; //град/час
+                }
                 if (SINSstate.flag_AccuracyClass_0_02grph)
                 {
                     SINSstate.stdF = 1E-5 * 9.81; //далее умножается G
@@ -543,6 +549,7 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_OdoModelOnlyCP = this.OdoModelOnlyCP.Checked;
 
             SINSstate.flag_AccuracyClass_NoErr = this.AccuracyClass_NoErr.Checked;
+            SINSstate.flag_AccuracyClass_0_0grph = this.AccuracyClass_0_0grph.Checked;
             SINSstate.flag_AccuracyClass_0_02grph = this.AccuracyClass_0_02grph.Checked;
             SINSstate.flag_AccuracyClass_0_2_grph = this.AccuracyClass_0_2_grph.Checked;
             SINSstate.flag_AccuracyClass_2_0_grph = this.AccuracyClass_2_0_grph.Checked;
@@ -841,6 +848,7 @@ namespace SINS_motion_processing_new_data
                 this.Imitator_Data.Enabled = true;
 
                 this.AccuracyClass_NoErr.Enabled = true;
+                this.AccuracyClass_0_0grph.Enabled = true;
                 this.AccuracyClass_0_02grph.Enabled = true;
                 this.AccuracyClass_0_2_grph.Enabled = true;
                 this.AccuracyClass_2_0_grph.Enabled = true;
@@ -850,6 +858,7 @@ namespace SINS_motion_processing_new_data
                 CheckedFalseDataIn();
 
                 this.AccuracyClass_NoErr.Enabled = false;
+                this.AccuracyClass_0_0grph.Enabled = false;
                 this.AccuracyClass_0_02grph.Enabled = false;
                 this.AccuracyClass_0_2_grph.Enabled = false;
                 this.AccuracyClass_2_0_grph.Enabled = false;
@@ -862,6 +871,7 @@ namespace SINS_motion_processing_new_data
             if (this.Imitator_Telemetric.Checked == true)
             {
                 this.AccuracyClass_NoErr.Enabled = true;
+                this.AccuracyClass_0_0grph.Enabled = true;
                 this.AccuracyClass_0_02grph.Enabled = true;
                 this.AccuracyClass_0_2_grph.Enabled = true;
                 this.AccuracyClass_2_0_grph.Enabled = true;
@@ -869,6 +879,7 @@ namespace SINS_motion_processing_new_data
             else
             {
                 this.AccuracyClass_NoErr.Enabled = false;
+                this.AccuracyClass_0_0grph.Enabled = false;
                 this.AccuracyClass_0_02grph.Enabled = false;
                 this.AccuracyClass_0_2_grph.Enabled = false;
                 this.AccuracyClass_2_0_grph.Enabled = false;

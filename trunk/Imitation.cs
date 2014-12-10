@@ -22,7 +22,7 @@ namespace MovingImitator
                       StartLongitude = 37.0 * SimpleData.ToRadian,
                       StartAltitude = 100.0;
 
-        double dT = 0.01;
+        double dT = 0.005;
 
         public Imitation()
         {
@@ -52,8 +52,8 @@ namespace MovingImitator
 
             double odometer_left_ValueTrue = 0.0, Params_OdoIncrement = 0.0, Params_OdoScaleErr = 0.0;
             double Params_df_0 = 0.0;
-            double Params_dnu_0 = 0.0; 
-            double Params_df_s = 0.0; 
+            double Params_dnu_0 = 0.0;
+            double Params_df_s = 0.0;
             double Params_dnu_s = 0.0;
 
             int OdometerMeasure_flag = 2, Params_OdoFrequency = 5;
@@ -71,11 +71,11 @@ namespace MovingImitator
 
             //Выставление начальных условий для вектора углов ориентации
             SINSstate.Heading = StartHeading;
-            SINSstate.Latitude = SINSstate.Latitude_prev = StartLatitude; OdometerCoordinate_s[0] = -0.5;// В осях приборного трехгранника
+            SINSstate.Latitude = SINSstate.Latitude_prev = SINSstate.GPS_Data.gps_Latitude.Value = StartLatitude; OdometerCoordinate_s[0] = 0.0;// В осях приборного трехгранника
             SINSstate.Roll = StartRoll;
-            SINSstate.Longitude = SINSstate.Longitude_prev = StartLongitude; OdometerCoordinate_s[1] = 2.0;
+            SINSstate.Longitude = SINSstate.Longitude_prev = SINSstate.GPS_Data.gps_Longitude.Value = StartLongitude; OdometerCoordinate_s[1] = 0.0;
             SINSstate.Pitch = StartPitch;
-            SINSstate.Altitude = SINSstate.Altitude_prev = StartAltitude; OdometerCoordinate_s[2] = -0.3;
+            SINSstate.Altitude = SINSstate.Altitude_prev = SINSstate.GPS_Data.gps_Altitude.Value = StartAltitude; OdometerCoordinate_s[2] = 0.0;
             SINSstate.Heading_prev = SINSstate.Heading;
             SINSstate.Roll_prev = SINSstate.Roll;
             SINSstate.Pitch_prev = SINSstate.Pitch;
@@ -99,17 +99,18 @@ namespace MovingImitator
 
 
 
-            Imitator_Data_for_Process.WriteLine("Latitude= " + StartLatitude + " Longitude= " + StartLongitude + " Height= " + StartAltitude + " SINS_Freq= 100.0" + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
-                + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement 
+            Imitator_Data_for_Process.WriteLine("Latitude= " + StartLatitude + " Longitude= " + StartLongitude + " Height= " + StartAltitude + " SINS_Freq= " + 1.0 / dT + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
+                + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement
                 + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (StartHeading - Params_OdoKappa3).ToString() + " Roll= " + StartRoll + " Pitch= " + (StartPitch + Params_OdoKappa1).ToString());
 
 
             Random rnd_1 = new Random(), rnd_2 = new Random(), rnd_3 = new Random(), rnd_4 = new Random(), rnd_5 = new Random(), rnd_6 = new Random();
 
             int AlignmentCount = 10000;
+            double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
-            //while (CurrentTime < 2120.0)
-            while (CurrentTime < 800.0)
+            //while (CurrentTime < 1520.0)
+            while (CurTimeWithAlign < 26000.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -122,19 +123,20 @@ namespace MovingImitator
                 else
                     SINSstate.FLG_Stop = 0;
 
-                if (SINSstate.Count == 28751)
-                    SINSstate.Count = SINSstate.Count;
-
-                double CurTimeWithAlign = CurrentTime - Alignment_End;
+                CurTimeWithAlign = CurrentTime - Alignment_End;
 
 
 
                 //Задание углов ориентации Курса, крена, тангажа и их производных
-                //SINSstate.Heading = StartHeading + 20.0 * SimpleData.ToRadian * Math.Sin(0.04 * CurTimeWithAlign);
-                //if (CurTimeWithAlign > 100.0 && CurTimeWithAlign <= 200.0) SINSstate.Heading = StartHeading + 2 * Math.Sin(Math.PI * (CurTimeWithAlign - 100.0) / 100.0);
-                if (CurTimeWithAlign > 75.0 && CurTimeWithAlign <= 95.0) SINSstate.Heading = StartHeading + Math.PI / 2.0 * (CurTimeWithAlign - 75.0) / 20.0;
-                if (CurTimeWithAlign > 300.0 && CurTimeWithAlign <= 400.0) SINSstate.Heading = StartHeading + Math.PI / 2.0 - Math.PI * (CurTimeWithAlign - 300.0) / 100.0;
-                if (CurTimeWithAlign > 400.0 && CurTimeWithAlign <= 410.0) SINSstate.Heading = StartHeading - Math.PI / 2.0 + Math.PI / 2.0 * (CurTimeWithAlign - 400.0) / 20.0;
+                //SINSstate.Heading = StartHeading + 45.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 1000.0 * CurTimeWithAlign);
+                if (CurTimeWithAlign <= 13000.0) SINSstate.Heading = StartHeading + 45.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 100.0 * CurTimeWithAlign);
+                else if (CurTimeWithAlign > 13000.0 && CurTimeWithAlign <= 13100.0) SINSstate.Heading = StartHeading + Math.PI / 3.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 13000.0) / 100.0);
+                else
+                    SINSstate.Heading = StartHeading + Math.PI / 3.0 + 45.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 100.0 * CurTimeWithAlign);
+
+                //if (CurTimeWithAlign > 75.0 && CurTimeWithAlign <= 95.0) SINSstate.Heading = StartHeading + Math.PI / 2.0 * (CurTimeWithAlign - 75.0) / 20.0;
+                //if (CurTimeWithAlign > 300.0 && CurTimeWithAlign <= 400.0) SINSstate.Heading = StartHeading + Math.PI / 2.0 - Math.PI * (CurTimeWithAlign - 300.0) / 100.0;
+                //if (CurTimeWithAlign > 400.0 && CurTimeWithAlign <= 410.0) SINSstate.Heading = StartHeading - Math.PI / 2.0 + Math.PI / 2.0 * (CurTimeWithAlign - 400.0) / 20.0;
 
                 //if (CurTimeWithAlign > 1300.0 && CurTimeWithAlign <= 1350.0) SINSstate.Heading = StartHeading + Math.PI / 2.0 + Math.PI / 2.0 * (CurTimeWithAlign - 1300.0) / 50.0;
                 //SINSstate.Roll = StartRoll + 5.0 * SimpleData.ToRadian * Math.Sin(0.021 * CurTimeWithAlign);
@@ -188,22 +190,22 @@ namespace MovingImitator
                 //Задание относительной линейной скорости в различных проекциях, а так же их производных
                 SINSstate.Vz[0] = 0.0;
                 SINSstate.Vz[1] = 0.0;
-                if (CurTimeWithAlign > 0.0 && CurTimeWithAlign <= 10.0) SINSstate.Vz[1] = 5.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 0) / 10.0);
-                if (CurTimeWithAlign > 10.0 && CurTimeWithAlign <= 25.0) SINSstate.Vz[1] = 5.0;
-                if (CurTimeWithAlign > 25.0 && CurTimeWithAlign <= 35.0) SINSstate.Vz[1] = 5.0 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 25.0) / 10.0);
+                if (CurTimeWithAlign > 0.0 && CurTimeWithAlign <= 50.0) SINSstate.Vz[1] = 40.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 0) / 50.0);
+                if (CurTimeWithAlign > 50.0 && CurTimeWithAlign <= 25500.0) SINSstate.Vz[1] = 40.0;
+                if (CurTimeWithAlign > 25500.0 && CurTimeWithAlign <= 25550.0) SINSstate.Vz[1] = 40.0 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 25500.0) / 50.0);
 
-                if (CurTimeWithAlign > 75.0 && CurTimeWithAlign <= 95.0) SINSstate.Vz[1] = 3.0 * Math.Sin(Math.PI * (CurTimeWithAlign - 75.0) / 20.0);
+                //if (CurTimeWithAlign > 75.0 && CurTimeWithAlign <= 95.0) SINSstate.Vz[1] = 3.0 * Math.Sin(Math.PI * (CurTimeWithAlign - 75.0) / 20.0);
 
-                if (CurTimeWithAlign > 120.0 && CurTimeWithAlign <= 140.0) SINSstate.Vz[1] = 7.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 120.0) / 20.0);
-                if (CurTimeWithAlign > 140.0 && CurTimeWithAlign <= 250.0) SINSstate.Vz[1] = 7.0;
-                if (CurTimeWithAlign > 250.0 && CurTimeWithAlign <= 270.0) SINSstate.Vz[1] = 7.0 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 250.0) / 20.0);
+                //if (CurTimeWithAlign > 120.0 && CurTimeWithAlign <= 140.0) SINSstate.Vz[1] = 7.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 120.0) / 20.0);
+                //if (CurTimeWithAlign > 140.0 && CurTimeWithAlign <= 250.0) SINSstate.Vz[1] = 7.0;
+                //if (CurTimeWithAlign > 250.0 && CurTimeWithAlign <= 270.0) SINSstate.Vz[1] = 7.0 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 250.0) / 20.0);
 
-                if (CurTimeWithAlign > 300.0 && CurTimeWithAlign <= 400.0) SINSstate.Vz[1] = 4.0 * Math.Sin(Math.PI * (CurTimeWithAlign - 300.0) / 100.0);
-                if (CurTimeWithAlign > 400.0 && CurTimeWithAlign <= 420.0) SINSstate.Vz[1] = 4.0 * Math.Sin(Math.PI * (CurTimeWithAlign - 400.0) / 20.0);
+                //if (CurTimeWithAlign > 300.0 && CurTimeWithAlign <= 400.0) SINSstate.Vz[1] = 4.0 * Math.Sin(Math.PI * (CurTimeWithAlign - 300.0) / 100.0);
+                //if (CurTimeWithAlign > 400.0 && CurTimeWithAlign <= 420.0) SINSstate.Vz[1] = 4.0 * Math.Sin(Math.PI * (CurTimeWithAlign - 400.0) / 20.0);
 
-                if (CurTimeWithAlign > 420.0 && CurTimeWithAlign <= 440.0) SINSstate.Vz[1] = 6.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 420.0) / 20.0);
-                if (CurTimeWithAlign > 440.0 && CurTimeWithAlign <= 650.0) SINSstate.Vz[1] = 6.0;
-                if (CurTimeWithAlign > 650.0 && CurTimeWithAlign <= 670.0) SINSstate.Vz[1] = 6.0 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 650.0) / 20.0);
+                //if (CurTimeWithAlign > 420.0 && CurTimeWithAlign <= 440.0) SINSstate.Vz[1] = 6.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 420.0) / 20.0);
+                //if (CurTimeWithAlign > 440.0 && CurTimeWithAlign <= 650.0) SINSstate.Vz[1] = 6.0;
+                //if (CurTimeWithAlign > 650.0 && CurTimeWithAlign <= 670.0) SINSstate.Vz[1] = 6.0 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 650.0) / 20.0);
 
 
 
@@ -242,7 +244,7 @@ namespace MovingImitator
                 //    SINSstate.OdometerData.odometer_left.Value = tmp1 + tmp3 * Params_OdoIncrement / 100.0;
                 //}
                 //else
-                    SINSstate.OdometerData.odometer_left.Value = odometer_left_ValueTrue;
+                SINSstate.OdometerData.odometer_left.Value = odometer_left_ValueTrue;
 
                 if (SINSstate.Count % Params_OdoFrequency == 0)
                     SINSstate.OdometerData.odometer_left.isReady = 1;
@@ -258,11 +260,18 @@ namespace MovingImitator
 
 
                 SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.Latitude;
-                SINSstate.GPS_Data.gps_Latitude.isReady = 1;
+                SINSstate.GPS_Data.gps_Latitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.Longitude;
-                SINSstate.GPS_Data.gps_Longitude.isReady = 1;
+                SINSstate.GPS_Data.gps_Longitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
-                SINSstate.GPS_Data.gps_Altitude.isReady = 1;
+                SINSstate.GPS_Data.gps_Altitude.isReady = 2;
+
+                if (odometer_left_ValueTrue % 60000.0 < SINSstate.Vz[1] * dT + 0.01 && odometer_left_ValueTrue > 1.0)
+                {
+                    SINSstate.GPS_Data.gps_Latitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Longitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Altitude.isReady = 1;
+                }
 
 
                 //Относительные угловые скорости
@@ -848,7 +857,7 @@ namespace MovingImitator
                                  + " " + SINSstate.GPS_Data.gps_Longitude.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.Value.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.isReady.ToString()
                                  + " " + SINSstate.GPS_Data.gps_Vn.Value.ToString() + " " + SINSstate.GPS_Data.gps_Vn.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Ve.Value.ToString() + " " + SINSstate.GPS_Data.gps_Ve.isReady.ToString()
                                  + " " + SINSstate.FLG_Stop.ToString() + " " + SINSstate.OdometerData.odometer_left.Value.ToString() + " " + SINSstate.OdometerData.odometer_left.isReady.ToString()
-                                 + " " + SINSstate.OdometerData.odometer_right.Value.ToString() + " " + SINSstate.OdometerData.odometer_right.isReady.ToString() 
+                                 + " " + SINSstate.OdometerData.odometer_right.Value.ToString() + " " + SINSstate.OdometerData.odometer_right.isReady.ToString()
                                  + " " + SINSstate.Heading.ToString() + " " + SINSstate.Roll.ToString() + " " + SINSstate.Pitch.ToString());
 
 
