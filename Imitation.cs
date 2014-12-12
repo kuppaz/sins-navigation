@@ -387,8 +387,8 @@ namespace MovingImitator
                 //}
 
                 //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
-
                 {
+                    //Можно смотреть на текущую сумму и вызывать NEXT, пока не выпадет значение противоположного знака.
                     int indx = rnd_4.Next(noisSampleCountDUS);
                     SINSstate.W_z[0] -= noisSampleDUS[indx];
                     SINSstate.W_z[1] -= noisSampleDUS[rnd_5.Next(noisSampleCountDUS)];
