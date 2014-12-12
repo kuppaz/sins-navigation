@@ -69,6 +69,65 @@ namespace Common_Namespace
             }
             //----------------------------------------------------------------------------------------//
 
+
+
+
+            bool addNoisSample = true;
+            int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
+            double[] noisSampleDUS, noisSampleAccs;
+
+            string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
+            StreamReader NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
+            if (addNoisSample)
+            {
+                for (noisSampleCountDUS = 0; ; noisSampleCountDUS++)
+                {
+                    if (NoisImputSampleDUS.EndOfStream == true || noisSampleCountDUS > 2000000)
+                        break;
+                    NoisImputSampleDUS.ReadLine();
+                }
+                NoisImputSampleDUS.Close();
+                NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
+            }
+
+            noisSampleDUS = new double[noisSampleCountDUS];
+            if (addNoisSample)
+            {
+                for (int i = 0; i < noisSampleCountDUS; i++)
+                {
+                    string str = NoisImputSampleDUS.ReadLine();
+                    string[] strArray = str.Split(' ');
+                    int t1 = 0;
+                    for (int y = 0; y < strArray.Length; y++)
+                    {
+                        if (strArray[y] != "")
+                            t1++;
+                    }
+                    string[] strArray2 = new string[t1];
+                    t1 = 0;
+
+                    for (int y = 0; y < strArray.Length; y++)
+                    {
+                        if (strArray[y] != "")
+                        {
+                            strArray2[t1] = strArray[y];
+                            t1++;
+                        }
+                    }
+                    noisSampleDUS[i] = Convert.ToDouble(strArray2[1]);
+                }
+            }
+            double sampleCurrSumDUC = 0, sampleCurrAvgDUC = 0, sampleCurrSumAccs = 0, sampleCurrAvgAccs = 0;
+            double avgSampleDUC = noisSampleDUS.Sum() / noisSampleCountDUS;
+            for (int i = 0; i < noisSampleCountDUS; i++)
+                noisSampleDUS[i] -= avgSampleDUC;
+
+
+
+
+
+
+
             outFile.WriteLine("Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Height= " + SINSstate.Altitude + " SINS_Freq= " + 1.0 / SINSstate.timeStep + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
                 + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement
                 + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString() + " Roll= " + SINSstate.Roll + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString());
@@ -152,6 +211,19 @@ namespace Common_Namespace
                 SINSstate.F_z[0] += df_0;   SINSstate.W_z[0] -= dW_0;
                 SINSstate.F_z[1] += df_0;   SINSstate.W_z[1] -= dW_0;
                 SINSstate.F_z[2] += df_0;   SINSstate.W_z[2] -= dW_0;
+
+                //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
+                if (addNoisSample)
+                {
+                    //Можно смотреть на текущую сумму и вызывать NEXT, пока не выпадет значение противоположного знака.
+                    int indx = rnd_4.Next(noisSampleCountDUS);
+                    SINSstate.W_z[0] -= noisSampleDUS[indx];
+                    SINSstate.W_z[1] -= noisSampleDUS[rnd_5.Next(noisSampleCountDUS)];
+                    SINSstate.W_z[2] -= noisSampleDUS[rnd_6.Next(noisSampleCountDUS)];
+
+                    sampleCurrSumDUC += noisSampleDUS[indx];
+                    sampleCurrAvgDUC = sampleCurrSumDUC / SINSstate.Count;
+                }
 
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/
