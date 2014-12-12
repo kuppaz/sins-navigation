@@ -98,6 +98,60 @@ namespace MovingImitator
 
 
 
+            bool addNoisSample = true;
+            int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
+            double[] noisSampleDUS, noisSampleAccs;
+
+            string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
+            StreamReader NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
+            if (addNoisSample)
+            {
+                for (noisSampleCountDUS = 0; ; noisSampleCountDUS++)
+                {
+                    if (NoisImputSampleDUS.EndOfStream == true || noisSampleCountDUS > 2000000)
+                        break;
+                    NoisImputSampleDUS.ReadLine();
+                }
+                NoisImputSampleDUS.Close();
+                NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
+            }
+
+            noisSampleDUS = new double[noisSampleCountDUS];
+            if (addNoisSample)
+            {
+                for (int i = 0; i < noisSampleCountDUS; i++)
+                {
+                    string str = NoisImputSampleDUS.ReadLine();
+                    string[] strArray = str.Split(' ');
+                    int t = 0;
+                    for (int y = 0; y < strArray.Length; y++)
+                    {
+                        if (strArray[y] != "")
+                            t++;
+                    }
+                    string[] strArray2 = new string[t];
+                    t = 0;
+
+                    for (int y = 0; y < strArray.Length; y++)
+                    {
+                        if (strArray[y] != "")
+                        {
+                            strArray2[t] = strArray[y];
+                            t++;
+                        }
+                    }
+                    noisSampleDUS[i] = Convert.ToDouble(strArray2[1]);
+                }
+            }
+            double sampleCurrSumDUC = 0, sampleCurrAvgDUC = 0, sampleCurrSumAccs =0, sampleCurrAvgAccs = 0;
+            double avgSampleDUC = noisSampleDUS.Sum() / noisSampleCountDUS;
+            for (int i = 0; i < noisSampleCountDUS; i++)
+                noisSampleDUS[i] -= avgSampleDUC;
+
+
+
+
+
 
             Imitator_Data_for_Process.WriteLine("Latitude= " + StartLatitude + " Longitude= " + StartLongitude + " Height= " + StartAltitude + " SINS_Freq= " + 1.0 / dT + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
                 + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement
@@ -109,8 +163,8 @@ namespace MovingImitator
             int AlignmentCount = 10000;
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
-            //while (CurrentTime < 1520.0)
-            while (CurTimeWithAlign < 26000.0)
+            while (CurrentTime < 1520.0)
+            //while (CurTimeWithAlign < 26000.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -331,6 +385,18 @@ namespace MovingImitator
                 //    SINSstate.W_z[1] -= (rnd_5.NextDouble() - 0.5) / Params_dnu_s;
                 //    SINSstate.W_z[2] -= (rnd_6.NextDouble() - 0.5) / Params_dnu_s;
                 //}
+
+                //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
+
+                {
+                    int indx = rnd_4.Next(noisSampleCountDUS);
+                    SINSstate.W_z[0] -= noisSampleDUS[indx];
+                    SINSstate.W_z[1] -= noisSampleDUS[rnd_5.Next(noisSampleCountDUS)];
+                    SINSstate.W_z[2] -= noisSampleDUS[rnd_6.Next(noisSampleCountDUS)];
+
+                    sampleCurrSumDUC += noisSampleDUS[indx];
+                    sampleCurrAvgDUC = sampleCurrSumDUC / SINSstate.Count;
+                }
 
                 //SINSstate.F_z[0] += df_0;
                 //SINSstate.F_z[1] += df_0;
