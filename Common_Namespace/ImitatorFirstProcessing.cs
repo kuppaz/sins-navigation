@@ -74,7 +74,10 @@ namespace Common_Namespace
 
             bool addNoisSample = true;
             int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
-            double[] noisSampleDUS, noisSampleAccs;
+            double avgSampleDUC;
+            double[] avgSampleAccs = new double[3];
+            double[] noisSampleDUS, noisSampleAccs_1, noisSampleAccs_2, noisSampleAccs_3;
+            double[] sampleCurrSumDUC = new double[3], sampleCurrAvgDUC = new double[3], sampleCurrSumAccs = new double[3], sampleCurrAvgAccs = new double[3];
 
             string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
             StreamReader NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
@@ -115,12 +118,55 @@ namespace Common_Namespace
                         }
                     }
                     noisSampleDUS[i] = Convert.ToDouble(strArray2[1]);
+                    noisSampleDUS[i] *= Math.PI / 180.0;
                 }
             }
-            double sampleCurrSumDUC = 0, sampleCurrAvgDUC = 0, sampleCurrSumAccs = 0, sampleCurrAvgAccs = 0;
-            double avgSampleDUC = noisSampleDUS.Sum() / noisSampleCountDUS;
+            avgSampleDUC = noisSampleDUS.Sum() / noisSampleCountDUS;
             for (int i = 0; i < noisSampleCountDUS; i++)
                 noisSampleDUS[i] -= avgSampleDUC;
+
+
+            /////////-----///////
+            string pathToSampleACCS = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
+            StreamReader NoisImputSampleACCS = new StreamReader(pathToSampleACCS);
+            if (addNoisSample)
+            {
+                for (noisSampleCountAccs = 0; ; noisSampleCountAccs++)
+                {
+                    if (NoisImputSampleACCS.EndOfStream == true || noisSampleCountAccs > 2000000)
+                        break;
+                    NoisImputSampleACCS.ReadLine();
+                }
+                NoisImputSampleACCS.Close();
+                NoisImputSampleACCS = new StreamReader(pathToSampleACCS);
+            }
+
+            noisSampleAccs_1 = new double[noisSampleCountAccs];
+            noisSampleAccs_2 = new double[noisSampleCountAccs];
+            noisSampleAccs_3 = new double[noisSampleCountAccs];
+            if (addNoisSample)
+            {
+                for (int i = 0; i < noisSampleCountAccs; i++)
+                {
+                    string str = NoisImputSampleACCS.ReadLine();
+                    string[] strArray = str.Split(' ');
+                    noisSampleAccs_1[i] = Convert.ToDouble(strArray[3]);
+                    noisSampleAccs_2[i] = Convert.ToDouble(strArray[1]);
+                    noisSampleAccs_3[i] = Convert.ToDouble(strArray[2]);
+                }
+            }
+            avgSampleAccs[0] = noisSampleAccs_1.Sum() / noisSampleCountAccs;
+            avgSampleAccs[1] = noisSampleAccs_2.Sum() / noisSampleCountAccs;
+            avgSampleAccs[2] = noisSampleAccs_3.Sum() / noisSampleCountAccs;
+            for (int i = 0; i < noisSampleCountAccs; i++)
+            {
+                noisSampleAccs_1[i] -= avgSampleAccs[0];
+                noisSampleAccs_2[i] -= avgSampleAccs[1];
+                noisSampleAccs_3[i] -= avgSampleAccs[2];
+            }
+
+
+
 
 
 
@@ -208,21 +254,87 @@ namespace Common_Namespace
                     SINSstate.W_z[2] -= (rnd_6.NextDouble() - 0.5) / Params_dnu_s;
                 }
 
-                SINSstate.F_z[0] += df_0;   SINSstate.W_z[0] -= dW_0;
-                SINSstate.F_z[1] += df_0;   SINSstate.W_z[1] -= dW_0;
-                SINSstate.F_z[2] += df_0;   SINSstate.W_z[2] -= dW_0;
+                if (!addNoisSample)
+                {
+                    SINSstate.F_z[0] += df_0;
+                    SINSstate.F_z[1] += df_0;
+                    SINSstate.F_z[2] += df_0;
+
+                    SINSstate.W_z[0] -= dW_0;
+                    SINSstate.W_z[1] -= dW_0;
+                    SINSstate.W_z[2] -= dW_0;
+                }
+                else
+                {
+                    SINSstate.F_z[0] += 5E-4;
+                    SINSstate.F_z[1] += -5E-4;
+                    SINSstate.F_z[2] += 3E-4;
+
+                    SINSstate.W_z[0] -= 0.005 * SimpleData.ToRadian / 3600.0;
+                    SINSstate.W_z[1] -= -0.003 * SimpleData.ToRadian / 3600.0;
+                    SINSstate.W_z[2] -= 0.004 * SimpleData.ToRadian / 3600.0;
+                }
+
 
                 //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
                 if (addNoisSample)
                 {
                     //Можно смотреть на текущую сумму и вызывать NEXT, пока не выпадет значение противоположного знака.
-                    int indx = rnd_4.Next(noisSampleCountDUS);
-                    SINSstate.W_z[0] -= noisSampleDUS[indx];
-                    SINSstate.W_z[1] -= noisSampleDUS[rnd_5.Next(noisSampleCountDUS)];
-                    SINSstate.W_z[2] -= noisSampleDUS[rnd_6.Next(noisSampleCountDUS)];
+                    //int indx = rnd_4.Next(noisSampleCountDUS);
+                    //for (int j = 0; ; j++)
+                    //{
+                    //    int t3 = Math.Sign(noisSampleDUS[indx]);
+                    //    if (Math.Sign(noisSampleDUS[indx]) == Math.Sign(sampleCurrSumDUC[0]))
+                    //        indx = rnd_4.Next(noisSampleCountDUS);
+                    //    else
+                    //        break;
+                    //}
+                    //SINSstate.W_z[0] -= noisSampleDUS[indx];
+                    //sampleCurrSumDUC[0] += noisSampleDUS[indx];
+                    //sampleCurrAvgDUC[0] = sampleCurrSumDUC[0] / SINSstate.Count;
 
-                    sampleCurrSumDUC += noisSampleDUS[indx];
-                    sampleCurrAvgDUC = sampleCurrSumDUC / SINSstate.Count;
+                    //indx = rnd_5.Next(noisSampleCountDUS);
+                    //for (int j = 0; ; j++)
+                    //{
+                    //    int t3 = Math.Sign(noisSampleDUS[indx]);
+                    //    if (Math.Sign(noisSampleDUS[indx]) == Math.Sign(sampleCurrSumDUC[1]))
+                    //        indx = rnd_5.Next(noisSampleCountDUS);
+                    //    else
+                    //        break;
+                    //}
+                    //SINSstate.W_z[1] -= noisSampleDUS[indx];
+                    //sampleCurrSumDUC[1] += noisSampleDUS[indx];
+                    //sampleCurrAvgDUC[1] = sampleCurrSumDUC[1] / SINSstate.Count;
+
+                    //indx = rnd_6.Next(noisSampleCountDUS);
+                    //for (int j = 0; ; j++)
+                    //{
+                    //    int t3 = Math.Sign(noisSampleDUS[indx]);
+                    //    if (Math.Sign(noisSampleDUS[indx]) == Math.Sign(sampleCurrSumDUC[2]))
+                    //        indx = rnd_6.Next(noisSampleCountDUS);
+                    //    else
+                    //        break;
+                    //}
+                    //SINSstate.W_z[2] -= noisSampleDUS[indx];
+                    //sampleCurrSumDUC[2] += noisSampleDUS[indx];
+                    //sampleCurrAvgDUC[2] = sampleCurrSumDUC[2] / SINSstate.Count;
+
+
+
+
+                    int t2 = Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS;
+                    if (Convert.ToInt32(SINSstate.Count) >= noisSampleCountDUS)
+                        noisSampleCountDUS = noisSampleCountDUS;
+                    SINSstate.W_z[0] -= noisSampleDUS[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
+                    SINSstate.W_z[1] -= noisSampleDUS[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
+                    SINSstate.W_z[2] -= noisSampleDUS[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
+
+                    int t3 = Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs;
+                    if (Convert.ToInt32(SINSstate.Count) >= noisSampleCountAccs)
+                        noisSampleCountDUS = noisSampleCountDUS;
+                    SINSstate.F_z[0] += noisSampleAccs_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
+                    SINSstate.F_z[1] += noisSampleAccs_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
+                    SINSstate.F_z[2] += noisSampleAccs_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
                 }
 
 

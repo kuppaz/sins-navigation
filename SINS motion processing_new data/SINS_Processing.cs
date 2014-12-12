@@ -105,8 +105,8 @@ namespace SINS_motion_processing_new_data
             ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах
             ParamStart.Modeling_Params_OdoScaleErr = 1.002;
             ParamStart.Modeling_Params_OdoFrequency = 5;
-            ParamStart.Modeling_Params_df_s = 1000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
-            ParamStart.Modeling_Params_dnu_s = 100000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
+            ParamStart.Modeling_Params_df_s = 100000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
+            ParamStart.Modeling_Params_dnu_s = 10000000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
