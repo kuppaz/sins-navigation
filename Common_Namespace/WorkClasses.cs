@@ -121,7 +121,8 @@ namespace Common_Namespace
         public double[] W_z_prev = new double[3], W_x = new double[3], u_x = new double[3], u_s = new double[3], Omega_x = new double[3];
 
         //---Начальные  сигма для матриц S---
-        public double stdR, stdOdoR, stdV, stdAlpha12, stdBeta3, stdNu, stdF, stdScale, stdKappa1, stdKappa3;
+        public double[] stdF = new double[3];
+        public double stdR, stdOdoR, stdV, stdAlpha1, stdAlpha2, stdBeta3, stdNu, stdScale, stdKappa1, stdKappa3;
 
         //---Ошибки вектора состояния системы---
         public double DeltaLatitude, DeltaLongitude, DeltaV_1, DeltaV_2, DeltaV_3, DeltaHeading, DeltaRoll, DeltaPitch, DeltaAltitude;

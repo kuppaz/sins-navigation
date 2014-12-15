@@ -101,7 +101,8 @@ namespace MovingImitator
 
 
 
-            Imitator_Data_for_Process.WriteLine("Latitude= " + StartLatitude + " Longitude= " + StartLongitude + " Height= " + StartAltitude + " SINS_Freq= " + 1.0 / dT + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
+            Imitator_Data_for_Process.WriteLine("Latitude= " + StartLatitude + " Longitude= " + StartLongitude + " Height= " + StartAltitude + " SINS_Freq= " + 1.0 / dT + " df_0(E)= "
+                + Params_df_0 + " df_0(N)= " + Params_df_0 + " df_s= " + Params_df_s
                 + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement
                 + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (StartHeading - Params_OdoKappa3).ToString() + " Roll= " + StartRoll + " Pitch= " + (StartPitch + Params_OdoKappa1).ToString());
 
@@ -111,8 +112,8 @@ namespace MovingImitator
             int AlignmentCount = 10000;
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
-            while (CurrentTime < 2020.0)
-            //while (CurTimeWithAlign < 26000.0)
+            //while (CurrentTime < 2020.0)
+            while (CurTimeWithAlign < 26000.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -268,7 +269,7 @@ namespace MovingImitator
                 SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
                 SINSstate.GPS_Data.gps_Altitude.isReady = 2;
 
-                if (odometer_left_ValueTrue % 30000.0 < SINSstate.Vz[1] * dT + 0.01 && odometer_left_ValueTrue > 1.0)
+                if (odometer_left_ValueTrue % 60000.0 < SINSstate.Vz[1] * dT + 0.01 && odometer_left_ValueTrue > 1.0)
                 {
                     SINSstate.GPS_Data.gps_Latitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Longitude.isReady = 1;
