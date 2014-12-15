@@ -13,7 +13,8 @@ namespace Common_Namespace
         {
             double Params_OdoKappa1 = 0.0, Params_OdoKappa3 = 0.0, Params_OdoIncrement = 0.0, Params_OdoScaleErr = 0.0, Params_OdoFrequency = 0.0;
             double OdometerData_odometer_left_Value = 0.0;
-            double Params_df_0 = 0.0, Params_dnu_0 = 0.0, Params_df_s = 0.0, Params_dnu_s = 0.0;
+            double Params_df_s = 0.0, Params_dnu_s = 0.0;
+            double[] Params_df_0 = new double[3], Params_dnu_0 = new double[3];
 
             Random rnd_1 = new Random(), rnd_2 = new Random(), rnd_3 = new Random(), rnd_4 = new Random(), rnd_5 = new Random(), rnd_6 = new Random();
 
@@ -31,8 +32,11 @@ namespace Common_Namespace
                 Params_OdoScaleErr = 1.0;
                 Params_OdoFrequency = 5;
 
-                Params_df_0 = 0.0; //далее умножается G
-                Params_dnu_0 = 0.0; //град/час
+                for (int j = 0; j < 3; j++)
+                {
+                    Params_df_0[j] = 0.0; //далее умножается G
+                    Params_dnu_0[j] = 0.0; //град/час
+                }
                 Params_df_s = 0.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
                 Params_dnu_s = 0.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
             }
@@ -47,25 +51,29 @@ namespace Common_Namespace
                 Params_dnu_s = ParamStart.Modeling_Params_dnu_s; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
 
                 if (SINSstate.flag_AccuracyClass_0_0grph)
-                {
-                    Params_df_0 = 0.0; //далее умножается G
-                    Params_dnu_0 = 0.001; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Params_df_0[j] = 0.0; //далее умножается G
+                        Params_dnu_0[j] = 0.0; //град/час
+                    }
                 if (SINSstate.flag_AccuracyClass_0_02grph)
-                {
-                    Params_df_0 = 1E-5; //далее умножается G
-                    Params_dnu_0 = 0.02; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Params_df_0[j] = 1E-5; //далее умножается G
+                        Params_dnu_0[j] = 0.02; //град/час
+                    }
                 if (SINSstate.flag_AccuracyClass_0_2_grph)
-                {
-                    Params_df_0 = 1E-4; //далее умножается G
-                    Params_dnu_0 = 0.2; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Params_df_0[j] = 1E-4; //далее умножается G
+                        Params_dnu_0[j] = 0.2; //град/час
+                    }
                 if (SINSstate.flag_AccuracyClass_2_0_grph)
-                {
-                    Params_df_0 = 1E-3; //далее умножается G
-                    Params_dnu_0 = 2.0; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Params_df_0[j] = 1E-3; //далее умножается G
+                        Params_dnu_0[j] = 2.0; //град/час
+                    }
             }
             //----------------------------------------------------------------------------------------//
 
@@ -74,12 +82,12 @@ namespace Common_Namespace
 
             bool addNoisSample = true;
             int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
-            double avgSampleDUC;
-            double[] avgSampleAccs = new double[3];
-            double[] noisSampleDUS, noisSampleAccs_1, noisSampleAccs_2, noisSampleAccs_3;
+            double[] avgSampleAccs = new double[3], avgSampleDUC = new double[3];
+            double[] noisSampleDUS_1, noisSampleDUS_2, noisSampleDUS_3, noisSampleAccs_1, noisSampleAccs_2, noisSampleAccs_3;
             double[] sampleCurrSumDUC = new double[3], sampleCurrAvgDUC = new double[3], sampleCurrSumAccs = new double[3], sampleCurrAvgAccs = new double[3];
 
             string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
+            //string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
             StreamReader NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
             if (addNoisSample)
             {
@@ -93,37 +101,61 @@ namespace Common_Namespace
                 NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
             }
 
-            noisSampleDUS = new double[noisSampleCountDUS];
+            noisSampleDUS_1 = new double[noisSampleCountDUS];
+            noisSampleDUS_2 = new double[noisSampleCountDUS];
+            noisSampleDUS_3 = new double[noisSampleCountDUS];
             if (addNoisSample)
             {
-                for (int i = 0; i < noisSampleCountDUS; i++)
+                if (pathToSampleDUC == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.dat")
                 {
-                    string str = NoisImputSampleDUS.ReadLine();
-                    string[] strArray = str.Split(' ');
-                    int t1 = 0;
-                    for (int y = 0; y < strArray.Length; y++)
+                    for (int i = 0; i < noisSampleCountDUS; i++)
                     {
-                        if (strArray[y] != "")
-                            t1++;
-                    }
-                    string[] strArray2 = new string[t1];
-                    t1 = 0;
-
-                    for (int y = 0; y < strArray.Length; y++)
-                    {
-                        if (strArray[y] != "")
+                        string str = NoisImputSampleDUS.ReadLine();
+                        string[] strArray = str.Split(' ');
+                        int t1 = 0;
+                        for (int y = 0; y < strArray.Length; y++)
                         {
-                            strArray2[t1] = strArray[y];
-                            t1++;
+                            if (strArray[y] != "")
+                                t1++;
                         }
+                        string[] strArray2 = new string[t1];
+                        t1 = 0;
+
+                        for (int y = 0; y < strArray.Length; y++)
+                        {
+                            if (strArray[y] != "")
+                            {
+                                strArray2[t1] = strArray[y];
+                                t1++;
+                            }
+                        }
+                        noisSampleDUS_1[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
+                        noisSampleDUS_2[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
+                        noisSampleDUS_3[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
                     }
-                    noisSampleDUS[i] = Convert.ToDouble(strArray2[1]);
-                    noisSampleDUS[i] *= Math.PI / 180.0;
+                }
+                else if (pathToSampleDUC == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat")
+                {
+                    for (int i = 0; i < noisSampleCountDUS; i++)
+                    {
+                        string str = NoisImputSampleDUS.ReadLine();
+                        string[] strArray = str.Split(' ');
+                        noisSampleDUS_1[i] = Convert.ToDouble(strArray[6]);
+                        noisSampleDUS_2[i] = Convert.ToDouble(strArray[4]);
+                        noisSampleDUS_3[i] = Convert.ToDouble(strArray[5]);
+                    }
                 }
             }
-            avgSampleDUC = noisSampleDUS.Sum() / noisSampleCountDUS;
+            avgSampleDUC[0] = noisSampleDUS_1.Sum() / noisSampleCountDUS;
+            avgSampleDUC[1] = noisSampleDUS_2.Sum() / noisSampleCountDUS;
+            avgSampleDUC[2] = noisSampleDUS_3.Sum() / noisSampleCountDUS;
             for (int i = 0; i < noisSampleCountDUS; i++)
-                noisSampleDUS[i] -= avgSampleDUC;
+            {
+                noisSampleDUS_1[i] -= avgSampleDUC[0];
+                noisSampleDUS_2[i] -= avgSampleDUC[1];
+                noisSampleDUS_3[i] -= avgSampleDUC[2];
+            }
+            NoisImputSampleDUS.Close();
 
 
             /////////-----///////
@@ -165,6 +197,15 @@ namespace Common_Namespace
                 noisSampleAccs_3[i] -= avgSampleAccs[2];
             }
 
+            if (addNoisSample)
+            {
+                Params_df_0[0] = 5E-4;
+                Params_df_0[1] = -5E-4;
+                Params_df_0[2] = 3E-4;
+                Params_dnu_0[0] = 0.005;
+                Params_dnu_0[1] = -0.003;
+                Params_dnu_0[2] = 0.004;
+            }
 
 
 
@@ -173,10 +214,14 @@ namespace Common_Namespace
 
 
 
+            double[] Params_df_0_x0 = new double[3], Params_dnu_0_x0 = new double[3];
+            SimpleOperations.CopyArray(Params_dnu_0_x0, SINSstate.A_x0s * Params_dnu_0);
+            SimpleOperations.CopyArray(Params_df_0_x0, SINSstate.A_x0s * Params_df_0);
 
-            outFile.WriteLine("Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Height= " + SINSstate.Altitude + " SINS_Freq= " + 1.0 / SINSstate.timeStep + " df_0= " + Params_df_0 + " df_s= " + Params_df_s
-                + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement
-                + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString() + " Roll= " + SINSstate.Roll + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString());
+            outFile.WriteLine("Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Height= " + SINSstate.Altitude + " SINS_Freq= " + 1.0 / SINSstate.timeStep + " df_0(E)= "
+                + Params_df_0_x0[0] + " df_0(N)= " + Params_df_0_x0[1] + " df_s= " + Params_df_s + " nu_0= " + Params_dnu_0_x0[0] + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
+                + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString()
+                + " Roll= " + SINSstate.Roll + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString());
 
 
             int t = 0;
@@ -241,8 +286,6 @@ namespace Common_Namespace
                 SimpleOperations.CopyArray(SINSstate.F_z, SimpleOperations.A_odoZ(kappa[0], kappa[2]) * SINSstate.F_z);
                 SimpleOperations.CopyArray(SINSstate.W_z, SimpleOperations.A_odoZ(kappa[0], kappa[2]) * SINSstate.W_z);
 
-                double df_0 = 9.81 * Params_df_0;
-                double dW_0 = Params_dnu_0 * SimpleData.ToRadian / 3600.0; //0.2 grad/hour
 
                 if (Math.Abs(Params_df_s) > 0.1 && Math.Abs(Params_dnu_s) > 0.1)
                 {
@@ -254,88 +297,33 @@ namespace Common_Namespace
                     SINSstate.W_z[2] -= (rnd_6.NextDouble() - 0.5) / Params_dnu_s;
                 }
 
-                if (!addNoisSample)
-                {
-                    SINSstate.F_z[0] += df_0;
-                    SINSstate.F_z[1] += df_0;
-                    SINSstate.F_z[2] += df_0;
+                SINSstate.F_z[0] += Params_df_0[0] * 9.81;
+                SINSstate.F_z[1] += Params_df_0[1] * 9.81;
+                SINSstate.F_z[2] += Params_df_0[2] * 9.81;
 
-                    SINSstate.W_z[0] -= dW_0;
-                    SINSstate.W_z[1] -= dW_0;
-                    SINSstate.W_z[2] -= dW_0;
-                }
-                else
-                {
-                    SINSstate.F_z[0] += 5E-4;
-                    SINSstate.F_z[1] += -5E-4;
-                    SINSstate.F_z[2] += 3E-4;
+                SINSstate.W_z[0] -= Params_dnu_0[0] * SimpleData.ToRadian / 3600.0;
+                SINSstate.W_z[1] -= Params_dnu_0[1] * SimpleData.ToRadian / 3600.0;
+                SINSstate.W_z[2] -= Params_dnu_0[2] * SimpleData.ToRadian / 3600.0;
 
-                    SINSstate.W_z[0] -= 0.005 * SimpleData.ToRadian / 3600.0;
-                    SINSstate.W_z[1] -= -0.003 * SimpleData.ToRadian / 3600.0;
-                    SINSstate.W_z[2] -= 0.004 * SimpleData.ToRadian / 3600.0;
-                }
+
+
 
 
                 //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
                 if (addNoisSample)
                 {
-                    //Можно смотреть на текущую сумму и вызывать NEXT, пока не выпадет значение противоположного знака.
-                    //int indx = rnd_4.Next(noisSampleCountDUS);
-                    //for (int j = 0; ; j++)
-                    //{
-                    //    int t3 = Math.Sign(noisSampleDUS[indx]);
-                    //    if (Math.Sign(noisSampleDUS[indx]) == Math.Sign(sampleCurrSumDUC[0]))
-                    //        indx = rnd_4.Next(noisSampleCountDUS);
-                    //    else
-                    //        break;
-                    //}
-                    //SINSstate.W_z[0] -= noisSampleDUS[indx];
-                    //sampleCurrSumDUC[0] += noisSampleDUS[indx];
-                    //sampleCurrAvgDUC[0] = sampleCurrSumDUC[0] / SINSstate.Count;
+                    SINSstate.W_z[0] -= noisSampleDUS_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
+                    SINSstate.W_z[1] -= noisSampleDUS_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
+                    SINSstate.W_z[2] -= noisSampleDUS_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
 
-                    //indx = rnd_5.Next(noisSampleCountDUS);
-                    //for (int j = 0; ; j++)
-                    //{
-                    //    int t3 = Math.Sign(noisSampleDUS[indx]);
-                    //    if (Math.Sign(noisSampleDUS[indx]) == Math.Sign(sampleCurrSumDUC[1]))
-                    //        indx = rnd_5.Next(noisSampleCountDUS);
-                    //    else
-                    //        break;
-                    //}
-                    //SINSstate.W_z[1] -= noisSampleDUS[indx];
-                    //sampleCurrSumDUC[1] += noisSampleDUS[indx];
-                    //sampleCurrAvgDUC[1] = sampleCurrSumDUC[1] / SINSstate.Count;
-
-                    //indx = rnd_6.Next(noisSampleCountDUS);
-                    //for (int j = 0; ; j++)
-                    //{
-                    //    int t3 = Math.Sign(noisSampleDUS[indx]);
-                    //    if (Math.Sign(noisSampleDUS[indx]) == Math.Sign(sampleCurrSumDUC[2]))
-                    //        indx = rnd_6.Next(noisSampleCountDUS);
-                    //    else
-                    //        break;
-                    //}
-                    //SINSstate.W_z[2] -= noisSampleDUS[indx];
-                    //sampleCurrSumDUC[2] += noisSampleDUS[indx];
-                    //sampleCurrAvgDUC[2] = sampleCurrSumDUC[2] / SINSstate.Count;
-
-
-
-
-                    int t2 = Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS;
-                    if (Convert.ToInt32(SINSstate.Count) >= noisSampleCountDUS)
-                        noisSampleCountDUS = noisSampleCountDUS;
-                    SINSstate.W_z[0] -= noisSampleDUS[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
-                    SINSstate.W_z[1] -= noisSampleDUS[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
-                    SINSstate.W_z[2] -= noisSampleDUS[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
-
-                    int t3 = Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs;
-                    if (Convert.ToInt32(SINSstate.Count) >= noisSampleCountAccs)
-                        noisSampleCountDUS = noisSampleCountDUS;
                     SINSstate.F_z[0] += noisSampleAccs_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
                     SINSstate.F_z[1] += noisSampleAccs_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
                     SINSstate.F_z[2] += noisSampleAccs_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
                 }
+                //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
+
+
+
 
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/

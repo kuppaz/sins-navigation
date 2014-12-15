@@ -84,8 +84,10 @@ namespace SINS_motion_processing_new_data
 
             //---для имитатора---
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-            ParamStart.Imitator_Noise_Vel = 3E-4; 
-            ParamStart.Imitator_Noise_Angl = 3E-6; 
+            //ParamStart.Imitator_Noise_Vel = 3E-4;
+            //ParamStart.Imitator_Noise_Angl = 3E-6
+            ParamStart.Imitator_Noise_Vel = 3E-3;
+            ParamStart.Imitator_Noise_Angl = 3E-5;
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -244,25 +246,29 @@ namespace SINS_motion_processing_new_data
                     l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
 
                 if (SINSstate.flag_AccuracyClass_0_0grph)
-                {
-                    SINSstate.stdF = 0.0; //далее умножается G
-                    SINSstate.stdNu = 0.0; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        SINSstate.stdF[j] = 0.0 * 9.81; //далее умножается G
+                        SINSstate.stdNu = 0.0; //град/час
+                    }
                 if (SINSstate.flag_AccuracyClass_0_02grph)
-                {
-                    SINSstate.stdF = 1E-5 * 9.81; //далее умножается G
-                    SINSstate.stdNu = 0.02; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        SINSstate.stdF[j] = 1E-5 * 9.81; //далее умножается G
+                        SINSstate.stdNu = 0.02; //град/час
+                    }
                 if (SINSstate.flag_AccuracyClass_0_2_grph)
-                {
-                    SINSstate.stdF = 1E-4 * 9.81; //далее умножается G
-                    SINSstate.stdNu = 0.2; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        SINSstate.stdF[j] = 1E-4 * 9.81; //далее умножается G
+                        SINSstate.stdNu = 0.2; //град/час
+                    }
                 if (SINSstate.flag_AccuracyClass_2_0_grph)
-                {
-                    SINSstate.stdF = 1E-3 * 9.81; //далее умножается G
-                    SINSstate.stdNu = 2.0; //град/час
-                }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        SINSstate.stdF[j] = 1E-3 * 9.81; //далее умножается G
+                        SINSstate.stdNu = 2.0; //град/час
+                    }
 
                 if (ParamStart.Experiment_NoiseModelFlag == true)
                 {
@@ -277,7 +283,8 @@ namespace SINS_motion_processing_new_data
                 SINSstate.stdR = ParamStart.Experiment_stdR;
                 SINSstate.stdOdoR = ParamStart.Experiment_stdOdoR = 1.0; // метров
                 SINSstate.stdV = ParamStart.Experiment_stdV;
-                SINSstate.stdAlpha12 = SINSstate.stdF / 9.81; //радиан
+                SINSstate.stdAlpha1 = -SINSstate.stdF[1] / 9.81; //радиан
+                SINSstate.stdAlpha2 = SINSstate.stdF[0] / 9.81; //радиан
                 SINSstate.stdBeta3 = SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude)); //радиан
                 SINSstate.stdScale = ParamStart.Experiment_stdScale;
                 SINSstate.stdKappa1 = ParamStart.Experiment_stdKappa1; //минут
@@ -347,8 +354,9 @@ namespace SINS_motion_processing_new_data
             if (SINSstate.odo_min_increment < 0.0001)
                 SINSstate.odo_min_increment = 0.01;
 
-            SINSstate.stdF = Convert.ToDouble(dataArray[9]) * 9.81;
-            SINSstate.stdNu = Convert.ToDouble(dataArray[13]);
+            SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
+            SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
+            SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
             for (int j = 0; j < 3; j++)
             {
                 if (ParamStart.Imitator_NoiseModelFlag == true)
@@ -358,13 +366,13 @@ namespace SINS_motion_processing_new_data
                 }
                 else
                 {
-                    KalmanVars.Noise_Vel[j] = 1.0 / 3.0 / Convert.ToDouble(dataArray[11]);
-                    KalmanVars.Noise_Angl[j] = 1.0 / 3.0 / Convert.ToDouble(dataArray[15]);
+                    KalmanVars.Noise_Vel[j] = 1.0 / 3.0 / Convert.ToDouble(dataArray[13]);
+                    KalmanVars.Noise_Angl[j] = 1.0 / 3.0 / Convert.ToDouble(dataArray[17]);
                 }
 
             }
 
-            KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / Convert.ToDouble(dataArray[25]);
+            KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / Convert.ToDouble(dataArray[27]);
             KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
             KalmanVars.OdoNoise_STOP = 0.01;
 
@@ -381,9 +389,9 @@ namespace SINS_motion_processing_new_data
             ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
 
             //Углы найденные подбором минимизацией максимальной ошибки по позиции.
-            SINSstate.Heading = Convert.ToDouble(dataArray[27]) + SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude));
-            SINSstate.Roll = Convert.ToDouble(dataArray[29]) + SINSstate.stdF / 9.81;
-            SINSstate.Pitch = Convert.ToDouble(dataArray[31]) + SINSstate.stdF / 9.81;
+            SINSstate.Heading = Convert.ToDouble(dataArray[29]) + SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude));
+            SINSstate.Pitch = Convert.ToDouble(dataArray[33]) + (SINSstate.stdF[1] / 9.81 * Math.Cos(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Sin(SINSstate.Heading));
+            SINSstate.Roll = Convert.ToDouble(dataArray[31]) + (-(-SINSstate.stdF[1] / 9.81 * Math.Sin(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch));
 
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
@@ -401,7 +409,8 @@ namespace SINS_motion_processing_new_data
             SINSstate.stdR = ParamStart.Imitator_stdR; // метров
             SINSstate.stdOdoR = ParamStart.Imitator_stdOdoR; // метров
             SINSstate.stdV = ParamStart.Imitator_stdV; // м/с
-            SINSstate.stdAlpha12 = SINSstate.stdF / 9.81; //радиан
+            SINSstate.stdAlpha1 = -SINSstate.stdF[1] / 9.81; //радиан
+            SINSstate.stdAlpha2 = SINSstate.stdF[0] / 9.81; //радиан
             SINSstate.stdBeta3 = SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude)); //радиан
             SINSstate.stdScale = ParamStart.Imitator_stdScale; //коэффициент в долях
             SINSstate.stdKappa1 = ParamStart.Imitator_stdKappa1; //минут

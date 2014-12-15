@@ -120,7 +120,6 @@ namespace SINSProcessingModes
 
             if (Do_Smoothing) start_i = SINSstate.LastCountForRead - 1;
 
-
             //=========================================================================//
             //=========================================================================//
             for (int i = start_i; i <= SINSstate.LastCountForRead; i++)
