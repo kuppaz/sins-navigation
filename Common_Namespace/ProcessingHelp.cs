@@ -434,8 +434,7 @@ namespace Common_Namespace
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
                                         + " " + ProcHelp.corrected + " " + SINSstate.OdometerData.odometer_left.isReady
                                         + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start + " " + SINSstate.FLG_Stop
-                                        + " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1]
-                                        + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0)
+                                        + " " + Math.Round(((SINSstate.Heading - SINSstateDinamOdo.Heading) * SimpleData.ToDegree), 8) 
                         // + " " + OdoModel.V_increment_odo + " " + (OdoModel.V_increment_SINS + SINSstate.dV_q) + " " + OdoModel.Can
                                         ;
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);

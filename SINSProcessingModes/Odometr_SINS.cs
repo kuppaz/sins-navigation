@@ -71,8 +71,10 @@ namespace SINSProcessingModes
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3] = 1.0;
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 2] = -1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstateDinamOdo.Altitude;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist;
-                //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
+                if (SINSstateDinamOdo.Altitude > 100.0 || SINSstateDinamOdo.Altitude < 100.0)
+                    SINSstateDinamOdo.Altitude = SINSstateDinamOdo.Altitude;
+                //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
 
                 //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 //{
@@ -292,32 +294,32 @@ namespace SINSProcessingModes
             /*-----------МОДИФИЦИРОВАННЫЙ СЛАБОСВЗАННЫЙ ВАРИАНТ----------------*/
             if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
             {
-                KalmanVars.Matrix_A[iMx_r12_odo * iMx + 6] = SINSstate.Vx_0[1];
-                KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 1] = SINSstate.Omega_x[2];
+                KalmanVars.Matrix_A[iMx_r12_odo * iMx + 6] = SINSstateDinamOdo.Vx_0[1];
+                KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 1] = SINSstateDinamOdo.Omega_x[2];
 
-                KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 6] = -SINSstate.Vx_0[0];
-                KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 0] = -SINSstate.Omega_x[2];
+                KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 6] = -SINSstateDinamOdo.Vx_0[0];
+                KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 0] = -SINSstateDinamOdo.Omega_x[2];
 
                 
                 if (SINSstate.flag_iMx_r3_dV3)
                 {
-                    KalmanVars.Matrix_A[iMx_r12_odo * iMx + 0] += SINSstate.Vx_0[2] / SINSstate.R_e;
-                    KalmanVars.Matrix_A[iMx_r12_odo * iMx + 5] += -SINSstate.Vx_0[2];
-                    KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 2] = -SINSstate.Omega_x[1];
+                    KalmanVars.Matrix_A[iMx_r12_odo * iMx + 0] += SINSstateDinamOdo.Vx_0[2] / SINSstateDinamOdo.R_e;
+                    KalmanVars.Matrix_A[iMx_r12_odo * iMx + 5] += -SINSstateDinamOdo.Vx_0[2];
+                    KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 2] = -SINSstateDinamOdo.Omega_x[1];
 
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 1] += SINSstate.Vx_0[2] / SINSstate.R_n;
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 4] += SINSstate.Vx_0[2];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 2] = SINSstate.Omega_x[0];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 1] += SINSstateDinamOdo.Vx_0[2] / SINSstateDinamOdo.R_n;
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 4] += SINSstateDinamOdo.Vx_0[2];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 2] = SINSstateDinamOdo.Omega_x[0];
                 }
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 0] = -SINSstate.Omega_x[1];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 1] = SINSstate.Omega_x[0];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate.Vx_0[1];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate.Vx_0[0];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 0] = SINSstate.Omega_x[1];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 1] = -SINSstate.Omega_x[0];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 0] = -SINSstateDinamOdo.Vx_0[0] / SINSstateDinamOdo.R_e;
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 1] = -SINSstateDinamOdo.Vx_0[1] / SINSstateDinamOdo.R_n;
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstateDinamOdo.Vx_0[1];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstateDinamOdo.Vx_0[0];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 0] = SINSstateDinamOdo.Omega_x[1];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 1] = -SINSstateDinamOdo.Omega_x[0];
                 }
             }
             /*-----------СЛАБОСВЗАННЫЙ ВАРИАНТ----------------*/

@@ -196,6 +196,7 @@ namespace Common_Namespace
         public double Imitator_stdKappa1;
         public double Imitator_stdKappa3;
         public bool Imitator_NoiseModelFlag;
+        public double Imitator_GPS_IsReadyDistance;
         public double Imitator_Noise_OdoScale;
         public double Imitator_Noise_OdoKappa;
         public double Imitator_Noise_Pos;

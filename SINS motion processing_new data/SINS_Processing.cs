@@ -85,9 +85,12 @@ namespace SINS_motion_processing_new_data
             //---для имитатора---
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
             //ParamStart.Imitator_Noise_Vel = 3E-4;
-            //ParamStart.Imitator_Noise_Angl = 3E-6
+            //ParamStart.Imitator_Noise_Angl = 3E-6; 
+
             ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
+
+            ParamStart.Imitator_GPS_IsReadyDistance = 30000.0;
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -98,9 +101,9 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdR = 1.1;
             ParamStart.Imitator_stdOdoR = 1.1; // метров
             ParamStart.Imitator_stdV = 0.1;
-            ParamStart.Imitator_stdScale = 0.01;
-            ParamStart.Imitator_stdKappa1 = 20.0; //минут
-            ParamStart.Imitator_stdKappa3 = 20.0; //минут
+            ParamStart.Imitator_stdScale = 0.001;
+            ParamStart.Imitator_stdKappa1 = 2.0; //минут
+            ParamStart.Imitator_stdKappa3 = 2.0; //минут
 
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
@@ -350,7 +353,7 @@ namespace SINS_motion_processing_new_data
             dataArray = ProcHelp.datastring.Split(' ');
 
             SINSstate.timeStep = SINSstate.Freq = 1.0 / Convert.ToDouble(dataArray[7]);
-            SINSstate.odo_min_increment = Convert.ToDouble(dataArray[23]) / 100.0;
+            SINSstate.odo_min_increment = Convert.ToDouble(dataArray[25]) / 100.0;
             if (SINSstate.odo_min_increment < 0.0001)
                 SINSstate.odo_min_increment = 0.01;
 
