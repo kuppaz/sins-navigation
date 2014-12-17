@@ -120,6 +120,7 @@ namespace SINSProcessingModes
 
             if (Do_Smoothing) start_i = SINSstate.LastCountForRead - 1;
 
+
             //=========================================================================//
             //=========================================================================//
             for (int i = start_i; i <= SINSstate.LastCountForRead; i++)
@@ -344,13 +345,13 @@ namespace SINSProcessingModes
                     //===КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС===//
                     else if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
-                        if (SINSstate.flag_UsingOdoPosition == true && SINSstate.add_velocity_to_position == false && SINSstate.flag_KNS == false)
+                        if (SINSstate.flag_UsingOdoPosition == true && SINSstate.flag_KNS == false)
                         {
                             //---Если корректировать по измерениям, полученным в прямом проходе, то сглаженное решение будет стремиться именно к последнему---
                             Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstateDinamOdo, ProcHelp);
                         }
 
-                        if (SINSstate.add_velocity_to_position == true && SINSstate.flag_KNS == false)
+                        if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_KNS == false)
                             Odometr_SINS.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
                     }
 
@@ -369,7 +370,8 @@ namespace SINSProcessingModes
                 //--------------------------------------------------------------------------------
 
 
-
+                //if (SINSstate.OdoSpeed_s[1] > 10.0)
+                //    SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
 
                 //====Вывод данных для телеметрического имитатора====
                 if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23" && SINSstate.Global_file != "Saratov_run_2014_07_23_middle_interval_GPS")
@@ -764,7 +766,10 @@ namespace SINSProcessingModes
             {
                 if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                 {
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                     SINSstate.flag_UsingCorrection = true;
                 }
             }

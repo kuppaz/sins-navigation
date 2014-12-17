@@ -236,7 +236,7 @@ namespace Common_Namespace
 
 
                 /*----------------------------------OUTPUT AUTONOMOUS------------------------------------------------------*/
-                if (i % SINSstate.FreqOutput == 0 || SINSstate.flag_Smoothing)
+                if (i % SINSstate.FreqOutput == 0)
                 {
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.OdoTimeStepCount + " " + SINSstate.OdometerVector[1]
                          + " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
@@ -263,6 +263,7 @@ namespace Common_Namespace
                 /*------------------------------------FORMING ERRORS-------------------------------------------------*/
 
                 //---расчет с учетом инкремента---//
+                double odometer_left_ValueTrue = SINSstate.OdometerData.odometer_left.Value;
                 SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value * Params_OdoScaleErr;
                 if (Params_OdoIncrement > 0.001)
                 {
@@ -305,6 +306,20 @@ namespace Common_Namespace
                 SINSstate.W_z[1] -= Params_dnu_0[1] * SimpleData.ToRadian / 3600.0;
                 SINSstate.W_z[2] -= Params_dnu_0[2] * SimpleData.ToRadian / 3600.0;
 
+
+
+
+                SINSstate.GPS_Data.gps_Latitude.isReady = 2;
+                SINSstate.GPS_Data.gps_Longitude.isReady = 2;
+                SINSstate.GPS_Data.gps_Altitude.isReady = 2;
+
+                SimpleOperations.CopyArray(SINSstate.Vz, SINSstate.A_sx0 * SINSstate.Vx_0);
+                if (odometer_left_ValueTrue % ParamStart.Imitator_GPS_IsReadyDistance < SINSstate.Vz[1] * SINSstate.timeStep + 0.01 && odometer_left_ValueTrue > 1.0)
+                {
+                    SINSstate.GPS_Data.gps_Latitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Longitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Altitude.isReady = 1;
+                }
 
 
 

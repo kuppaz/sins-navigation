@@ -112,7 +112,7 @@ namespace MovingImitator
             int AlignmentCount = 10000;
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
-            //while (CurrentTime < 2020.0)
+            //while (CurrentTime < 520.0)
             while (CurTimeWithAlign < 26000.0)
             {
                 SINSstate.Count++;
@@ -269,12 +269,12 @@ namespace MovingImitator
                 SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
                 SINSstate.GPS_Data.gps_Altitude.isReady = 2;
 
-                if (odometer_left_ValueTrue % 60000.0 < SINSstate.Vz[1] * dT + 0.01 && odometer_left_ValueTrue > 1.0)
-                {
-                    SINSstate.GPS_Data.gps_Latitude.isReady = 1;
-                    SINSstate.GPS_Data.gps_Longitude.isReady = 1;
-                    SINSstate.GPS_Data.gps_Altitude.isReady = 1;
-                }
+                //if (odometer_left_ValueTrue % 30000.0 < SINSstate.Vz[1] * dT + 0.01 && odometer_left_ValueTrue > 1.0)
+                //{
+                //    SINSstate.GPS_Data.gps_Latitude.isReady = 1;
+                //    SINSstate.GPS_Data.gps_Longitude.isReady = 1;
+                //    SINSstate.GPS_Data.gps_Altitude.isReady = 1;
+                //}
 
 
                 //Относительные угловые скорости

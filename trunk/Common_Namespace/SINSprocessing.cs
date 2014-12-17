@@ -812,9 +812,12 @@ namespace Common_Namespace
 
             //--------------------------------------------------------------------------------------
 
-            //double GG = SimpleData.Gravity_Normal * (1 + 0.005317099 * Math.Sin(SINSstate.Latitude) * Math.Sin(SINSstate.Latitude)) * SimpleData.A * SimpleData.A / (SimpleData.A + SINSstate.Altitude) / (SimpleData.A + SINSstate.Altitude);
 
-            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS))
+            //double GG = SimpleData.Gravity_Normal * (1 + 0.005317099 * Math.Sin(SINSstate.Latitude) * Math.Sin(SINSstate.Latitude)) * SimpleData.A * SimpleData.A / (SimpleData.A + SINSstate.Altitude) / (SimpleData.A + SINSstate.Altitude);
+            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS) 
+                //&& !(SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode)
+                //&& SINSstate.OdoSpeed_s[1] > 1.0
+                )
             {
                 dVh = SINSstate.F_x[2] - SINSstate.g + (Vx_0[0] + Vx_0_prev[0]) / 2.0 * (2 * u[1] + SINSstate.Omega_x[1]) - (Vx_0[1] + Vx_0_prev[1]) / 2.0 * (2 * u[0] + SINSstate.Omega_x[0]);
                 Vx_0[2] += dVh * SINSstate.timeStep;
@@ -825,16 +828,12 @@ namespace Common_Namespace
 
 
 
-
-
             //Сюда заходим если установлен флажок при автономном счислении ИЛИ объект есть чисто одометрическое решение.
             SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, D_x_z * SINSstate.OdoSpeed_s);
             if (SINSstate.flag_OdoSINSWeakConnect_MODIF && (SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode))
             {
                 SimpleOperations.CopyArray(Vx_0, SINSstate.OdoSpeed_x0);
             }
-
-
 
 
 

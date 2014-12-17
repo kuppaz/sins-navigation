@@ -393,7 +393,7 @@
             this.Output_Freq.Name = "Output_Freq";
             this.Output_Freq.Size = new System.Drawing.Size(28, 20);
             this.Output_Freq.TabIndex = 28;
-            this.Output_Freq.Text = "10";
+            this.Output_Freq.Text = "100";
             this.Output_Freq.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label1
