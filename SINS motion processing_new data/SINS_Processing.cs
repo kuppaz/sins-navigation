@@ -90,8 +90,6 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 30000.0;
-
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
             ParamStart.Imitator_Noise_Pos = 0.75;
@@ -101,10 +99,11 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdR = 1.1;
             ParamStart.Imitator_stdOdoR = 1.1; // метров
             ParamStart.Imitator_stdV = 0.1;
-            ParamStart.Imitator_stdScale = 0.001;
-            ParamStart.Imitator_stdKappa1 = 2.0; //минут
-            ParamStart.Imitator_stdKappa3 = 2.0; //минут
+            ParamStart.Imitator_stdScale = 0.01;
+            ParamStart.Imitator_stdKappa1 = 20.0; //минут
+            ParamStart.Imitator_stdKappa3 = 20.0; //минут
 
+            ParamStart.Imitator_GPS_IsReadyDistance = 60000.0;
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах

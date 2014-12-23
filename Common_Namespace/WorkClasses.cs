@@ -110,6 +110,7 @@ namespace Common_Namespace
         public double Dist_by_SINS = 0.0;
         public double[] AlignAlgebraDrifts = new double[3];
         public double GyroHeading, Heading, Roll, Pitch, Heading_prev, Roll_prev, Pitch_prev, Azimth, LongSNS, LatSNS, AltSNS, g, g_0, F_mod, R_e, R_n;
+        public double HeadingImitator;
         public double CourseHeading, CoursePitch, beta_c, gamma_c, alpha_c;
         public double Latitude, Longitude, Altitude, Latitude_Start, Longitude_Start, Altitude_Start, Latitude_Point, Altitude_prev, Latitude_prev, Longitude_prev;
         public double Latitude_Corr, Longitude_Corr, Altitude_Corr;

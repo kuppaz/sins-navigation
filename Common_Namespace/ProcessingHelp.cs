@@ -199,16 +199,9 @@ namespace Common_Namespace
 
                 }
 
-                if (dataArray2.Length > 22 && SINSstate.Do_Smoothing == true)
+                if (SINSstate.Global_file.ToLower().Contains("imitator") && dataArray2.Length >= 22)
                 {
-                    SINSstate_OdoMod.Latitude = Convert.ToDouble(dataArray2[22]);
-                    SINSstate_OdoMod.Longitude = Convert.ToDouble(dataArray2[23]);
-
-                    if (SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
-                    {
-                        SINSstate_OdoMod.Latitude = Convert.ToDouble(dataArray2[23]);
-                        SINSstate_OdoMod.Longitude = Convert.ToDouble(dataArray2[24]);
-                    }
+                    SINSstate.HeadingImitator = Convert.ToDouble(dataArray2[22]);
                 }
 
             }
@@ -430,11 +423,14 @@ namespace Common_Namespace
                                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2)
                                         + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
                                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
-                                        + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8) 
+                                        + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
-                                        + " " + ProcHelp.corrected + " " + SINSstate.OdometerData.odometer_left.isReady
-                                        + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start + " " + SINSstate.FLG_Stop
-                                        + " " + Math.Round(((SINSstate.Heading - SINSstateDinamOdo.Heading) * SimpleData.ToDegree), 8) 
+                                        + " " + ProcHelp.corrected 
+                                        //+ " " + SINSstate.OdometerData.odometer_left.isReady
+                                        + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start 
+                                        //+ " " + SINSstate.FLG_Stop
+                                        + " " + Math.Round(((SINSstate.Heading - SINSstateDinamOdo.Heading) * SimpleData.ToDegree), 8)
+                                        + " " + Math.Round((SINSstate.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8);
                         // + " " + OdoModel.V_increment_odo + " " + (OdoModel.V_increment_SINS + SINSstate.dV_q) + " " + OdoModel.Can
                                         ;
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);

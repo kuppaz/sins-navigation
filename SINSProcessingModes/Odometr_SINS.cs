@@ -23,22 +23,19 @@ namespace SINSProcessingModes
             double[] tempVect = new double[3];
 
             //---Разбиение на три составляющие---
-
-            //KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = SimpleData.A / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-            //KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 1] = SimpleData.A / SINSstate.R_n;
-            //KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 0] = -SimpleData.A / SINSstateDinamOdo.R_e / Math.Cos(SINSstateDinamOdo.Latitude);
-            //KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_r12_odo + 1] = -SimpleData.A / SINSstateDinamOdo.R_n;
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = 1.0;
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 1] = 1.0;
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 0] = -1.0;
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_r12_odo + 1] = -1.0;
 
             //Формирование измерений по географическим координатам
-            //KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Longitude * SimpleData.A - SINSstateDinamOdo.Longitude * SimpleData.A;
-            //KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = SINSstate.Latitude * SimpleData.A - SINSstateDinamOdo.Latitude * SimpleData.A;
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstateDinamOdo.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstateDinamOdo.Latitude) * SINSstate.R_n;
 
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist;
+
+            KalmanVars.cnt_measures += 2;
 
 
 
@@ -58,41 +55,39 @@ namespace SINSProcessingModes
             //}
 
 
-
-
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist;
-
-            KalmanVars.cnt_measures += 2;
-
-
+            //---ДОПОЛНИТЕЛЬНОЕ измерение по вертикальной скорости---
             if (SINSstate.flag_iMx_r3_dV3)
             {
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3] = 1.0;
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 2] = -1.0;
-                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstateDinamOdo.Altitude;
-                if (SINSstateDinamOdo.Altitude > 100.0 || SINSstateDinamOdo.Altitude < 100.0)
-                    SINSstateDinamOdo.Altitude = SINSstateDinamOdo.Altitude;
-                //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
+                if (SINSstate.add_velocity_to_position)
+                {
+                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Vx_0[2] - SINSstateDinamOdo.Vx_0[2];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3 + 1] = 1.0;
+                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_V;
 
-                //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
-                //{
-                //    KalmanVars.Measure[(KalmanVars.cnt_measures + 2)] += deltaOdoVSsins_x[2];
-                //}
+                    if (SINSstate.flag_iMx_kappa_13_ds)
+                    {
+                        KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstate.OdoSpeed_s[1] * SINSstateDinamOdo.A_x0s[2, 2];
+                        KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstate.OdoSpeed_s[1] * SINSstateDinamOdo.A_x0s[2, 0];
+                        KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_s[1] * SINSstateDinamOdo.A_x0s[2, 1];
+                    }
 
-                KalmanVars.cnt_measures += 1;
-            }
+                    KalmanVars.cnt_measures += 1;
+                }
+                else if (!SINSstate.add_velocity_to_position)
+                {
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3] = 1.0;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 2] = -1.0;
+                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstateDinamOdo.Altitude;
+                    //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist;
+                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
 
-            //---ДОПОЛНИТЕЛЬНОЕ измерение по вертикальной скорости---
-            if (SINSstate.flag_iMx_r3_dV3 && SINSstate.add_velocity_to_position)
-            {
-                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Vx_0[2] - SINSstateDinamOdo.Vx_0[2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3 + 1] = 1.0;
+                    //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                    //{
+                    //    KalmanVars.Measure[(KalmanVars.cnt_measures + 2)] += deltaOdoVSsins_x[2];
+                    //}
 
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_V;
-
-                KalmanVars.cnt_measures += 1;
+                    KalmanVars.cnt_measures += 1;
+                }
             }
 
 
