@@ -16,16 +16,19 @@ namespace SINSProcessingModes
 
             double[,] distance_GK_Sarat = new double[5, 46];
 
-            StreamWriter Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnFB.txt");
-            StreamWriter Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S_Errs.txt");
-            StreamWriter Nav_Autonomous = new StreamWriter(SimpleData.PathOutputString + "S_Auto.txt");
-            StreamWriter Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnEst.txt");
-            StreamWriter Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S_ErrVct.txt");
-            StreamWriter ForHelp = new StreamWriter(SimpleData.PathOutputString + "ForHelp.txt");
-            StreamWriter STD_data = new StreamWriter(SimpleData.PathOutputString + "S_STD.txt");
-            StreamWriter KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFileOut.kml");
+            StreamWriter STD_data = new StreamWriter(SimpleData.PathOutputString + "Debaging//S_STD.txt");
 
-            StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Speed_Angles.txt");
+            StreamWriter Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnFeedBack.txt");
+            StreamWriter Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnEstimate.txt");
+            StreamWriter Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S_Errors.txt");
+            StreamWriter Nav_Autonomous = new StreamWriter(SimpleData.PathOutputString + "S_Autonomous.txt");
+            StreamWriter Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S_ErrVect.txt");
+            StreamWriter Nav_Smoothed = new StreamWriter(SimpleData.PathOutputString + "S_smoothed_SlnFeedBack.txt");
+            StreamWriter ForHelp = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp.txt");
+            StreamWriter KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Forward.kml");
+            StreamWriter KMLFileOutSmthd = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Smoothed.kml");
+
+            StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Debaging//Speed_Angles.txt");
             StreamWriter DinamicOdometer = new StreamWriter(SimpleData.PathOutputString + "DinamicOdometer.txt");
 
             Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");

@@ -475,9 +475,9 @@
             this.add_velocity_to_position.AutoSize = true;
             this.add_velocity_to_position.Location = new System.Drawing.Point(35, 47);
             this.add_velocity_to_position.Name = "add_velocity_to_position";
-            this.add_velocity_to_position.Size = new System.Drawing.Size(136, 17);
+            this.add_velocity_to_position.Size = new System.Drawing.Size(89, 17);
             this.add_velocity_to_position.TabIndex = 1;
-            this.add_velocity_to_position.Text = "Add Velocity Correction";
+            this.add_velocity_to_position.Text = "z = r_3 -> V_r";
             this.add_velocity_to_position.UseVisualStyleBackColor = true;
             // 
             // Use_Odo_Distance
