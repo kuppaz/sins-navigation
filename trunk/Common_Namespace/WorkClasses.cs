@@ -163,6 +163,7 @@ namespace Common_Namespace
         public double[,] MarkersInputData = new double[1000, 7];
         public double CountPrev;
         public bool flag_AccuracyClass_0_0grph;
+        public double Imitator_GPS_PositionError;
 
         public static SINS_State DeepCopy(SINS_State other)
         {
@@ -210,6 +211,7 @@ namespace Common_Namespace
         public int Modeling_Params_OdoFrequency;
         public double Modeling_Params_df_s;
         public double Modeling_Params_dnu_s;
+        public double Imitator_GPS_PositionError;
     }
 
     public class Kalman_Vars

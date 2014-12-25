@@ -307,11 +307,14 @@ namespace Common_Namespace
                 SINSstate.W_z[2] -= Params_dnu_0[2] * SimpleData.ToRadian / 3600.0;
 
 
-
+                
 
                 SINSstate.GPS_Data.gps_Latitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Longitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Altitude.isReady = 2;
+                SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.Latitude;
+                SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.Longitude;
+                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
 
                 SimpleOperations.CopyArray(SINSstate.Vz, SINSstate.A_sx0 * SINSstate.Vx_0);
                 if (odometer_left_ValueTrue % ParamStart.Imitator_GPS_IsReadyDistance < SINSstate.Vz[1] * SINSstate.timeStep + 0.01 && odometer_left_ValueTrue > 1.0)
@@ -319,8 +322,10 @@ namespace Common_Namespace
                     SINSstate.GPS_Data.gps_Latitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Longitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Altitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Latitude.Value +=  (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_n;
+                    SINSstate.GPS_Data.gps_Longitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+                    SINSstate.GPS_Data.gps_Altitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError;
                 }
-
 
 
 
@@ -344,8 +349,8 @@ namespace Common_Namespace
                 /*------------------------------------OUTPUT-------------------------------------------------*/
 
                 outFile.WriteLine(SINSstate.Count + " " + SINSstate.F_z[1] + " " + SINSstate.F_z[2] + " " + SINSstate.F_z[0] + " " + SINSstate.W_z[1] + " " + SINSstate.W_z[2] + " " + SINSstate.W_z[0]
-                     + " " + SINSstate.Latitude + " " + SINSstate.GPS_Data.gps_Latitude.isReady.ToString() + " " + SINSstate.Longitude.ToString()
-                     + " " + SINSstate.GPS_Data.gps_Longitude.isReady.ToString() + " " + SINSstate.Altitude.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.isReady.ToString()
+                     + " " + SINSstate.GPS_Data.gps_Latitude.Value.ToString() + " " + SINSstate.GPS_Data.gps_Latitude.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Longitude.Value.ToString()
+                     + " " + SINSstate.GPS_Data.gps_Longitude.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.Value.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.isReady.ToString()
                      + " " + SINSstate.Vx_0[1].ToString() + " " + SINSstate.GPS_Data.gps_Vn.isReady.ToString() + " " + SINSstate.Vx_0[0].ToString() + " " + SINSstate.GPS_Data.gps_Ve.isReady.ToString()
                      + " " + SINSstate.FLG_Stop.ToString() 
                      + " " + OdometerData_odometer_left_Value.ToString() + " " + SINSstate.OdometerData.odometer_left.isReady.ToString()

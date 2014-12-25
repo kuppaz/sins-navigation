@@ -104,6 +104,7 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdKappa3 = 20.0; //минут
 
             ParamStart.Imitator_GPS_IsReadyDistance = 60000.0;
+            ParamStart.Imitator_GPS_PositionError = 5.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах
@@ -114,6 +115,7 @@ namespace SINS_motion_processing_new_data
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
+            
 
 
 
@@ -195,6 +197,14 @@ namespace SINS_motion_processing_new_data
                     SINSstate.LastCountForRead = LastCountForRead - 10;
                 }
             }
+
+
+
+            if (SINSstate.Global_file.ToLower().Contains("imitator"))
+                SINSstate.Imitator_GPS_PositionError = ParamStart.Imitator_GPS_PositionError;
+            else
+                SINSstate.Imitator_GPS_PositionError = 2.0;
+
 
 
             Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, Params, ProcHelp);     //---Инициализация начальных условий при отсутствии выставки---//
