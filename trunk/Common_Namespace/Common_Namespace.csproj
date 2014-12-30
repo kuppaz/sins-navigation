@@ -46,7 +46,6 @@
     <Compile Include="Alignment.cs" />
     <Compile Include="CorrectionModel.cs" />
     <Compile Include="ImitatorFirstProcessing.cs" />
-    <Compile Include="ModelsOfOdoCorrection.cs" />
     <Compile Include="ProcessingHelp.cs" />
     <Compile Include="XmlPars.cs" />
     <Compile Include="Parameters.cs" />

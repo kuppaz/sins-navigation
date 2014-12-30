@@ -10,22 +10,15 @@ namespace Common_Namespace
         public static double dVh_global = 0.0;
         public static int Can = 0;
 
-        public static void Redifinition_OdoCounts(SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, ParamsForModel OdoModel)
+        public static void Redifinition_OdoCounts(SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod)
         {
             if (SINSstate.OdometerData.odometer_left.isReady == 1)
             {
-                SINSstate.OdometerLeftPrev_2 = SINSstate.OdometerData.odometer_left.Value;
-                SINSstate.OdometerRightPrev_2 = SINSstate.OdometerData.odometer_right.Value;
-                SINSstate.OdoSpeedPrev_2 = OdoModel.V_odo;
-                SINSstate.OdoTimeStepCount_2 = 0;
-
-                
-
                 if (SINSstate.flag_UsingCorrection == true || SINSstate.flag_Odometr_SINS_case == true || SINSstate.flag_UsingOdoPosition == true || SINSstate.flag_UseOnlyStops == true || SINSstate.flag_slipping == true)
                 {
                     SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
                     SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
-                    SINSstate.OdoSpeedPrev = OdoModel.V_odo;
+                    SINSstate.OdoSpeedPrev = SINSstate.OdoSpeed_s[1];
                     SINSstate.OdoTimeStepCount = 0;
 
                     SINSstate.odotime_prev = SINSstate.Time;
@@ -35,9 +28,6 @@ namespace Common_Namespace
                     SINSstate.Altitude_prev = SINSstate.Altitude; SINSstate2.Altitude_prev = SINSstate2.Altitude;
                 }
             }
-
-            if (SINSstate.flag_FeedbackExist == false) 
-                SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0_prev, SINSstate_OdoMod.Vx_0);
         }
 
 
@@ -68,7 +58,7 @@ namespace Common_Namespace
             SINSstate.Omega_x[2] = Math.Tan(SINSstate.Latitude) * SINSstate.Omega_x[1];
 
             SINSstate.g = 9.78049 * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014;
-            SINSstate.g -= 2 * 0.000001538 *SINSstate.Altitude;
+            SINSstate.g -= 2 * 0.000001538 * SINSstate.Altitude;
         }
 
 
@@ -92,7 +82,7 @@ namespace Common_Namespace
         }
 
 
-        public static void CalcStateErrors(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate_OdoMod, SINS_State SINSstateDinamOdo)
+        public static void CalcStateErrors(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
             SINSstate.DeltaLatitude = ErrorVector[1] / SINSstate.R_n;
             SINSstate.DeltaLongitude = ErrorVector[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
@@ -128,7 +118,7 @@ namespace Common_Namespace
                     Matrix matr_1 = new Matrix(3, 3), matr_2 = new Matrix(3, 3);
                     double[] vect_1 = new double[3], vect_2 = new double[3], vect_3 = new double[3], vect_result = new double[3];
 
-                    for (int u = 0; u < 3; u++) 
+                    for (int u = 0; u < 3; u++)
                         d_2[u] = SINSstate.A_x0s[u, 1];
 
                     vect_1[0] = ErrorVector[4]; vect_1[1] = ErrorVector[5]; vect_1[2] = ErrorVector[6] + ErrorVector[0] / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
@@ -157,26 +147,20 @@ namespace Common_Namespace
 
 
 
-             //---Случай Одометр+БИНС. Обратная связть.---
+            //---Случай Одометр+БИНС. Обратная связть.---
             if (SINSstate.flag_Odometr_SINS_case == true)
             {
-                SINSstateDinamOdo.DeltaLatitude = ErrorVector[SINSstate.iMx_r12_odo + 1] / SINSstateDinamOdo.R_n;
-                SINSstateDinamOdo.DeltaLongitude = ErrorVector[SINSstate.iMx_r12_odo + 0] / SINSstateDinamOdo.R_e / Math.Cos(SINSstateDinamOdo.Latitude);
+                SINSstate_OdoMod.DeltaLatitude = ErrorVector[SINSstate.iMx_r12_odo + 1] / SINSstate_OdoMod.R_n;
+                SINSstate_OdoMod.DeltaLongitude = ErrorVector[SINSstate.iMx_r12_odo + 0] / SINSstate_OdoMod.R_e / Math.Cos(SINSstate_OdoMod.Latitude);
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
-                {
-                    SINSstateDinamOdo.DeltaAltitude = ErrorVector[SINSstate.iMx_r12_odo + 2];
-                }
-
-                SINSstateDinamOdo.DeltaRoll = -(ErrorVector[4] * Math.Sin(SINSstateDinamOdo.Heading) + ErrorVector[5] * Math.Cos(SINSstateDinamOdo.Heading)) / Math.Cos(SINSstateDinamOdo.Pitch);
-                SINSstateDinamOdo.DeltaPitch = -ErrorVector[4] * Math.Cos(SINSstateDinamOdo.Heading) + ErrorVector[5] * Math.Sin(SINSstateDinamOdo.Heading);
-                SINSstateDinamOdo.DeltaHeading = ErrorVector[6] + SINSstateDinamOdo.DeltaLongitude * Math.Sin(SINSstateDinamOdo.Latitude) + SINSstateDinamOdo.DeltaRoll * Math.Sin(SINSstateDinamOdo.Pitch);
-            }       
+                    SINSstate_OdoMod.DeltaAltitude = ErrorVector[SINSstate.iMx_r12_odo + 2];
+            }
         }
 
 
 
-        public static void StateCorrection(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, SINS_State SINSstateDinamOdo)
+        public static void StateCorrection(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod)
         {
             SINSstate2.Latitude = SINSstate.Latitude - SINSstate.DeltaLatitude;
             SINSstate2.Longitude = SINSstate.Longitude - SINSstate.DeltaLongitude;
@@ -194,6 +178,7 @@ namespace Common_Namespace
             SINSstate2.Roll = SINSstate.Roll - SINSstate.DeltaRoll;
             SINSstate2.Pitch = SINSstate.Pitch - SINSstate.DeltaPitch;
             SINSstate2.Heading = SINSstate.Heading - SINSstate.DeltaHeading;
+
             SINSprocessing.ApplyCompensatedErrorsToSolution(SINSstate2);
 
 
@@ -213,39 +198,17 @@ namespace Common_Namespace
             //---Случай Одометр+БИНС. Обратная связть.---
             if (SINSstate.flag_Odometr_SINS_case == true)
             {
-                SINSstateDinamOdo.Latitude_Corr = SINSstateDinamOdo.Latitude - SINSstateDinamOdo.DeltaLatitude;
-                SINSstateDinamOdo.Longitude_Corr = SINSstateDinamOdo.Longitude - SINSstateDinamOdo.DeltaLongitude;
+                SINSstate_OdoMod.Latitude_Corr = SINSstate_OdoMod.Latitude - SINSstate_OdoMod.DeltaLatitude;
+                SINSstate_OdoMod.Longitude_Corr = SINSstate_OdoMod.Longitude - SINSstate_OdoMod.DeltaLongitude;
                 if (SINSstate.flag_Using_iMx_r_odo_3)
-                    SINSstateDinamOdo.Altitude_Corr = SINSstateDinamOdo.Altitude - SINSstateDinamOdo.DeltaAltitude;
+                    SINSstate_OdoMod.Altitude_Corr = SINSstate_OdoMod.Altitude - SINSstate_OdoMod.DeltaAltitude;
 
                 if (SINSstate.flag_FeedbackExist == true)
                 {
-                    SINSstateDinamOdo.Latitude = SINSstateDinamOdo.Latitude - SINSstateDinamOdo.DeltaLatitude;
-                    SINSstateDinamOdo.Longitude = SINSstateDinamOdo.Longitude - SINSstateDinamOdo.DeltaLongitude;
+                    SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude - SINSstate_OdoMod.DeltaLatitude;
+                    SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude - SINSstate_OdoMod.DeltaLongitude;
                     if (SINSstate.flag_Using_iMx_r_odo_3)
-                        SINSstateDinamOdo.Altitude = SINSstateDinamOdo.Altitude - SINSstateDinamOdo.DeltaAltitude;
-
-                    //---Обратная связь для СЛАБОСВЯЗНОГО случая---
-                    if (SINSstate.flag_OdoSINSWeakConnect)
-                    {
-                        SINSstateDinamOdo.Vx_0[0] = SINSstateDinamOdo.Vx_0[0] - SINSstate.DeltaV_1;
-                        SINSstateDinamOdo.Vx_0[1] = SINSstateDinamOdo.Vx_0[1] - SINSstate.DeltaV_2;
-                        if (SINSstate.flag_Using_iMx_r_odo_3)
-                            SINSstateDinamOdo.Vx_0[2] = SINSstateDinamOdo.Vx_0[2] - SINSstate.DeltaV_3;
-
-                        SINSstateDinamOdo.Roll -= SINSstate.DeltaRoll;
-                        SINSstateDinamOdo.Pitch -= SINSstate.DeltaPitch;
-                        SINSstateDinamOdo.Heading -= SINSstate.DeltaHeading;
-                    }
-                    //---Обратная связь для МОДИФИЦИРОВАННОГО случая---
-                    if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
-                    {
-                        SINSstateDinamOdo.Roll -= SINSstateDinamOdo.DeltaRoll;
-                        SINSstateDinamOdo.Pitch -= SINSstateDinamOdo.DeltaPitch;
-                        SINSstateDinamOdo.Heading -= SINSstateDinamOdo.DeltaHeading;
-                    }
-
-                    SINSprocessing.ApplyCompensatedErrorsToSolution(SINSstateDinamOdo);
+                        SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude - SINSstate_OdoMod.DeltaAltitude;
                 }
             }
             else if (SINSstate.flag_FeedbackExist == true)
@@ -253,6 +216,9 @@ namespace Common_Namespace
                 SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude - SINSstate_OdoMod.DeltaLatitude;
                 SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude - SINSstate_OdoMod.DeltaLongitude;
             }
+
+            SINSstate_OdoMod.A_x0n = A_x0n(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Longitude);
+            SINSstate_OdoMod.A_nx0 = SINSstate_OdoMod.A_x0n.Transpose();
         }
 
 
@@ -689,7 +655,7 @@ namespace Common_Namespace
 
             if (SINSstate.flag_FeedbackExist && SINSstate.flag_DoFeedBackDeltaFW)
             {
-                for (int i=0; i < 3; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     fz[i] -= SINSstate.ComulativeInstrumental_Fz[i];
                     Wz[i] -= SINSstate.ComulativeInstrumental_Wz[i];
@@ -724,7 +690,6 @@ namespace Common_Namespace
             //-------------ИНТЕГРИРОВАНИЕ МАТРИЦЫ AT_Z_XI И ПЕРВОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z---------
             if (true)
             {
-
                 if (SINSstate.flag_UsingAvegering == true)
                 {
                     for (int i = 0; i < 3; i++)
@@ -814,7 +779,7 @@ namespace Common_Namespace
 
 
             //double GG = SimpleData.Gravity_Normal * (1 + 0.005317099 * Math.Sin(SINSstate.Latitude) * Math.Sin(SINSstate.Latitude)) * SimpleData.A * SimpleData.A / (SimpleData.A + SINSstate.Altitude) / (SimpleData.A + SINSstate.Altitude);
-            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS) 
+            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS)
                 //&& !(SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode)
                 //&& SINSstate.OdoSpeed_s[1] > 1.0
                 )
@@ -828,12 +793,28 @@ namespace Common_Namespace
 
 
 
+
+
+
             //Сюда заходим если установлен флажок при автономном счислении ИЛИ объект есть чисто одометрическое решение.
             SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, D_x_z * SINSstate.OdoSpeed_s);
-            if (SINSstate.flag_OdoSINSWeakConnect_MODIF && (SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode))
+            SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_s, SINSstate.OdoSpeed_s);
+
+            if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
             {
-                SimpleOperations.CopyArray(Vx_0, SINSstate.OdoSpeed_x0);
+                CopyMatrix(W_x_xi, SINSstate_OdoMod.A_x0n * SINSstate.A_nxi);
+                CopyMatrix(SINSstate_OdoMod.A_x0s, W_x_xi * SINSstate.AT.Transpose());
+
+                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate_OdoMod.A_x0s * SINSstate.OdoSpeed_s);
+                SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0, SINSstate_OdoMod.OdoSpeed_x0);
             }
+            else if (SINSstate.flag_OdoSINSWeakConnect)
+            {
+                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, D_x_z * SINSstate.OdoSpeed_s);
+                SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0, SINSstate.OdoSpeed_x0);
+            }
+
+
 
 
 
@@ -886,41 +867,96 @@ namespace Common_Namespace
 
 
 
-
-
-            if (SINSstate.flag_OdoSINSWeakConnect && (SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode))
+            //---------ДЛЯ SINSstate_OdoModel---------
+            //---------ИНТЕГРИРОВАНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z--------------
             {
-                if (SINSstate.OdometerData.odometer_left.isReady == 1)
+                if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
                 {
-                    double[] dS_x = new double[3];
-                    SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
+                    SINSstate_OdoMod.Omega_x[0] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
+                    SINSstate_OdoMod.Omega_x[1] = SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
+                    SINSstate_OdoMod.Omega_x[2] = Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate_OdoMod.Omega_x[1];
 
-                    SINSstate.Latitude = SINSstate.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
-                    SINSstate.Longitude = SINSstate.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude) / Math.Cos(SINSstate.Latitude);
-                    SINSstate.Altitude = SINSstate.Altitude + dS_x[2];
+                    Omega_x_abs = Math.Sqrt(SINSstate_OdoMod.Omega_x[0] * SINSstate_OdoMod.Omega_x[0] + SINSstate_OdoMod.Omega_x[1] * SINSstate_OdoMod.Omega_x[1] + SINSstate_OdoMod.Omega_x[2] * SINSstate_OdoMod.Omega_x[2]);
+                    if (Omega_x_abs != 0)
+                    {
+                        dlt = Math.Sin(Omega_x_abs * SINSstate.timeStep) / Omega_x_abs;
+                        dlt2 = (1.0 - Math.Cos(Omega_x_abs * SINSstate.timeStep)) / (Omega_x_abs * Omega_x_abs);
+                    }
+                    else
+                    {
+                        dlt = 1.0;
+                        dlt2 = 0.0;
+                    }
+
+                    Hat1 = Matrix.SkewSymmetricMatrix(SINSstate_OdoMod.Omega_x);
+                    Hat2 = Matrix.SkewSymmetricMatrixSquare(SINSstate_OdoMod.Omega_x);
+
+                    CopyMatrix(B_x_eta, SINSstate_OdoMod.A_x0n);
+
+                    CopyMatrix(dMatrix, E + Hat1 * dlt + Hat2 * dlt2);
+                    CopyMatrix(B_x_eta, dMatrix * B_x_eta);
+
+                    //Нормировка
+                    for (int i = 0; i < 3; i++)
+                    {
+                        tempV[i] = Math.Sqrt(B_x_eta[i, 0] * B_x_eta[i, 0] + B_x_eta[i, 1] * B_x_eta[i, 1] + B_x_eta[i, 2] * B_x_eta[i, 2]);
+                        for (int j = 0; j < 3; j++)
+                            B_x_eta[i, j] = B_x_eta[i, j] / tempV[i];
+                    }
+
+
+                    CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
+                    CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
                 }
-            }
-            else
-            {
-                //---ОПРЕДЕЛЕНИЕ ГЕОГРАФИЧЕСКИХ КООРДИНАТ---
-                SINSstate.Longitude = Math.Atan2(B_x_eta[2, 1], B_x_eta[2, 0]);
-                SINSstate.Latitude = Math.Atan2(B_x_eta[2, 2], Math.Sqrt(B_x_eta[0, 2] * B_x_eta[0, 2] + B_x_eta[1, 2] * B_x_eta[1, 2]));
-                Azimth = Math.Atan2(B_x_eta[0, 2], B_x_eta[1, 2]);
 
-                if (SINSstate.flag_OdoSINSWeakConnect_MODIF && (SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode))
+
+                //----------------Вычисление углов и переприсвоение матриц---------------------------
+                CopyMatrix(SINSstate_OdoMod.A_sx0, D_x_z.Transpose());
+                CopyMatrix(SINSstate_OdoMod.A_x0s, D_x_z);
+                CopyMatrix(SINSstate_OdoMod.A_x0n, B_x_eta);
+                CopyMatrix(SINSstate_OdoMod.A_nx0, B_x_eta.Transpose());
+            }
+
+
+
+
+
+
+
+            //---ОПРЕДЕЛЕНИЕ ГЕОГРАФИЧЕСКИХ КООРДИНАТ---
+            SINSstate.Longitude = Math.Atan2(SINSstate.A_x0n[2, 1], SINSstate.A_x0n[2, 0]);
+            SINSstate.Latitude = Math.Atan2(SINSstate.A_x0n[2, 2], Math.Sqrt(SINSstate.A_x0n[0, 2] * SINSstate.A_x0n[0, 2] + SINSstate.A_x0n[1, 2] * SINSstate.A_x0n[1, 2]));
+            Azimth = Math.Atan2(SINSstate.A_x0n[0, 2], SINSstate.A_x0n[1, 2]);
+
+            SINSstate.Altitude_prev = SINSstate.Altitude;
+            SINSstate.Altitude = Altitude;
+
+
+            {
+                //---ОПРЕДЕЛЕНИЕ ГЕОГРАФИЧЕСКИХ КООРДИНАТ ДЛЯ ОДОМЕТРИЧЕСКОГО РЕШЕНИЯ---
+                if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_OdoSINSWeakConnect_MODIF)
+                {
+                    SINSstate_OdoMod.Longitude = Math.Atan2(SINSstate_OdoMod.A_x0n[2, 1], SINSstate_OdoMod.A_x0n[2, 0]);
+                    SINSstate_OdoMod.Latitude = Math.Atan2(SINSstate_OdoMod.A_x0n[2, 2], Math.Sqrt(SINSstate_OdoMod.A_x0n[0, 2] * SINSstate_OdoMod.A_x0n[0, 2] + SINSstate_OdoMod.A_x0n[1, 2] * SINSstate_OdoMod.A_x0n[1, 2]));
+                    if (SINSstate.OdometerData.odometer_left.isReady == 1)
+                    {
+                        double[] dS_x = new double[3];
+                        SimpleOperations.CopyArray(dS_x, SINSstate_OdoMod.A_x0s * SINSstate.OdometerVector);
+
+                        SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
+                    }
+                }
+                else
                 {
                     if (SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
                         double[] dS_x = new double[3];
                         SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
 
-                        SINSstate.Altitude = SINSstate.Altitude + dS_x[2];
+                        SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+                        SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) / Math.Cos(SINSstate_OdoMod.Latitude);
+                        SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
                     }
-                }
-                else
-                {
-                    SINSstate.Altitude_prev = SINSstate.Altitude;
-                    SINSstate.Altitude = Altitude;
                 }
             }
 
@@ -948,6 +984,11 @@ namespace Common_Namespace
             CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
             CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
             //CopyArray(SINSstate.W_z, Wz);
+
+
+            SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+            SINSstate_OdoMod.R_n = RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+            CopyArray(SINSstate_OdoMod.Vx_0_prev, SINSstate_OdoMod.Vx_0);
             //--------------------------------------------------------------------------------------
 
 

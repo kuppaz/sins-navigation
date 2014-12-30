@@ -13,7 +13,7 @@ using SINSAlignment;
 using SINSProcessingModes;
 using SINS_motion_processing;
 
- 
+
 
 namespace SINS_motion_processing_new_data
 {
@@ -29,7 +29,6 @@ namespace SINS_motion_processing_new_data
         SINS_State SINSstate, SINSstate_OdoMod;
         Kalman_Vars KalmanVars;
         Parameters Params;
-        ParamsForModel OdoModel;
         Proc_Help ProcHelp;
 
         int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0;
@@ -37,7 +36,7 @@ namespace SINS_motion_processing_new_data
         bool iMx_kappa_13_ds;
 
         string GlobalPrefixTelemetric = "";
-        
+
 
         public SINS_Processing()
         {
@@ -85,7 +84,7 @@ namespace SINS_motion_processing_new_data
             //---для имитатора---
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
             //ParamStart.Imitator_Noise_Vel = 3E-4;
-            //ParamStart.Imitator_Noise_Angl = 3E-6; 
+            //ParamStart.Imitator_Noise_Angl = 3E-6;
 
             ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
@@ -115,7 +114,7 @@ namespace SINS_motion_processing_new_data
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
-            
+
 
 
 
@@ -143,7 +142,7 @@ namespace SINS_motion_processing_new_data
                     string[] dataArray = tmpstr.Split(' ');
                     double time = Convert.ToDouble(dataArray[0]);
 
-                    if (time > 51450) 
+                    if (time > 51450)
                         break;
                 }
             }
@@ -188,7 +187,6 @@ namespace SINS_motion_processing_new_data
                     SINSstate_OdoMod = new SINS_State();
                     KalmanVars = new Kalman_Vars();
                     Params = new Parameters();
-                    OdoModel = new ParamsForModel();
                     ProcHelp = new Proc_Help();
 
                     this.DefineClassElementAndFlags();
@@ -222,7 +220,7 @@ namespace SINS_motion_processing_new_data
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
                 ProcHelp.AlgnCnt = 27320;
-                if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true) 
+                if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true)
                     ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
 
                 //Experiment_stdKappa1 - сильно влияеет на решение!!!!
@@ -324,13 +322,13 @@ namespace SINS_motion_processing_new_data
             {
                 ////------БИНС + ОДОМЕТР------
                 if (OnlyIntegrating.Checked == false && SINSstate.flag_OnlyAlignment == false || SINSstate.flag_Odometr_SINS_case == true)
-                    SINS_Corrected.SINS_Corrected_Processing(l, false, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, OdoModel);
+                    SINS_Corrected.SINS_Corrected_Processing(l, false, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);
                 //------Автономное решение-----
                 else if (SINSstate.flag_OnlyAlignment == false)
-                    SINS_Autonomous.SINS_Autonomous_Processing(l, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, OdoModel);
+                    SINS_Autonomous.SINS_Autonomous_Processing(l, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);
 
                 if (SINSstate.flag_Smoothing)
-                    SINS_Corrected.SINS_Corrected_Processing(l, true, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, OdoModel);
+                    SINS_Corrected.SINS_Corrected_Processing(l, true, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);
             }
 
 
@@ -416,6 +414,17 @@ namespace SINS_motion_processing_new_data
             SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
             SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
 
+            SINSstate_OdoMod.A_sx0 = SimpleOperations.A_sx0(SINSstate_OdoMod);
+            SINSstate_OdoMod.A_x0s = SINSstate_OdoMod.A_sx0.Transpose();
+            SINSstate_OdoMod.A_x0n = SimpleOperations.A_x0n(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Longitude);
+            SINSstate_OdoMod.A_nx0 = SINSstate_OdoMod.A_x0n.Transpose();
+            SINSstate_OdoMod.A_nxi = SimpleOperations.A_ne(SINSstate_OdoMod.Time, SINSstate_OdoMod.Longitude_Start);
+            SINSstate_OdoMod.AT = Matrix.Multiply(SINSstate_OdoMod.A_sx0, SINSstate_OdoMod.A_x0n);
+            SINSstate_OdoMod.AT = Matrix.Multiply(SINSstate_OdoMod.AT, SINSstate_OdoMod.A_nxi);
+
+            SINSstate_OdoMod.R_e = SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+            SINSstate_OdoMod.R_n = SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+
 
             //------------------------------------------------------
             SINSstate.stdR = ParamStart.Imitator_stdR; // метров
@@ -488,7 +497,7 @@ namespace SINS_motion_processing_new_data
                 iMq = SimpleData.iMq += 2;
             if (iMqKappa.Checked)
                 iMq = SimpleData.iMq += 1;
-            
+
             if (this.Odometr_SINS_case.Checked)
             {
                 if (iMqDeltaRodo.Checked)
@@ -514,7 +523,6 @@ namespace SINS_motion_processing_new_data
             SINSstate = new SINS_State(); SINSstate_OdoMod = new SINS_State();
             KalmanVars = new Kalman_Vars();
             Params = new Parameters();
-            OdoModel = new ParamsForModel();
             ProcHelp = new Proc_Help();
 
             SINSstate.FreqOutput = Convert.ToInt32(this.Output_Freq.Text);
@@ -578,13 +586,8 @@ namespace SINS_motion_processing_new_data
             //---флаги коррекции---
             SINSstate.Use_Each_Odo_Measure = this.Use_Each_Odo_Measure.Checked;
             SINSstate.Ungolonom_Velocity_model = this.Ungolonom_model.Checked;
-            SINSstate.Use_dV_by_F_Constraint = this.Use_dV_by_F_Constraint.Checked;
-            SINSstate.Use_Const_dV_Constraint = this.Use_Const_dV_Constraint.Checked;
-            SINSstate.Use_Constant_Constraint = this.Use_Constant_Constraint.Checked;
-            SINSstate.Use_Const_Freq = this.Use_Const_Freq.Checked;
             //SINSstate.Use_dV_Constraints = this.Use_dV_Constraints.Checked;
             SINSstate.Use_Odo_Distance = this.Use_Odo_Distance.Checked;
-            SINSstate.Use_Integral_of_Fx_2 = this.Use_Integral_of_Fx_2.Checked;
         }
 
         public void DataInCheck(string FileLink)
@@ -708,7 +711,7 @@ namespace SINS_motion_processing_new_data
 
                 else if (this.SaratAlignStart.Checked && !this.SaratWithZalipan.Checked)
                     myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align.dat");
-                    //myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align_FULL.dat");
+                //myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align_FULL.dat");
                 else if (this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
                 {
                     SINSstate.Saratov_run_Final = true;
@@ -743,7 +746,7 @@ namespace SINS_motion_processing_new_data
             if (Saratov_run_2014_07_23_middle_interval_GPS.Checked == true)
             {
                 if (SINSstate.FreqOutput == 10)
-                    SINSstate.FreqOutput =100;
+                    SINSstate.FreqOutput = 100;
 
                 myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_middle_interval_GPS.dat");
                 SINSstate.Global_file = "Saratov_run_2014_07_23_middle_interval_GPS";
@@ -765,15 +768,13 @@ namespace SINS_motion_processing_new_data
 
         public void LockTypesOfCorrection()
         {
-            this.Use_Odo_Distance.Enabled = false; this.Use_Each_Odo_Measure.Enabled = false; this.Use_Constant_Constraint.Enabled = false;
-            this.Use_Const_dV_Constraint.Enabled = false; this.Use_Const_dV_Constraint.Enabled = false; this.Use_dV_by_F_Constraint.Enabled = false;
-            this.Use_Const_Freq.Enabled = false; this.Use_Only_Stops.Enabled = false; this.Use_Integral_of_Fx_2.Enabled = false; this.Ungolonom_model.Enabled = false;
+            this.Use_Odo_Distance.Enabled = false; this.Use_Each_Odo_Measure.Enabled = false;
+            this.Use_Only_Stops.Enabled = false; this.Ungolonom_model.Enabled = false;
         }
         public void FreeTypesOfCorrection()
         {
-            this.Use_Odo_Distance.Enabled = true; this.Use_Each_Odo_Measure.Enabled = true; this.Use_Constant_Constraint.Enabled = true;
-            this.Use_Const_dV_Constraint.Enabled = true; this.Use_Const_dV_Constraint.Enabled = true; this.Use_dV_by_F_Constraint.Enabled = true;
-            this.Use_Const_Freq.Enabled = true; this.Use_Only_Stops.Enabled = true; this.Use_Integral_of_Fx_2.Enabled = true; this.Ungolonom_model.Enabled = true;
+            this.Use_Odo_Distance.Enabled = true; this.Use_Each_Odo_Measure.Enabled = true;
+            this.Use_Only_Stops.Enabled = true; this.Ungolonom_model.Enabled = true;
         }
 
         public void LockInData()
@@ -834,10 +835,9 @@ namespace SINS_motion_processing_new_data
         }
         public void UnCheckTypesOfCorrection()
         {
-            this.Use_Odo_Distance.Checked = false; this.Use_Each_Odo_Measure.Checked = false; this.Use_Constant_Constraint.Checked = false;
-            this.Use_Const_dV_Constraint.Checked = false; this.Use_Const_dV_Constraint.Checked = false; this.Use_dV_by_F_Constraint.Checked = false;
-            this.Use_Const_Freq.Checked = false; this.Use_Only_Stops.Checked = false;
-            this.usingSNS.Checked = false; this.Use_Integral_of_Fx_2.Checked = false;
+            this.Use_Odo_Distance.Checked = false; this.Use_Each_Odo_Measure.Checked = false;
+            this.Use_Only_Stops.Checked = false;
+            this.usingSNS.Checked = false;
         }
 
 
@@ -911,7 +911,7 @@ namespace SINS_motion_processing_new_data
         {
             if (this.Azimut_14_08_2012.Checked == true)
             {
-                CheckedTrueDataIn(); 
+                CheckedTrueDataIn();
                 this.Azimut_14_08_2012.Enabled = true;
             }
             else CheckedFalseDataIn();
@@ -921,7 +921,7 @@ namespace SINS_motion_processing_new_data
         {
             if (this.Azimut_15_08_2012.Checked == true)
             {
-                CheckedTrueDataIn(); 
+                CheckedTrueDataIn();
                 this.Azimut_15_08_2012.Enabled = true;
             }
             else CheckedFalseDataIn();
@@ -931,7 +931,7 @@ namespace SINS_motion_processing_new_data
         {
             if (this.Azimut_24_08_2012.Checked == true)
             {
-                CheckedTrueDataIn(); 
+                CheckedTrueDataIn();
                 this.Azimut_24_08_2012.Enabled = true;
             }
             else CheckedFalseDataIn();
@@ -941,7 +941,7 @@ namespace SINS_motion_processing_new_data
         {
             if (this.Azimut_29_08_2012.Checked == true)
             {
-                CheckedTrueDataIn(); 
+                CheckedTrueDataIn();
                 this.Azimut_29_08_2012.Enabled = true;
             }
             else CheckedFalseDataIn();
@@ -951,7 +951,7 @@ namespace SINS_motion_processing_new_data
         {
             if (this.Kama_04_09_2012.Checked == true)
             {
-                CheckedTrueDataIn(); 
+                CheckedTrueDataIn();
                 this.Kama_04_09_2012.Enabled = true;
             }
             else CheckedFalseDataIn();
@@ -961,7 +961,7 @@ namespace SINS_motion_processing_new_data
         {
             if (this.ktn004_21_03_2012.Checked == true)
             {
-                CheckedTrueDataIn(); 
+                CheckedTrueDataIn();
                 this.ktn004_21_03_2012.Enabled = true;
             }
             else CheckedFalseDataIn();
@@ -971,7 +971,7 @@ namespace SINS_motion_processing_new_data
         {
             if (this.ktn004_15_03_2012.Checked == true)
             {
-                CheckedTrueDataIn(); 
+                CheckedTrueDataIn();
                 this.ktn004_15_03_2012.Enabled = true;
             }
             else CheckedFalseDataIn();
@@ -1170,7 +1170,7 @@ namespace SINS_motion_processing_new_data
                 this.WeakConnect.Enabled = true;
             }
         }
-        
+
 
 
 
@@ -1188,15 +1188,6 @@ namespace SINS_motion_processing_new_data
             this.Main_Block_Click_new.Enabled = false;
         }
 
-        private void Use_Const_Freq_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Use_Const_Freq.Checked == true)
-            {
-                CheckedTrueTypesOfCorrection();
-                this.Use_Const_Freq.Enabled = true;
-            }
-            else CheckedFlaseTypesOfCorrection();
-        }
 
         private void Use_Only_Stops_CheckedChanged(object sender, EventArgs e)
         {
@@ -1235,35 +1226,7 @@ namespace SINS_motion_processing_new_data
         }
 
 
-        private void Use_Constant_Constraint_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Use_Constant_Constraint.Checked == true)
-            {
-                CheckedTrueTypesOfCorrection();
-                this.Use_Constant_Constraint.Enabled = true;
-            }
-            else CheckedFlaseTypesOfCorrection();
-        }
 
-        private void Use_Const_dV_Constraint_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Use_Const_dV_Constraint.Checked == true)
-            {
-                CheckedTrueTypesOfCorrection();
-                this.Use_Const_dV_Constraint.Enabled = true;
-            }
-            else CheckedFlaseTypesOfCorrection();
-        }
-
-        private void Use_dV_by_F_Constraint_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Use_dV_by_F_Constraint.Checked == true)
-            {
-                CheckedTrueTypesOfCorrection();
-                this.Use_dV_by_F_Constraint.Enabled = true;
-            }
-            else CheckedFlaseTypesOfCorrection();
-        }
 
         private void Use_Odo_Distance_CheckedChanged(object sender, EventArgs e)
         {
@@ -1279,16 +1242,6 @@ namespace SINS_motion_processing_new_data
                 this.flag_not_use_kns.Checked = false;
                 CheckedFlaseTypesOfCorrection();
             }
-        }
-        private void Use_Integral_of_Fx_2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Use_Integral_of_Fx_2.Checked == true)
-            {
-                CheckedTrueTypesOfCorrection();
-                this.UseOdo_In_Oz.Enabled = false;
-                this.Use_Integral_of_Fx_2.Enabled = true;
-            }
-            else CheckedFlaseTypesOfCorrection();
         }
 
         private void usingSNS_CheckedChanged(object sender, EventArgs e)
@@ -1350,32 +1303,6 @@ namespace SINS_motion_processing_new_data
         {
 
         }
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
 
 
     }

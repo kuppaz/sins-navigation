@@ -37,11 +37,7 @@
             this.UsingAveraging = new System.Windows.Forms.CheckBox();
             this.UsingAltitudeCorrection = new System.Windows.Forms.CheckBox();
             this.UsingNavAlignment = new System.Windows.Forms.CheckBox();
-            this.Use_Const_Freq = new System.Windows.Forms.CheckBox();
-            this.Use_Constant_Constraint = new System.Windows.Forms.CheckBox();
             this.Use_Only_Stops = new System.Windows.Forms.CheckBox();
-            this.Use_Const_dV_Constraint = new System.Windows.Forms.CheckBox();
-            this.Use_dV_by_F_Constraint = new System.Windows.Forms.CheckBox();
             this.Azimut_14_08_2012 = new System.Windows.Forms.CheckBox();
             this.Azimut_15_08_2012 = new System.Windows.Forms.CheckBox();
             this.Azimut_29_08_2012 = new System.Windows.Forms.CheckBox();
@@ -57,7 +53,6 @@
             this.Ungolonom_model = new System.Windows.Forms.CheckBox();
             this.Use_Each_Odo_Measure = new System.Windows.Forms.CheckBox();
             this.flag_UsingScalarOdoMeasure = new System.Windows.Forms.CheckBox();
-            this.Use_Integral_of_Fx_2 = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.add_velocity_to_position = new System.Windows.Forms.CheckBox();
             this.Use_Odo_Distance = new System.Windows.Forms.CheckBox();
@@ -234,28 +229,6 @@
             this.UsingNavAlignment.Text = "Navigation Mode";
             this.UsingNavAlignment.UseVisualStyleBackColor = true;
             // 
-            // Use_Const_Freq
-            // 
-            this.Use_Const_Freq.AutoSize = true;
-            this.Use_Const_Freq.Location = new System.Drawing.Point(35, 330);
-            this.Use_Const_Freq.Name = "Use_Const_Freq";
-            this.Use_Const_Freq.Size = new System.Drawing.Size(116, 17);
-            this.Use_Const_Freq.TabIndex = 9;
-            this.Use_Const_Freq.Text = "Const Freq, each 5";
-            this.Use_Const_Freq.UseVisualStyleBackColor = true;
-            this.Use_Const_Freq.CheckedChanged += new System.EventHandler(this.Use_Const_Freq_CheckedChanged);
-            // 
-            // Use_Constant_Constraint
-            // 
-            this.Use_Constant_Constraint.AutoSize = true;
-            this.Use_Constant_Constraint.Location = new System.Drawing.Point(36, 353);
-            this.Use_Constant_Constraint.Name = "Use_Constant_Constraint";
-            this.Use_Constant_Constraint.Size = new System.Drawing.Size(122, 17);
-            this.Use_Constant_Constraint.TabIndex = 11;
-            this.Use_Constant_Constraint.Text = "Costraint on dV_odo";
-            this.Use_Constant_Constraint.UseVisualStyleBackColor = true;
-            this.Use_Constant_Constraint.CheckedChanged += new System.EventHandler(this.Use_Constant_Constraint_CheckedChanged);
-            // 
             // Use_Only_Stops
             // 
             this.Use_Only_Stops.AutoSize = true;
@@ -266,28 +239,6 @@
             this.Use_Only_Stops.Text = "Only ZUPT";
             this.Use_Only_Stops.UseVisualStyleBackColor = true;
             this.Use_Only_Stops.CheckedChanged += new System.EventHandler(this.Use_Only_Stops_CheckedChanged);
-            // 
-            // Use_Const_dV_Constraint
-            // 
-            this.Use_Const_dV_Constraint.AutoSize = true;
-            this.Use_Const_dV_Constraint.Location = new System.Drawing.Point(36, 376);
-            this.Use_Const_dV_Constraint.Name = "Use_Const_dV_Constraint";
-            this.Use_Const_dV_Constraint.Size = new System.Drawing.Size(110, 17);
-            this.Use_Const_dV_Constraint.TabIndex = 14;
-            this.Use_Const_dV_Constraint.Text = "Constraint  V_odo";
-            this.Use_Const_dV_Constraint.UseVisualStyleBackColor = true;
-            this.Use_Const_dV_Constraint.CheckedChanged += new System.EventHandler(this.Use_Const_dV_Constraint_CheckedChanged);
-            // 
-            // Use_dV_by_F_Constraint
-            // 
-            this.Use_dV_by_F_Constraint.AutoSize = true;
-            this.Use_dV_by_F_Constraint.Location = new System.Drawing.Point(36, 400);
-            this.Use_dV_by_F_Constraint.Name = "Use_dV_by_F_Constraint";
-            this.Use_dV_by_F_Constraint.Size = new System.Drawing.Size(101, 17);
-            this.Use_dV_by_F_Constraint.TabIndex = 15;
-            this.Use_dV_by_F_Constraint.Text = "Filtering dV by F";
-            this.Use_dV_by_F_Constraint.UseVisualStyleBackColor = true;
-            this.Use_dV_by_F_Constraint.CheckedChanged += new System.EventHandler(this.Use_dV_by_F_Constraint_CheckedChanged);
             // 
             // Azimut_14_08_2012
             // 
@@ -447,17 +398,6 @@
             this.flag_UsingScalarOdoMeasure.TabIndex = 56;
             this.flag_UsingScalarOdoMeasure.Text = "Scalar, when Rotate";
             this.flag_UsingScalarOdoMeasure.UseVisualStyleBackColor = true;
-            // 
-            // Use_Integral_of_Fx_2
-            // 
-            this.Use_Integral_of_Fx_2.AutoSize = true;
-            this.Use_Integral_of_Fx_2.Location = new System.Drawing.Point(36, 418);
-            this.Use_Integral_of_Fx_2.Name = "Use_Integral_of_Fx_2";
-            this.Use_Integral_of_Fx_2.Size = new System.Drawing.Size(130, 17);
-            this.Use_Integral_of_Fx_2.TabIndex = 49;
-            this.Use_Integral_of_Fx_2.Text = "Use_Integral_of_Fx_2";
-            this.Use_Integral_of_Fx_2.UseVisualStyleBackColor = true;
-            this.Use_Integral_of_Fx_2.CheckedChanged += new System.EventHandler(this.Use_Integral_of_Fx_2_CheckedChanged);
             // 
             // groupBox2
             // 
@@ -652,18 +592,13 @@
             // 
             // groupBox10
             // 
-            this.groupBox10.Controls.Add(this.Use_Integral_of_Fx_2);
             this.groupBox10.Controls.Add(this.groupBox4);
             this.groupBox10.Controls.Add(this.groupBox1);
             this.groupBox10.Controls.Add(this.groupBox2);
-            this.groupBox10.Controls.Add(this.Use_Const_Freq);
             this.groupBox10.Controls.Add(this.groupBox3);
-            this.groupBox10.Controls.Add(this.Use_Const_dV_Constraint);
-            this.groupBox10.Controls.Add(this.Use_dV_by_F_Constraint);
-            this.groupBox10.Controls.Add(this.Use_Constant_Constraint);
-            this.groupBox10.Location = new System.Drawing.Point(549, 12);
+            this.groupBox10.Location = new System.Drawing.Point(549, 53);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(227, 443);
+            this.groupBox10.Size = new System.Drawing.Size(227, 329);
             this.groupBox10.TabIndex = 39;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Correction Modes";
@@ -1177,7 +1112,6 @@
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBox10.ResumeLayout(false);
-            this.groupBox10.PerformLayout();
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
             this.groupBox12.ResumeLayout(false);
@@ -1200,11 +1134,7 @@
         private System.Windows.Forms.CheckBox UsingAveraging;
         private System.Windows.Forms.CheckBox UsingAltitudeCorrection;
         private System.Windows.Forms.CheckBox UsingNavAlignment;
-        private System.Windows.Forms.CheckBox Use_Const_Freq;
-        private System.Windows.Forms.CheckBox Use_Constant_Constraint;
         private System.Windows.Forms.CheckBox Use_Only_Stops;
-        private System.Windows.Forms.CheckBox Use_Const_dV_Constraint;
-        private System.Windows.Forms.CheckBox Use_dV_by_F_Constraint;
         private System.Windows.Forms.CheckBox Azimut_14_08_2012;
         private System.Windows.Forms.CheckBox Azimut_15_08_2012;
         private System.Windows.Forms.CheckBox Azimut_29_08_2012;
@@ -1237,7 +1167,6 @@
         private System.Windows.Forms.CheckBox iMx_r_odo_3;
         private System.Windows.Forms.CheckBox Imitator_Data;
         private System.Windows.Forms.CheckBox Azimuth_minsk_race_4_3to6to2;
-        private System.Windows.Forms.CheckBox Use_Integral_of_Fx_2;
         private System.Windows.Forms.CheckBox iMq_eq_iMx;
         private System.Windows.Forms.CheckBox flag_Smoothing;
         private System.Windows.Forms.CheckBox flag_not_use_kns;
