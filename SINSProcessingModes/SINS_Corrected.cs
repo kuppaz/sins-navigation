@@ -45,7 +45,7 @@ namespace SINSProcessingModes
         {
             int t = 0;
 
-            StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
+            //StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
 
 
             double lambda_last_odo_flg = SINSstate2.Longitude, phi_last_odo_flg = SINSstate2.Latitude;
@@ -158,6 +158,7 @@ namespace SINSProcessingModes
                 SimpleOperations.CopyArray(SINSstateDinamOdo.W_z, SINSstate.W_z);
 
                 SINSstate.OdoTimeStepCount++;
+
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
                 SINSstateDinamOdo.OdoTimeStepCount = SINSstate.OdoTimeStepCount;
@@ -288,7 +289,6 @@ namespace SINSProcessingModes
                 else
                 {
                     SINSstate.flag_UsingCorrection = false;
-                    SINSstate.OdoTimeStepCount++;
                 }
                 //-----------------------END----------------------------------
                 //-----------------------------------------------------------------
@@ -374,23 +374,23 @@ namespace SINSProcessingModes
                 //    SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
 
                 //====Вывод данных для телеметрического имитатора====
-                if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23" && SINSstate.Global_file != "Saratov_run_2014_07_23_middle_interval_GPS")
-                {
-                    double tmpRoundFreq50 = Math.Round(1.0 / SINSstate.Freq / 50.0, 0) * 50.0;
-                    int tmpFreqOut10 = Convert.ToInt32(tmpRoundFreq50 / 10.0);
+                //if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23" && SINSstate.Global_file != "Saratov_run_2014_07_23_middle_interval_GPS")
+                //{
+                //    double tmpRoundFreq50 = Math.Round(1.0 / SINSstate.Freq / 50.0, 0) * 50.0;
+                //    int tmpFreqOut10 = Convert.ToInt32(tmpRoundFreq50 / 10.0);
 
-                    if ((i - l) % tmpFreqOut10 == 0)
-                    {
-                        if (SINSstate.flag_FeedbackExist)
-                            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
-                                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
-                                    + " " + (SINSstate.Heading * SimpleData.ToDegree) + " " + (SINSstate.Roll * SimpleData.ToDegree) + " " + (SINSstate.Pitch * SimpleData.ToDegree));
-                        else if (SINSstate.flag_EstimateExist)
-                            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
-                                    + " " + SINSstate2.Latitude + " " + SINSstate2.Longitude + " " + SINSstate2.Altitude
-                                    + " " + (SINSstate2.Heading * SimpleData.ToDegree) + " " + (SINSstate2.Roll * SimpleData.ToDegree) + " " + (SINSstate2.Pitch * SimpleData.ToDegree));
-                    }
-                }
+                //    if ((i - l) % tmpFreqOut10 == 0)
+                //    {
+                //        if (SINSstate.flag_FeedbackExist)
+                //            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
+                //                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
+                //                    + " " + (SINSstate.Heading * SimpleData.ToDegree) + " " + (SINSstate.Roll * SimpleData.ToDegree) + " " + (SINSstate.Pitch * SimpleData.ToDegree));
+                //        else if (SINSstate.flag_EstimateExist)
+                //            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
+                //                    + " " + SINSstate2.Latitude + " " + SINSstate2.Longitude + " " + SINSstate2.Altitude
+                //                    + " " + (SINSstate2.Heading * SimpleData.ToDegree) + " " + (SINSstate2.Roll * SimpleData.ToDegree) + " " + (SINSstate2.Pitch * SimpleData.ToDegree));
+                //    }
+                //}
 
 
 
@@ -743,7 +743,7 @@ namespace SINSProcessingModes
 
             ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); Nav_Autonomous.Close();
             //Dif_GK.Close(); 
-            Speed_Angles.Close(); Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
+            Speed_Angles.Close(); //Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
             Nav_Smoothed.Close();
             KMLFileOut.Close(); KMLFileOutSmthd.Close();
         }
