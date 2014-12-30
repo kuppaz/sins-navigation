@@ -8,11 +8,28 @@ namespace Common_Namespace
 {
     public class Parameters : SimpleOperations
     {
+        public static void ApplyMatrixStartCondition(SINS_State SINSstate)
+        {
+            SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+            SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
+            SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
+            SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
+            SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
+            SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
+            SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
+
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+        }
+
+
         public static void StartSINS_Parameters(SINS_State SINSstate, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars, Parameters Params, Proc_Help ProcHelp)
         {
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
+                SINSstate.OdoLimitMeasuresNum = 1;
+
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
@@ -28,7 +45,7 @@ namespace Common_Namespace
             if (SINSstate.Global_file == "Azimut_14.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -68,21 +85,13 @@ namespace Common_Namespace
                 SINSstate.Roll = 0.6767 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0.3837195 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
             if (SINSstate.Global_file == "Azimut_15.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -125,21 +134,13 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
             if (SINSstate.Global_file == "Azimut_24.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -182,21 +183,13 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
             if (SINSstate.Global_file == "Azimut_29.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -236,21 +229,13 @@ namespace Common_Namespace
                 SINSstate.Roll = 1.753250 * SimpleData.ToRadian;
                 SINSstate.Pitch = -1.510889 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
             if (SINSstate.Global_file == "Kama_04.09.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -290,22 +275,14 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
 
             if (SINSstate.Global_file == "ktn004_15.03.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -339,25 +316,17 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
 
                 SINSstate.alpha_x = 0.1 * SimpleData.ToRadian;
                 SINSstate.alpha_y = 0.08 * SimpleData.ToRadian;
                 SINSstate.alpha_z = 0.46 * SimpleData.ToRadian;
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
             }
             if (SINSstate.Global_file == "ktn004_21.03.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -395,20 +364,12 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
 
                 SINSstate.alpha_x = 0.1 * SimpleData.ToRadian;
                 SINSstate.alpha_y = 0.08 * SimpleData.ToRadian;
                 SINSstate.alpha_z = 0.46 * SimpleData.ToRadian;
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
             }
 
 
@@ -423,7 +384,7 @@ namespace Common_Namespace
             {
                 SINSstate.odo_min_increment = 0.2;
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.Odo_Limit_Measures = 3;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -456,16 +417,8 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
 
 
@@ -481,7 +434,7 @@ namespace Common_Namespace
             {
                 SINSstate.odo_min_increment = 0.05;
                 SINSstate.timeStep = SINSstate.Freq = 0.01;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -518,22 +471,14 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
             if (SINSstate.Global_file == "AZIMUT_T_2013_10_18_12_55")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.odo_min_increment = 0.1268;
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -563,16 +508,8 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
 
 
@@ -586,7 +523,7 @@ namespace Common_Namespace
             {
                 SINSstate.odo_min_increment = 0.1268;
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -616,16 +553,8 @@ namespace Common_Namespace
                 SINSstate.Roll = 0 * SimpleData.ToRadian;
                 SINSstate.Pitch = -0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
 
 
@@ -636,7 +565,7 @@ namespace Common_Namespace
             {
                 SINSstate.odo_min_increment = 0.05;
                 SINSstate.timeStep = SINSstate.Freq = 0.01048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -683,16 +612,8 @@ namespace Common_Namespace
                 //SINSstate.alpha_y = 1.0 * SimpleData.ToRadian;
                 SINSstate.alpha_z = 0.0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
 
 
                 string str_markers = "";
@@ -721,7 +642,7 @@ namespace Common_Namespace
             {
                 SINSstate.odo_min_increment = 0.05;
                 SINSstate.timeStep = SINSstate.Freq = 0.01048;
-                SINSstate.Odo_Limit_Measures = 5;
+                SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.dV_q = 2.5;
 
@@ -763,16 +684,8 @@ namespace Common_Namespace
                 //SINSstate.alpha_y = 1.0 * SimpleData.ToRadian;
                 SINSstate.alpha_z = 0.0 * SimpleData.ToRadian;
 
-                SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
-                SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
-                SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
-                SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
-                SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-                SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
-                SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
-
-                SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
 
                 SINSstate.Time_Alignment = 12592.685164;
             }

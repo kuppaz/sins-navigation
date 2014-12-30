@@ -75,8 +75,8 @@ namespace Common_Namespace
         public bool flag_UsingScalarOdoMeasure = false;
         public bool flag_OdoModelOnlyCP = false;
 
-        public bool Use_Each_Odo_Measure = false, Ungolonom_Velocity_model = false, Use_dV_by_F_Constraint = false, Use_Const_dV_Constraint = false, UseStatisticCoeff = false, Use_Constant_Constraint = false,
-                    Use_Const_Freq = false, Use_dV_Constraints = false, Use_Odo_Distance = false, Use_Integral_of_Fx_2 = false;
+        public bool Use_Each_Odo_Measure = false, Ungolonom_Velocity_model = false, UseStatisticCoeff = false,
+                    Use_dV_Constraints = false, Use_Odo_Distance = false;
 
         //---остальное вспомогательное---
         public bool flag_UseLastMinusOneOdo = false, flag_slipping = false;
@@ -129,9 +129,10 @@ namespace Common_Namespace
         public double DeltaLatitude, DeltaLongitude, DeltaV_1, DeltaV_2, DeltaV_3, DeltaHeading, DeltaRoll, DeltaPitch, DeltaAltitude;
 
         //---Одометрические переменные---
-        public double OdoTimeStepCount, OdoTimeStepCount_2;
+        public double OdoTimeStepCount;
         public double[] OdometerVector = new double[3], OdoSpeed_x0 = new double[3], OdoSpeed_s = new double[3];
-        public double OdometerLeftPrev, OdometerRightPrev, OdometerLeftPrev_2, OdometerRightPrev_2, Odo_Limit_Measures, OdoAbsSpeed, OdoSpeedPrev, OdoSpeedPrev_2;
+        public double OdometerLeftPrev, OdometerRightPrev, OdoAbsSpeed, OdoSpeedPrev;
+        public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
         //---Комулятивные величины---
         public Matrix Ds_ComulativeByOdoTrack = new Matrix(3, 3), Ds2_ComulativeByOdoTrack = new Matrix(3, 3);

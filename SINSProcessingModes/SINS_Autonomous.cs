@@ -10,7 +10,7 @@ namespace SINSProcessingModes
     public class SINS_Autonomous
     {
 
-        public static void SINS_Autonomous_Processing(int l, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod, ParamsForModel OdoModel)
+        public static void SINS_Autonomous_Processing(int l, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod)
         {
             int t = 0;
 
@@ -84,18 +84,18 @@ namespace SINSProcessingModes
 
                 SINSprocessing.Make_A(SINSstate, KalmanVars, SINSstate_OdoMod);
                 //if (SINSstate.OdometerData.odometer_left.isReady == 1)
-                    //KalmanProcs.KalmanForecast(KalmanVars);
+                //KalmanProcs.KalmanForecast(KalmanVars);
 
                 SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdometerVector);
                 if (i % 10 == 0)
                     ForHelp.WriteLine(SINSstate.Time + " " + SINSstate.CourseHeading + " " + SINSstate.Heading + " " + SINSstate.CoursePitch + " " + SINSstate.beta_c + " " + SINSstate.alpha_c + " " + SINSstate.gamma_c
                         + " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1] + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate2.Vx_0[0] + " " + SINSstate2.Vx_0[1]
-                        +" " + SINSstate.A_x0s[0, 1] +" " + SINSstate.A_x0s[1, 1] +" " + SINSstate.A_x0s[2, 1]);
+                        + " " + SINSstate.A_x0s[0, 1] + " " + SINSstate.A_x0s[1, 1] + " " + SINSstate.A_x0s[2, 1]);
 
 
                 //ForHelp.WriteLine(((SINSstate2.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n).ToString() + " " + ((SINSstate2.Longitude - SINSstate.Longitude_Start) * SINSstate.R_n).ToString());
                 //ForHelp.WriteLine(SINSstate.Count + " " + SINSstate.A_x0s[0, 0] + " " + SINSstate.A_x0s[1, 1] + " " + SINSstate.A_x0s[2, 2] + " " + SINSstate.A_x0s[0, 1] + " " + SINSstate.A_x0s[0, 2] + " " + SINSstate.A_x0s[1, 2]);
- 
+
                 /*----------------------------------------END---------------------------------------------*/
 
 
@@ -108,26 +108,20 @@ namespace SINSProcessingModes
                         + ",  Vx_1=" + Math.Round(SINSstate.Vx_0[0], 2) + ",  Vx_2=" + Math.Round(SINSstate.Vx_0[1], 3)
                         );
 
-                ProcessingHelp.OutPutInfo(i, i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut);
+                ProcessingHelp.OutPutInfo(i, i, ProcHelp, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut);
 
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {
-                    SINSstate.OdometerLeftPrev_2 = SINSstate.OdometerData.odometer_left.Value;
-                    SINSstate.OdometerRightPrev_2 = SINSstate.OdometerData.odometer_right.Value;
-                    SINSstate.OdoSpeedPrev_2 = OdoModel.V_odo;
-                    SINSstate.OdoTimeStepCount_2 = 0;
-
                     if (SINSstate.flag_UsingCorrection == true)
                     {
                         SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
                         SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
-                        SINSstate.OdoSpeedPrev = OdoModel.V_odo;
                         SINSstate.OdoTimeStepCount = 0;
                     }
                 }
             }
 
-            ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); 
+            ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close();
         }
     }
 }

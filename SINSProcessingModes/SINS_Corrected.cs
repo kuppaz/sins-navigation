@@ -41,22 +41,15 @@ namespace SINSProcessingModes
 
         //testes//testes
 
-        public static void SINS_Corrected_Processing(int l, bool Do_Smoothing, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod, ParamsForModel OdoModel)
+        public static void SINS_Corrected_Processing(int l, bool Do_Smoothing, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod)
         {
             int t = 0;
 
-            //StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
+            StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
 
 
             double lambda_last_odo_flg = SINSstate2.Longitude, phi_last_odo_flg = SINSstate2.Latitude;
             SINS_State SINSstate_Smooth = new SINS_State();
-
-            SINS_State SINSstateDinamOdo = SINS_State.DeepCopy(SINSstate);
-
-            //--- Смотрим, если выставлен режим модифицированных слабо связанных систем, то вмешиваемся в алгоритм БИНС. Если нет, то нет ---//
-            SINSstateDinamOdo.flag_Autonomous_Solution = true;
-            SINSstateDinamOdo.flag_autonomous_dinamic_mode = true;
-            //--- ---//
 
 
             SINSstate.NumberOfFilesForSmoothing = Math.Floor(SINSstate.LastCountForRead / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1;
@@ -84,7 +77,7 @@ namespace SINSProcessingModes
             }
             else
             {
-                SINSstate.odotime_prev = SINSstate.Time+ SINSstate.timeStep;
+                SINSstate.odotime_prev = SINSstate.Time + SINSstate.timeStep;
 
                 Back_Input_File_read = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full.txt");
                 Back_Input_X = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_X.txt");
@@ -110,7 +103,7 @@ namespace SINSProcessingModes
             Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch Correct PositError PositErrStart difHeadingSINStoODO difToTrueHeading");
             Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_x1  V_x2  V_x3  Correct  Yaw YawCor  Roll RollCor  Pitch PitchCor PositError V_abs");
             Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");
-            DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3 Yaw  Roll  Pitch");
+            DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3");
 
 
 
@@ -150,22 +143,12 @@ namespace SINSProcessingModes
 
 
 
-                //---------------------------------------------------------------------//
-                SINSstateDinamOdo.Time = SINSstate.Time;
-                SINSstateDinamOdo.timeStep = SINSstateDinamOdo.Freq = SINSstate.timeStep;
-                SINSstateDinamOdo.OdometerData.odometer_left.isReady = SINSstate.OdometerData.odometer_left.isReady;
-                SimpleOperations.CopyArray(SINSstateDinamOdo.F_z, SINSstate.F_z);
-                SimpleOperations.CopyArray(SINSstateDinamOdo.W_z, SINSstate.W_z);
 
+                //---------------------------------------------------------------------//
                 SINSstate.OdoTimeStepCount++;
 
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
-                SINSstateDinamOdo.OdoTimeStepCount = SINSstate.OdoTimeStepCount;
-
-                //===Проверка на всякий===
-                if (SINSstate.OdoTimeStepCount == 0.0 && SINSstate.OdometerData.odometer_left.isReady == 1)
-                    SINSstate.OdoTimeStepCount = SINSstate.OdoTimeStepCount;
 
                 //--- Формируем вектора измерений одометра для основной и одометрической копии ---//
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
@@ -173,25 +156,15 @@ namespace SINSProcessingModes
                     SINSstate.OdoSpeed_s = SimpleOperations.NullingOfArray(SINSstate.OdoSpeed_s);
                     SINSstate.OdoSpeed_x0 = SimpleOperations.NullingOfArray(SINSstate.OdoSpeed_x0);
                     SINSstate.OdometerVector = SimpleOperations.NullingOfArray(SINSstate.OdometerVector);
-                    SINSstateDinamOdo.OdoSpeed_s = SimpleOperations.NullingOfArray(SINSstateDinamOdo.OdoSpeed_s);
-                    SINSstateDinamOdo.OdoSpeed_x0 = SimpleOperations.NullingOfArray(SINSstateDinamOdo.OdoSpeed_x0);
-                    SINSstateDinamOdo.OdometerVector = SimpleOperations.NullingOfArray(SINSstateDinamOdo.OdometerVector);
 
                     SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
-
-                    if (SINSstate.OdometerVector[1] > 0.01)
-                        SINSstate.OdometerVector[1] = SINSstate.OdometerVector[1];
                     SINSstate.OdoSpeed_s[1] = SINSstate.OdometerVector[1] / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
-                    SINSstateDinamOdo.OdometerVector[1] = SINSstate.OdometerVector[1];
-                    SINSstateDinamOdo.OdoSpeed_s[1] = SINSstateDinamOdo.OdometerVector[1] / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
 
                     //--- Если обратные связи, то сразу корректируем измерение одометра по честной оценке ---//
                     if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
                     {
                         SimpleOperations.CopyArray(SINSstate.OdoSpeed_s, (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.ComulativeKappaEst)) / (1.0 + SINSstate.ComulativeKappaEst[1]) * SINSstate.OdoSpeed_s);
-                        SimpleOperations.CopyArray(SINSstateDinamOdo.OdoSpeed_s, SINSstate.OdoSpeed_s);
                         SimpleOperations.CopyArray(SINSstate.OdometerVector, (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.ComulativeKappaEst)) / (1.0 + SINSstate.ComulativeKappaEst[1]) * SINSstate.OdometerVector);
-                        SimpleOperations.CopyArray(SINSstateDinamOdo.OdometerVector, SINSstate.OdometerVector);
                     }
                 }
 
@@ -206,12 +179,8 @@ namespace SINSProcessingModes
                         SINSstate.Roll_prev = SINSstate.Roll;
                         SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
                         SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
-                        SimpleOperations.CopyArray(SINSstateDinamOdo.F_z_prev, SINSstateDinamOdo.F_z);
-                        SimpleOperations.CopyArray(SINSstateDinamOdo.W_z_prev, SINSstateDinamOdo.W_z);
                         SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
                         SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
-                        SINSstateDinamOdo.OdometerLeftPrev = SINSstateDinamOdo.OdometerData.odometer_left.Value;
-                        SINSstateDinamOdo.OdometerRightPrev = SINSstateDinamOdo.OdometerData.odometer_right.Value;
                     }
                     if (Do_Smoothing)
                         i = i + 2;
@@ -224,18 +193,20 @@ namespace SINSProcessingModes
 
                 //---------------------------------------MAIN STEPS----------------------------------------------------
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
-                SINSprocessing.StateIntegration_AT(SINSstateDinamOdo, KalmanVars, SINSstate2, SINSstate_OdoMod);
+
+                //if (i % 100 == 0)
+                //    ForHelp_2.WriteLine((SINSstate_OdoMod.Longitude - Math.Atan2(SINSstate_OdoMod.A_x0n[2, 1], SINSstate_OdoMod.A_x0n[2, 0])) * SINSstate_OdoMod.R_e * Math.Cos(SINSstate_OdoMod.Latitude)
+                //        + " " + (SINSstate_OdoMod.Latitude - Math.Atan2(SINSstate_OdoMod.A_x0n[2, 2], Math.Sqrt(SINSstate_OdoMod.A_x0n[0, 2] * SINSstate_OdoMod.A_x0n[0, 2] + SINSstate_OdoMod.A_x0n[1, 2] * SINSstate_OdoMod.A_x0n[1, 2]))) * SINSstate_OdoMod.R_n
+                //        + " ");
+
+
 
                 if (SINSstate.flag_Odometr_SINS_case == true)
                 {
-                    //SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
-
                     if (SINSstate.flag_FeedbackExist == true && SINSstate.flag_EstimateExist == false)
-                        Odometr_SINS.Make_A_new(SINSstate, KalmanVars, SINSstate_OdoMod, SINSstateDinamOdo);
+                        Odometr_SINS.Make_A_new(SINSstate, KalmanVars, SINSstate_OdoMod);
                     else if (SINSstate.flag_FeedbackExist == false && SINSstate.flag_EstimateExist == true)
-                        Odometr_SINS.Make_A_new(SINSstate2, KalmanVars, SINSstate_OdoMod, SINSstateDinamOdo);
-                    else //--- Это случай, когда автономное решение и по углам от него строится решение по одометру ---//
-                        Odometr_SINS.Make_A_new(SINSstateDinamOdo, KalmanVars, SINSstate_OdoMod, SINSstateDinamOdo);
+                        Odometr_SINS.Make_A_new(SINSstate2, KalmanVars, SINSstate_OdoMod);
 
                     Odometr_SINS.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
                 }
@@ -263,22 +234,22 @@ namespace SINSProcessingModes
                 if (SINSstate.flag_UseOnlyStops == false && SINSstate.flag_Odometr_SINS_case == false || SINSstate.flag_Odometr_SINS_case == true && (SINSstate.flag_UsingOdoVelocity || SINSstate.Use_Odo_Distance))
                 {
                     if (SINSstate.Use_Each_Odo_Measure == true)
-                        ModelsOfOdoCorrection.Model_Each_Odo_Measure(SINSstate, SINSstate_OdoMod, OdoModel, ForHelp);
+                        SINSstate.flag_UsingOdoVelocity = true;
                     else if (SINSstate.Use_Odo_Distance == true)
-                        ModelsOfOdoCorrection.Model_With_Odo_Equations(SINSstate, SINSstate_OdoMod, KalmanVars, OdoModel, ForHelp);
+                    {
+                        SINSstate.flag_UsingOdoVelocity = false;
+                        SINSstate.flag_UsingOdoPosition = true;
+                    }
 
                     //--- Считаем весовые матрицы ---//
                     if (SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
-                        double[] d_2 = new double[3];
+                        SINSstate.flag_UsingCorrection = true;
 
+                        double[] d_2 = new double[3];
                         for (int u = 0; u < 3; u++) d_2[u] = SINSstate.A_x0s[u, 1];
                         SimpleOperations.CopyMatrix(SINSstate.Ds_ComulativeByOdoTrack, SINSstate.Ds_ComulativeByOdoTrack + SINSstate.OdometerVector[1] * SINSstate.A_x0s);
                         SimpleOperations.CopyMatrix(SINSstate.Ds2_ComulativeByOdoTrack, SINSstate.Ds2_ComulativeByOdoTrack + SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2));
-
-                        for (int u = 0; u < 3; u++) d_2[u] = SINSstateDinamOdo.A_x0s[u, 1];
-                        SimpleOperations.CopyMatrix(SINSstateDinamOdo.Ds_ComulativeByOdoTrack, SINSstateDinamOdo.Ds_ComulativeByOdoTrack + SINSstate.OdometerVector[1] * SINSstateDinamOdo.A_x0s);
-                        SimpleOperations.CopyMatrix(SINSstateDinamOdo.Ds2_ComulativeByOdoTrack, SINSstateDinamOdo.Ds2_ComulativeByOdoTrack + SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2));
                     }
                     // --- -------------------------------------------- //
 
@@ -289,6 +260,7 @@ namespace SINSProcessingModes
                 else
                 {
                     SINSstate.flag_UsingCorrection = false;
+                    SINSstate.OdoTimeStepCount++;
                 }
                 //-----------------------END----------------------------------
                 //-----------------------------------------------------------------
@@ -316,10 +288,11 @@ namespace SINSProcessingModes
                 //---------------------------------------------------------------------------------------------------------------------------------------
                 //----------------------------ЭТАП КОРРЕКЦИИ start-----------------------------------------------------------------------------------------
                 KalmanVars.cnt_measures = 0;
-                for (int u = 0; u < SimpleData.iMx * SimpleData.iMz; u++) KalmanVars.Matrix_H[u] = 0.0;
+                SimpleOperations.NullingOfArray(KalmanVars.Matrix_H);
+                //for (int u = 0; u < SimpleData.iMx * SimpleData.iMz; u++) KalmanVars.Matrix_H[u] = 0.0;
 
                 if (SINSstate.flag_using_Checkpotints == true)
-                    CheckPointProcessing(SINSstate, SINSstateDinamOdo, SINSstate_OdoMod, KalmanVars);
+                    CheckPointProcessing(SINSstate, SINSstate_OdoMod, KalmanVars);
 
                 //-------------------------------------------------
                 ProcHelp.corrected = 0;
@@ -348,11 +321,11 @@ namespace SINSProcessingModes
                         if (SINSstate.flag_UsingOdoPosition == true && SINSstate.flag_KNS == false)
                         {
                             //---Если корректировать по измерениям, полученным в прямом проходе, то сглаженное решение будет стремиться именно к последнему---
-                            Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstateDinamOdo, ProcHelp);
+                            Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstate_OdoMod, ProcHelp);
                         }
 
                         if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_KNS == false)
-                            Odometr_SINS.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
+                            Odometr_SINS.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
                     }
 
                     //===SNS коррекция===//
@@ -374,23 +347,23 @@ namespace SINSProcessingModes
                 //    SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
 
                 //====Вывод данных для телеметрического имитатора====
-                //if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23" && SINSstate.Global_file != "Saratov_run_2014_07_23_middle_interval_GPS")
-                //{
-                //    double tmpRoundFreq50 = Math.Round(1.0 / SINSstate.Freq / 50.0, 0) * 50.0;
-                //    int tmpFreqOut10 = Convert.ToInt32(tmpRoundFreq50 / 10.0);
+                if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Azimut-T_18-Oct-2013_11-05-11" && SINSstate.Global_file != "Saratov_run_2014_07_23" && SINSstate.Global_file != "Saratov_run_2014_07_23_middle_interval_GPS")
+                {
+                    double tmpRoundFreq50 = Math.Round(1.0 / SINSstate.Freq / 50.0, 0) * 50.0;
+                    int tmpFreqOut10 = Convert.ToInt32(tmpRoundFreq50 / 10.0);
 
-                //    if ((i - l) % tmpFreqOut10 == 0)
-                //    {
-                //        if (SINSstate.flag_FeedbackExist)
-                //            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
-                //                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
-                //                    + " " + (SINSstate.Heading * SimpleData.ToDegree) + " " + (SINSstate.Roll * SimpleData.ToDegree) + " " + (SINSstate.Pitch * SimpleData.ToDegree));
-                //        else if (SINSstate.flag_EstimateExist)
-                //            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
-                //                    + " " + SINSstate2.Latitude + " " + SINSstate2.Longitude + " " + SINSstate2.Altitude
-                //                    + " " + (SINSstate2.Heading * SimpleData.ToDegree) + " " + (SINSstate2.Roll * SimpleData.ToDegree) + " " + (SINSstate2.Pitch * SimpleData.ToDegree));
-                //    }
-                //}
+                    if ((i - l) % tmpFreqOut10 == 0)
+                    {
+                        if (SINSstate.flag_FeedbackExist)
+                            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
+                                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
+                                    + " " + (SINSstate.Heading * SimpleData.ToDegree) + " " + (SINSstate.Roll * SimpleData.ToDegree) + " " + (SINSstate.Pitch * SimpleData.ToDegree));
+                        else if (SINSstate.flag_EstimateExist)
+                            Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
+                                    + " " + SINSstate2.Latitude + " " + SINSstate2.Longitude + " " + SINSstate2.Altitude
+                                    + " " + (SINSstate2.Heading * SimpleData.ToDegree) + " " + (SINSstate2.Roll * SimpleData.ToDegree) + " " + (SINSstate2.Pitch * SimpleData.ToDegree));
+                    }
+                }
 
 
 
@@ -406,9 +379,9 @@ namespace SINSProcessingModes
                 }
 
                 //--- Расчет корректирующего вектора состояния ---
-                SINSprocessing.CalcStateErrors(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
-                if (SINSstate.flag_EstimateExist == true) SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstateDinamOdo);
-                if (SINSstate.flag_FeedbackExist == true) SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate, SINSstate_OdoMod, SINSstateDinamOdo);
+                SINSprocessing.CalcStateErrors(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate_OdoMod);
+                if (SINSstate.flag_EstimateExist == true) SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate2, SINSstate_OdoMod);
+                if (SINSstate.flag_FeedbackExist == true) SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate, SINSstate_OdoMod);
 
                 /*----------------------------------------END---------------------------------------------*/
                 /*----------------------------------------------------------------------------------------*/
@@ -491,7 +464,7 @@ namespace SINSProcessingModes
                     if (SimpleData.iMxSmthd >= 4)
                     {
                         SINSstate_Smooth.Vx_0[0] = KalmanVars.ErrorVector_Smoothed[2];
-                        SINSstate_Smooth.Vx_0[1]= KalmanVars.ErrorVector_Smoothed[3];
+                        SINSstate_Smooth.Vx_0[1] = KalmanVars.ErrorVector_Smoothed[3];
                     }
                     if (SimpleData.iMxSmthd >= 7)
                     {
@@ -582,7 +555,7 @@ namespace SINSProcessingModes
                                             * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
                                             * SimpleOperations.C_convultion_iMx(SINSstate).Transpose()
                                             ;
-                                                
+
                     KalmanVars.CovarianceMatrix_SP_Straight = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), SimpleData.iMxSmthd);
 
                     for (int ii = 0; ii < SimpleData.iMxSmthd; ii++)
@@ -635,14 +608,14 @@ namespace SINSProcessingModes
                 }
                 //=========================================================================Сглаживание END=======================================================================
                 //==============================================================================================================================================================
-                
+
 
 
 
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/
                 if (i != (SINSstate.LastCountForRead - 1) && SINSstate.Global_file != "Saratov_run_2014_07_23")
-                    ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
+                    ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
                         Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
                 else if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
@@ -652,7 +625,7 @@ namespace SINSProcessingModes
                     {
                         SINSstate.CountPrev = SINSstate.Count;
                         SINSstate.FreqOutput = 1;
-                        ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, OdoModel, SINSstate, SINSstate2, SINSstateDinamOdo, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
+                        ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
                             Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
                     }
                 }
@@ -668,7 +641,7 @@ namespace SINSProcessingModes
 
 
                 //--- Переопределение значений данных одометра ---
-                SINSprocessing.Redifinition_OdoCounts(SINSstate, SINSstate2, SINSstate_OdoMod, OdoModel);
+                SINSprocessing.Redifinition_OdoCounts(SINSstate, SINSstate2, SINSstate_OdoMod);
                 //---------------------------------------END----------------------------------------------------
 
             }
@@ -678,7 +651,7 @@ namespace SINSProcessingModes
                 Smthing_Backward.Close();
                 Smthing_P.Close();
                 Smthing_X.Close();
-                if(Do_Smoothing) ForHelpSmoothed.Close();
+                if (Do_Smoothing) ForHelpSmoothed.Close();
             }
 
 
@@ -742,8 +715,8 @@ namespace SINSProcessingModes
             FillKMLOutputFile(KMLFileOutSmthd, "End", "");
 
             ForHelp.Close(); Nav_FeedbackSolution.Close(); Nav_EstimateSolution.Close(); Nav_StateErrorsVector.Close(); Nav_Autonomous.Close();
-            //Dif_GK.Close(); 
-            Speed_Angles.Close(); //Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
+            //Dif_GK.Close();
+            Speed_Angles.Close(); Imitator_Telemetric.Close(); //InputForSmoothFile.Close();
             Nav_Smoothed.Close();
             KMLFileOut.Close(); KMLFileOutSmthd.Close();
         }
@@ -756,7 +729,7 @@ namespace SINSProcessingModes
 
         //--- КОНТРОЛЬНЫЕ ТОЧКИ --- //
 
-        public static void CheckPointProcessing(SINS_State SINSstate, SINS_State SINSstateDinamOdo, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars)
+        public static void CheckPointProcessing(SINS_State SINSstate, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars)
         {
             SINSstate.flag_ControlPointCorrection = false;
 
@@ -767,9 +740,9 @@ namespace SINSProcessingModes
                 if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                     SINSstate.flag_UsingCorrection = true;
                 }
             }
@@ -778,7 +751,7 @@ namespace SINSProcessingModes
             //{
             //    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 300.62) < 0.001)
             //    {
-            //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.960075010802552, 0.646022214684887, 100.0);
+            //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.960075010802552, 0.646022214684887, 100.0);
             //        SINSstate.flag_UsingCorrection = true;
             //    }
             //}
@@ -788,14 +761,14 @@ namespace SINSProcessingModes
             //    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 135.32) < 0.001)
             //    {
             //        if (SINSstate.flag_Odometr_SINS_case == true)
-            //            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959946460438717, 0.645798564231763, 100.0);
+            //            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.959946460438717, 0.645798564231763, 100.0);
             //        else
-            //            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959946460438717, 0.645798564231763, 100.0);
+            //            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.959946460438717, 0.645798564231763, 100.0);
             //        SINSstate.flag_UsingCorrection = true;
             //    }
             //    //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 370.00) < 0.001)
             //    //{
-            //    //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.9598413385365, 0.645991245362916, 100.0);
+            //    //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.9598413385365, 0.645991245362916, 100.0);
             //    //    SINSstate.flag_UsingCorrection = true;
             //    //}
             //}
@@ -804,12 +777,12 @@ namespace SINSProcessingModes
             //{
             //    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 220.05) < 0.001)
             //    {
-            //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959931087475909, 0.645771822753885, 100.0);
+            //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.959931087475909, 0.645771822753885, 100.0);
             //        SINSstate.flag_UsingCorrection = true;
             //    }
             //    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 370.15) < 0.001)
             //    {
-            //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 0.959931087475909, 0.645771822753885, 100.0);
+            //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.959931087475909, 0.645771822753885, 100.0);
             //        SINSstate.flag_UsingCorrection = true;
             //    }
             //}
@@ -821,9 +794,9 @@ namespace SINSProcessingModes
                     )
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                     SINSstate.flag_UsingCorrection = true;
                 }
             }
@@ -840,9 +813,9 @@ namespace SINSProcessingModes
                     )
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                     SINSstate.flag_UsingCorrection = true;
                 }
             }
@@ -852,17 +825,17 @@ namespace SINSProcessingModes
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 875.97) < 0.01)
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 53.93522417 * SimpleData.ToRadian, 27.84293667 * SimpleData.ToRadian, 210.397);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 53.93522417 * SimpleData.ToRadian, 27.84293667 * SimpleData.ToRadian, 210.397);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 53.93522417 * SimpleData.ToRadian, 27.84293667 * SimpleData.ToRadian, 210.397);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 53.93522417 * SimpleData.ToRadian, 27.84293667 * SimpleData.ToRadian, 210.397);
                     SINSstate.flag_UsingCorrection = true;
                 }
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1576.38) < 0.01)
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 53.92735 * SimpleData.ToRadian, 27.84526944 * SimpleData.ToRadian, 210.397);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 53.92735 * SimpleData.ToRadian, 27.84526944 * SimpleData.ToRadian, 210.397);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, 53.92735 * SimpleData.ToRadian, 27.84526944 * SimpleData.ToRadian, 210.397);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 53.92735 * SimpleData.ToRadian, 27.84526944 * SimpleData.ToRadian, 210.397);
                     SINSstate.flag_UsingCorrection = true;
                 }
             }
@@ -871,8 +844,8 @@ namespace SINSProcessingModes
 
             //51882.017348 51282.781305 50314.277559 49810.665254 48625.735469 46969.706109 46099.38973  45275.137785 44455.564773 42015.698887 40798.997098 38318.319723 37522.01148 36624.152871
             //35772.02007  35084.502238 33450.816234 32439.517395 31374.969328 30586.404395 28841.333672 8066.56118   27237.678469 26396.367391 24978.914531 24344.341156 23488.823863
-            // 21846.975871 20959.275109 19219.215453 18246.793246 17335.874867 16413.823246 14615.745918 13546.283195 12591.799629 9717.100547  8813.435602  6404.147453 
-            //5654.336258  5265.48943 4881.444133  3604.662328  3181.956188  3171.288992 
+            // 21846.975871 20959.275109 19219.215453 18246.793246 17335.874867 16413.823246 14615.745918 13546.283195 12591.799629 9717.100547  8813.435602  6404.147453
+            //5654.336258  5265.48943 4881.444133  3604.662328  3181.956188  3171.288992
 
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
@@ -911,9 +884,9 @@ namespace SINSProcessingModes
                         )
                     {
                         if (SINSstate.flag_Odometr_SINS_case == true)
-                            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                         else
-                            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                         SINSstate.flag_UsingCorrection = true;
 
                         SINSstate.flag_ControlPointCorrection = true;
@@ -922,7 +895,7 @@ namespace SINSProcessingModes
                         SINSstate.Count = SINSstate.Count;
                 }
             }
-            
+
             if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
             {
                 //SINSstate.counter_GPS_marks
@@ -938,9 +911,9 @@ namespace SINSProcessingModes
                     if (SINSstate.Count != 15519.99802)
                     {
                         if (SINSstate.flag_Odometr_SINS_case == true)
-                            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                            Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                         else
-                            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstateDinamOdo, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+                            CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
                         SINSstate.flag_UsingCorrection = true;
 
                         SINSstate.flag_ControlPointCorrection = true;
@@ -1006,8 +979,8 @@ namespace SINSProcessingModes
             else if (Part == "End")
             {
                 KMLFileOut.WriteLine("                   </coordinates>");
-                KMLFileOut.WriteLine(" 	           </LineString>       ");
-                KMLFileOut.WriteLine("		</Placemark>               ");
+                KMLFileOut.WriteLine("              </LineString>       ");
+                KMLFileOut.WriteLine("          </Placemark>               ");
                 KMLFileOut.WriteLine("</Folder>                        ");
                 KMLFileOut.WriteLine("</Document>                      ");
                 KMLFileOut.WriteLine("</kml>                           ");

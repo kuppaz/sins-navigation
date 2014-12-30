@@ -82,7 +82,7 @@ namespace Common_Namespace
 
                 SINSstate.OdometerData.odometer_left.Value = Convert.ToDouble(dataArray[23]) / 1000.0;
 
-                if (SINSstate.Count % 5 == 0)
+                if (SINSstate.Count % SINSstate.OdoLimitMeasuresNum == 0)
                 {
                     SINSstate.odotime_cur = SINSstate.Time;
                     SINSstate.OdometerData.odometer_left.isReady = 1;
@@ -155,13 +155,14 @@ namespace Common_Namespace
 
                 if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                 {
-                    SINSstate.GPS_Data.gps_Latitude_prev.Value=SINSstate.GPS_Data.gps_Latitude.Value;
+                    SINSstate.GPS_Data.gps_Latitude_prev.Value = SINSstate.GPS_Data.gps_Latitude.Value;
                     SINSstate.GPS_Data.gps_Longitude_prev.Value = SINSstate.GPS_Data.gps_Longitude.Value;
                     SINSstate.GPS_Data.gps_Altitude_prev.Value = SINSstate.GPS_Data.gps_Altitude.Value;
 
                     SINSstate.OdometerData.odometer_left_prev.Value = SINSstate.OdometerData.odometer_left.Value;
                     SINSstate.OdometerData.odometer_right_prev.Value = SINSstate.OdometerData.odometer_right.Value;
                 }
+
                 SINSstate.GPS_Data.gps_Latitude.Value = Convert.ToDouble(dataArray2[7]);
                 SINSstate.GPS_Data.gps_Latitude.isReady = Convert.ToInt32(dataArray2[8]);
                 SINSstate.GPS_Data.gps_Longitude.Value = Convert.ToDouble(dataArray2[9]);
@@ -183,6 +184,19 @@ namespace Common_Namespace
                 SINSstate.OdometerData.odometer_left.isReady = Convert.ToInt32(dataArray2[19]);
                 SINSstate.OdometerData.odometer_right.Value = Convert.ToDouble(dataArray2[20]);
                 SINSstate.OdometerData.odometer_right.isReady = Convert.ToInt32(dataArray2[21]);
+
+
+                if (SINSstate.OdometerData.odometer_left.isReady == 1)
+                {
+                    SINSstate.OdoLimitMeasuresNum_Count++;
+                    if (SINSstate.OdoLimitMeasuresNum_Count < SINSstate.OdoLimitMeasuresNum)
+                    {
+                        SINSstate.OdometerData.odometer_left.isReady = 2;
+                        SINSstate.OdometerData.odometer_right.isReady = 2;
+                    }
+                    else
+                        SINSstate.OdoLimitMeasuresNum_Count = 0;
+                }
 
                 //if (SINSstate.Global_file == "AZIMUT_T_2013_10_18_12_55")
                 //{
@@ -261,22 +275,22 @@ namespace Common_Namespace
 
 
 
-        public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, ParamsForModel OdoModel, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstateDinamOdo, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
+        public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
                 StreamWriter Nav_FeedbackSolution, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer, StreamWriter Nav_Smoothed, StreamWriter KMLFileOut, StreamWriter KMLFileOutSmoothed)
         {
             double Lat = 0.0, Long = 0.0;
             double[] Vx_0 = new double[3];
-            if (SINSstate.flag_FeedbackExist || SINSstate.flag_Autonomous_Solution) 
-            { 
-                Lat = SINSstate.Latitude; 
+            if (SINSstate.flag_FeedbackExist || SINSstate.flag_Autonomous_Solution)
+            {
+                Lat = SINSstate.Latitude;
                 Long = SINSstate.Longitude;
                 SimpleOperations.CopyArray(Vx_0, SINSstate.Vx_0);
             }
-            else 
-            { 
-                Lat = SINSstate2.Latitude; 
-                Long = SINSstate2.Longitude; 
-                SimpleOperations.CopyArray(Vx_0, SINSstate2.Vx_0); 
+            else
+            {
+                Lat = SINSstate2.Latitude;
+                Long = SINSstate2.Longitude;
+                SimpleOperations.CopyArray(Vx_0, SINSstate2.Vx_0);
             }
 
 
@@ -287,20 +301,20 @@ namespace Common_Namespace
 
 
             if (i % SINSstate.FreqOutput == 0 && SINSstate.Do_Smoothing == false)
-                Speed_Angles.WriteLine(SINSstate.Time + " " + SINSstate.CourseHeading + " " + SINSstate.Heading + " " + SINSstate.CoursePitch 
+                Speed_Angles.WriteLine(SINSstate.Time + " " + SINSstate.CourseHeading + " " + SINSstate.Heading + " " + SINSstate.CoursePitch
                     + " " + SINSstate.beta_c + " " + SINSstate.alpha_c + " " + SINSstate.gamma_c
                     + " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1] + " " + Vx_0[0] + " " + Vx_0[1]
                     + " " + KalmanVars.Matrix_H[4] + " " + KalmanVars.Matrix_H[5] + " " + KalmanVars.Matrix_H[6]);
 
             //--- Вывод всяких СКО ---
-            if (i % SINSstate.FreqOutput == 0 || i == start_i) 
+            if (i % SINSstate.FreqOutput == 0 || i == start_i)
             {
                 string str = (SINSstate.Time + SINSstate.Time_Alignment).ToString(), str_hat = "";
 
                 if (i == start_i)
                 {
                     str_hat += "time sigm_dr1 sigm_dr2 ";
-                    if (SINSstate.flag_iMx_r3_dV3) 
+                    if (SINSstate.flag_iMx_r3_dV3)
                         str_hat += "std_dr3 ";
                     if (SINSstate.flag_Odometr_SINS_case)
                         str_hat += "std_odo_dr1 std_odo_dr2 ";
@@ -337,25 +351,21 @@ namespace Common_Namespace
             /*----------------------------------OUTPUT DinamicOdometer------------------------------------------------------*/
             if (i % SINSstate.FreqOutput == 0)
             {
-                ProcHelp.datastring = (SINSstateDinamOdo.Time + SINSstateDinamOdo.Time_Alignment) + " " + SINSstateDinamOdo.Count
-                                 + " " + SINSstateDinamOdo.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstateDinamOdo.OdoSpeed_s)
-                                 + " " + Math.Round(((SINSstateDinamOdo.Latitude - SINSstateDinamOdo.Latitude_Start) * SINSstateDinamOdo.R_n), 2)
-                                 + " " + Math.Round(((SINSstateDinamOdo.Longitude - SINSstateDinamOdo.Longitude_Start) * SINSstateDinamOdo.R_e * Math.Cos(SINSstateDinamOdo.Latitude)), 2) 
-                                 + " " + SINSstateDinamOdo.Altitude + " " + SINSstateDinamOdo.Altitude_Corr + " "
-                                 + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstateDinamOdo.Latitude_Corr) * SINSstateDinamOdo.R_n), 2)
-                                 + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstateDinamOdo.Longitude_Corr) * SINSstateDinamOdo.R_e * Math.Cos(SINSstateDinamOdo.Latitude)), 2)
-                                 + " " + ((SINSstateDinamOdo.Latitude)) + " " + ((SINSstateDinamOdo.Longitude))
-                                 + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstateDinamOdo.Latitude) * SINSstateDinamOdo.R_n), 2)
-                                 + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstateDinamOdo.Longitude) * SINSstateDinamOdo.R_e), 2)
+                ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
+                                 + " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate_OdoMod.OdoSpeed_s)
+                                 + " " + Math.Round(((SINSstate_OdoMod.Latitude - SINSstate.Latitude_Start) * SINSstate_OdoMod.R_n), 2)
+                                 + " " + Math.Round(((SINSstate_OdoMod.Longitude - SINSstate.Longitude_Start) * SINSstate_OdoMod.R_e * Math.Cos(SINSstate_OdoMod.Latitude)), 2)
+                                 + " " + SINSstate_OdoMod.Altitude + " " + SINSstate_OdoMod.Altitude_Corr + " "
+                                 + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate_OdoMod.Latitude_Corr) * SINSstate_OdoMod.R_n), 2)
+                                 + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_OdoMod.Longitude_Corr) * SINSstate_OdoMod.R_e * Math.Cos(SINSstate_OdoMod.Latitude)), 2)
+                                 + " " + ((SINSstate_OdoMod.Latitude)) + " " + ((SINSstate_OdoMod.Longitude))
+                                 + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate_OdoMod.Latitude) * SINSstate_OdoMod.R_n), 2)
+                                 + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_OdoMod.Longitude) * SINSstate_OdoMod.R_e), 2)
                                  + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
-                                 + " " + Math.Round(SINSstateDinamOdo.Vx_0[0], 3) + " " + Math.Round(SINSstateDinamOdo.Vx_0[1], 3) + " " + Math.Round(SINSstateDinamOdo.Vx_0[2], 3)
-                                 + " " + Math.Round((SINSstateDinamOdo.Heading * SimpleData.ToDegree), 4)
-                                 + " " + Math.Round((SINSstateDinamOdo.Roll * SimpleData.ToDegree), 4)
-                                 + " " + Math.Round((SINSstateDinamOdo.Pitch * SimpleData.ToDegree), 4)
-                                 + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3) + " " + Math.Round(SINSstateDinamOdo.V_norm, 3)
-                                 + " " + OdoModel.V_increment_odo + " " + (OdoModel.V_increment_SINS + SINSstateDinamOdo.dV_q)
-                                 + " " + Math.Round(SINSstateDinamOdo.Vx_0[0], 3) + " " + Math.Round(SINSstateDinamOdo.Vx_0[1], 3)
-                                 + " " + SINSstateDinamOdo.OdometerVector[1] + " " + SINSstateDinamOdo.OdoSpeed_x0[1]
+                                 + " " + Math.Round(SINSstate_OdoMod.Vx_0[0], 3) + " " + Math.Round(SINSstate_OdoMod.Vx_0[1], 3) + " " + Math.Round(SINSstate_OdoMod.Vx_0[2], 3)
+                                 + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3) + " " + Math.Round(SINSstate_OdoMod.V_norm, 3)
+                                 + " " + Math.Round(SINSstate_OdoMod.Vx_0[0], 3) + " " + Math.Round(SINSstate_OdoMod.Vx_0[1], 3)
+                                 + " " + SINSstate_OdoMod.OdometerVector[1] + " " + SINSstate_OdoMod.OdoSpeed_x0[1]
                                  ;
                 DinamicOdometer.WriteLine(ProcHelp.datastring);
 
@@ -378,9 +388,8 @@ namespace Common_Namespace
                                  + " " + ProcHelp.corrected
                                  + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Heading * SimpleData.ToDegree), 4)
                                  + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Roll * SimpleData.ToDegree), 4)
-                                 + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Pitch * SimpleData.ToDegree), 4) 
+                                 + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Pitch * SimpleData.ToDegree), 4)
                                  + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3) + " " + Math.Round(SINSstate.V_norm, 3)
-                                 + " " + OdoModel.V_increment_odo + " " + (OdoModel.V_increment_SINS + SINSstate.dV_q) 
                                  + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3)
                                  + " " + SINSstate.OdometerVector[1] + " " + SINSstate.OdoSpeed_x0[1]
                                  ;
@@ -399,12 +408,12 @@ namespace Common_Namespace
                          + " " + SINSstate.Longitude
                          + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
                          + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3)
-                         + " " + ((ProcHelp.LatSNS * SimpleData.ToRadian)) + " " + ((ProcHelp.LongSNS * SimpleData.ToRadian ) )
+                         + " " + ((ProcHelp.LatSNS * SimpleData.ToRadian)) + " " + ((ProcHelp.LongSNS * SimpleData.ToRadian))
                          + " " + Math.Round(ProcHelp.SpeedSNS, 3)
-                         + " " + Math.Round(SINSstate.Vx_0[0],3) + " " + Math.Round(SINSstate.Vx_0[1],3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
-                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 3) 
+                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
+                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 3)
                          + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 3) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 3)
-                         + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3) 
+                         + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3)
                          + " " + SINSstate.Azimth + " " + SINSstate.OdometerData.odometer_left.isReady
                          + " " + SINSstate.OdometerData.odometer_left.Value
                          + " " + Math.Round(SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0), 3)
@@ -425,14 +434,13 @@ namespace Common_Namespace
                                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
                                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
-                                        + " " + ProcHelp.corrected 
-                                        //+ " " + SINSstate.OdometerData.odometer_left.isReady
-                                        + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start 
-                                        //+ " " + SINSstate.FLG_Stop
-                                        + " " + Math.Round(((SINSstate.Heading - SINSstateDinamOdo.Heading) * SimpleData.ToDegree), 8)
+                                        + " " + ProcHelp.corrected
+                        //+ " " + SINSstate.OdometerData.odometer_left.isReady
+                                        + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start
+                        //+ " " + SINSstate.FLG_Stop
+                                        + " " + Math.Round(((SINSstate.Heading - SINSstate_OdoMod.Heading) * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8);
-                        // + " " + OdoModel.V_increment_odo + " " + (OdoModel.V_increment_SINS + SINSstate.dV_q) + " " + OdoModel.Can
-                                        ;
+                    ;
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);
                 }
             }
@@ -441,7 +449,7 @@ namespace Common_Namespace
             if (SINSstate.Do_Smoothing == true && i % SINSstate.FreqOutput == 0)
             {
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
-                                        //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
+                    //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
                                         + " " + Math.Round(((SINSstate_Smooth.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((SINSstate_Smooth.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude)), 2) + " " + SINSstate_Smooth.Altitude
                                         + " " + ((SINSstate_Smooth.Latitude)) + " " + ((SINSstate_Smooth.Longitude))
@@ -451,10 +459,10 @@ namespace Common_Namespace
                                         + " " + Math.Round(SINSstate_Smooth.Vx_0[0], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[1], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[2], 3)
                                         + " " + Math.Round((SINSstate_Smooth.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate_Smooth.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate_Smooth.Pitch * SimpleData.ToDegree), 8)
-                                        //+ " " + ProcHelp.corrected + " " + SINSstate.OdometerData.odometer_left.isReady
-                                        //+ " " + ProcHelp.distance + " " + ProcHelp.distance_from_start + " " + SINSstate.FLG_Stop
-                                        //+ " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1]
-                                        //+ " " + SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0)
+                    //+ " " + ProcHelp.corrected + " " + SINSstate.OdometerData.odometer_left.isReady
+                    //+ " " + ProcHelp.distance + " " + ProcHelp.distance_from_start + " " + SINSstate.FLG_Stop
+                    //+ " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1]
+                    //+ " " + SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0)
                                         ;
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     ProcHelp.datastring = ProcHelp.datastring + " " + Math.Round(SINSstate.Count);
@@ -488,7 +496,7 @@ namespace Common_Namespace
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo] + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo + 1];
                 if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_Using_iMx_r_odo_3)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo + 2];
-                
+
                 if (SINSstate.flag_iMx_kappa_13_ds)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_odo_model] * SimpleData.ToDegree
                                                               + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_odo_model + 1] * SimpleData.ToDegree
@@ -520,7 +528,7 @@ namespace Common_Namespace
                     KMLFileOut.WriteLine(SINSstate2.Longitude * SimpleData.ToDegree + "," + SINSstate2.Latitude * SimpleData.ToDegree + "," + SINSstate2.Altitude);
 
                 if (SINSstate.Do_Smoothing)
-                    KMLFileOutSmoothed.WriteLine(SINSstate_Smooth.Longitude*SimpleData.ToDegree + "," + SINSstate_Smooth.Latitude*SimpleData.ToDegree + "," + SINSstate_Smooth.Altitude);
+                    KMLFileOutSmoothed.WriteLine(SINSstate_Smooth.Longitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Latitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Altitude);
             }
 
         }
