@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using Common_Namespace;
 
 namespace Common_Namespace
 {
@@ -250,73 +252,6 @@ namespace Common_Namespace
 
 
 
-
-        public static void Gauss_Kruger(SINS_State SINSstate)
-        {
-            double[] X_et = new double[5], Y_et = new double[5], H_et = new double[5];
-            X_et[0] = 5978265.75; X_et[1] = 5979838.67; X_et[2] = 5979140.272;
-            Y_et[0] = 5555526.02; Y_et[1] = 5555406.746; Y_et[2] = 5555362.311;
-            H_et[0] = 195.0; H_et[1] = 217.084; H_et[2] = 210.397;
-
-            int i, iN;
-            for (i = 0; i < 3; i++)
-            {
-                Phi_Lambda_GAUSS_KRUGER(X_et[i], Y_et[i], SINSstate, i);
-            }
-
-            iN = (int)(Y_et[0] * 1.0e-6);
-            SINSstate.DirectionalAngle = 280 * 0.06 + (SINSstate.Longitude / 3.141592 * 180.0 - 6.0 * (iN - 0.5)) * Math.Sin(SINSstate.Latitude);
-        }
-
-        public static void Phi_Lambda_GAUSS_KRUGER(double dX, double dY, SINS_State SINSstate, int i)
-        {
-            // INPUT:  dX -> X (Gauss-Kruger) Coordinate
-            // INPUT:  dY -> X (Gauss-Kruger) Coordinate
-            // OUTPUT:  *dPhi -> Latitude, *dLambda -> Longitude
-            //    dPhi and dLambda in Radians !!!
-            int iN;
-            double dSinPhi, dCosPhi, dSin2Phi, dSin4Phi, dSin6Phi;
-            double dBeta, dSinBeta, dSin2Beta, dSin4Beta, dZ0, dZ02, dPhi0;
-            double dDeltaPhi, dL;
-            iN = (int)(dY * 1.0e-6);
-            dBeta = dX / 6367558.4968;
-            dSinBeta = Math.Sin(dBeta);
-            dSin2Beta = dSinBeta * dSinBeta;
-            dSin4Beta = dSin2Beta * dSin2Beta;
-            dPhi0 = dBeta + Math.Sin(2.0 * dBeta) * (0.00252588685 -
-            0.00001491860 * dSin2Beta + 0.00000011904 * dSin4Beta);
-
-            dCosPhi = Math.Cos(dPhi0);
-            dSinPhi = Math.Sin(dPhi0);
-            dSin2Phi = dSinPhi * dSinPhi;
-            dSin4Phi = dSin2Phi * dSin2Phi;
-            dSin6Phi = dSin4Phi * dSin2Phi;
-
-            dZ0 = (dY - (10.0 * iN + 5.0) * 1.0e5) / (6378245.0 * dCosPhi);
-            dZ02 = dZ0 * dZ0;
-
-            dDeltaPhi = -dZ02 * Math.Sin(2.0 * dPhi0) * (0.251684631 -
-            0.003369263 * dSin2Phi + 0.000011276 * dSin4Phi -
-            dZ02 * (0.10500614 - 0.04559916 * dSin2Phi + 0.00228901 * dSin4Phi - 0.00002987 * dSin6Phi -
-            dZ02 * (0.042858 - 0.025318 * dSin2Phi + 0.014346 * dSin4Phi - 0.001264 * dSin6Phi -
-            dZ02 * (0.01672 - 0.00630 * dSin2Phi + 0.01188 * dSin4Phi - 0.00328 * dSin6Phi))));
-
-            dL = dZ0 * (1.0 - 0.0033467108 * dSin2Phi - 0.0000056002 * dSin4Phi - 0.0000000187 * dSin6Phi -
-            dZ02 * (0.16778975 + 0.16273586 * dSin2Phi - 0.00052490 * dSin4Phi - 0.00000846 * dSin6Phi -
-            dZ02 * (0.0420025 + 0.1487407 * dSin2Phi + 0.0059420 * dSin4Phi - 0.0000150 * dSin6Phi -
-            dZ02 * (0.01225 + 0.09477 * dSin2Phi + 0.03282 * dSin4Phi - 0.00034 * dSin6Phi -
-            dZ02 * (0.0038 + 0.0524 * dSin2Phi + 0.0482 * dSin4Phi + 0.0032 * dSin6Phi)))));
-
-            SINSstate.GK_Latitude[i] = dPhi0 + dDeltaPhi;
-            //*dLambda = 6.0*( iN - 0.0)/ 57.29577951 + dL;
-            SINSstate.GK_Longitude[i] = 6.0 * (iN - 0.5) / 57.29577951 + dL;
-        }
-
-
-
-
-
-
         public static void InitOfCovarianceMatrixes(SINS_State SINSstate, Kalman_Vars KalmanVars)
         {
             double[] pdP = new double[SimpleData.iMx * SimpleData.iMx];
@@ -483,6 +418,28 @@ namespace Common_Namespace
 
 
 
+        public static void Make_A_brindge(SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, SINS_State SINSstate_OdoMod)
+        {
+            if (SINSstate.flag_Odometr_SINS_case == true)
+            {
+                if (SINSstate.flag_FeedbackExist == true)
+                    Odometr_SINS.Make_A(SINSstate, KalmanVars, SINSstate_OdoMod);
+                else if (SINSstate.flag_FeedbackExist == false)
+                    Odometr_SINS.Make_A(SINSstate2, KalmanVars, SINSstate_OdoMod);
+
+                Odometr_SINS.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
+            }
+            else
+            {
+                if (SINSstate.flag_FeedbackExist == true)
+                    SINSprocessing.Make_A(SINSstate, KalmanVars, SINSstate_OdoMod);
+                else if (SINSstate.flag_FeedbackExist == false)
+                    SINSprocessing.Make_A(SINSstate2, KalmanVars, SINSstate_OdoMod);
+
+                SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
+            }
+        }
+
 
         public static void Make_A(SINS_State SINSstate, Kalman_Vars KalmanVars, SINS_State SINSstate_OdoMod)
         {
@@ -640,6 +597,7 @@ namespace Common_Namespace
             CopyMatrix(AT_z_xi, SINSstate.AT);
             CopyMatrix(B_x_eta, SINSstate.A_x0n);
 
+            SINSstate2.Time = SINSstate.Time;
             SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
             //C_eta_xi = Matrix.DoA_eta_xi(SINSstate.Time);
             Altitude = SINSstate.Altitude;
@@ -1051,6 +1009,253 @@ namespace Common_Namespace
                 else str = str + " 1";
             }
             SlippageLog.WriteLine(str);
+        }
+
+
+
+
+
+
+
+
+
+        public static void FuncSmoothing_BackwardAndSmooth(SINS_State SINSstate, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, Proc_Help ProcHelp, StreamReader Back_Input_X, StreamReader Back_Input_P, StreamWriter ForHelpSmoothed)
+        {
+            string[] BackInputX_LineArray = Back_Input_X.ReadLine().Split(' ');
+
+            for (int u = 1; u < SimpleData.iMxSmthd + 1; u++)
+                KalmanVars.ErrorVector_Straight[u - 1] = Convert.ToDouble(BackInputX_LineArray[u]);
+
+            double Time_Streight = Convert.ToDouble(BackInputX_LineArray[0]);
+            double Time_Back = SINSstate.Count;
+
+            int u2 = 0;
+            string[] BackInputP_LineArray = Back_Input_P.ReadLine().Split(' ');
+
+            SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
+            for (int u = 0; u < SimpleData.iMxSmthd; u++)
+            {
+                for (int u1 = u; u1 < SimpleData.iMxSmthd; u1++)
+                {
+                    KalmanVars.CovarianceMatrix_SP_Straight[u * SimpleData.iMxSmthd + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
+                    u2++;
+                }
+            }
+
+            if (SimpleData.iMxSmthd >= 2)
+            {
+                KalmanVars.ErrorVector_m[0] = SINSstate.Latitude;
+                KalmanVars.ErrorVector_m[1] = SINSstate.Longitude;
+            }
+            if (SimpleData.iMxSmthd >= 4)
+            {
+                KalmanVars.ErrorVector_m[2] = SINSstate.Vx_0[0];
+                KalmanVars.ErrorVector_m[3] = SINSstate.Vx_0[1];
+            }
+            if (SimpleData.iMxSmthd >= 7)
+            {
+                KalmanVars.ErrorVector_m[4] = SINSstate.Pitch;
+                KalmanVars.ErrorVector_m[5] = SINSstate.Roll;
+                KalmanVars.ErrorVector_m[6] = SINSstate.Heading;
+            }
+            if (SimpleData.iMxSmthd > 4)
+            {
+                if (SINSstate.Pitch - KalmanVars.ErrorVector_Straight[4] > Math.PI) KalmanVars.ErrorVector_Straight[4] += 2 * Math.PI;
+                if (SINSstate.Pitch - KalmanVars.ErrorVector_Straight[4] < -Math.PI) KalmanVars.ErrorVector_Straight[4] -= 2 * Math.PI;
+
+                if (SINSstate.Roll - KalmanVars.ErrorVector_Straight[5] > Math.PI) KalmanVars.ErrorVector_Straight[5] += 2 * Math.PI;
+                if (SINSstate.Roll - KalmanVars.ErrorVector_Straight[5] < -Math.PI) KalmanVars.ErrorVector_Straight[5] -= 2 * Math.PI;
+
+                if (SINSstate.Heading - KalmanVars.ErrorVector_Straight[6] > Math.PI) KalmanVars.ErrorVector_Straight[6] += 2 * Math.PI;
+                if (SINSstate.Heading - KalmanVars.ErrorVector_Straight[6] < -Math.PI) KalmanVars.ErrorVector_Straight[6] -= 2 * Math.PI;
+            }
+
+            Matrix MatrixS_ForNavDeltas = new Matrix(SimpleData.iMxSmthd, SimpleData.iMxSmthd);
+            MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx(SINSstate)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
+                                    * SimpleOperations.C_convultion_iMx(SINSstate).Transpose()
+                                    ;
+            KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), SimpleData.iMxSmthd);
+
+            //==============================================================//
+            KalmanProcs.Smoothing(KalmanVars, SINSstate, SimpleData.iMxSmthd);
+            //==============================================================//
+
+            if (SimpleData.iMxSmthd >= 2)
+            {
+                SINSstate_Smooth.Latitude = KalmanVars.ErrorVector_Smoothed[0];
+                SINSstate_Smooth.Longitude = KalmanVars.ErrorVector_Smoothed[1];
+            }
+            if (SimpleData.iMxSmthd >= 4)
+            {
+                SINSstate_Smooth.Vx_0[0] = KalmanVars.ErrorVector_Smoothed[2];
+                SINSstate_Smooth.Vx_0[1] = KalmanVars.ErrorVector_Smoothed[3];
+            }
+            if (SimpleData.iMxSmthd >= 7)
+            {
+                SINSstate_Smooth.Pitch = KalmanVars.ErrorVector_m[4];
+                SINSstate_Smooth.Roll = KalmanVars.ErrorVector_m[5];
+                SINSstate_Smooth.Heading = KalmanVars.ErrorVector_m[6];
+            }
+
+            if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+            {
+                ForHelpSmoothed.WriteLine("Ошибка сглаживания в выколотой точке в момент времени " + SINSstate.Count + " = " +
+                    Math.Sqrt(
+                        Math.Pow((ProcHelp.LatSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[0]) * SINSstate.R_n, 2)
+                        + Math.Pow((ProcHelp.LongSNS * SimpleData.ToRadian - KalmanVars.ErrorVector_m[1]) * SINSstate.R_e * Math.Cos(KalmanVars.ErrorVector_m[0]), 2)
+                        )
+                    );
+            }
+
+
+
+            //===================Vertical Channel===================//
+            if (SINSstate.flag_iMx_r3_dV3)
+            {
+                int dimVertical = 0;
+                if (SimpleData.iMxSmthd == 4)
+                    dimVertical = 2;
+                if (SimpleData.iMxSmthd == 2)
+                    dimVertical = 1;
+
+                for (int u = 0; u < dimVertical; u++)
+                    KalmanVars.ErrorVector_Straight[u] = Convert.ToDouble(BackInputX_LineArray[SimpleData.iMxSmthd + 1 + u]);
+
+                KalmanVars.ErrorVector_m[0] = SINSstate.Altitude;
+                if (dimVertical == 2)
+                    KalmanVars.ErrorVector_m[1] = SINSstate.Vx_0[2];
+
+                SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
+                for (int u = 0; u < dimVertical; u++)
+                {
+                    for (int u1 = u; u1 < dimVertical; u1++)
+                    {
+                        KalmanVars.CovarianceMatrix_SP_Straight[u * dimVertical + u1] = Convert.ToDouble(BackInputP_LineArray[u2]);
+                        u2++;
+                    }
+                }
+
+                Matrix MatrixS_ForNavDeltas_r3 = new Matrix(dimVertical, dimVertical);
+                MatrixS_ForNavDeltas_r3 = SimpleOperations.C_convultion_iMx_r3(SINSstate)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
+                                    * SimpleOperations.C_convultion_iMx_r3(SINSstate).Transpose()
+                                    ;
+                KalmanVars.CovarianceMatrix_SP_m = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), dimVertical);
+
+                //==============================================================//
+                KalmanProcs.Smoothing(KalmanVars, SINSstate, dimVertical);
+                //==============================================================//
+
+                SINSstate_Smooth.Altitude = KalmanVars.ErrorVector_Smoothed[0];
+                if (SimpleData.iMxSmthd == 4)
+                    SINSstate_Smooth.Vx_0[2] = KalmanVars.ErrorVector_Smoothed[1];
+            }
+        }
+
+
+
+        public static void FuncSmoothing_Forward(SINS_State SINSstate, SINS_State SINSstate_Smooth, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars, Proc_Help ProcHelp, StreamWriter Smthing_X, StreamWriter Smthing_P, StreamWriter Smthing_Backward)
+        {
+            string str_P = "";
+            //---Делаем свертку до S_X---
+            Matrix MatrixS_ForNavDeltas = new Matrix(SimpleData.iMxSmthd, SimpleData.iMxSmthd);
+            MatrixS_ForNavDeltas = SimpleOperations.C_convultion_iMx(SINSstate)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
+                                    * SimpleOperations.C_convultion_iMx(SINSstate).Transpose()
+                                    ;
+
+            KalmanVars.CovarianceMatrix_SP_Straight = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), SimpleData.iMxSmthd);
+
+            for (int ii = 0; ii < SimpleData.iMxSmthd; ii++)
+                for (int ji = ii; ji < SimpleData.iMxSmthd; ji++)
+                    str_P += KalmanVars.CovarianceMatrix_SP_Straight[ii * SimpleData.iMxSmthd + ji].ToString() + " ";
+
+            if (SINSstate.flag_iMx_r3_dV3)
+            {
+                Matrix MatrixS_ForNavDeltas_r3 = SimpleOperations.C_convultion_iMx_r3(SINSstate)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                    * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
+                                    * SimpleOperations.C_convultion_iMx_r3(SINSstate).Transpose()
+                                    ;
+                if (SimpleData.iMxSmthd == 4)
+                {
+                    double[] ArrayS_ForNavDeltas_r3_SP = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), 2);
+                    str_P += ArrayS_ForNavDeltas_r3_SP[0].ToString() + " " + ArrayS_ForNavDeltas_r3_SP[1].ToString() + " " + ArrayS_ForNavDeltas_r3_SP[3].ToString();
+                }
+                else if (SimpleData.iMxSmthd == 2)
+                {
+                    double[] ArrayS_ForNavDeltas_r3_SP = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas_r3), 1);
+                    str_P += ArrayS_ForNavDeltas_r3_SP[0].ToString();
+                }
+            }
+
+            Smthing_P.WriteLine(str_P);
+            //-----------------------
+
+            string str_X = "";
+            if (SimpleData.iMxSmthd == 2)
+            {
+                str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude;
+                if (SINSstate.flag_iMx_r3_dV3)
+                    str_X = str_X + " " + SINSstate.Altitude;
+            }
+            if (SimpleData.iMxSmthd == 4)
+            {
+                str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1];
+                if (SINSstate.flag_iMx_r3_dV3)
+                    str_X = str_X + " " + SINSstate.Altitude + " " + SINSstate.Vx_0[2];
+            }
+            if (SimpleData.iMxSmthd == 7)
+                str_X = SINSstate.Count + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
+            Smthing_X.WriteLine(str_X);
+            //-----------------------
+
+            string StringForBack = "";
+            StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
+            Smthing_Backward.WriteLine(StringForBack);
+        }
+
+
+
+        public static void FuncSmoothing_TransposeFileForBackward(SINS_State SINSstate, int NumberOfIterationForOneForSmoothing)
+        {
+            StreamReader Smthing_Backward_R, Smthing_Backward_R_X, Smthing_Backward_R_P;
+            StreamWriter Smthing_Backward_full = new StreamWriter(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full.txt"),
+                         Smthing_Backward_X = new StreamWriter(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_X.txt"),
+                         Smthing_Backward_P = new StreamWriter(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_P.txt");
+
+            for (int i = Convert.ToInt32(SINSstate.NumberOfFilesForSmoothing); i >= 1; i--)
+            {
+                int j = 0;
+                string[] strTemp = new string[NumberOfIterationForOneForSmoothing],
+                         strTemp_X = new string[NumberOfIterationForOneForSmoothing],
+                         strTemp_P = new string[NumberOfIterationForOneForSmoothing];
+                Smthing_Backward_R = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_" + i + ".txt");
+                Smthing_Backward_R_X = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_X_" + i + ".txt");
+                Smthing_Backward_R_P = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_P_" + i + ".txt");
+
+                for (j = 0; j < NumberOfIterationForOneForSmoothing; j++)
+                {
+                    if (Smthing_Backward_R.EndOfStream == true)
+                        break;
+                    strTemp[j] = Smthing_Backward_R.ReadLine();
+                    strTemp_X[j] = Smthing_Backward_R_X.ReadLine();
+                    strTemp_P[j] = Smthing_Backward_R_P.ReadLine();
+                }
+                for (int j1 = j - 1; j1 >= 0; j1--)
+                {
+                    Smthing_Backward_full.WriteLine(strTemp[j1]);
+                    Smthing_Backward_X.WriteLine(strTemp_X[j1]);
+                    Smthing_Backward_P.WriteLine(strTemp_P[j1]);
+                }
+
+                Smthing_Backward_R.Close(); Smthing_Backward_R_X.Close(); Smthing_Backward_R_P.Close();
+            }
+            Smthing_Backward_full.Close(); Smthing_Backward_X.Close(); Smthing_Backward_P.Close();
         }
     }
 }

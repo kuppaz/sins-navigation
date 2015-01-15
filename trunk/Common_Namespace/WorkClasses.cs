@@ -21,16 +21,27 @@ namespace Common_Namespace
     [Serializable()]
     public class gps_data
     {
-        public DataWithIsReady gps_Latitude = new DataWithIsReady(), gps_Longitude = new DataWithIsReady(), gps_Altitude = new DataWithIsReady();
-        public DataWithIsReady gps_Latitude_prev = new DataWithIsReady(), gps_Longitude_prev = new DataWithIsReady(), gps_Altitude_prev = new DataWithIsReady();
-        public DataWithIsReady gps_Ve = new DataWithIsReady(), gps_Vn = new DataWithIsReady(), gps_Vup = new DataWithIsReady();
+        public DataWithIsReady gps_Latitude = new DataWithIsReady()
+                             , gps_Longitude = new DataWithIsReady()
+                             , gps_Altitude = new DataWithIsReady();
+
+        public DataWithIsReady gps_Latitude_prev = new DataWithIsReady()
+                             , gps_Longitude_prev = new DataWithIsReady()
+                             , gps_Altitude_prev = new DataWithIsReady();
+
+        public DataWithIsReady gps_Ve = new DataWithIsReady()
+                             , gps_Vn = new DataWithIsReady()
+                             , gps_Vup = new DataWithIsReady();
     }
 
     [Serializable()]
     public class odometer_data
     {
-        public DataWithIsReady odometer_left = new DataWithIsReady(), odometer_right = new DataWithIsReady();
-        public DataWithIsReady odometer_left_prev = new DataWithIsReady(), odometer_right_prev = new DataWithIsReady();
+        public DataWithIsReady odometer_left = new DataWithIsReady()
+                             , odometer_right = new DataWithIsReady();
+
+        public DataWithIsReady odometer_left_prev = new DataWithIsReady()
+                             , odometer_right_prev = new DataWithIsReady();
     }
 
     [Serializable()]
@@ -68,15 +79,16 @@ namespace Common_Namespace
         public bool flag_UseAlgebraDrift = false;
 
         //---параметры коррекции---
-        public bool flag_UsingCorrection = false, flag_UsingAngleCorrection = false, flag_KNS = false, flag_UsingAltitudeCorrection = false;
-        public bool flag_Using_SNS = false, flag_UseOnlyStops = false, flag_not_use_kns = false, flag_using_Checkpotints = false, flag_using_GoCalibrInCP = false;
+        public bool flag_UsingCorrection = false, flag_UsingAngleCorrection = false, flag_ZUPT = false, flag_UsingAltitudeCorrection = false;
+        public bool flag_Using_SNS = false, flag_UseOnlyStops = false, flag_NotUse_ZUPT = false, flag_using_Checkpotints = false, flag_using_GoCalibrInCP = false;
         public bool flag_UseOdoVelocity_In_Oz = false, flag_autonomous_dinamic_mode = false;
+
         public bool flag_UsingOdoPosition = false, flag_UsingOdoVelocity = false, add_velocity_to_position = false;
         public bool flag_UsingScalarOdoMeasure = false;
         public bool flag_OdoModelOnlyCP = false;
 
-        public bool Use_Each_Odo_Measure = false, Ungolonom_Velocity_model = false, UseStatisticCoeff = false,
-                    Use_dV_Constraints = false, Use_Odo_Distance = false;
+        public bool Ungolonom_Velocity_model = false, UseStatisticCoeff = false,
+                    Use_dV_Constraints = false;
 
         //---остальное вспомогательное---
         public bool flag_UseLastMinusOneOdo = false, flag_slipping = false;
@@ -89,37 +101,69 @@ namespace Common_Namespace
 
         //---Считывание данных из файла---
         public double FLG_Stop;
-        public gps_data GPS_Data = new gps_data();
         public double Count, initCount, timeStep, Time, Time_prev;
-        public start_data StartData = new start_data();
+        public gps_data GPS_Data = new gps_data();
         public odometer_data OdometerData = new odometer_data();
-        public double[] F_z = new double[3], W_z = new double[3];
+
+        public double[] F_z = new double[3]
+                      , F_x = new double[3]
+                      , F_z_prev = new double[3]
+                      , W_z = new double[3]
+                      , W_x = new double[3]
+                      , W_z_prev = new double[3]
+                      ;
+
+        public double[] g_x = new double[3]
+                      , u_s = new double[3]
+                      , u_x = new double[3]
+                      , Omega_x = new double[3]
+                      ;
 
         //---матрицы ориентации---
-        public Matrix A_sx0 = new Matrix(3, 3), A_sx0_prev = new Matrix(3, 3), A_x0s = new Matrix(3, 3), A_x0s_prev = new Matrix(3, 3), A_nx0 = new Matrix(3, 3), A_nx0_prev = new Matrix(3, 3), A_x0n = new Matrix(3, 3), A_x0n_prev = new Matrix(3, 3);
-        public Matrix A_sx_Gyro = new Matrix(3, 3), A_xs_Gyro = new Matrix(3, 3), A_nx_Gyro = new Matrix(3, 3), A_xn_Gyro = new Matrix(3, 3);
-        public Matrix AT = new Matrix(3, 3), AT_prev = new Matrix(3, 3), A_nxi = new Matrix(3, 3), A_nxi_prev = new Matrix(3, 3);
-        public Matrix A_sc = new Matrix(3, 3), A_cs = new Matrix(3, 3), A_x0c = new Matrix(3, 3), A_cx0 = new Matrix(3, 3);
+        public Matrix AT = new Matrix(3, 3)
+                    , AT_prev = new Matrix(3, 3)
+                    , A_sx0 = new Matrix(3, 3)
+                    , A_sx0_prev = new Matrix(3, 3)
+                    , A_x0s = new Matrix(3, 3)
+                    , A_x0s_prev = new Matrix(3, 3)
+                    , A_x0n = new Matrix(3, 3)
+                    , A_x0n_prev = new Matrix(3, 3)
+                    , A_nx0 = new Matrix(3, 3)
+                    , A_nx0_prev = new Matrix(3, 3)
+                    , A_nxi = new Matrix(3, 3)
+                    , A_nxi_prev = new Matrix(3, 3)
+                      ;
+
+        public Matrix A_sx_Gyro = new Matrix(3, 3)
+                    , A_xs_Gyro = new Matrix(3, 3)
+                    , A_nx_Gyro = new Matrix(3, 3)
+                    , A_xn_Gyro = new Matrix(3, 3)
+                    , A_sc = new Matrix(3, 3)
+                    , A_cs = new Matrix(3, 3)
+                    , A_x0c = new Matrix(3, 3)
+                    , A_cx0 = new Matrix(3, 3)
+                      ;
 
         //------
-        public double Freq, dV_q, V_abs, DistanceModeled = 0.0, Time_Alignment = 0, V_norm;
-        public double odo_min_increment;
+        public double Freq, odo_min_increment, V_abs, DistanceModeled = 0.0, Time_Alignment = 0, V_norm;
 
         //---Вычисляемые переменные---
         public bool init_bins = false, firstLineRead = false;
-        public double Dist_by_SINS = 0.0;
         public double[] AlignAlgebraDrifts = new double[3];
-        public double GyroHeading, Heading, Roll, Pitch, Heading_prev, Roll_prev, Pitch_prev, Azimth, LongSNS, LatSNS, AltSNS, g, g_0, F_mod, R_e, R_n;
-        public double HeadingImitator;
+        public double GyroHeading, Heading, Roll, Pitch, Heading_prev, Roll_prev, Pitch_prev, Azimth, LongSNS, LatSNS, AltSNS, g, g_0, F_mod, R_e, R_n, HeadingImitator;
         public double CourseHeading, CoursePitch, beta_c, gamma_c, alpha_c;
         public double Latitude, Longitude, Altitude, Latitude_Start, Longitude_Start, Altitude_Start, Latitude_Point, Altitude_prev, Latitude_prev, Longitude_prev;
         public double Latitude_Corr, Longitude_Corr, Altitude_Corr;
         public double[] Heading_Array = new double[20];
-        public double[] Vx_0 = new double[3], Vx_0_prev = new double[3], Vz = new double[3], Vz_prev = new double[3], Vc = new double[3];
-        public double[] Vx_0_temp = new double[3], Vx_0_prev_temp = new double[3];
-        public double[] Vx = new double[3], Vx_prev = new double[3];
-        public double[] F_z_prev = new double[3], F_x = new double[3], g_x = new double[3];
-        public double[] W_z_prev = new double[3], W_x = new double[3], u_x = new double[3], u_s = new double[3], Omega_x = new double[3];
+
+        public double[] Vx_0 = new double[3]
+                      , Vx_0_prev = new double[3]
+                      , Vz = new double[3]
+                      , Vz_prev = new double[3]
+                      , Vx = new double[3]
+                      , Vx_prev = new double[3]
+                      , Vc = new double[3]
+                      ;
 
         //---Начальные  сигма для матриц S---
         public double[] stdF = new double[3];
@@ -147,15 +191,13 @@ namespace Common_Namespace
 
         public bool flag_iMqDeltaR = false, flag_iMqDeltaF = false, flag_iMqDeltaNu = false, flag_iMqVarkappa13 = false, flag_iMqKappa = false, flag_iMqDeltaRodo = false;
         public bool flag_AccuracyClass_NoErr;
-        public bool flag_AccuracyClass_0_02grph;
-        public bool flag_AccuracyClass_2_0_grph;
-        public bool flag_AccuracyClass_0_2_grph;
-        public double odotime_cur;
-        public double odotime_prev;
+        public bool flag_AccuracyClass_0_02grph, flag_AccuracyClass_2_0_grph, flag_AccuracyClass_0_2_grph;
+
+        public double odotime_cur, odotime_prev;
         public bool flag_ControlPointCorrection;
         public double NumberOfFilesForSmoothing;
         public bool Saratov_run_Final;
-        public bool Do_Smoothing;
+        public bool NowSmoothing;
         public bool flag_Imitator_Telemetric;
         public int GPS_CounterOfPoints = 0;
 
@@ -213,6 +255,7 @@ namespace Common_Namespace
         public double Modeling_Params_df_s;
         public double Modeling_Params_dnu_s;
         public double Imitator_GPS_PositionError;
+        public double Experiment_GPS_PositionError;
     }
 
     public class Kalman_Vars
@@ -231,24 +274,28 @@ namespace Common_Namespace
         public double[] Matrix_A = new double[SimpleData.iMx * SimpleData.iMx];
         public double[] Matrix_H = new double[SimpleData.iMx * SimpleData.iMz];
         public double[] CovarianceMatrix_P = new double[SimpleData.iMx * SimpleData.iMx];
-        public double[] CovarianceMatrixS_m = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_m = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
-        public double[] CovarianceMatrixS_p = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_p = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
+
+        public double[] CovarianceMatrixS_m = new double[SimpleData.iMx * SimpleData.iMx]
+                      , CovarianceMatrix_SP_m = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
+
+        public double[] CovarianceMatrixS_p = new double[SimpleData.iMx * SimpleData.iMx]
+                      , CovarianceMatrix_SP_p = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
+
         public double[] CovarianceMatrixNoise = new double[SimpleData.iMx * SimpleData.iMq];
         public double[] TransitionMatrixF = new double[SimpleData.iMx * SimpleData.iMx];
 
         public double[] ErrorConditionVector_Straight = new double[SimpleData.iMx], ErrorVector_Straight = new double[SimpleData.iMxSmthd];
         public double[] ErrorConditionVector_Smoothed = new double[SimpleData.iMx], ErrorVector_Smoothed = new double[SimpleData.iMxSmthd];
-        public double[] CovarianceMatrixS_Straight = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_Straight = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
-        public double[] CovarianceMatrixS_Smoothed = new double[SimpleData.iMx * SimpleData.iMx], CovarianceMatrix_SP_Smoothed = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
 
-        public double Noise_Pos;
+        public double[] CovarianceMatrixS_Straight = new double[SimpleData.iMx * SimpleData.iMx]
+                      , CovarianceMatrix_SP_Straight = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
+
+        public double[] CovarianceMatrixS_Smoothed = new double[SimpleData.iMx * SimpleData.iMx]
+                      , CovarianceMatrix_SP_Smoothed = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
+
+        public double Noise_Pos, Noise_Drift, Noise_Accel, Noise_OdoScale, Noise_OdoKappa;
         public double[] Noise_Vel = new double[3];
         public double[] Noise_Angl = new double[3];
-        //public double Noise_Vel;
-        //public double Noise_Angl;
-        public double Noise_Drift;
-        public double Noise_Accel;
-        public double Noise_OdoScale, Noise_OdoKappa;
 
         public double OdoNoise_STOP;
 

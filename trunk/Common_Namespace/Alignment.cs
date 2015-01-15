@@ -185,12 +185,6 @@ namespace Common_Namespace
                     KalmanVars.Noise_Vel[j] = sigma_f[j] / 1.0;
                 if (SimpleOperations.AbsoluteVectorValue(sigma_w) > 1E-9)
                     KalmanVars.Noise_Angl[j] = sigma_w[j] / 1.0;
-
-                //if (SINSstate.Global_file.Contains("Azimut_T_zaezd_Golovan_18_Oct_2013") == true)
-                //{
-                //    KalmanVars.Noise_Vel[j] = sigma_f[j] * 5.0;
-                //    KalmanVars.Noise_Angl[j] = sigma_w[j] * 5.0;
-                //}
             }
 
             SINSstate.Pitch = Math.Atan2(f_avg[1], Math.Sqrt(f_avg[0] * f_avg[0] + f_avg[2] * f_avg[2]));
@@ -258,20 +252,10 @@ namespace Common_Namespace
             {
                 //SINSstate.Heading = -3.0504734;
             }
-            if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "ktn004_21.03.2012")
+            if (SINSstate.Global_file == "ktn004_15.03.2012")
             {
                 SINSstate.Heading = 15.28 * SimpleData.ToRadian;
             }
-            if (SINSstate.Global_file.Contains("Azimut-T_18-Oct-2013_11-05-11") == true)
-            {
-                KalmanVars.Noise_Vel[0] = 0.01; //Part of Ge
-                KalmanVars.Noise_Vel[1] = 0.01;
-                KalmanVars.Noise_Vel[2] = 0.01;
-                KalmanVars.Noise_Angl[0] = 0.005558373; // 10.0 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_Angl[1] = 0.005558373; //10.0 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_Angl[2] = 0.005558373; //10.0 * 3.141592 / 180.0 / 3600.0;
-            }
-
 
 
 
