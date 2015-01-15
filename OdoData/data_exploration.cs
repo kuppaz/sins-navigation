@@ -47,7 +47,7 @@ namespace OdoData
                 SINSstate.Latitude = Convert.ToDouble(dataArray[3]);
                 SINSstate.Longitude = Convert.ToDouble(dataArray[4]);
 
-                SINSprocessing.Phi_Lambda_GAUSS_KRUGER(SINSstate.Latitude, SINSstate.Longitude, SINSstate, 0);
+                //SINSprocessing.Phi_Lambda_GAUSS_KRUGER(SINSstate.Latitude, SINSstate.Longitude, SINSstate, 0);
 
                 SINSstate.GK_Latitude[0] = SINSstate.GK_Latitude[0];
                 SINSstate.GK_Longitude[0] = SINSstate.GK_Longitude[0];

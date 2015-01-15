@@ -26,14 +26,13 @@ namespace SINS_motion_processing_new_data
 
         StreamReader myFile;
 
+        ParamToStart ParamStart = new ParamToStart();
         SINS_State SINSstate, SINSstate_OdoMod;
         Kalman_Vars KalmanVars;
-        Parameters Params;
         Proc_Help ProcHelp;
 
         int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0;
-        bool iMx_r3_dV3;
-        bool iMx_kappa_13_ds;
+        bool iMx_r3_dV3, iMx_kappa_13_ds;
 
         string GlobalPrefixTelemetric = "";
 
@@ -45,19 +44,9 @@ namespace SINS_motion_processing_new_data
             LockParamsOfStart();
             LockTypesOfCorrection();
             LockTheWayOfStart();
-            LockNumbOfMeasures();
             LockDimOfVector();
             this.usingSNS.Enabled = false;
             this.Main_Block_Click_new.Enabled = false;
-        }
-
-
-        ParamToStart ParamStart = new ParamToStart();
-
-
-        public struct Entry
-        {
-            public string str;
         }
 
 
@@ -65,27 +54,11 @@ namespace SINS_motion_processing_new_data
         {
             int l = 0;
 
-
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
-            //---для экспериментов---
-            ParamStart.Experiment_NoiseModelFlag = false; // Брать модельные значения, а не задаваемые ниже
-            ParamStart.Experiment_Noise_Vel = 3E-2; //3E-4- optim --Не играют роли для Экспериментов
-            ParamStart.Experiment_Noise_Angl = 3E-4; //3E-6- optim --Не играют роли для Экспериментов
-
-            ParamStart.Experiment_stdR = 1.0;
-            ParamStart.Experiment_stdOdoR = 1.0; // метров
-            ParamStart.Experiment_stdV = 0.1;
-            ParamStart.Experiment_stdScale = 0.005;
-            ParamStart.Experiment_stdKappa1 = 20.0; //минут
-            ParamStart.Experiment_stdKappa3 = 20.0; //минут
-
 
             //---для имитатора---
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-            //ParamStart.Imitator_Noise_Vel = 3E-4;
-            //ParamStart.Imitator_Noise_Angl = 3E-6;
-
             ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
 
@@ -124,9 +97,8 @@ namespace SINS_motion_processing_new_data
             this.DefineClassElementAndFlags();
             this.SelectDataIn();                                                                            //---выбор входного набора данных---//
 
-            //StreamWriter InputForSmoothFile = new StreamWriter(SimpleData.PathInputString + "" + SINSstate.Global_file + "_Back.dat");
 
-            //Вычисляем LastCountForRead
+            //=== Вычисляем LastCountForRead ===
             SINSstate.LastCountForRead = -20;
             int maxStrLength = 0;
             for (; ; )
@@ -136,7 +108,7 @@ namespace SINS_motion_processing_new_data
                 SINSstate.LastCountForRead++;
                 maxStrLength = Math.Max(maxStrLength, tmpstr.Length);
 
-                //рамки, чтобы можно было сверяться с Паневым
+                //рамки, чтобы можно было сверяться
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     string[] dataArray = tmpstr.Split(' ');
@@ -147,9 +119,10 @@ namespace SINS_motion_processing_new_data
                 }
             }
             int LastCountForRead = SINSstate.LastCountForRead;
-            //myFile.BaseStream.Seek(0, SeekOrigin.Begin);
             myFile.Close();
+
             this.SelectDataIn();
+            //=== ===
 
 
 
@@ -186,7 +159,6 @@ namespace SINS_motion_processing_new_data
                     SINSstate = new SINS_State();
                     SINSstate_OdoMod = new SINS_State();
                     KalmanVars = new Kalman_Vars();
-                    Params = new Parameters();
                     ProcHelp = new Proc_Help();
 
                     this.DefineClassElementAndFlags();
@@ -205,38 +177,43 @@ namespace SINS_motion_processing_new_data
 
 
 
-            Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, Params, ProcHelp);     //---Инициализация начальных условий при отсутствии выставки---//
+            //---Инициализация начальных условий при отсутствии выставки---//
+            Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);     
+
 
 
             ProcHelp.AlgnCnt = 0;
-            if (SINSstate.Global_file == "Azimut_14.08.2012") ProcHelp.AlgnCnt = 21486;
-            if (SINSstate.Global_file == "ktn004_15.03.2012") ProcHelp.AlgnCnt = 48000;
-            if (SINSstate.Global_file == "ktn004_21.03.2012") ProcHelp.AlgnCnt = 45000;
-            if (SINSstate.Global_file == "Azimut_29.08.2012") ProcHelp.AlgnCnt = 35000;
-            if (SINSstate.Global_file == "Azimuth_minsk_race_4_3to6to2") ProcHelp.AlgnCnt = 10300;
             if (SINSstate.Global_file == "Imitator_Data") ProcHelp.AlgnCnt = 9000;
+            if (SINSstate.Global_file == "Imitator_Telemetric") ProcHelp.AlgnCnt = 100;
 
-            if (SINSstate.Global_file == "Azimut-T_18-Oct-2013_11-05-11") ProcHelp.AlgnCnt = 38000;
+            if (SINSstate.Global_file == "Azimut_15.08.2012") ProcHelp.AlgnCnt = 40000;
+            //--- 1. Хорошее решение при коррекции по V как в режиме Odo+SINS так и в режиме SINS+Odo
+
+            if (SINSstate.Global_file == "Azimut_24.08.2012") ProcHelp.AlgnCnt = 45000;
+            //--- 1. Хорошее решение Odo+SINS, но плохое SINS+Odo; Также плохие измерения GPS, поэтому их использовать не стоит
+
+            if (SINSstate.Global_file == "Azimut_29.08.2012") ProcHelp.AlgnCnt = 35000;
+            //--- 1. Хорошее решение Odo+SINS, но плохое SINS+Odo; Также плохие измерения GPS, поэтому их использовать не стоит
+
+            if (SINSstate.Global_file == "ktn004_15.03.2012") ProcHelp.AlgnCnt = 48000;
+            //--- 1. Решение по Odo+SINS немного лучше. Хороший эксперимент для сравнения моделей.
+            //--- 2. Добавил деление на SINSstate.OdoLimitMeasuresNum при вычислении KalmanVars.OdoNoise_V
+
+            if (SINSstate.Global_file == "Azimuth_minsk_race_4_3to6to2") ProcHelp.AlgnCnt = 10300;
+            //--- 1. Решение по Odo+SINS немного лучше.
+
+            if (SINSstate.Global_file == "AZIMUT_T_2013_10_18_12_55") ProcHelp.AlgnCnt = 22000;
+            //--- 1. Поездка по прямой от одной до друго точки туда-сюда. Как то плохо пока, не настроено.
+
+            if (SINSstate.Global_file == "Azimut_514_08Nov2013_11_15") ProcHelp.AlgnCnt = 95000;
+
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
                 ProcHelp.AlgnCnt = 27320;
                 if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true)
                     ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
-
-                //Experiment_stdKappa1 - сильно влияеет на решение!!!!
-                ParamStart.Experiment_stdKappa1 = 0.01; //минут
-                ParamStart.Experiment_stdKappa3 = 0.01; //минут
-                ParamStart.Experiment_stdR = 0.10;
-                ParamStart.Experiment_stdOdoR = 0.1; // метров
-                ParamStart.Experiment_stdV = 0.01;
-                ParamStart.Experiment_stdScale = 0.0005;
             }
-            if (SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS") ProcHelp.AlgnCnt = 0;
-
-            if (SINSstate.Global_file == "AZIMUT_T_2013_10_18_12_55") ProcHelp.AlgnCnt = 22000;
-            if (SINSstate.Global_file == "Azimut_514_08Nov2013_11_15") ProcHelp.AlgnCnt = 95000;
-
-            if (SINSstate.Global_file == "Imitator_Telemetric") ProcHelp.AlgnCnt = 100;
+            
 
 
             SINS_State SINSstate2;
@@ -255,6 +232,8 @@ namespace SINS_motion_processing_new_data
                 else if (SINSstate.flag_UsingClasAlignment == true && ProcHelp.AlgnCnt != 0)
                     l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
 
+
+                //--- stdF и stdNu значения, определяющие классы точности датчиков. На основе них формируется стартовые ковариации инструментальных погрешностей инерц.датчиков, а также угловых ошибок ---
                 if (SINSstate.flag_AccuracyClass_0_0grph)
                     for (int j = 0; j < 3; j++)
                     {
@@ -303,7 +282,7 @@ namespace SINS_motion_processing_new_data
 
 
             //---Инициализация начальной матрицы ковариации---
-            if (SINSstate.flag_Odometr_SINS_case)
+            if (SINSstate.flag_Odometr_SINS_case == true)
                 Odometr_SINS.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
             else
                 SINSprocessing.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
@@ -312,8 +291,6 @@ namespace SINS_motion_processing_new_data
 
             //---Переопределяем размерности векторов и матриц после выставки---
             this.DefineDimentionOfErrorVector();
-
-            SINSprocessing.Gauss_Kruger(SINSstate);
 
             SINSstate2 = SINS_State.DeepCopy(SINSstate);
 
@@ -522,7 +499,6 @@ namespace SINS_motion_processing_new_data
         {
             SINSstate = new SINS_State(); SINSstate_OdoMod = new SINS_State();
             KalmanVars = new Kalman_Vars();
-            Params = new Parameters();
             ProcHelp = new Proc_Help();
 
             SINSstate.FreqOutput = Convert.ToInt32(this.Output_Freq.Text);
@@ -563,11 +539,10 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_OdoSINSWeakConnect = this.WeakConnect.Checked;
             SINSstate.flag_OdoSINSWeakConnect_MODIF = this.ModifWeakConnect.Checked;
             SINSstate.flag_Using_iMx_r_odo_3 = this.iMx_r_odo_3.Checked;
-            SINSstate.flag_UseOdoVelocity_In_Oz = this.UseOdo_In_Oz.Checked;
             SINSstate.flag_UseOnlyStops = this.Use_Only_Stops.Checked;
             SINSstate.flag_OnlyAlignment = this.OnlyAlignment.Checked;
             SINSstate.flag_Smoothing = this.flag_Smoothing.Checked;
-            SINSstate.flag_not_use_kns = this.flag_not_use_kns.Checked;
+            SINSstate.flag_NotUse_ZUPT = this.flag_not_use_zupt.Checked;
             SINSstate.flag_using_slippage = this.flag_using_slippage.Checked;
             SINSstate.flag_using_Checkpotints = this.flag_using_Checkpotints.Checked;
             SINSstate.flag_using_GoCalibrInCP = this.flag_using_GoCalibrInCP.Checked;
@@ -584,10 +559,9 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_AccuracyClass_2_0_grph = this.AccuracyClass_2_0_grph.Checked;
 
             //---флаги коррекции---
-            SINSstate.Use_Each_Odo_Measure = this.Use_Each_Odo_Measure.Checked;
+            SINSstate.flag_UsingOdoVelocity = this.flag_UsingOdoVelocity.Checked;
+            SINSstate.flag_UsingOdoPosition = this.flag_UsingOdoPosition.Checked;
             SINSstate.Ungolonom_Velocity_model = this.Ungolonom_model.Checked;
-            //SINSstate.Use_dV_Constraints = this.Use_dV_Constraints.Checked;
-            SINSstate.Use_Odo_Distance = this.Use_Odo_Distance.Checked;
         }
 
         public void DataInCheck(string FileLink)
@@ -603,12 +577,7 @@ namespace SINS_motion_processing_new_data
 
         public void SelectDataIn()
         {
-            if (Azimut_14_08_2012.Checked == true)
-            {
-                myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120814_Autolab_10-31-26_2.dat");
-                SINSstate.Global_file = "Azimut_14.08.2012";
-            }
-            else if (Azimut_15_08_2012.Checked == true)
+            if (Azimut_15_08_2012.Checked == true)
             {
                 myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120815_Autolab_DPC_100Hz_14-40-04.dat");
                 SINSstate.Global_file = "Azimut_15.08.2012";
@@ -622,18 +591,6 @@ namespace SINS_motion_processing_new_data
             {
                 myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120829_Autolab_Circle_09-21-35.dat");
                 SINSstate.Global_file = "Azimut_29.08.2012";
-            }
-            else if (Kama_04_09_2012.Checked == true)
-            {
-                myFile = new StreamReader(SimpleData.PathInputString + "Kama_120904_04-Sep-2012,14-44-11.dat");
-                SINSstate.Global_file = "Kama_04.09.2012";
-                for (int i = 0; i < 14649; i++) myFile.ReadLine();
-            }
-
-            else if (ktn004_21_03_2012.Checked == true)
-            {
-                myFile = new StreamReader(SimpleData.PathInputString + "ktn004_marsh16_repeat_21-Mar-2012,17-21-07_dat.dat");
-                SINSstate.Global_file = "ktn004_21.03.2012";
             }
             else if (ktn004_15_03_2012.Checked == true)
             {
@@ -674,18 +631,6 @@ namespace SINS_motion_processing_new_data
                 SINSstate.Global_file = "Azimuth_minsk_race_4_3to6to2";
             }
 
-
-            //---AZIMUT-T----
-            //if (_16_09_13_TLM_1zaezd.Checked == true)
-            //{
-            //    SINSstate.FreqOutput = 100;
-            //    //myFile = new StreamReader(SimpleData.PathInputString + "Topo_Saratov//topo_short.dat");
-            //    myFile = new StreamReader(SimpleData.PathInputString + "Topo_Saratov//topo.xch");
-            //    SINSstate.Global_file = "Azimut-T_18-Oct-2013_11-05-11";
-            //}
-
-
-
             if (AZIMUT_T_12_32_16_09_13_TLM_2z.Checked == true)
             {
                 myFile = new StreamReader(SimpleData.PathInputString + "Azimut-T//Azimut-T_18-Oct-2013_12-56-43.txt");
@@ -699,34 +644,23 @@ namespace SINS_motion_processing_new_data
 
 
 
-            if (_16_09_13_TLM_1zaezd.Checked == true)
+            if (topo_saratov.Checked == true)
             {
                 if (SINSstate.FreqOutput == 10)
                     SINSstate.FreqOutput = 100;
 
-                if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
+                if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked)
                     myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23.dat");
-                else if (this.SaratovFullRun.Checked == false && !this.SaratAlignStart.Checked && !this.SaratENDStart.Checked && this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_noFilter.dat");
 
-                else if (this.SaratAlignStart.Checked && !this.SaratWithZalipan.Checked)
+                else if (this.SaratAlignStart.Checked)
                     myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align.dat");
                 //myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align_FULL.dat");
-                else if (this.SaratENDStart.Checked && !this.SaratWithZalipan.Checked)
+                else if (this.SaratENDStart.Checked)
                 {
                     SINSstate.Saratov_run_Final = true;
                     myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_finalAlign.dat");
                 }
-
-                else if (this.SaratAlignStart.Checked && this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_Align_noFilter.dat");
-                else if (this.SaratENDStart.Checked && this.SaratWithZalipan.Checked)
-                {
-                    SINSstate.Saratov_run_Final = true;
-                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_finalAlign_noFilter.dat");
-                }
-
-                else if (!this.SaratWithZalipan.Checked)
+                else
                 {
                     if (this.saratovOdoVirtual_1.Checked)
                         myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_full_odo_1.dat");
@@ -737,19 +671,8 @@ namespace SINS_motion_processing_new_data
                     else
                         myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_full.dat");
                 }
-                else if (this.SaratWithZalipan.Checked)
-                    myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_full_noFilter.dat");
 
                 SINSstate.Global_file = "Saratov_run_2014_07_23";
-            }
-
-            if (Saratov_run_2014_07_23_middle_interval_GPS.Checked == true)
-            {
-                if (SINSstate.FreqOutput == 10)
-                    SINSstate.FreqOutput = 100;
-
-                myFile = new StreamReader(SimpleData.PathInputString + "Saratov_run_2014_07_23_middle_interval_GPS.dat");
-                SINSstate.Global_file = "Saratov_run_2014_07_23_middle_interval_GPS";
             }
         }
 
@@ -768,28 +691,26 @@ namespace SINS_motion_processing_new_data
 
         public void LockTypesOfCorrection()
         {
-            this.Use_Odo_Distance.Enabled = false; this.Use_Each_Odo_Measure.Enabled = false;
+            this.flag_UsingOdoPosition.Enabled = false; this.flag_UsingOdoVelocity.Enabled = false;
             this.Use_Only_Stops.Enabled = false; this.Ungolonom_model.Enabled = false;
         }
         public void FreeTypesOfCorrection()
         {
-            this.Use_Odo_Distance.Enabled = true; this.Use_Each_Odo_Measure.Enabled = true;
+            this.flag_UsingOdoPosition.Enabled = true; this.flag_UsingOdoVelocity.Enabled = true;
             this.Use_Only_Stops.Enabled = true; this.Ungolonom_model.Enabled = true;
         }
 
         public void LockInData()
         {
-            this.Azimut_14_08_2012.Enabled = false; this.Azimut_15_08_2012.Enabled = false; this.Azimut_24_08_2012.Enabled = false; this.Azimut_29_08_2012.Enabled = false; this.Kama_04_09_2012.Enabled = false;
-            this.ktn004_21_03_2012.Enabled = false; this.ktn004_15_03_2012.Enabled = false; this.Imitator_Data.Enabled = false;
-            this.Azimuth_minsk_race_4_3to6to2.Enabled = false;
-            this._16_09_13_TLM_1zaezd.Enabled = false; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = false; this.Azimut_514_08Nov2013_11_15.Enabled = false;
+            this.Azimut_15_08_2012.Enabled = false; this.Azimut_24_08_2012.Enabled = false; this.Azimut_29_08_2012.Enabled = false;
+            this.ktn004_15_03_2012.Enabled = false; this.Imitator_Data.Enabled = false; this.Azimuth_minsk_race_4_3to6to2.Enabled = false;
+            this.topo_saratov.Enabled = false; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = false; this.Azimut_514_08Nov2013_11_15.Enabled = false;
         }
         public void FreeInData()
         {
-            this.Azimut_14_08_2012.Enabled = true; this.Azimut_15_08_2012.Enabled = true; this.Azimut_24_08_2012.Enabled = true; this.Azimut_29_08_2012.Enabled = true; this.Kama_04_09_2012.Enabled = true;
-            this.ktn004_21_03_2012.Enabled = true; this.ktn004_15_03_2012.Enabled = true; this.Imitator_Data.Enabled = true;
-            this.Azimuth_minsk_race_4_3to6to2.Enabled = true;
-            this._16_09_13_TLM_1zaezd.Enabled = true; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = true; this.Azimut_514_08Nov2013_11_15.Enabled = true;
+            this.Azimut_15_08_2012.Enabled = true; this.Azimut_24_08_2012.Enabled = true; this.Azimut_29_08_2012.Enabled = true;
+            this.ktn004_15_03_2012.Enabled = true; this.Imitator_Data.Enabled = true; this.Azimuth_minsk_race_4_3to6to2.Enabled = true;
+            this.topo_saratov.Enabled = true; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = true; this.Azimut_514_08Nov2013_11_15.Enabled = true;
         }
 
         public void LockParamsOfStart()
@@ -810,14 +731,6 @@ namespace SINS_motion_processing_new_data
             this.OnlyIntegrating.Enabled = true; this.feedbackExist.Enabled = true; this.Odometr_SINS_case.Enabled = true; this.EstimateExist.Enabled = true;
         }
 
-        public void LockNumbOfMeasures()
-        {
-            this.UseOdo_In_Oz.Enabled = false;
-        }
-        public void FreeNumbOfMeasures()
-        {
-            this.UseOdo_In_Oz.Enabled = true;
-        }
 
         public void LockDimOfVector()
         {
@@ -835,7 +748,7 @@ namespace SINS_motion_processing_new_data
         }
         public void UnCheckTypesOfCorrection()
         {
-            this.Use_Odo_Distance.Checked = false; this.Use_Each_Odo_Measure.Checked = false;
+            this.flag_UsingOdoPosition.Checked = false; this.flag_UsingOdoVelocity.Checked = false;
             this.Use_Only_Stops.Checked = false;
             this.usingSNS.Checked = false;
         }
@@ -907,16 +820,6 @@ namespace SINS_motion_processing_new_data
             }
         }
 
-        private void Azimut_14_08_2012_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Azimut_14_08_2012.Checked == true)
-            {
-                CheckedTrueDataIn();
-                this.Azimut_14_08_2012.Enabled = true;
-            }
-            else CheckedFalseDataIn();
-        }
-
         private void Azimut_15_08_2012_CheckedChanged(object sender, EventArgs e)
         {
             if (this.Azimut_15_08_2012.Checked == true)
@@ -947,26 +850,6 @@ namespace SINS_motion_processing_new_data
             else CheckedFalseDataIn();
         }
 
-        private void Kama_04_09_2012_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Kama_04_09_2012.Checked == true)
-            {
-                CheckedTrueDataIn();
-                this.Kama_04_09_2012.Enabled = true;
-            }
-            else CheckedFalseDataIn();
-        }
-
-        private void ktn004_21_03_2012_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.ktn004_21_03_2012.Checked == true)
-            {
-                CheckedTrueDataIn();
-                this.ktn004_21_03_2012.Enabled = true;
-            }
-            else CheckedFalseDataIn();
-        }
-
         private void ktn004_15_03_2012_CheckedChanged(object sender, EventArgs e)
         {
             if (this.ktn004_15_03_2012.Checked == true)
@@ -989,14 +872,12 @@ namespace SINS_motion_processing_new_data
             else CheckedFalseDataIn();
         }
 
-
-
         private void _16_09_13_TLM_1zaezd_CheckedChanged(object sender, EventArgs e)
         {
-            if (this._16_09_13_TLM_1zaezd.Checked == true)
+            if (this.topo_saratov.Checked == true)
             {
                 CheckedTrueDataIn();
-                this._16_09_13_TLM_1zaezd.Enabled = true;
+                this.topo_saratov.Enabled = true;
             }
             else CheckedFalseDataIn();
         }
@@ -1019,15 +900,6 @@ namespace SINS_motion_processing_new_data
             else CheckedFalseDataIn();
         }
 
-        private void Saratov_run_2014_07_23_middle_interval_GPS_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Saratov_run_2014_07_23_middle_interval_GPS.Checked == true)
-            {
-                CheckedTrueDataIn();
-                this.Saratov_run_2014_07_23_middle_interval_GPS.Enabled = true;
-            }
-            else CheckedFalseDataIn();
-        }
 
 
 
@@ -1058,7 +930,6 @@ namespace SINS_motion_processing_new_data
             {
                 LockTheWayOfStart(); this.feedbackExist.Enabled = true;
                 FreeTypesOfCorrection();
-                FreeNumbOfMeasures();
                 this.usingSNS.Enabled = true;
 
                 this.WeakConnect.Enabled = false;
@@ -1072,7 +943,6 @@ namespace SINS_motion_processing_new_data
                 UnCheckTypesOfCorrection();
                 FreeTheWayOfStart();
                 LockTypesOfCorrection();
-                LockNumbOfMeasures();
                 this.usingSNS.Enabled = false;
                 this.Main_Block_Click_new.Enabled = false;
 
@@ -1092,7 +962,6 @@ namespace SINS_motion_processing_new_data
             {
                 LockTheWayOfStart(); this.EstimateExist.Enabled = true;
                 FreeTypesOfCorrection();
-                FreeNumbOfMeasures();
                 this.usingSNS.Enabled = true;
 
                 this.WeakConnect.Enabled = false;
@@ -1103,7 +972,6 @@ namespace SINS_motion_processing_new_data
                 UnCheckTypesOfCorrection();
                 FreeTheWayOfStart();
                 LockTypesOfCorrection();
-                LockNumbOfMeasures();
                 this.usingSNS.Enabled = false;
                 this.Main_Block_Click_new.Enabled = false;
 
@@ -1122,6 +990,7 @@ namespace SINS_motion_processing_new_data
                 //this.flag_autonomous_dinamic_mode.Checked = true;
                 this.WeakConnect.Enabled = true;
                 this.ModifWeakConnect.Enabled = true;
+                this.Use_Only_Stops.Enabled = false;
             }
             else
             {
@@ -1130,6 +999,7 @@ namespace SINS_motion_processing_new_data
                 this.iMx_kappa_1_3_ds.Checked = false;
                 this.WeakConnect.Enabled = false;
                 this.ModifWeakConnect.Enabled = false;
+                this.Use_Only_Stops.Enabled = true;
             }
         }
         private void WeakConnect_CheckedChanged(object sender, EventArgs e)
@@ -1137,7 +1007,6 @@ namespace SINS_motion_processing_new_data
             if (this.WeakConnect.Checked == true)
             {
                 FreeTypesOfCorrection();
-                FreeNumbOfMeasures();
                 this.ModifWeakConnect.Enabled = false;
                 this.usingSNS.Enabled = true;
                 this.Main_Block_Click_new.Enabled = true;
@@ -1145,7 +1014,6 @@ namespace SINS_motion_processing_new_data
             else
             {
                 LockTypesOfCorrection();
-                LockNumbOfMeasures();
                 this.usingSNS.Enabled = false;
                 this.Main_Block_Click_new.Enabled = false;
                 this.ModifWeakConnect.Enabled = true;
@@ -1156,7 +1024,6 @@ namespace SINS_motion_processing_new_data
             if (this.ModifWeakConnect.Checked == true)
             {
                 FreeTypesOfCorrection();
-                FreeNumbOfMeasures();
                 this.WeakConnect.Enabled = false;
                 this.usingSNS.Enabled = true;
                 this.Main_Block_Click_new.Enabled = true;
@@ -1164,7 +1031,6 @@ namespace SINS_motion_processing_new_data
             else
             {
                 LockTypesOfCorrection();
-                LockNumbOfMeasures();
                 this.usingSNS.Enabled = false;
                 this.Main_Block_Click_new.Enabled = false;
                 this.WeakConnect.Enabled = true;
@@ -1178,13 +1044,11 @@ namespace SINS_motion_processing_new_data
         private void CheckedTrueTypesOfCorrection()
         {
             LockTypesOfCorrection();
-            FreeNumbOfMeasures();
             this.Main_Block_Click_new.Enabled = true;
         }
         private void CheckedFlaseTypesOfCorrection()
         {
             FreeTypesOfCorrection();
-            LockNumbOfMeasures();
             this.Main_Block_Click_new.Enabled = false;
         }
 
@@ -1195,16 +1059,22 @@ namespace SINS_motion_processing_new_data
             {
                 CheckedTrueTypesOfCorrection();
                 this.Use_Only_Stops.Enabled = true;
+                this.flag_not_use_zupt.Checked = false;
+                this.flag_not_use_zupt.Enabled = false;
             }
-            else CheckedFlaseTypesOfCorrection();
+            else
+            {
+                CheckedFlaseTypesOfCorrection();
+                this.flag_not_use_zupt.Enabled = true;
+            }
         }
 
-        private void Use_Each_Odo_Measure_CheckedChanged(object sender, EventArgs e)
+        private void flag_UsingOdoVelocity_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.Use_Each_Odo_Measure.Checked == true)
+            if (this.flag_UsingOdoVelocity.Checked == true)
             {
                 CheckedTrueTypesOfCorrection();
-                this.Use_Each_Odo_Measure.Enabled = true;
+                this.flag_UsingOdoVelocity.Enabled = true;
             }
             else CheckedFlaseTypesOfCorrection();
         }
@@ -1228,18 +1098,17 @@ namespace SINS_motion_processing_new_data
 
 
 
-        private void Use_Odo_Distance_CheckedChanged(object sender, EventArgs e)
+        private void flag_UsingOdoPosition_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.Use_Odo_Distance.Checked == true)
+            if (this.flag_UsingOdoPosition.Checked == true)
             {
                 CheckedTrueTypesOfCorrection();
-                this.UseOdo_In_Oz.Enabled = false;
-                this.flag_not_use_kns.Checked = true;
-                this.Use_Odo_Distance.Enabled = true;
+                this.flag_not_use_zupt.Checked = true;
+                this.flag_UsingOdoPosition.Enabled = true;
             }
             else
             {
-                this.flag_not_use_kns.Checked = false;
+                this.flag_not_use_zupt.Checked = false;
                 CheckedFlaseTypesOfCorrection();
             }
         }
@@ -1297,11 +1166,6 @@ namespace SINS_motion_processing_new_data
                     this.iMx_r_odo_3.Enabled = true;
                 }
             }
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
 

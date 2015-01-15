@@ -35,7 +35,7 @@ namespace Common_Namespace
 
             ProcHelp.datastring = myFile.ReadLine();
 
-            if (SINSstate.Global_file == "Azimut-T_18-Oct-2013_11-05-11" || SINSstate.Global_file == "topo")
+            if (SINSstate.Global_file == "topo")
             {
                 if (SINSstate.firstLineRead == false)
                 {
@@ -44,7 +44,6 @@ namespace Common_Namespace
                     SINSstate.Count++;
                     SINSstate.Time_prev = Convert.ToDouble(dataArray[1]);
                     SINSstate.OdometerLeftPrev = Convert.ToDouble(dataArray[23]) / 1000.0;
-                    SINSstate.firstLineRead = true;
                     ProcHelp.datastring = myFile.ReadLine();
                 }
 
@@ -103,27 +102,17 @@ namespace Common_Namespace
                 int t = 0;
 
                 for (int y = 0; y < dataArray.Length; y++)
-                {
                     if (dataArray[y] != "")
                         t++;
-                }
                 string[] dataArray2 = new string[t];
                 t = 0;
 
                 for (int y = 0; y < dataArray.Length; y++)
-                {
                     if (dataArray[y] != "")
                     {
                         dataArray2[t] = dataArray[y];
                         t++;
                     }
-                }
-
-                if (SINSstate.firstLineRead == false)
-                {
-                    SINSstate.OdometerLeftPrev = Convert.ToDouble(dataArray2[18]);
-                    SINSstate.firstLineRead = true;
-                }
 
                 //SINSstate.Time = Convert.ToDouble(dataArray2[0]);
                 SINSstate.Count = Convert.ToDouble(dataArray2[0]);
@@ -132,12 +121,17 @@ namespace Common_Namespace
 
                 SINSstate.Time = (SINSstate.Count - SINSstate.initCount) * Math.Abs(SINSstate.timeStep);
 
-                SINSstate.F_z[1] = Convert.ToDouble(dataArray2[1]); SINSstate.W_z[1] = Convert.ToDouble(dataArray2[4]);
-                SINSstate.F_z[2] = Convert.ToDouble(dataArray2[2]); SINSstate.W_z[2] = Convert.ToDouble(dataArray2[5]);
-                SINSstate.F_z[0] = Convert.ToDouble(dataArray2[3]); SINSstate.W_z[0] = Convert.ToDouble(dataArray2[6]);
+                SINSstate.F_z[1] = Convert.ToDouble(dataArray2[1]); 
+                SINSstate.F_z[2] = Convert.ToDouble(dataArray2[2]); 
+                SINSstate.F_z[0] = Convert.ToDouble(dataArray2[3]);
+
+                SINSstate.W_z[1] = Convert.ToDouble(dataArray2[4]);
+                SINSstate.W_z[2] = Convert.ToDouble(dataArray2[5]);
+                SINSstate.W_z[0] = Convert.ToDouble(dataArray2[6]);
+
 
                 //Юстировочные углы
-                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "ktn004_21.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
+                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     double[] fz = new double[3], Wz = new double[3];
 
@@ -153,6 +147,7 @@ namespace Common_Namespace
                     SimpleOperations.CopyArray(SINSstate.W_z, Wz);
                 }
 
+                //---Запоминаем координаты предыдущей контрольной точки
                 if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                 {
                     SINSstate.GPS_Data.gps_Latitude_prev.Value = SINSstate.GPS_Data.gps_Latitude.Value;
@@ -198,27 +193,40 @@ namespace Common_Namespace
                         SINSstate.OdoLimitMeasuresNum_Count = 0;
                 }
 
-                //if (SINSstate.Global_file == "AZIMUT_T_2013_10_18_12_55")
-                //{
-                //    SINSstate.OdometerData.odometer_left.Value -= 50735.7232;
-                //    SINSstate.OdometerData.odometer_right.Value -= 50735.7232;
-                //}
-
-                if (SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "Saratov_run_2014_07_23_middle_interval_GPS")
+                if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     SINSstate.timeStep = SINSstate.Freq = Convert.ToDouble(dataArray2[22]);
                     SINSstate.Time = Convert.ToDouble(dataArray2[0]) - SINSstate.Time_Alignment;
 
                     //SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value * 1.0015;
-
                 }
 
                 if (SINSstate.Global_file.ToLower().Contains("imitator") && dataArray2.Length >= 22)
-                {
                     SINSstate.HeadingImitator = Convert.ToDouble(dataArray2[22]);
-                }
 
             }
+
+            if (SINSstate.firstLineRead == false)
+            {
+                SINSstate.Roll_prev = SINSstate.Roll;
+                SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
+                SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
+                SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
+                SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
+                SINSstate.firstLineRead = true;
+            }
+
+
+            SINSstate.OdoTimeStepCount++;
+
+            if (SINSstate.OdometerData.odometer_left.isReady == 1)
+            {
+                SINSstate.OdoSpeed_s = SimpleOperations.NullingOfArray(SINSstate.OdoSpeed_s);
+                SINSstate.OdometerVector = SimpleOperations.NullingOfArray(SINSstate.OdometerVector);
+            }
+
+            if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
 
         }
 
@@ -228,46 +236,48 @@ namespace Common_Namespace
         {
             double[] Min_Distance_to_Points = new double[6];
 
-            if (true)
+            for (int ij = 0; ij < SINSstate.NumberOfControlPoints; ij++)
             {
-                for (int ij = 0; ij < SINSstate.NumberOfControlPoints; ij++)
+                if (SINSstate.Count == SINSstate.ControlPointCount[ij])
                 {
-                    if (SINSstate.Count == SINSstate.ControlPointCount[ij])
+                    for (int ii = 0; ii < 3; ii++)
                     {
-                        for (int ii = 0; ii < 3; ii++)
+                        if (SINSstate.flag_FeedbackExist)
                         {
-                            if (SINSstate.flag_FeedbackExist)
-                            {
-                                Dif_GK.WriteLine("Широта " + ii.ToString() + ": " + SINSstate.GK_Latitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Latitude[ii] - SINSstate.Latitude) * SINSstate.R_n).ToString());
-                                Dif_GK.WriteLine("Долгота " + ii.ToString() + ": " + SINSstate.GK_Longitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Longitude[ii] - SINSstate.Longitude) * SINSstate.R_e).ToString());
-                            }
-                            else
-                            {
-                                Dif_GK.WriteLine("Широта " + ii.ToString() + ": " + SINSstate.GK_Latitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Latitude[ii] - SINSstate2.Latitude) * SINSstate.R_n).ToString());
-                                Dif_GK.WriteLine("Долгота " + ii.ToString() + ": " + SINSstate.GK_Longitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Longitude[ii] - SINSstate2.Longitude) * SINSstate.R_e).ToString());
-                            }
-
-                            Dif_GK.WriteLine(" ");
+                            Dif_GK.WriteLine("Широта " + ii.ToString() + ": " + SINSstate.GK_Latitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Latitude[ii] - SINSstate.Latitude) * SINSstate.R_n).ToString());
+                            Dif_GK.WriteLine("Долгота " + ii.ToString() + ": " + SINSstate.GK_Longitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Longitude[ii] - SINSstate.Longitude) * SINSstate.R_e).ToString());
                         }
+                        else
+                        {
+                            Dif_GK.WriteLine("Широта " + ii.ToString() + ": " + SINSstate.GK_Latitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Latitude[ii] - SINSstate2.Latitude) * SINSstate.R_n).ToString());
+                            Dif_GK.WriteLine("Долгота " + ii.ToString() + ": " + SINSstate.GK_Longitude[ii].ToString() + " разница со стартом: " + ((SINSstate.GK_Longitude[ii] - SINSstate2.Longitude) * SINSstate.R_e).ToString());
+                        }
+
                         Dif_GK.WriteLine(" ");
                     }
+                    Dif_GK.WriteLine(" ");
                 }
             }
-            else
+        }
+
+        public static void OutPutInfo_Telemetric(SINS_State SINSstate, SINS_State SINSstate2, System.IO.StreamWriter Imitator_Telemetric, int i, int l)
+        {
+            //====Вывод данных для телеметрического имитатора====
+            if (SINSstate.flag_Imitator_Telemetric && SINSstate.Global_file != "Saratov_run_2014_07_23")
             {
-                if (SINSstate.flag_FeedbackExist)
+                double tmpRoundFreq50 = Math.Round(1.0 / SINSstate.Freq / 50.0, 0) * 50.0;
+                int tmpFreqOut10 = Convert.ToInt32(tmpRoundFreq50 / 10.0);
+
+                if ((i - l) % tmpFreqOut10 == 0)
                 {
-                    Min_Distance_to_Points[0] = (SINSstate.GK_Latitude[0] - SINSstate.Latitude) * SINSstate.R_n; Min_Distance_to_Points[1] = (SINSstate.GK_Longitude[0] - SINSstate.Longitude) * SINSstate.R_e;
-                    Min_Distance_to_Points[2] = (SINSstate.GK_Latitude[1] - SINSstate.Latitude) * SINSstate.R_n; Min_Distance_to_Points[3] = (SINSstate.GK_Longitude[1] - SINSstate.Longitude) * SINSstate.R_e;
-                    Min_Distance_to_Points[4] = (SINSstate.GK_Latitude[2] - SINSstate.Latitude) * SINSstate.R_n; Min_Distance_to_Points[5] = (SINSstate.GK_Longitude[2] - SINSstate.Longitude) * SINSstate.R_e;
-                    Dif_GK.WriteLine((SINSstate.Count * Math.Abs(SINSstate.timeStep)).ToString() + " " + Min_Distance_to_Points[0].ToString() + " " + Min_Distance_to_Points[1].ToString() + " " + Min_Distance_to_Points[2].ToString() + " " + Min_Distance_to_Points[3].ToString() + " " + Min_Distance_to_Points[4].ToString() + " " + Min_Distance_to_Points[5].ToString());
-                }
-                else
-                {
-                    Min_Distance_to_Points[0] = (SINSstate.GK_Latitude[0] - SINSstate2.Latitude) * SINSstate.R_n; Min_Distance_to_Points[1] = (SINSstate.GK_Longitude[0] - SINSstate2.Longitude) * SINSstate.R_e;
-                    Min_Distance_to_Points[2] = (SINSstate.GK_Latitude[1] - SINSstate2.Latitude) * SINSstate.R_n; Min_Distance_to_Points[3] = (SINSstate.GK_Longitude[1] - SINSstate2.Longitude) * SINSstate.R_e;
-                    Min_Distance_to_Points[4] = (SINSstate.GK_Latitude[2] - SINSstate2.Latitude) * SINSstate.R_n; Min_Distance_to_Points[5] = (SINSstate.GK_Longitude[2] - SINSstate2.Longitude) * SINSstate.R_e;
-                    Dif_GK.WriteLine((SINSstate.Count * Math.Abs(SINSstate.timeStep)).ToString() + " " + Min_Distance_to_Points[0].ToString() + " " + Min_Distance_to_Points[1].ToString() + " " + Min_Distance_to_Points[2].ToString() + " " + Min_Distance_to_Points[3].ToString() + " " + Min_Distance_to_Points[4].ToString() + " " + Min_Distance_to_Points[5].ToString());
+                    if (SINSstate.flag_FeedbackExist)
+                        Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
+                                + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
+                                + " " + (SINSstate.Heading * SimpleData.ToDegree) + " " + (SINSstate.Roll * SimpleData.ToDegree) + " " + (SINSstate.Pitch * SimpleData.ToDegree));
+                    else if (SINSstate.flag_EstimateExist)
+                        Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
+                                + " " + SINSstate2.Latitude + " " + SINSstate2.Longitude + " " + SINSstate2.Altitude
+                                + " " + (SINSstate2.Heading * SimpleData.ToDegree) + " " + (SINSstate2.Roll * SimpleData.ToDegree) + " " + (SINSstate2.Pitch * SimpleData.ToDegree));
                 }
             }
         }
@@ -300,7 +310,7 @@ namespace Common_Namespace
                                  Math.Pow((Long - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
 
 
-            if (i % SINSstate.FreqOutput == 0 && SINSstate.Do_Smoothing == false)
+            if (i % SINSstate.FreqOutput == 0 && SINSstate.NowSmoothing == false)
                 Speed_Angles.WriteLine(SINSstate.Time + " " + SINSstate.CourseHeading + " " + SINSstate.Heading + " " + SINSstate.CoursePitch
                     + " " + SINSstate.beta_c + " " + SINSstate.alpha_c + " " + SINSstate.gamma_c
                     + " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1] + " " + Vx_0[0] + " " + Vx_0[1]
@@ -446,7 +456,7 @@ namespace Common_Namespace
             }
 
 
-            if (SINSstate.Do_Smoothing == true && i % SINSstate.FreqOutput == 0)
+            if (SINSstate.NowSmoothing == true && i % SINSstate.FreqOutput == 0)
             {
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                     //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
@@ -527,7 +537,7 @@ namespace Common_Namespace
                 else
                     KMLFileOut.WriteLine(SINSstate2.Longitude * SimpleData.ToDegree + "," + SINSstate2.Latitude * SimpleData.ToDegree + "," + SINSstate2.Altitude);
 
-                if (SINSstate.Do_Smoothing)
+                if (SINSstate.NowSmoothing)
                     KMLFileOutSmoothed.WriteLine(SINSstate_Smooth.Longitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Latitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Altitude);
             }
 
