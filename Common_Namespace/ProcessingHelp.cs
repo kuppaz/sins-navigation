@@ -206,6 +206,7 @@ namespace Common_Namespace
 
             }
 
+
             if (SINSstate.firstLineRead == false)
             {
                 SINSstate.Roll_prev = SINSstate.Roll;
@@ -216,9 +217,7 @@ namespace Common_Namespace
                 SINSstate.firstLineRead = true;
             }
 
-
             SINSstate.OdoTimeStepCount++;
-
             if (SINSstate.OdometerData.odometer_left.isReady == 1)
             {
                 SINSstate.OdoSpeed_s = SimpleOperations.NullingOfArray(SINSstate.OdoSpeed_s);
@@ -226,8 +225,11 @@ namespace Common_Namespace
             }
 
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+            {
                 SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
-
+                if (SINSstate.NowSmoothing == true)
+                    SINSstate.OdoTimeStepCount = -SINSstate.OdoTimeStepCount;
+            }
         }
 
 
@@ -373,14 +375,10 @@ namespace Common_Namespace
                                  + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_OdoMod.Longitude) * SINSstate_OdoMod.R_e), 2)
                                  + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
                                  + " " + Math.Round(SINSstate_OdoMod.Vx_0[0], 3) + " " + Math.Round(SINSstate_OdoMod.Vx_0[1], 3) + " " + Math.Round(SINSstate_OdoMod.Vx_0[2], 3)
-                                 + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3) + " " + Math.Round(SINSstate_OdoMod.V_norm, 3)
-                                 + " " + Math.Round(SINSstate_OdoMod.Vx_0[0], 3) + " " + Math.Round(SINSstate_OdoMod.Vx_0[1], 3)
                                  + " " + SINSstate_OdoMod.OdometerVector[1] + " " + SINSstate_OdoMod.OdoSpeed_x0[1]
                                  ;
                 DinamicOdometer.WriteLine(ProcHelp.datastring);
-
             }
-
 
 
             /*----------------------------------OUTPUT ESTIMATE------------------------------------------------------*/
@@ -400,7 +398,6 @@ namespace Common_Namespace
                                  + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Roll * SimpleData.ToDegree), 4)
                                  + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Pitch * SimpleData.ToDegree), 4)
                                  + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3) + " " + Math.Round(SINSstate.V_norm, 3)
-                                 + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3)
                                  + " " + SINSstate.OdometerVector[1] + " " + SINSstate.OdoSpeed_x0[1]
                                  ;
                 Nav_EstimateSolution.WriteLine(ProcHelp.datastring);
@@ -444,11 +441,7 @@ namespace Common_Namespace
                                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
                                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
-                                        + " " + ProcHelp.corrected
-                        //+ " " + SINSstate.OdometerData.odometer_left.isReady
-                                        + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start
-                        //+ " " + SINSstate.FLG_Stop
-                                        + " " + Math.Round(((SINSstate.Heading - SINSstate_OdoMod.Heading) * SimpleData.ToDegree), 8)
+                                        + " " + ProcHelp.corrected + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start
                                         + " " + Math.Round((SINSstate.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8);
                     ;
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);
@@ -469,11 +462,8 @@ namespace Common_Namespace
                                         + " " + Math.Round(SINSstate_Smooth.Vx_0[0], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[1], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[2], 3)
                                         + " " + Math.Round((SINSstate_Smooth.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate_Smooth.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate_Smooth.Pitch * SimpleData.ToDegree), 8)
-                    //+ " " + ProcHelp.corrected + " " + SINSstate.OdometerData.odometer_left.isReady
-                    //+ " " + ProcHelp.distance + " " + ProcHelp.distance_from_start + " " + SINSstate.FLG_Stop
-                    //+ " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1]
-                    //+ " " + SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0)
                                         ;
+
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     ProcHelp.datastring = ProcHelp.datastring + " " + Math.Round(SINSstate.Count);
 
@@ -487,8 +477,8 @@ namespace Common_Namespace
                 {
                     ProcHelp.datastring = (SINSstate.DeltaLatitude * SimpleData.ToDegree) + " " + (SINSstate.DeltaLongitude * SimpleData.ToDegree) + " " + SINSstate.DeltaV_1 + " " + SINSstate.DeltaV_2 + " "
                                     + SINSstate.DeltaV_3 + " " + SINSstate.DeltaHeading + " " + SINSstate.DeltaRoll + " " + SINSstate.DeltaPitch;
+                    Nav_Errors.WriteLine(ProcHelp.datastring);
                 }
-                Nav_Errors.WriteLine(ProcHelp.datastring);
 
 
 
@@ -499,9 +489,9 @@ namespace Common_Namespace
                                   + " " + (KalmanVars.ErrorConditionVector_p[6] * SimpleData.ToDegree) + " " + (KalmanVars.ErrorConditionVector_p[7] * SimpleData.ToDegree * 3600.0) + " " + (KalmanVars.ErrorConditionVector_p[8] * SimpleData.ToDegree * 3600.0)
                                    + " " + (KalmanVars.ErrorConditionVector_p[9] * SimpleData.ToDegree * 3600.0) + " " + KalmanVars.ErrorConditionVector_p[10] + " " + KalmanVars.ErrorConditionVector_p[11]
                                     + " " + KalmanVars.ErrorConditionVector_p[12];
+
                 if (SINSstate.flag_iMx_r3_dV3)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r3_dV3] + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r3_dV3 + 1];
-
                 if (SINSstate.flag_Odometr_SINS_case)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo] + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo + 1];
                 if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_Using_iMx_r_odo_3)
@@ -512,7 +502,6 @@ namespace Common_Namespace
                                                               + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_odo_model + 1] * SimpleData.ToDegree
                                                               + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_odo_model + 2];
 
-                //if (SINSstate.flag_DoFeedBackKappa && SINSstate.flag_Odometr_SINS_case)
                 if (SINSstate.flag_FeedbackExist)
                 {
                     if (SINSstate.flag_Odometr_SINS_case)
@@ -541,6 +530,72 @@ namespace Common_Namespace
                     KMLFileOutSmoothed.WriteLine(SINSstate_Smooth.Longitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Latitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Altitude);
             }
 
+        }
+
+
+
+        public static void FillKMLOutputFile(StreamWriter KMLFileOut, string Part, string Mode)
+        {
+            if (Part == "Start")
+            {
+                KMLFileOut.WriteLine("<?xml version='1.0' encoding='UTF-8'?>                                                 ");
+                KMLFileOut.WriteLine("<kml xmlns='http://earth.google.com/kml/2.2'>                                          ");
+                KMLFileOut.WriteLine("<Document>                                                                             ");
+                KMLFileOut.WriteLine("<name>NavLab Nikitin Markers</name>                                                    ");
+                KMLFileOut.WriteLine("<visibility>1</visibility>                                                             ");
+                KMLFileOut.WriteLine("<open>1</open>                                                                         ");
+                KMLFileOut.WriteLine("<Style id='MarkerIcon'>                                                                ");
+                KMLFileOut.WriteLine("        <IconStyle>                                                                    ");
+                KMLFileOut.WriteLine("        <scale>1</scale>                                                               ");
+                KMLFileOut.WriteLine("            <Icon>                                                                     ");
+                KMLFileOut.WriteLine("                <href>http://maps.google.com/mapfiles/kml/shapes/cross-hairs.png</href>");
+                KMLFileOut.WriteLine("            </Icon>                                                                    ");
+                KMLFileOut.WriteLine("        </IconStyle>                                                                   ");
+                KMLFileOut.WriteLine("</Style>                                                                               ");
+                KMLFileOut.WriteLine("<Style id='MarkerLine'>                                                                ");
+                KMLFileOut.WriteLine("        <LineStyle>                                                                    ");
+                if (Mode == "Smoothing")
+                {
+                    KMLFileOut.WriteLine("                <color>ffff5555</color>                                                ");
+                    KMLFileOut.WriteLine("                <width>2</width>                                                       ");
+                }
+                if (Mode == "Forward")
+                {
+                    KMLFileOut.WriteLine("                <color>ff000000</color>                                                ");
+                    KMLFileOut.WriteLine("                <width>2</width>                                                       ");
+                }
+                if (Mode == "Backward")
+                {
+                    KMLFileOut.WriteLine("                <color>ff0000ff</color>                                                ");
+                    KMLFileOut.WriteLine("                <width>2</width>                                                       ");
+                }
+                KMLFileOut.WriteLine("        </LineStyle>                                                                   ");
+                KMLFileOut.WriteLine("</Style>                                                                               ");
+                KMLFileOut.WriteLine("<Folder>                                                                               ");
+                KMLFileOut.WriteLine("        <name>Path</name>                                                              ");
+                KMLFileOut.WriteLine("        <visibility>1</visibility>                                                     ");
+                KMLFileOut.WriteLine("        <open>0</open>                                                                 ");
+                KMLFileOut.WriteLine("        <Placemark>                                                                    ");
+                KMLFileOut.WriteLine("            <name>Markers</name>                                                       ");
+                KMLFileOut.WriteLine("                <visibility>1</visibility>                                             ");
+                KMLFileOut.WriteLine("                <description>The markers scheme</description>                          ");
+                KMLFileOut.WriteLine("                <styleUrl>#MarkerLine</styleUrl>                                       ");
+                KMLFileOut.WriteLine("                <LineString>                                                           ");
+                KMLFileOut.WriteLine("                    <extrude>0</extrude>                                               ");
+                KMLFileOut.WriteLine("                    <tessellate>1</tessellate>                                         ");
+                KMLFileOut.WriteLine("                    <altitudeMode>clampToGround</altitudeMode>                         ");
+                KMLFileOut.WriteLine("                    <coordinates>                                                      ");
+            }
+            else if (Part == "End")
+            {
+                KMLFileOut.WriteLine("                   </coordinates>");
+                KMLFileOut.WriteLine("              </LineString>       ");
+                KMLFileOut.WriteLine("          </Placemark>               ");
+                KMLFileOut.WriteLine("</Folder>                        ");
+                KMLFileOut.WriteLine("</Document>                      ");
+                KMLFileOut.WriteLine("</kml>                           ");
+
+            }
         }
 
 

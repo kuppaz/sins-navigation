@@ -16,11 +16,11 @@ namespace Common_Namespace
         {
             if (SINSstate.OdometerData.odometer_left.isReady == 1)
             {
-                if (SINSstate.flag_UsingCorrection == true || SINSstate.flag_Odometr_SINS_case == true || SINSstate.flag_UsingOdoPosition == true || SINSstate.flag_UseOnlyStops == true || SINSstate.flag_slipping == true)
+                if (SINSstate.flag_UsingCorrection == true || SINSstate.flag_UseOnlyStops == true)
+                // || SINSstate.flag_slipping == true - в большей степени SlipageProcessing это обработка выбросов одометра, а не проскальзывания. Поэтому не обнуляем OdoTimeStepCount 
                 {
                     SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
                     SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
-                    SINSstate.OdoSpeedPrev = SINSstate.OdoSpeed_s[1];
                     SINSstate.OdoTimeStepCount = 0;
 
                     SINSstate.odotime_prev = SINSstate.Time;
@@ -54,7 +54,6 @@ namespace Common_Namespace
             SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
-            //SimpleOperations.CopyArray(SINSstate.Omega_x, SINSstate.Omega_x);
             SINSstate.Omega_x[0] = -SINSstate.Vx_0[1] / SINSstate.R_n;
             SINSstate.Omega_x[1] = SINSstate.Vx_0[0] / SINSstate.R_e;
             SINSstate.Omega_x[2] = Math.Tan(SINSstate.Latitude) * SINSstate.Omega_x[1];
@@ -63,25 +62,6 @@ namespace Common_Namespace
             SINSstate.g -= 2 * 0.000001538 * SINSstate.Altitude;
         }
 
-
-        public static void CalcStateErrorsEasySINS(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate_OdoMod, SINS_State SINSstateDinamOdo)
-        {
-            SINSstate.DeltaLatitude = ErrorVector[1] / SINSstate.R_n;
-            SINSstate.DeltaLongitude = ErrorVector[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-
-            SINSstate.DeltaV_1 = ErrorVector[2] + SINSstate.Vx_0[1] * ErrorVector[6];// + SINSstate.Vx_0[1] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
-            SINSstate.DeltaV_2 = ErrorVector[3] - SINSstate.Vx_0[0] * ErrorVector[6];// -SINSstate.Vx_0[0] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
-
-            if (SINSstate.flag_iMx_r3_dV3)
-            {
-                SINSstate.DeltaAltitude = ErrorVector[SINSstate.iMx_r3_dV3];
-                SINSstate.DeltaV_3 = ErrorVector[SINSstate.iMx_r3_dV3 + 1] + SINSstate.Vx_0[0] * (ErrorVector[5] - ErrorVector[0] / SINSstate.R_e) - SINSstate.Vx_0[1] * (ErrorVector[4] + ErrorVector[1] / SINSstate.R_n);
-            }
-
-            SINSstate.DeltaRoll = -(ErrorVector[4] * Math.Sin(SINSstate.Heading) + ErrorVector[5] * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch);
-            SINSstate.DeltaPitch = -ErrorVector[4] * Math.Cos(SINSstate.Heading) + ErrorVector[5] * Math.Sin(SINSstate.Heading);
-            SINSstate.DeltaHeading = ErrorVector[6] + SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude) + SINSstate.DeltaRoll * Math.Sin(SINSstate.Pitch);
-        }
 
 
         public static void CalcStateErrors(double[] ErrorVector, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
@@ -109,6 +89,7 @@ namespace Common_Namespace
 
             if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
             {
+                //--- Ведем расчет оценки ошибок модели одометра в случае обратных связей ---//
                 SINSstate.ComulativeKappaEst[0] += ErrorVector[SINSstate.iMx_odo_model + 0];
                 SINSstate.ComulativeKappaEst[2] += ErrorVector[SINSstate.iMx_odo_model + 1];
                 SINSstate.ComulativeKappaEst[1] += ErrorVector[SINSstate.iMx_odo_model + 2];
@@ -234,13 +215,6 @@ namespace Common_Namespace
                 if (SINSstate.flag_DoFeedBackDeltaFW == false && i >= 7 && i <= 12)
                     continue;
 
-                //if (SINSstate.flag_Odometr_SINS_case == false && (i == SINSstate.iMx_odo_model || i == SINSstate.iMx_odo_model + 1 || i == SINSstate.iMx_odo_model + 2) && SINSstate.flag_iMx_kappa_13_ds)
-                //    continue;
-
-                //if ((i == SINSstate.iMx_r12_odo || i == SINSstate.iMx_r12_odo + 1 || (i == SINSstate.iMx_r12_odo + 2 && SINSstate.flag_Using_iMx_r_odo_3)) && SINSstate.flag_Odometr_SINS_case)
-                //    continue;
-
-                double tmp = KalmanVars.ErrorConditionVector_p[i];
                 KalmanVars.ErrorConditionVector_p[i] = 0.0;
                 KalmanVars.ErrorConditionVector_m[i] = 0.0;
             }
@@ -293,32 +267,6 @@ namespace Common_Namespace
                 KalmanVars.CovarianceMatrixS_m[(SINSstate.iMx_odo_model + 2) * SimpleData.iMx + (SINSstate.iMx_odo_model + 2)]
                     = KalmanVars.CovarianceMatrixS_p[(SINSstate.iMx_odo_model + 2) * SimpleData.iMx + (SINSstate.iMx_odo_model + 2)] = SINSstate.stdScale;
             }
-
-
-
-            if (false && SINSstate.flag_Odometr_SINS_case == false)
-            {
-                for (int i = 0; i < SimpleData.iMx; i++)
-                    pdP[i * SimpleData.iMx + i] = KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + i] * KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + i];
-
-                pdP[4 * SimpleData.iMx + 4] = 1.001 * pdP[10 * SimpleData.iMx + 10] / 9.78 / 9.78;
-
-                pdP[4 * SimpleData.iMx + 10] = pdP[10 * SimpleData.iMx + 4] = -pdP[10 * SimpleData.iMx + 10] / 9.78 * SINSstate.A_sx0[1, 1];
-                pdP[4 * SimpleData.iMx + 11] = pdP[11 * SimpleData.iMx + 4] = -pdP[10 * SimpleData.iMx + 10] / 9.78 * SINSstate.A_sx0[2, 1];
-                pdP[4 * SimpleData.iMx + 12] = pdP[12 * SimpleData.iMx + 4] = -pdP[10 * SimpleData.iMx + 10] / 9.78 * SINSstate.A_sx0[0, 1];
-                pdP[5 * SimpleData.iMx + 5] = 1.001 * pdP[10 * SimpleData.iMx + 10] / 9.78 / 9.78;
-                pdP[5 * SimpleData.iMx + 10] = pdP[10 * SimpleData.iMx + 5] = pdP[10 * SimpleData.iMx + 10] / 9.78 * SINSstate.A_sx0[1, 0];
-                pdP[5 * SimpleData.iMx + 11] = pdP[11 * SimpleData.iMx + 5] = pdP[10 * SimpleData.iMx + 10] / 9.78 * SINSstate.A_sx0[2, 0];
-                pdP[5 * SimpleData.iMx + 12] = pdP[12 * SimpleData.iMx + 5] = pdP[10 * SimpleData.iMx + 10] / 9.78 * SINSstate.A_sx0[0, 0];
-
-                pdP[6 * SimpleData.iMx + 6] = 1.001 * pdP[7 * SimpleData.iMx + 7] / SimpleData.U * Math.Cos(SINSstate.Latitude) / SimpleData.U * Math.Cos(SINSstate.Latitude);
-                pdP[6 * SimpleData.iMx + 7] = pdP[7 * SimpleData.iMx + 6] = pdP[7 * SimpleData.iMx + 7] / SimpleData.U * Math.Cos(SINSstate.Latitude) * SINSstate.A_sx0[1, 0];
-                pdP[6 * SimpleData.iMx + 8] = pdP[8 * SimpleData.iMx + 6] = pdP[7 * SimpleData.iMx + 7] / SimpleData.U * Math.Cos(SINSstate.Latitude) * SINSstate.A_sx0[2, 0];
-                pdP[6 * SimpleData.iMx + 9] = pdP[9 * SimpleData.iMx + 6] = pdP[7 * SimpleData.iMx + 7] / SimpleData.U * Math.Cos(SINSstate.Latitude) * SINSstate.A_sx0[0, 0];
-
-                KalmanVars.CovarianceMatrixS_m = KalmanProcs.rsb_rsb(pdP, SimpleData.iMx);
-                KalmanVars.CovarianceMatrixS_p = KalmanProcs.rsb_rsb(pdP, SimpleData.iMx);
-            }
         }
 
 
@@ -328,9 +276,10 @@ namespace Common_Namespace
 
         public static int MatrixNoise_ReDef(SINS_State SINSstate, Kalman_Vars KalmanVars, bool AlignmentFLG)
         {
-            int iMx = SimpleData.iMx, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model,
-                iMx_r12_odo = SINSstate.iMx_r12_odo;
+            int iMx = SimpleData.iMx, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model, iMx_r12_odo = SINSstate.iMx_r12_odo;
 
+            int tmpCounter = 0;
+            double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
             double[] Noise_Vel_in_Mx = new double[3], Noise_Angl_in_Mx = new double[3];
 
             for (int i = 0; i < iMx * iMq; i++)
@@ -339,19 +288,15 @@ namespace Common_Namespace
             for (int j = 0; j < 3; j++)
             {
                 // выбираем, где для каких осей инструментальных шумов формируется матрица шумов //
-                Noise_Vel_in_Mx[j] = Math.Sqrt(SINSstate.A_x0s[j, 0] * SINSstate.A_x0s[j, 0] * KalmanVars.Noise_Vel[0] * KalmanVars.Noise_Vel[0] +
-                                               SINSstate.A_x0s[j, 1] * SINSstate.A_x0s[j, 1] * KalmanVars.Noise_Vel[1] * KalmanVars.Noise_Vel[1] +
-                                               SINSstate.A_x0s[j, 2] * SINSstate.A_x0s[j, 2] * KalmanVars.Noise_Vel[2] * KalmanVars.Noise_Vel[2]);
-                Noise_Angl_in_Mx[j] = Math.Sqrt(SINSstate.A_x0s[j, 0] * SINSstate.A_x0s[j, 0] * KalmanVars.Noise_Angl[0] * KalmanVars.Noise_Angl[0] +
-                                               SINSstate.A_x0s[j, 1] * SINSstate.A_x0s[j, 1] * KalmanVars.Noise_Angl[1] * KalmanVars.Noise_Angl[1] +
-                                               SINSstate.A_x0s[j, 2] * SINSstate.A_x0s[j, 2] * KalmanVars.Noise_Angl[2] * KalmanVars.Noise_Angl[2]);
+                Noise_Vel_in_Mx[j] = Math.Sqrt(Math.Pow(SINSstate.A_x0s[j, 0] * KalmanVars.Noise_Vel[0], 2) +
+                                               Math.Pow(SINSstate.A_x0s[j, 1] * KalmanVars.Noise_Vel[1], 2) +
+                                               Math.Pow(SINSstate.A_x0s[j, 2] * KalmanVars.Noise_Vel[2], 2));
+                Noise_Angl_in_Mx[j] = Math.Sqrt(Math.Pow(SINSstate.A_x0s[j, 0] * KalmanVars.Noise_Angl[0], 2) +
+                                               Math.Pow(SINSstate.A_x0s[j, 1] * KalmanVars.Noise_Angl[1], 2) +
+                                               Math.Pow(SINSstate.A_x0s[j, 2] * KalmanVars.Noise_Angl[2], 2));
 
             }
-            double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
-            //sqrt_freq = 1.0;
 
-
-            int tmpCounter = 0;
             if (SINSstate.flag_iMqDeltaR)
             {
                 KalmanVars.CovarianceMatrixNoise[0 * iMq + tmpCounter + 0] = KalmanVars.Noise_Pos * sqrt_freq;
@@ -418,7 +363,7 @@ namespace Common_Namespace
 
 
 
-        public static void Make_A_brindge(SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, SINS_State SINSstate_OdoMod)
+        public static void Make_A_bridge(SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, SINS_State SINSstate_OdoMod)
         {
             if (SINSstate.flag_Odometr_SINS_case == true)
             {
@@ -591,18 +536,15 @@ namespace Common_Namespace
             Matrix E = Matrix.UnitMatrix(3);
             Matrix dMatrix = new Matrix(3, 3);
 
-            double W_z_abs, Omega_x_abs, dlt, dlt2, Altitude, Altitude_prev, dh, dVx, dVy, dVh;
-            double kren, tang, gkurs, Azimth;
+            double W_z_abs, Omega_x_abs, dlt, dlt2, Altitude, Altitude_prev, dh, dVx, dVy, dVh, Azimth;
 
             CopyMatrix(AT_z_xi, SINSstate.AT);
             CopyMatrix(B_x_eta, SINSstate.A_x0n);
 
             SINSstate2.Time = SINSstate.Time;
             SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-            //C_eta_xi = Matrix.DoA_eta_xi(SINSstate.Time);
             Altitude = SINSstate.Altitude;
             Altitude_prev = SINSstate.Altitude_prev;
-            //Azimth = SINSstate.Azimth;
 
             fz[1] = SINSstate.F_z[1];
             fz[2] = SINSstate.F_z[2];
@@ -631,10 +573,6 @@ namespace Common_Namespace
 
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
-            //u[0] = SimpleData.U * Math.Cos(SINSstate.Latitude) * Math.Sin(Azimth);
-            //u[1] = SimpleData.U * Math.Cos(SINSstate.Latitude) * Math.Cos(Azimth);
-            //u[2] = SimpleData.U * Math.Sin(SINSstate.Latitude);
-
             u[0] = 0.0;
             u[1] = SimpleData.U * Math.Cos(SINSstate.Latitude);
             u[2] = SimpleData.U * Math.Sin(SINSstate.Latitude);
@@ -646,79 +584,44 @@ namespace Common_Namespace
 
 
             //-------------ИНТЕГРИРОВАНИЕ МАТРИЦЫ AT_Z_XI И ПЕРВОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z---------
-            if (true)
+            if (SINSstate.flag_UsingAvegering == true)
             {
-                if (SINSstate.flag_UsingAvegering == true)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        fz[i] = (fz[i] + SINSstate.F_z_prev[i]) / 2.0;
-                        Wz[i] = (Wz[i] + SINSstate.W_z_prev[i]) / 2.0;
-                    }
-                }
-
-                W_z_abs = Math.Sqrt(Wz[0] * Wz[0] + Wz[1] * Wz[1] + Wz[2] * Wz[2]);
-                dlt = Math.Sin(W_z_abs * SINSstate.timeStep) / W_z_abs;
-                dlt2 = (1.0 - Math.Cos(W_z_abs * SINSstate.timeStep)) / (W_z_abs * W_z_abs);
-
-                Hat1 = Matrix.SkewSymmetricMatrix(Wz);
-                Hat2 = Matrix.SkewSymmetricMatrixSquare(Wz);
-
-                CopyMatrix(dMatrix, (E + Hat1 * dlt + Hat2 * dlt2));
-                CopyMatrix(AT_z_xi, (dMatrix * AT_z_xi));
-
-                //Нормировка
                 for (int i = 0; i < 3; i++)
                 {
-                    tempV[i] = Math.Sqrt(AT_z_xi[i, 0] * AT_z_xi[i, 0] + AT_z_xi[i, 1] * AT_z_xi[i, 1] + AT_z_xi[i, 2] * AT_z_xi[i, 2]);
-                    for (int j = 0; j < 3; j++)
-                        AT_z_xi[i, j] = AT_z_xi[i, j] / tempV[i];
+                    fz[i] = (fz[i] + SINSstate.F_z_prev[i]) / 2.0;
+                    Wz[i] = (Wz[i] + SINSstate.W_z_prev[i]) / 2.0;
                 }
-
-                CopyMatrix(SINSstate.AT, AT_z_xi);
-
-                CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
-                CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
-                //--------------------------------------------------------------------------------------
             }
-            else //Эйлера с пересчетом
+
+            W_z_abs = Math.Sqrt(Wz[0] * Wz[0] + Wz[1] * Wz[1] + Wz[2] * Wz[2]);
+            dlt = Math.Sin(W_z_abs * SINSstate.timeStep) / W_z_abs;
+            dlt2 = (1.0 - Math.Cos(W_z_abs * SINSstate.timeStep)) / (W_z_abs * W_z_abs);
+
+            Hat1 = Matrix.SkewSymmetricMatrix(Wz);
+            Hat2 = Matrix.SkewSymmetricMatrixSquare(Wz);
+
+            CopyMatrix(dMatrix, (E + Hat1 * dlt + Hat2 * dlt2));
+            CopyMatrix(AT_z_xi, (dMatrix * AT_z_xi));
+
+            //Нормировка
+            for (int i = 0; i < 3; i++)
             {
-                Hat1 = Matrix.SkewSymmetricMatrix(Wz);
-                Hat2 = Matrix.SkewSymmetricMatrix(SINSstate.W_z_prev);
-
-                CopyMatrix(dMatrix, (E + (Hat1 + Hat2) * SINSstate.timeStep / 2.0 + (Hat1 * Hat2) * SINSstate.timeStep * SINSstate.timeStep / 2.0));
-                CopyMatrix(AT_z_xi, (dMatrix * AT_z_xi));
-
-                //Ортогональность
-                //AT_z_xi[0, 0] = AT_z_xi[1, 1] * AT_z_xi[2, 2] - AT_z_xi[2, 1] * AT_z_xi[1, 2];
-                //AT_z_xi[1, 0] = AT_z_xi[2, 1] * AT_z_xi[0, 2] - AT_z_xi[0, 1] * AT_z_xi[2, 2];
-                //AT_z_xi[2, 0] = AT_z_xi[0, 1] * AT_z_xi[1, 2] - AT_z_xi[0, 2] * AT_z_xi[1, 1];
-
-                //Нормировка
-                //for (int i = 0; i < 3; i++)
-                //{
-                //    tempV[i] = Math.Sqrt(AT_z_xi[i, 0] * AT_z_xi[i, 0] + AT_z_xi[i, 1] * AT_z_xi[i, 1] + AT_z_xi[i, 2] * AT_z_xi[i, 2]);
-                //    for (int j = 0; j < 3; j++)
-                //        AT_z_xi[i, j] = AT_z_xi[i, j] / tempV[i];
-                //}
-
-                CopyMatrix(SINSstate.AT, AT_z_xi);
-
-                CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
-                CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
-                //--------------------------------------------------------------------------------------
+                tempV[i] = Math.Sqrt(AT_z_xi[i, 0] * AT_z_xi[i, 0] + AT_z_xi[i, 1] * AT_z_xi[i, 1] + AT_z_xi[i, 2] * AT_z_xi[i, 2]);
+                for (int j = 0; j < 3; j++)
+                    AT_z_xi[i, j] = AT_z_xi[i, j] / tempV[i];
             }
 
+            CopyMatrix(SINSstate.AT, AT_z_xi);
+
+            CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
+            CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
+            //--------------------------------------------------------------------------------------
 
 
 
             //---------------------------------ИНТЕГРИРОВАНИЕ СКОРОСТЕЙ----------------------------
             CopyArray(SINSstate.F_x, D_x_z * fz);
-
-            //--- надо вычислять, используется, например в выставке ---//
-            SINSstate.g = 9.78049 * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014;
-            if (true)
-                SINSstate.g -= 2 * 0.000001538 * Altitude;
+            SINSstate.g = SimpleData.Gravity_Normal * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014 - 2 * 0.000001538 * Altitude;
 
             if (SINSstate.flag_Alignment == true)
             {
@@ -736,7 +639,8 @@ namespace Common_Namespace
             //--------------------------------------------------------------------------------------
 
 
-            //double GG = SimpleData.Gravity_Normal * (1 + 0.005317099 * Math.Sin(SINSstate.Latitude) * Math.Sin(SINSstate.Latitude)) * SimpleData.A * SimpleData.A / (SimpleData.A + SINSstate.Altitude) / (SimpleData.A + SINSstate.Altitude);
+
+            //--- Интегрируем вертикальную скорость ---//
             if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS)
                 //&& !(SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode)
                 //&& SINSstate.OdoSpeed_s[1] > 1.0
@@ -754,7 +658,7 @@ namespace Common_Namespace
 
 
 
-            //Сюда заходим если установлен флажок при автономном счислении ИЛИ объект есть чисто одометрическое решение.
+            //--- Сюда заходим если установлен флажок при автономном счислении ИЛИ объект есть чисто одометрическое решение. ---//
             SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, D_x_z * SINSstate.OdoSpeed_s);
             SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_s, SINSstate.OdoSpeed_s);
 
@@ -920,28 +824,22 @@ namespace Common_Namespace
 
 
 
-            // определение углов курса,крена,тангажа
-            kren = -Math.Atan2(SINSstate.A_sx0[0, 2], SINSstate.A_sx0[2, 2]);
-            tang = Math.Atan2(SINSstate.A_sx0[1, 2], Math.Sqrt(SINSstate.A_sx0[0, 2] * SINSstate.A_sx0[0, 2] + SINSstate.A_sx0[2, 2] * SINSstate.A_sx0[2, 2]));
-            gkurs = Math.Atan2(SINSstate.A_sx0[1, 0], SINSstate.A_sx0[1, 1]);
-
             //SINSstate.Heading = gkurs - Azimth;
-            SINSstate.Heading = gkurs;
-            SINSstate.Roll = kren;
-            SINSstate.Pitch = tang;
+            SINSstate.Heading = Math.Atan2(SINSstate.A_sx0[1, 0], SINSstate.A_sx0[1, 1]);
+            SINSstate.Roll = -Math.Atan2(SINSstate.A_sx0[0, 2], SINSstate.A_sx0[2, 2]);
+            SINSstate.Pitch = Math.Atan2(SINSstate.A_sx0[1, 2], Math.Sqrt(SINSstate.A_sx0[0, 2] * SINSstate.A_sx0[0, 2] + SINSstate.A_sx0[2, 2] * SINSstate.A_sx0[2, 2]));
             //SINSstate.Azimth = Azimth;
 
             SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
             SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
-            CopyArray(SINSstate.W_x, SINSstate.A_x0s * Wz);
-
             CopyArray(SINSstate.Vx_0_prev, SINSstate.Vx_0);
             CopyArray(SINSstate.Vx_0, Vx_0);
+
             CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
             CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
-            //CopyArray(SINSstate.W_z, Wz);
+            CopyArray(SINSstate.W_x, SINSstate.A_x0s * Wz);
 
 
             SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
@@ -950,10 +848,12 @@ namespace Common_Namespace
             //--------------------------------------------------------------------------------------
 
 
+
+
             //---ВЫЧИСЛЯЕМ СКОРОСТНЫЕ УГЛЫ---//
             double[] Vx_0_temp = new double[3];
-            if ((SINSstate.flag_FeedbackExist == true && SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0) > 2.0) ||
-                (SINSstate.flag_FeedbackExist == false && SimpleOperations.AbsoluteVectorValue(SINSstate2.Vx_0) > 2.0))
+            if ((SINSstate.flag_FeedbackExist == true && SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0) > 2.0) 
+                || (SINSstate.flag_FeedbackExist == false && SimpleOperations.AbsoluteVectorValue(SINSstate2.Vx_0) > 2.0))
             {
                 if (SINSstate.flag_FeedbackExist == true) SimpleOperations.CopyArray(Vx_0_temp, SINSstate.Vx_0);
                 if (SINSstate.flag_FeedbackExist == false) SimpleOperations.CopyArray(Vx_0_temp, SINSstate2.Vx_0);
@@ -1018,7 +918,7 @@ namespace Common_Namespace
 
 
 
-
+        //------------------ Функции для СГЛАЖИВАНИЯ --------------------//
         public static void FuncSmoothing_BackwardAndSmooth(SINS_State SINSstate, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, Proc_Help ProcHelp, StreamReader Back_Input_X, StreamReader Back_Input_P, StreamWriter ForHelpSmoothed)
         {
             string[] BackInputX_LineArray = Back_Input_X.ReadLine().Split(' ');

@@ -175,7 +175,7 @@ namespace Common_Namespace
         //---Одометрические переменные---
         public double OdoTimeStepCount;
         public double[] OdometerVector = new double[3], OdoSpeed_x0 = new double[3], OdoSpeed_s = new double[3];
-        public double OdometerLeftPrev, OdometerRightPrev, OdoAbsSpeed, OdoSpeedPrev;
+        public double OdometerLeftPrev, OdometerRightPrev, OdoAbsSpeed;
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
         //---Комулятивные величины---
@@ -232,7 +232,9 @@ namespace Common_Namespace
         public double Experiment_stdKappa1;
         public double Experiment_stdKappa3;
         public bool Experiment_NoiseModelFlag;
+        public double Experiment_GPS_PositionError;
 
+        public bool Imitator_addNoisSample;
         public double Imitator_Noise_Vel, Imitator_Noise_Angl;
         public double Imitator_stdR;
         public double Imitator_stdOdoR;
@@ -255,7 +257,6 @@ namespace Common_Namespace
         public double Modeling_Params_df_s;
         public double Modeling_Params_dnu_s;
         public double Imitator_GPS_PositionError;
-        public double Experiment_GPS_PositionError;
     }
 
     public class Kalman_Vars

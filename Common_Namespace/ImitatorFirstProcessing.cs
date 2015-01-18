@@ -80,16 +80,16 @@ namespace Common_Namespace
 
 
 
-            bool addNoisSample = true;
             int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
             double[] avgSampleAccs = new double[3], avgSampleDUC = new double[3];
             double[] noisSampleDUS_1, noisSampleDUS_2, noisSampleDUS_3, noisSampleAccs_1, noisSampleAccs_2, noisSampleAccs_3;
             double[] sampleCurrSumDUC = new double[3], sampleCurrAvgDUC = new double[3], sampleCurrSumAccs = new double[3], sampleCurrAvgAccs = new double[3];
 
+
             string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
             //string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
             StreamReader NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
-            if (addNoisSample)
+            if (ParamStart.Imitator_addNoisSample)
             {
                 for (noisSampleCountDUS = 0; ; noisSampleCountDUS++)
                 {
@@ -104,7 +104,7 @@ namespace Common_Namespace
             noisSampleDUS_1 = new double[noisSampleCountDUS];
             noisSampleDUS_2 = new double[noisSampleCountDUS];
             noisSampleDUS_3 = new double[noisSampleCountDUS];
-            if (addNoisSample)
+            if (ParamStart.Imitator_addNoisSample)
             {
                 if (pathToSampleDUC == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.dat")
                 {
@@ -145,23 +145,25 @@ namespace Common_Namespace
                         noisSampleDUS_3[i] = Convert.ToDouble(strArray[5]);
                     }
                 }
+
+                avgSampleDUC[0] = noisSampleDUS_1.Sum() / noisSampleCountDUS;
+                avgSampleDUC[1] = noisSampleDUS_2.Sum() / noisSampleCountDUS;
+                avgSampleDUC[2] = noisSampleDUS_3.Sum() / noisSampleCountDUS;
+                for (int i = 0; i < noisSampleCountDUS; i++)
+                {
+                    noisSampleDUS_1[i] -= avgSampleDUC[0];
+                    noisSampleDUS_2[i] -= avgSampleDUC[1];
+                    noisSampleDUS_3[i] -= avgSampleDUC[2];
+                }
+                NoisImputSampleDUS.Close();
             }
-            avgSampleDUC[0] = noisSampleDUS_1.Sum() / noisSampleCountDUS;
-            avgSampleDUC[1] = noisSampleDUS_2.Sum() / noisSampleCountDUS;
-            avgSampleDUC[2] = noisSampleDUS_3.Sum() / noisSampleCountDUS;
-            for (int i = 0; i < noisSampleCountDUS; i++)
-            {
-                noisSampleDUS_1[i] -= avgSampleDUC[0];
-                noisSampleDUS_2[i] -= avgSampleDUC[1];
-                noisSampleDUS_3[i] -= avgSampleDUC[2];
-            }
-            NoisImputSampleDUS.Close();
+
 
 
             /////////-----///////
             string pathToSampleACCS = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
             StreamReader NoisImputSampleACCS = new StreamReader(pathToSampleACCS);
-            if (addNoisSample)
+            if (ParamStart.Imitator_addNoisSample)
             {
                 for (noisSampleCountAccs = 0; ; noisSampleCountAccs++)
                 {
@@ -176,7 +178,7 @@ namespace Common_Namespace
             noisSampleAccs_1 = new double[noisSampleCountAccs];
             noisSampleAccs_2 = new double[noisSampleCountAccs];
             noisSampleAccs_3 = new double[noisSampleCountAccs];
-            if (addNoisSample)
+            if (ParamStart.Imitator_addNoisSample)
             {
                 for (int i = 0; i < noisSampleCountAccs; i++)
                 {
@@ -186,26 +188,27 @@ namespace Common_Namespace
                     noisSampleAccs_2[i] = Convert.ToDouble(strArray[1]);
                     noisSampleAccs_3[i] = Convert.ToDouble(strArray[2]);
                 }
-            }
-            avgSampleAccs[0] = noisSampleAccs_1.Sum() / noisSampleCountAccs;
-            avgSampleAccs[1] = noisSampleAccs_2.Sum() / noisSampleCountAccs;
-            avgSampleAccs[2] = noisSampleAccs_3.Sum() / noisSampleCountAccs;
-            for (int i = 0; i < noisSampleCountAccs; i++)
-            {
-                noisSampleAccs_1[i] -= avgSampleAccs[0];
-                noisSampleAccs_2[i] -= avgSampleAccs[1];
-                noisSampleAccs_3[i] -= avgSampleAccs[2];
+
+                avgSampleAccs[0] = noisSampleAccs_1.Sum() / noisSampleCountAccs;
+                avgSampleAccs[1] = noisSampleAccs_2.Sum() / noisSampleCountAccs;
+                avgSampleAccs[2] = noisSampleAccs_3.Sum() / noisSampleCountAccs;
+                for (int i = 0; i < noisSampleCountAccs; i++)
+                {
+                    noisSampleAccs_1[i] -= avgSampleAccs[0];
+                    noisSampleAccs_2[i] -= avgSampleAccs[1];
+                    noisSampleAccs_3[i] -= avgSampleAccs[2];
+                }
             }
 
-            if (addNoisSample)
-            {
-                Params_df_0[0] = 5E-4;
-                Params_df_0[1] = -5E-4;
-                Params_df_0[2] = 3E-4;
-                Params_dnu_0[0] = 0.005;
-                Params_dnu_0[1] = -0.003;
-                Params_dnu_0[2] = 0.004;
-            }
+            //if (addNoisSample)
+            //{
+            //    Params_df_0[0] = 5E-4;
+            //    Params_df_0[1] = -5E-4;
+            //    Params_df_0[2] = 3E-4;
+            //    Params_dnu_0[0] = 0.005;
+            //    Params_dnu_0[1] = -0.003;
+            //    Params_dnu_0[2] = 0.004;
+            //}
 
 
 
@@ -330,7 +333,7 @@ namespace Common_Namespace
 
 
                 //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
-                if (addNoisSample)
+                if (ParamStart.Imitator_addNoisSample)
                 {
                     SINSstate.W_z[0] -= noisSampleDUS_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
                     SINSstate.W_z[1] -= noisSampleDUS_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];

@@ -117,105 +117,37 @@ namespace Common_Namespace
 
         public static void KalmanCorrection(Kalman_Vars KalmanVars)
         {
-            if (true)
+            for (int i = 0; i < SimpleData.iMx; i++)
+                KalmanVars.KalmanFactor[i] = 0.0;
+
+            unsafe
             {
-                for (int i = 0; i < SimpleData.iMx; i++)
-                    KalmanVars.KalmanFactor[i] = 0.0;
-
-                unsafe
+                fixed (double* _xm = KalmanVars.ErrorConditionVector_m, _xp = KalmanVars.ErrorConditionVector_p, _sm = KalmanVars.CovarianceMatrixS_m, _sp = KalmanVars.CovarianceMatrixS_p, _kf = KalmanVars.KalmanFactor)
                 {
-                    fixed (double* _xm = KalmanVars.ErrorConditionVector_m, _xp = KalmanVars.ErrorConditionVector_p, _sm = KalmanVars.CovarianceMatrixS_m, _sp = KalmanVars.CovarianceMatrixS_p, _kf = KalmanVars.KalmanFactor)
+                    for (int t = 0; t < KalmanVars.cnt_measures; t++)
                     {
-                        for (int t = 0; t < KalmanVars.cnt_measures; t++)
+                        for (int i = 0; i < SimpleData.iMx; i++)
+                            KalmanVars.StringOfMeasure[i] = KalmanVars.Matrix_H[t * SimpleData.iMx + i];
+
+                        fixed (double* _h = KalmanVars.StringOfMeasure)
                         {
-                            for (int i = 0; i < SimpleData.iMx; i++)
-                                KalmanVars.StringOfMeasure[i] = KalmanVars.Matrix_H[t * SimpleData.iMx + i];
+                            //Коррекция по измерениям
+                            f0b(KalmanVars.Measure[t], _xm, _sm, _h, KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t], _xp, _sp, _kf, SimpleData.iMx);
 
-                            fixed (double* _h = KalmanVars.StringOfMeasure)
+                            if (t < KalmanVars.cnt_measures - 1)
                             {
-                                //Коррекция по измерениям
-                                f0b(KalmanVars.Measure[t], _xm, _sm, _h, KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t], _xp, _sp, _kf, SimpleData.iMx);
-                                //f0b_nb(KalmanVars.Measure[t], _xm, _sm, _h, KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t], _xp, _sp, _kf, SimpleData.iMx);
-
-                                if (t < KalmanVars.cnt_measures - 1)
+                                for (int i = 0; i < SimpleData.iMx; i++)
                                 {
-                                    for (int i = 0; i < SimpleData.iMx; i++)
-                                    {
-                                        _xm[i] = _xp[i];
-                                        for (int j = 0; j < SimpleData.iMx; j++)
-                                            _sm[i * SimpleData.iMx + j] = _sp[i * SimpleData.iMx + j];
-                                    }
+                                    _xm[i] = _xp[i];
+                                    for (int j = 0; j < SimpleData.iMx; j++)
+                                        _sm[i * SimpleData.iMx + j] = _sp[i * SimpleData.iMx + j];
                                 }
                             }
                         }
                     }
                 }
             }
-            else
-            {
-                double d_k = 0.0, b_k = 0.0, c_k = 0.0;
-                double[] f, e, S_k_m, S_k_p;
-                Matrix CovarianceMatrixS_p = new Matrix(SimpleData.iMx, SimpleData.iMx), CovarianceMatrixS_m = new Matrix(SimpleData.iMx, SimpleData.iMx);
 
-                for (int t = 0; t < KalmanVars.cnt_measures; t++)
-                {
-                    d_k = KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t];
-
-                    e = new double[SimpleData.iMx];
-                    S_k_m = new double[SimpleData.iMx];
-                    f = new double[SimpleData.iMx];
-                    S_k_p = new double[SimpleData.iMx];
-
-                    SimpleOperations.MakeMatrixFromVector(CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_p, SimpleData.iMx);
-                    SimpleOperations.MakeMatrixFromVector(CovarianceMatrixS_m, KalmanVars.CovarianceMatrixS_m, SimpleData.iMx);
-
-                    for (int i = 0; i < SimpleData.iMx; i++)
-                        KalmanVars.StringOfMeasure[i] = KalmanVars.Matrix_H[t * SimpleData.iMx + i];
-
-                    SimpleOperations.CopyArray(f, CovarianceMatrixS_m.Transpose() * KalmanVars.StringOfMeasure);
-
-                    for (int i = 0; i < SimpleData.iMx; i++)
-                    {
-                        b_k = Math.Sqrt(d_k / (d_k + f[i] * f[i]));
-                        c_k = f[i] / (Math.Sqrt(d_k * (d_k + f[i] * f[i])));
-                        d_k = d_k + f[i] * f[i];
-
-                        for (int j = 0; j < SimpleData.iMx; j++)
-                            S_k_m[j] = KalmanVars.CovarianceMatrixS_m[j * SimpleData.iMx + i];
-
-                        for (int j = 0; j < SimpleData.iMx; j++)
-                        {
-                            S_k_p[j] = S_k_m[j] * b_k - e[j] * c_k;
-                            KalmanVars.CovarianceMatrixS_p[j * SimpleData.iMx + i] = S_k_p[j];
-                        }
-
-                        for (int j = 0; j < SimpleData.iMx; j++)
-                            e[j] = e[j] + S_k_m[j] * f[i];
-                    }
-
-                    double h_x_ = 0.0;
-                    for (int j = 0; j < SimpleData.iMx; j++)
-                        h_x_ += KalmanVars.StringOfMeasure[j] * KalmanVars.ErrorConditionVector_m[j];
-
-                    for (int j = 0; j < SimpleData.iMx; j++)
-                        KalmanVars.ErrorConditionVector_p[j] = KalmanVars.ErrorConditionVector_m[j] + (KalmanVars.Measure[t] - h_x_) * e[j] / d_k;
-
-
-
-
-
-                    if (t < KalmanVars.cnt_measures - 1)
-                    {
-                        for (int i = 0; i < SimpleData.iMx; i++)
-                        {
-                            KalmanVars.ErrorConditionVector_m[i] = KalmanVars.ErrorConditionVector_p[i];
-                            for (int j = 0; j < SimpleData.iMx; j++)
-                                KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + j] = KalmanVars.CovarianceMatrixS_p[i * SimpleData.iMx + j];
-                        }
-                    }
-                }
-            }
-            
         }
 
 
@@ -227,7 +159,6 @@ namespace Common_Namespace
                 fixed (double* _xm = KalmanVars.ErrorConditionVector_m, _xp = KalmanVars.ErrorConditionVector_p, _sm = KalmanVars.CovarianceMatrixS_m, _sp = KalmanVars.CovarianceMatrixS_p, _f = KalmanVars.TransitionMatrixF, _sq = KalmanVars.CovarianceMatrixNoise)
                 {
                     dgq0b(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx, SimpleData.iMq);
-                    //dgq0b_nb(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx, SimpleData.iMq);
                 }
             }
             SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
