@@ -250,7 +250,7 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "Azimuth_minsk_race_4_3to6to2")
             {
-                //SINSstate.Heading = -3.0504734;
+                SINSstate.Heading = -3.0504734;
             }
             if (SINSstate.Global_file == "ktn004_15.03.2012")
             {

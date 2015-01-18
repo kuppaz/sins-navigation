@@ -58,6 +58,7 @@ namespace SINS_motion_processing_new_data
             //------------------------------------------------------------------------
 
             //---для имитатора---
+            ParamStart.Imitator_addNoisSample = true;
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
             ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
@@ -523,15 +524,16 @@ namespace SINS_motion_processing_new_data
             if (SINSstate.flag_iMx_kappa_13_ds)
                 SINSstate.iMx_odo_model = value_iMx_kappa_13_ds;
 
+            SINSstate.flag_DoFeedBackDeltaFW = this.DoFeedBackDeltaFW.Checked;
+            if (this.Odometr_SINS_case.Checked)
+                SINSstate.flag_DoFeedBackKappa = this.DoFeedBackKappa.Checked;
+
             //---флаги---
             SINSstate.flag_Autonomous_Solution = this.OnlyIntegrating.Checked;
             SINSstate.flag_UsingAvegering = this.UsingAveraging.Checked;
             SINSstate.flag_UsingAltitudeCorrection = this.UsingAltitudeCorrection.Checked;
             SINSstate.flag_Using_SNS = this.usingSNS.Checked;
             SINSstate.flag_FeedbackExist = this.feedbackExist.Checked;
-            if (this.Odometr_SINS_case.Checked)
-                SINSstate.flag_DoFeedBackKappa = this.DoFeedBackKappa.Checked;
-            SINSstate.flag_DoFeedBackDeltaFW = this.DoFeedBackDeltaFW.Checked;
             SINSstate.flag_EstimateExist = this.EstimateExist.Checked;
             SINSstate.flag_UsingClasAlignment = this.UsingClasAlignment.Checked;
             SINSstate.flag_UsingNavAlignment = this.UsingNavAlignment.Checked;
@@ -1166,6 +1168,11 @@ namespace SINS_motion_processing_new_data
                     this.iMx_r_odo_3.Enabled = true;
                 }
             }
+        }
+
+        private void SINS_Processing_Load(object sender, EventArgs e)
+        {
+
         }
 
 

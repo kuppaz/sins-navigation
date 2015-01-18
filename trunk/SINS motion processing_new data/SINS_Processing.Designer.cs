@@ -70,6 +70,8 @@
             this.iMx_r_odo_3 = new System.Windows.Forms.CheckBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z = new System.Windows.Forms.CheckBox();
+            this.Azimut_514_08Nov2013_11_15 = new System.Windows.Forms.CheckBox();
             this.Odometr_SINS_case = new System.Windows.Forms.CheckBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.ModifWeakConnect = new System.Windows.Forms.CheckBox();
@@ -83,9 +85,7 @@
             this.flag_Smoothing = new System.Windows.Forms.CheckBox();
             this.flag_using_slippage = new System.Windows.Forms.CheckBox();
             this.topo_saratov = new System.Windows.Forms.CheckBox();
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z = new System.Windows.Forms.CheckBox();
             this.flag_UseAlgebraDrift = new System.Windows.Forms.CheckBox();
-            this.Azimut_514_08Nov2013_11_15 = new System.Windows.Forms.CheckBox();
             this.iMqDeltaR = new System.Windows.Forms.CheckBox();
             this.iMqDeltaF = new System.Windows.Forms.CheckBox();
             this.iMqVarkappa13 = new System.Windows.Forms.CheckBox();
@@ -106,6 +106,10 @@
             this.saratovOdoVirtual_2 = new System.Windows.Forms.CheckBox();
             this.saratovWithVirtualMarksInside = new System.Windows.Forms.CheckBox();
             this.AccuracyClass_0_0grph = new System.Windows.Forms.CheckBox();
+            this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.groupBox15 = new System.Windows.Forms.GroupBox();
+            this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -119,11 +123,15 @@
             this.groupBox11.SuspendLayout();
             this.groupBox12.SuspendLayout();
             this.groupBox13.SuspendLayout();
+            this.groupBox14.SuspendLayout();
+            this.groupBox15.SuspendLayout();
+            this.groupBox16.SuspendLayout();
+            this.groupBox17.SuspendLayout();
             this.SuspendLayout();
             // 
             // Main_Block_Click_new
             // 
-            this.Main_Block_Click_new.Location = new System.Drawing.Point(941, 179);
+            this.Main_Block_Click_new.Location = new System.Drawing.Point(929, 169);
             this.Main_Block_Click_new.Name = "Main_Block_Click_new";
             this.Main_Block_Click_new.Size = new System.Drawing.Size(83, 92);
             this.Main_Block_Click_new.TabIndex = 0;
@@ -170,7 +178,7 @@
             this.OnlyIntegrating.AutoSize = true;
             this.OnlyIntegrating.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.OnlyIntegrating.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.OnlyIntegrating.Location = new System.Drawing.Point(15, 28);
+            this.OnlyIntegrating.Location = new System.Drawing.Point(6, 32);
             this.OnlyIntegrating.Name = "OnlyIntegrating";
             this.OnlyIntegrating.Size = new System.Drawing.Size(85, 17);
             this.OnlyIntegrating.TabIndex = 4;
@@ -183,7 +191,7 @@
             this.feedbackExist.AutoSize = true;
             this.feedbackExist.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.feedbackExist.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.feedbackExist.Location = new System.Drawing.Point(15, 68);
+            this.feedbackExist.Location = new System.Drawing.Point(6, 72);
             this.feedbackExist.Name = "feedbackExist";
             this.feedbackExist.Size = new System.Drawing.Size(74, 17);
             this.feedbackExist.TabIndex = 5;
@@ -196,7 +204,7 @@
             this.UsingAveraging.AutoSize = true;
             this.UsingAveraging.Checked = true;
             this.UsingAveraging.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.UsingAveraging.Location = new System.Drawing.Point(939, 125);
+            this.UsingAveraging.Location = new System.Drawing.Point(21, 91);
             this.UsingAveraging.Name = "UsingAveraging";
             this.UsingAveraging.Size = new System.Drawing.Size(85, 17);
             this.UsingAveraging.TabIndex = 6;
@@ -206,7 +214,7 @@
             // UsingAltitudeCorrection
             // 
             this.UsingAltitudeCorrection.AutoSize = true;
-            this.UsingAltitudeCorrection.Location = new System.Drawing.Point(21, 115);
+            this.UsingAltitudeCorrection.Location = new System.Drawing.Point(30, 42);
             this.UsingAltitudeCorrection.Name = "UsingAltitudeCorrection";
             this.UsingAltitudeCorrection.Size = new System.Drawing.Size(123, 17);
             this.UsingAltitudeCorrection.TabIndex = 7;
@@ -226,7 +234,7 @@
             // Use_Only_Stops
             // 
             this.Use_Only_Stops.AutoSize = true;
-            this.Use_Only_Stops.Location = new System.Drawing.Point(35, 55);
+            this.Use_Only_Stops.Location = new System.Drawing.Point(35, 59);
             this.Use_Only_Stops.Name = "Use_Only_Stops";
             this.Use_Only_Stops.Size = new System.Drawing.Size(79, 17);
             this.Use_Only_Stops.TabIndex = 12;
@@ -237,7 +245,7 @@
             // Azimut_15_08_2012
             // 
             this.Azimut_15_08_2012.AutoSize = true;
-            this.Azimut_15_08_2012.Location = new System.Drawing.Point(19, 18);
+            this.Azimut_15_08_2012.Location = new System.Drawing.Point(19, 21);
             this.Azimut_15_08_2012.Name = "Azimut_15_08_2012";
             this.Azimut_15_08_2012.Size = new System.Drawing.Size(117, 17);
             this.Azimut_15_08_2012.TabIndex = 17;
@@ -248,7 +256,7 @@
             // Azimut_29_08_2012
             // 
             this.Azimut_29_08_2012.AutoSize = true;
-            this.Azimut_29_08_2012.Location = new System.Drawing.Point(19, 65);
+            this.Azimut_29_08_2012.Location = new System.Drawing.Point(19, 54);
             this.Azimut_29_08_2012.Name = "Azimut_29_08_2012";
             this.Azimut_29_08_2012.Size = new System.Drawing.Size(117, 17);
             this.Azimut_29_08_2012.TabIndex = 19;
@@ -259,7 +267,7 @@
             // Azimut_24_08_2012
             // 
             this.Azimut_24_08_2012.AutoSize = true;
-            this.Azimut_24_08_2012.Location = new System.Drawing.Point(19, 41);
+            this.Azimut_24_08_2012.Location = new System.Drawing.Point(19, 38);
             this.Azimut_24_08_2012.Name = "Azimut_24_08_2012";
             this.Azimut_24_08_2012.Size = new System.Drawing.Size(117, 17);
             this.Azimut_24_08_2012.TabIndex = 18;
@@ -281,7 +289,7 @@
             // iMx_r_3_dV_3
             // 
             this.iMx_r_3_dV_3.AutoSize = true;
-            this.iMx_r_3_dV_3.Location = new System.Drawing.Point(18, 28);
+            this.iMx_r_3_dV_3.Location = new System.Drawing.Point(18, 22);
             this.iMx_r_3_dV_3.Name = "iMx_r_3_dV_3";
             this.iMx_r_3_dV_3.Size = new System.Drawing.Size(84, 17);
             this.iMx_r_3_dV_3.TabIndex = 24;
@@ -292,7 +300,7 @@
             // iMx_kappa_1_3_ds
             // 
             this.iMx_kappa_1_3_ds.AutoSize = true;
-            this.iMx_kappa_1_3_ds.Location = new System.Drawing.Point(18, 72);
+            this.iMx_kappa_1_3_ds.Location = new System.Drawing.Point(18, 80);
             this.iMx_kappa_1_3_ds.Name = "iMx_kappa_1_3_ds";
             this.iMx_kappa_1_3_ds.Size = new System.Drawing.Size(78, 17);
             this.iMx_kappa_1_3_ds.TabIndex = 26;
@@ -301,7 +309,7 @@
             // 
             // Output_Freq
             // 
-            this.Output_Freq.Location = new System.Drawing.Point(114, 38);
+            this.Output_Freq.Location = new System.Drawing.Point(117, 13);
             this.Output_Freq.Name = "Output_Freq";
             this.Output_Freq.Size = new System.Drawing.Size(28, 20);
             this.Output_Freq.TabIndex = 28;
@@ -311,7 +319,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(45, 41);
+            this.label1.Location = new System.Drawing.Point(48, 16);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 29;
@@ -323,7 +331,7 @@
             this.groupBox1.Controls.Add(this.flag_UsingOdoVelocity);
             this.groupBox1.Location = new System.Drawing.Point(15, 126);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(198, 64);
+            this.groupBox1.Size = new System.Drawing.Size(159, 64);
             this.groupBox1.TabIndex = 30;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Correction by Velocity";
@@ -366,7 +374,7 @@
             this.groupBox2.Controls.Add(this.flag_UsingOdoPosition);
             this.groupBox2.Location = new System.Drawing.Point(15, 196);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(198, 72);
+            this.groupBox2.Size = new System.Drawing.Size(159, 72);
             this.groupBox2.TabIndex = 31;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Correction by Odo Position";
@@ -374,7 +382,7 @@
             // add_velocity_to_position
             // 
             this.add_velocity_to_position.AutoSize = true;
-            this.add_velocity_to_position.Location = new System.Drawing.Point(35, 47);
+            this.add_velocity_to_position.Location = new System.Drawing.Point(35, 43);
             this.add_velocity_to_position.Name = "add_velocity_to_position";
             this.add_velocity_to_position.Size = new System.Drawing.Size(89, 17);
             this.add_velocity_to_position.TabIndex = 1;
@@ -400,7 +408,7 @@
             this.groupBox3.Controls.Add(this.Use_Only_Stops);
             this.groupBox3.Location = new System.Drawing.Point(15, 19);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(197, 101);
+            this.groupBox3.Size = new System.Drawing.Size(159, 101);
             this.groupBox3.TabIndex = 32;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "No External";
@@ -441,7 +449,7 @@
             this.groupBox4.Controls.Add(this.usingSNS);
             this.groupBox4.Location = new System.Drawing.Point(15, 274);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(198, 45);
+            this.groupBox4.Size = new System.Drawing.Size(159, 45);
             this.groupBox4.TabIndex = 33;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "SNS Correction";
@@ -452,9 +460,9 @@
             this.groupBox5.Controls.Add(this.Azimut_15_08_2012);
             this.groupBox5.Controls.Add(this.Azimut_24_08_2012);
             this.groupBox5.Controls.Add(this.Azimut_29_08_2012);
-            this.groupBox5.Location = new System.Drawing.Point(19, 85);
+            this.groupBox5.Location = new System.Drawing.Point(19, 41);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(157, 113);
+            this.groupBox5.Size = new System.Drawing.Size(171, 91);
             this.groupBox5.TabIndex = 34;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Азимут, Кама";
@@ -462,7 +470,7 @@
             // Azimuth_minsk_race_4_3to6to2
             // 
             this.Azimuth_minsk_race_4_3to6to2.AutoSize = true;
-            this.Azimuth_minsk_race_4_3to6to2.Location = new System.Drawing.Point(19, 88);
+            this.Azimuth_minsk_race_4_3to6to2.Location = new System.Drawing.Point(19, 70);
             this.Azimuth_minsk_race_4_3to6to2.Name = "Azimuth_minsk_race_4_3to6to2";
             this.Azimuth_minsk_race_4_3to6to2.Size = new System.Drawing.Size(138, 17);
             this.Azimuth_minsk_race_4_3to6to2.TabIndex = 46;
@@ -473,9 +481,9 @@
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.ktn004_15_03_2012);
-            this.groupBox6.Location = new System.Drawing.Point(19, 204);
+            this.groupBox6.Location = new System.Drawing.Point(19, 136);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(157, 41);
+            this.groupBox6.Size = new System.Drawing.Size(171, 41);
             this.groupBox6.TabIndex = 35;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Перьм";
@@ -483,9 +491,10 @@
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.Imitator_Data);
-            this.groupBox7.Location = new System.Drawing.Point(31, 399);
+            this.groupBox7.Controls.Add(this.Imitator_Telemetric);
+            this.groupBox7.Location = new System.Drawing.Point(12, 378);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(157, 48);
+            this.groupBox7.Size = new System.Drawing.Size(214, 70);
             this.groupBox7.TabIndex = 36;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Other";
@@ -505,7 +514,7 @@
             // 
             this.Imitator_Telemetric.AutoSize = true;
             this.Imitator_Telemetric.Enabled = false;
-            this.Imitator_Telemetric.Location = new System.Drawing.Point(16, 334);
+            this.Imitator_Telemetric.Location = new System.Drawing.Point(32, 42);
             this.Imitator_Telemetric.Name = "Imitator_Telemetric";
             this.Imitator_Telemetric.Size = new System.Drawing.Size(174, 17);
             this.Imitator_Telemetric.TabIndex = 52;
@@ -515,26 +524,29 @@
             // 
             // groupBox8
             // 
-            this.groupBox8.Controls.Add(this.UsingAltitudeCorrection);
             this.groupBox8.Controls.Add(this.OnlyAlignment);
             this.groupBox8.Controls.Add(this.UsingClasAlignment);
             this.groupBox8.Controls.Add(this.UsingNavAlignment);
-            this.groupBox8.Location = new System.Drawing.Point(214, 153);
+            this.groupBox8.Controls.Add(this.flag_using_slippage);
+            this.groupBox8.Controls.Add(this.UsingAveraging);
+            this.groupBox8.Controls.Add(this.flag_UseAlgebraDrift);
+            this.groupBox8.Location = new System.Drawing.Point(232, 72);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(163, 137);
+            this.groupBox8.Size = new System.Drawing.Size(181, 160);
             this.groupBox8.TabIndex = 37;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Start Params";
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.UsingAltitudeCorrection);
             this.groupBox9.Controls.Add(this.OdoModelOnlyCP);
             this.groupBox9.Controls.Add(this.iMx_r_odo_3);
             this.groupBox9.Controls.Add(this.iMx_r_3_dV_3);
             this.groupBox9.Controls.Add(this.iMx_kappa_1_3_ds);
-            this.groupBox9.Location = new System.Drawing.Point(782, 235);
+            this.groupBox9.Location = new System.Drawing.Point(750, 202);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(155, 116);
+            this.groupBox9.Size = new System.Drawing.Size(155, 125);
             this.groupBox9.TabIndex = 38;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Dimention of Error Vector";
@@ -542,7 +554,7 @@
             // OdoModelOnlyCP
             // 
             this.OdoModelOnlyCP.AutoSize = true;
-            this.OdoModelOnlyCP.Location = new System.Drawing.Point(33, 89);
+            this.OdoModelOnlyCP.Location = new System.Drawing.Point(33, 99);
             this.OdoModelOnlyCP.Name = "OdoModelOnlyCP";
             this.OdoModelOnlyCP.Size = new System.Drawing.Size(114, 17);
             this.OdoModelOnlyCP.TabIndex = 2;
@@ -553,7 +565,7 @@
             // iMx_r_odo_3
             // 
             this.iMx_r_odo_3.AutoSize = true;
-            this.iMx_r_odo_3.Location = new System.Drawing.Point(18, 51);
+            this.iMx_r_odo_3.Location = new System.Drawing.Point(18, 63);
             this.iMx_r_odo_3.Name = "iMx_r_odo_3";
             this.iMx_r_odo_3.Size = new System.Drawing.Size(65, 17);
             this.iMx_r_odo_3.TabIndex = 27;
@@ -568,31 +580,55 @@
             this.groupBox10.Controls.Add(this.groupBox3);
             this.groupBox10.Location = new System.Drawing.Point(549, 53);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(227, 329);
+            this.groupBox10.Size = new System.Drawing.Size(189, 329);
             this.groupBox10.TabIndex = 39;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Correction Modes";
             // 
             // groupBox11
             // 
-            this.groupBox11.Controls.Add(this.Imitator_Telemetric);
+            this.groupBox11.Controls.Add(this.groupBox15);
+            this.groupBox11.Controls.Add(this.AZIMUT_T_12_32_16_09_13_TLM_2z);
             this.groupBox11.Controls.Add(this.Output_Freq);
             this.groupBox11.Controls.Add(this.label1);
+            this.groupBox11.Controls.Add(this.Azimut_514_08Nov2013_11_15);
             this.groupBox11.Controls.Add(this.groupBox5);
             this.groupBox11.Controls.Add(this.groupBox6);
             this.groupBox11.Location = new System.Drawing.Point(12, 12);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(196, 359);
+            this.groupBox11.Size = new System.Drawing.Size(214, 360);
             this.groupBox11.TabIndex = 40;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Data In";
+            // 
+            // AZIMUT_T_12_32_16_09_13_TLM_2z
+            // 
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.AutoSize = true;
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Location = new System.Drawing.Point(22, 316);
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Name = "AZIMUT_T_12_32_16_09_13_TLM_2z";
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Size = new System.Drawing.Size(182, 17);
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.TabIndex = 54;
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Text = "AZIMUT_T_2013_10_18_12_55";
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.UseVisualStyleBackColor = true;
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.CheckedChanged += new System.EventHandler(this.AZIMUT_T_12_32_16_09_13_TLM_2z_CheckedChanged);
+            // 
+            // Azimut_514_08Nov2013_11_15
+            // 
+            this.Azimut_514_08Nov2013_11_15.AutoSize = true;
+            this.Azimut_514_08Nov2013_11_15.Location = new System.Drawing.Point(22, 334);
+            this.Azimut_514_08Nov2013_11_15.Name = "Azimut_514_08Nov2013_11_15";
+            this.Azimut_514_08Nov2013_11_15.Size = new System.Drawing.Size(179, 17);
+            this.Azimut_514_08Nov2013_11_15.TabIndex = 57;
+            this.Azimut_514_08Nov2013_11_15.Text = "Azimut_514_08Nov2013_11_15";
+            this.Azimut_514_08Nov2013_11_15.UseVisualStyleBackColor = true;
+            this.Azimut_514_08Nov2013_11_15.CheckedChanged += new System.EventHandler(this.Azimut_514_08Nov2013_11_15_CheckedChanged);
             // 
             // Odometr_SINS_case
             // 
             this.Odometr_SINS_case.AutoSize = true;
             this.Odometr_SINS_case.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.Odometr_SINS_case.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Odometr_SINS_case.Location = new System.Drawing.Point(15, 143);
+            this.Odometr_SINS_case.Location = new System.Drawing.Point(6, 147);
             this.Odometr_SINS_case.Name = "Odometr_SINS_case";
             this.Odometr_SINS_case.Size = new System.Drawing.Size(87, 17);
             this.Odometr_SINS_case.TabIndex = 42;
@@ -611,9 +647,9 @@
             this.groupBox12.Controls.Add(this.Odometr_SINS_case);
             this.groupBox12.Controls.Add(this.feedbackExist);
             this.groupBox12.Controls.Add(this.OnlyIntegrating);
-            this.groupBox12.Location = new System.Drawing.Point(383, 153);
+            this.groupBox12.Location = new System.Drawing.Point(419, 113);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(160, 206);
+            this.groupBox12.Size = new System.Drawing.Size(124, 211);
             this.groupBox12.TabIndex = 43;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "Method of Processing";
@@ -622,11 +658,11 @@
             // 
             this.ModifWeakConnect.AutoSize = true;
             this.ModifWeakConnect.Enabled = false;
-            this.ModifWeakConnect.Location = new System.Drawing.Point(27, 177);
+            this.ModifWeakConnect.Location = new System.Drawing.Point(20, 181);
             this.ModifWeakConnect.Name = "ModifWeakConnect";
-            this.ModifWeakConnect.Size = new System.Drawing.Size(121, 17);
+            this.ModifWeakConnect.Size = new System.Drawing.Size(100, 17);
             this.ModifWeakConnect.TabIndex = 61;
-            this.ModifWeakConnect.Text = "ModifWeakConnect";
+            this.ModifWeakConnect.Text = "ModifWeakCon";
             this.ModifWeakConnect.UseVisualStyleBackColor = true;
             this.ModifWeakConnect.CheckedChanged += new System.EventHandler(this.ModifWeakConnect_CheckedChanged);
             // 
@@ -634,7 +670,7 @@
             // 
             this.WeakConnect.AutoSize = true;
             this.WeakConnect.Enabled = false;
-            this.WeakConnect.Location = new System.Drawing.Point(27, 161);
+            this.WeakConnect.Location = new System.Drawing.Point(20, 165);
             this.WeakConnect.Name = "WeakConnect";
             this.WeakConnect.Size = new System.Drawing.Size(95, 17);
             this.WeakConnect.TabIndex = 60;
@@ -645,7 +681,7 @@
             // DoFeedBackDeltaFW
             // 
             this.DoFeedBackDeltaFW.AutoSize = true;
-            this.DoFeedBackDeltaFW.Location = new System.Drawing.Point(33, 101);
+            this.DoFeedBackDeltaFW.Location = new System.Drawing.Point(21, 105);
             this.DoFeedBackDeltaFW.Name = "DoFeedBackDeltaFW";
             this.DoFeedBackDeltaFW.Size = new System.Drawing.Size(58, 17);
             this.DoFeedBackDeltaFW.TabIndex = 59;
@@ -656,7 +692,7 @@
             // 
             this.DoFeedBackKappa.AutoSize = true;
             this.DoFeedBackKappa.Enabled = false;
-            this.DoFeedBackKappa.Location = new System.Drawing.Point(33, 87);
+            this.DoFeedBackKappa.Location = new System.Drawing.Point(21, 91);
             this.DoFeedBackKappa.Name = "DoFeedBackKappa";
             this.DoFeedBackKappa.Size = new System.Drawing.Size(71, 17);
             this.DoFeedBackKappa.TabIndex = 58;
@@ -666,7 +702,7 @@
             // flag_autonomous_dinamic_mode
             // 
             this.flag_autonomous_dinamic_mode.AutoSize = true;
-            this.flag_autonomous_dinamic_mode.Location = new System.Drawing.Point(27, 45);
+            this.flag_autonomous_dinamic_mode.Location = new System.Drawing.Point(22, 49);
             this.flag_autonomous_dinamic_mode.Name = "flag_autonomous_dinamic_mode";
             this.flag_autonomous_dinamic_mode.Size = new System.Drawing.Size(64, 17);
             this.flag_autonomous_dinamic_mode.TabIndex = 44;
@@ -677,7 +713,7 @@
             // EstimateExist
             // 
             this.EstimateExist.AutoSize = true;
-            this.EstimateExist.Location = new System.Drawing.Point(15, 120);
+            this.EstimateExist.Location = new System.Drawing.Point(6, 124);
             this.EstimateExist.Name = "EstimateExist";
             this.EstimateExist.Size = new System.Drawing.Size(66, 17);
             this.EstimateExist.TabIndex = 43;
@@ -688,7 +724,7 @@
             // groupBox13
             // 
             this.groupBox13.Controls.Add(this.flag_UsingScalarOdoMeasure);
-            this.groupBox13.Location = new System.Drawing.Point(782, 153);
+            this.groupBox13.Location = new System.Drawing.Point(750, 140);
             this.groupBox13.Name = "groupBox13";
             this.groupBox13.Size = new System.Drawing.Size(155, 49);
             this.groupBox13.TabIndex = 27;
@@ -699,7 +735,7 @@
             // 
             this.iMq_eq_iMx.AutoSize = true;
             this.iMq_eq_iMx.Enabled = false;
-            this.iMq_eq_iMx.Location = new System.Drawing.Point(857, 12);
+            this.iMq_eq_iMx.Location = new System.Drawing.Point(68, 19);
             this.iMq_eq_iMx.Name = "iMq_eq_iMx";
             this.iMq_eq_iMx.Size = new System.Drawing.Size(71, 17);
             this.iMq_eq_iMx.TabIndex = 49;
@@ -709,7 +745,7 @@
             // flag_Smoothing
             // 
             this.flag_Smoothing.AutoSize = true;
-            this.flag_Smoothing.Location = new System.Drawing.Point(798, 365);
+            this.flag_Smoothing.Location = new System.Drawing.Point(18, 19);
             this.flag_Smoothing.Name = "flag_Smoothing";
             this.flag_Smoothing.Size = new System.Drawing.Size(76, 17);
             this.flag_Smoothing.TabIndex = 50;
@@ -719,7 +755,7 @@
             // flag_using_slippage
             // 
             this.flag_using_slippage.AutoSize = true;
-            this.flag_using_slippage.Location = new System.Drawing.Point(798, 125);
+            this.flag_using_slippage.Location = new System.Drawing.Point(21, 110);
             this.flag_using_slippage.Name = "flag_using_slippage";
             this.flag_using_slippage.Size = new System.Drawing.Size(97, 17);
             this.flag_using_slippage.TabIndex = 51;
@@ -729,7 +765,7 @@
             // topo_saratov
             // 
             this.topo_saratov.AutoSize = true;
-            this.topo_saratov.Location = new System.Drawing.Point(235, 23);
+            this.topo_saratov.Location = new System.Drawing.Point(19, 17);
             this.topo_saratov.Name = "topo_saratov";
             this.topo_saratov.Size = new System.Drawing.Size(87, 17);
             this.topo_saratov.TabIndex = 52;
@@ -737,21 +773,10 @@
             this.topo_saratov.UseVisualStyleBackColor = true;
             this.topo_saratov.CheckedChanged += new System.EventHandler(this._16_09_13_TLM_1zaezd_CheckedChanged);
             // 
-            // AZIMUT_T_12_32_16_09_13_TLM_2z
-            // 
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.AutoSize = true;
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Location = new System.Drawing.Point(235, 97);
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Name = "AZIMUT_T_12_32_16_09_13_TLM_2z";
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Size = new System.Drawing.Size(182, 17);
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.TabIndex = 54;
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Text = "AZIMUT_T_2013_10_18_12_55";
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.UseVisualStyleBackColor = true;
-            this.AZIMUT_T_12_32_16_09_13_TLM_2z.CheckedChanged += new System.EventHandler(this.AZIMUT_T_12_32_16_09_13_TLM_2z_CheckedChanged);
-            // 
             // flag_UseAlgebraDrift
             // 
             this.flag_UseAlgebraDrift.AutoSize = true;
-            this.flag_UseAlgebraDrift.Location = new System.Drawing.Point(235, 296);
+            this.flag_UseAlgebraDrift.Location = new System.Drawing.Point(21, 128);
             this.flag_UseAlgebraDrift.Name = "flag_UseAlgebraDrift";
             this.flag_UseAlgebraDrift.Size = new System.Drawing.Size(103, 17);
             this.flag_UseAlgebraDrift.TabIndex = 56;
@@ -759,23 +784,12 @@
             this.flag_UseAlgebraDrift.UseVisualStyleBackColor = true;
             this.flag_UseAlgebraDrift.CheckedChanged += new System.EventHandler(this.flag_UseAlgebraDrift_CheckedChanged);
             // 
-            // Azimut_514_08Nov2013_11_15
-            // 
-            this.Azimut_514_08Nov2013_11_15.AutoSize = true;
-            this.Azimut_514_08Nov2013_11_15.Location = new System.Drawing.Point(235, 115);
-            this.Azimut_514_08Nov2013_11_15.Name = "Azimut_514_08Nov2013_11_15";
-            this.Azimut_514_08Nov2013_11_15.Size = new System.Drawing.Size(179, 17);
-            this.Azimut_514_08Nov2013_11_15.TabIndex = 57;
-            this.Azimut_514_08Nov2013_11_15.Text = "Azimut_514_08Nov2013_11_15";
-            this.Azimut_514_08Nov2013_11_15.UseVisualStyleBackColor = true;
-            this.Azimut_514_08Nov2013_11_15.CheckedChanged += new System.EventHandler(this.Azimut_514_08Nov2013_11_15_CheckedChanged);
-            // 
             // iMqDeltaR
             // 
             this.iMqDeltaR.AutoSize = true;
             this.iMqDeltaR.Checked = true;
             this.iMqDeltaR.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.iMqDeltaR.Location = new System.Drawing.Point(815, 35);
+            this.iMqDeltaR.Location = new System.Drawing.Point(10, 42);
             this.iMqDeltaR.Name = "iMqDeltaR";
             this.iMqDeltaR.Size = new System.Drawing.Size(77, 17);
             this.iMqDeltaR.TabIndex = 58;
@@ -785,7 +799,7 @@
             // iMqDeltaF
             // 
             this.iMqDeltaF.AutoSize = true;
-            this.iMqDeltaF.Location = new System.Drawing.Point(815, 55);
+            this.iMqDeltaF.Location = new System.Drawing.Point(10, 60);
             this.iMqDeltaF.Name = "iMqDeltaF";
             this.iMqDeltaF.Size = new System.Drawing.Size(80, 17);
             this.iMqDeltaF.TabIndex = 59;
@@ -795,7 +809,7 @@
             // iMqVarkappa13
             // 
             this.iMqVarkappa13.AutoSize = true;
-            this.iMqVarkappa13.Location = new System.Drawing.Point(901, 35);
+            this.iMqVarkappa13.Location = new System.Drawing.Point(96, 42);
             this.iMqVarkappa13.Name = "iMqVarkappa13";
             this.iMqVarkappa13.Size = new System.Drawing.Size(109, 17);
             this.iMqVarkappa13.TabIndex = 60;
@@ -805,7 +819,7 @@
             // iMqKappa
             // 
             this.iMqKappa.AutoSize = true;
-            this.iMqKappa.Location = new System.Drawing.Point(901, 55);
+            this.iMqKappa.Location = new System.Drawing.Point(96, 60);
             this.iMqKappa.Name = "iMqKappa";
             this.iMqKappa.Size = new System.Drawing.Size(77, 17);
             this.iMqKappa.TabIndex = 61;
@@ -815,7 +829,7 @@
             // iMqDeltaNu
             // 
             this.iMqDeltaNu.AutoSize = true;
-            this.iMqDeltaNu.Location = new System.Drawing.Point(815, 78);
+            this.iMqDeltaNu.Location = new System.Drawing.Point(10, 78);
             this.iMqDeltaNu.Name = "iMqDeltaNu";
             this.iMqDeltaNu.Size = new System.Drawing.Size(88, 17);
             this.iMqDeltaNu.TabIndex = 62;
@@ -827,7 +841,7 @@
             this.iMqDeltaRodo.AutoSize = true;
             this.iMqDeltaRodo.Checked = true;
             this.iMqDeltaRodo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.iMqDeltaRodo.Location = new System.Drawing.Point(901, 78);
+            this.iMqDeltaRodo.Location = new System.Drawing.Point(96, 78);
             this.iMqDeltaRodo.Name = "iMqDeltaRodo";
             this.iMqDeltaRodo.Size = new System.Drawing.Size(98, 17);
             this.iMqDeltaRodo.TabIndex = 63;
@@ -838,7 +852,7 @@
             // 
             this.AccuracyClass_NoErr.AutoSize = true;
             this.AccuracyClass_NoErr.Enabled = false;
-            this.AccuracyClass_NoErr.Location = new System.Drawing.Point(250, 347);
+            this.AccuracyClass_NoErr.Location = new System.Drawing.Point(21, 19);
             this.AccuracyClass_NoErr.Name = "AccuracyClass_NoErr";
             this.AccuracyClass_NoErr.Size = new System.Drawing.Size(129, 17);
             this.AccuracyClass_NoErr.TabIndex = 64;
@@ -848,7 +862,7 @@
             // AccuracyClass_0_02grph
             // 
             this.AccuracyClass_0_02grph.AutoSize = true;
-            this.AccuracyClass_0_02grph.Location = new System.Drawing.Point(250, 388);
+            this.AccuracyClass_0_02grph.Location = new System.Drawing.Point(21, 63);
             this.AccuracyClass_0_02grph.Name = "AccuracyClass_0_02grph";
             this.AccuracyClass_0_02grph.Size = new System.Drawing.Size(158, 17);
             this.AccuracyClass_0_02grph.TabIndex = 65;
@@ -858,7 +872,7 @@
             // AccuracyClass_0_2_grph
             // 
             this.AccuracyClass_0_2_grph.AutoSize = true;
-            this.AccuracyClass_0_2_grph.Location = new System.Drawing.Point(250, 411);
+            this.AccuracyClass_0_2_grph.Location = new System.Drawing.Point(21, 82);
             this.AccuracyClass_0_2_grph.Name = "AccuracyClass_0_2_grph";
             this.AccuracyClass_0_2_grph.Size = new System.Drawing.Size(152, 17);
             this.AccuracyClass_0_2_grph.TabIndex = 66;
@@ -868,7 +882,7 @@
             // AccuracyClass_2_0_grph
             // 
             this.AccuracyClass_2_0_grph.AutoSize = true;
-            this.AccuracyClass_2_0_grph.Location = new System.Drawing.Point(250, 434);
+            this.AccuracyClass_2_0_grph.Location = new System.Drawing.Point(21, 99);
             this.AccuracyClass_2_0_grph.Name = "AccuracyClass_2_0_grph";
             this.AccuracyClass_2_0_grph.Size = new System.Drawing.Size(152, 17);
             this.AccuracyClass_2_0_grph.TabIndex = 67;
@@ -878,7 +892,7 @@
             // SaratovFullRun
             // 
             this.SaratovFullRun.AutoSize = true;
-            this.SaratovFullRun.Location = new System.Drawing.Point(235, 35);
+            this.SaratovFullRun.Location = new System.Drawing.Point(32, 32);
             this.SaratovFullRun.Name = "SaratovFullRun";
             this.SaratovFullRun.Size = new System.Drawing.Size(59, 17);
             this.SaratovFullRun.TabIndex = 68;
@@ -888,7 +902,7 @@
             // SaratAlignStart
             // 
             this.SaratAlignStart.AutoSize = true;
-            this.SaratAlignStart.Location = new System.Drawing.Point(353, 23);
+            this.SaratAlignStart.Location = new System.Drawing.Point(6, 73);
             this.SaratAlignStart.Name = "SaratAlignStart";
             this.SaratAlignStart.Size = new System.Drawing.Size(74, 17);
             this.SaratAlignStart.TabIndex = 69;
@@ -898,7 +912,7 @@
             // SaratENDStart
             // 
             this.SaratENDStart.AutoSize = true;
-            this.SaratENDStart.Location = new System.Drawing.Point(353, 35);
+            this.SaratENDStart.Location = new System.Drawing.Point(6, 89);
             this.SaratENDStart.Name = "SaratENDStart";
             this.SaratENDStart.Size = new System.Drawing.Size(75, 17);
             this.SaratENDStart.TabIndex = 70;
@@ -910,7 +924,7 @@
             this.iMSmthd_Is_2.AutoSize = true;
             this.iMSmthd_Is_2.Checked = true;
             this.iMSmthd_Is_2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.iMSmthd_Is_2.Location = new System.Drawing.Point(815, 388);
+            this.iMSmthd_Is_2.Location = new System.Drawing.Point(35, 39);
             this.iMSmthd_Is_2.Name = "iMSmthd_Is_2";
             this.iMSmthd_Is_2.Size = new System.Drawing.Size(85, 17);
             this.iMSmthd_Is_2.TabIndex = 72;
@@ -920,7 +934,7 @@
             // iMSmthd_Is_7
             // 
             this.iMSmthd_Is_7.AutoSize = true;
-            this.iMSmthd_Is_7.Location = new System.Drawing.Point(815, 411);
+            this.iMSmthd_Is_7.Location = new System.Drawing.Point(35, 78);
             this.iMSmthd_Is_7.Name = "iMSmthd_Is_7";
             this.iMSmthd_Is_7.Size = new System.Drawing.Size(85, 17);
             this.iMSmthd_Is_7.TabIndex = 73;
@@ -930,7 +944,7 @@
             // iMSmthd_Is_4
             // 
             this.iMSmthd_Is_4.AutoSize = true;
-            this.iMSmthd_Is_4.Location = new System.Drawing.Point(907, 388);
+            this.iMSmthd_Is_4.Location = new System.Drawing.Point(35, 58);
             this.iMSmthd_Is_4.Name = "iMSmthd_Is_4";
             this.iMSmthd_Is_4.Size = new System.Drawing.Size(85, 17);
             this.iMSmthd_Is_4.TabIndex = 75;
@@ -940,7 +954,7 @@
             // saratovOdoVirtual_1
             // 
             this.saratovOdoVirtual_1.AutoSize = true;
-            this.saratovOdoVirtual_1.Location = new System.Drawing.Point(428, 23);
+            this.saratovOdoVirtual_1.Location = new System.Drawing.Point(76, 73);
             this.saratovOdoVirtual_1.Name = "saratovOdoVirtual_1";
             this.saratovOdoVirtual_1.Size = new System.Drawing.Size(84, 17);
             this.saratovOdoVirtual_1.TabIndex = 76;
@@ -950,7 +964,7 @@
             // saratovOdoVirtual_2
             // 
             this.saratovOdoVirtual_2.AutoSize = true;
-            this.saratovOdoVirtual_2.Location = new System.Drawing.Point(428, 35);
+            this.saratovOdoVirtual_2.Location = new System.Drawing.Point(76, 89);
             this.saratovOdoVirtual_2.Name = "saratovOdoVirtual_2";
             this.saratovOdoVirtual_2.Size = new System.Drawing.Size(84, 17);
             this.saratovOdoVirtual_2.TabIndex = 77;
@@ -960,7 +974,7 @@
             // saratovWithVirtualMarksInside
             // 
             this.saratovWithVirtualMarksInside.AutoSize = true;
-            this.saratovWithVirtualMarksInside.Location = new System.Drawing.Point(235, 53);
+            this.saratovWithVirtualMarksInside.Location = new System.Drawing.Point(45, 48);
             this.saratovWithVirtualMarksInside.Name = "saratovWithVirtualMarksInside";
             this.saratovWithVirtualMarksInside.Size = new System.Drawing.Size(112, 17);
             this.saratovWithVirtualMarksInside.TabIndex = 78;
@@ -970,47 +984,81 @@
             // AccuracyClass_0_0grph
             // 
             this.AccuracyClass_0_0grph.AutoSize = true;
-            this.AccuracyClass_0_0grph.Location = new System.Drawing.Point(250, 365);
+            this.AccuracyClass_0_0grph.Location = new System.Drawing.Point(21, 37);
             this.AccuracyClass_0_0grph.Name = "AccuracyClass_0_0grph";
             this.AccuracyClass_0_0grph.Size = new System.Drawing.Size(152, 17);
             this.AccuracyClass_0_0grph.TabIndex = 79;
             this.AccuracyClass_0_0grph.Text = "AccuracyClass- 0.0 grad/h";
             this.AccuracyClass_0_0grph.UseVisualStyleBackColor = true;
             // 
+            // groupBox14
+            // 
+            this.groupBox14.Controls.Add(this.AccuracyClass_NoErr);
+            this.groupBox14.Controls.Add(this.AccuracyClass_0_0grph);
+            this.groupBox14.Controls.Add(this.AccuracyClass_0_02grph);
+            this.groupBox14.Controls.Add(this.AccuracyClass_0_2_grph);
+            this.groupBox14.Controls.Add(this.AccuracyClass_2_0_grph);
+            this.groupBox14.Location = new System.Drawing.Point(232, 241);
+            this.groupBox14.Name = "groupBox14";
+            this.groupBox14.Size = new System.Drawing.Size(181, 122);
+            this.groupBox14.TabIndex = 80;
+            this.groupBox14.TabStop = false;
+            this.groupBox14.Text = "Aprior SINS Accuracy Class";
+            // 
+            // groupBox15
+            // 
+            this.groupBox15.Controls.Add(this.SaratovFullRun);
+            this.groupBox15.Controls.Add(this.saratovOdoVirtual_2);
+            this.groupBox15.Controls.Add(this.saratovWithVirtualMarksInside);
+            this.groupBox15.Controls.Add(this.saratovOdoVirtual_1);
+            this.groupBox15.Controls.Add(this.topo_saratov);
+            this.groupBox15.Controls.Add(this.SaratAlignStart);
+            this.groupBox15.Controls.Add(this.SaratENDStart);
+            this.groupBox15.Location = new System.Drawing.Point(19, 184);
+            this.groupBox15.Name = "groupBox15";
+            this.groupBox15.Size = new System.Drawing.Size(171, 117);
+            this.groupBox15.TabIndex = 53;
+            this.groupBox15.TabStop = false;
+            this.groupBox15.Text = "groupBox15";
+            // 
+            // groupBox16
+            // 
+            this.groupBox16.Controls.Add(this.flag_Smoothing);
+            this.groupBox16.Controls.Add(this.iMSmthd_Is_2);
+            this.groupBox16.Controls.Add(this.iMSmthd_Is_4);
+            this.groupBox16.Controls.Add(this.iMSmthd_Is_7);
+            this.groupBox16.Location = new System.Drawing.Point(750, 333);
+            this.groupBox16.Name = "groupBox16";
+            this.groupBox16.Size = new System.Drawing.Size(155, 100);
+            this.groupBox16.TabIndex = 81;
+            this.groupBox16.TabStop = false;
+            this.groupBox16.Text = "Smoothing Params";
+            // 
+            // groupBox17
+            // 
+            this.groupBox17.Controls.Add(this.iMqVarkappa13);
+            this.groupBox17.Controls.Add(this.iMq_eq_iMx);
+            this.groupBox17.Controls.Add(this.iMqDeltaR);
+            this.groupBox17.Controls.Add(this.iMqDeltaRodo);
+            this.groupBox17.Controls.Add(this.iMqDeltaF);
+            this.groupBox17.Controls.Add(this.iMqKappa);
+            this.groupBox17.Controls.Add(this.iMqDeltaNu);
+            this.groupBox17.Location = new System.Drawing.Point(750, 25);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(206, 100);
+            this.groupBox17.TabIndex = 82;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "Matrix Noise Dimension";
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1036, 459);
-            this.Controls.Add(this.AccuracyClass_0_0grph);
-            this.Controls.Add(this.saratovWithVirtualMarksInside);
-            this.Controls.Add(this.saratovOdoVirtual_2);
-            this.Controls.Add(this.saratovOdoVirtual_1);
-            this.Controls.Add(this.iMSmthd_Is_4);
-            this.Controls.Add(this.iMSmthd_Is_7);
-            this.Controls.Add(this.iMSmthd_Is_2);
-            this.Controls.Add(this.SaratENDStart);
-            this.Controls.Add(this.SaratAlignStart);
-            this.Controls.Add(this.SaratovFullRun);
-            this.Controls.Add(this.AccuracyClass_2_0_grph);
-            this.Controls.Add(this.AccuracyClass_0_2_grph);
-            this.Controls.Add(this.AccuracyClass_0_02grph);
-            this.Controls.Add(this.AccuracyClass_NoErr);
-            this.Controls.Add(this.UsingAveraging);
-            this.Controls.Add(this.iMqDeltaRodo);
+            this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.groupBox17);
+            this.Controls.Add(this.groupBox16);
+            this.Controls.Add(this.groupBox14);
             this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.iMqDeltaNu);
-            this.Controls.Add(this.iMqKappa);
-            this.Controls.Add(this.iMqVarkappa13);
-            this.Controls.Add(this.iMqDeltaF);
-            this.Controls.Add(this.iMqDeltaR);
-            this.Controls.Add(this.Azimut_514_08Nov2013_11_15);
-            this.Controls.Add(this.flag_UseAlgebraDrift);
-            this.Controls.Add(this.AZIMUT_T_12_32_16_09_13_TLM_2z);
-            this.Controls.Add(this.topo_saratov);
-            this.Controls.Add(this.flag_using_slippage);
-            this.Controls.Add(this.flag_Smoothing);
-            this.Controls.Add(this.iMq_eq_iMx);
             this.Controls.Add(this.groupBox13);
             this.Controls.Add(this.groupBox12);
             this.Controls.Add(this.groupBox8);
@@ -1020,6 +1068,7 @@
             this.Controls.Add(this.groupBox10);
             this.Name = "SINS_Processing";
             this.Text = "SINS Solution";
+            this.Load += new System.EventHandler(this.SINS_Processing_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1045,8 +1094,15 @@
             this.groupBox12.PerformLayout();
             this.groupBox13.ResumeLayout(false);
             this.groupBox13.PerformLayout();
+            this.groupBox14.ResumeLayout(false);
+            this.groupBox14.PerformLayout();
+            this.groupBox15.ResumeLayout(false);
+            this.groupBox15.PerformLayout();
+            this.groupBox16.ResumeLayout(false);
+            this.groupBox16.PerformLayout();
+            this.groupBox17.ResumeLayout(false);
+            this.groupBox17.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -1130,6 +1186,10 @@
         private System.Windows.Forms.CheckBox saratovOdoVirtual_2;
         private System.Windows.Forms.CheckBox saratovWithVirtualMarksInside;
         private System.Windows.Forms.CheckBox AccuracyClass_0_0grph;
+        private System.Windows.Forms.GroupBox groupBox14;
+        private System.Windows.Forms.GroupBox groupBox15;
+        private System.Windows.Forms.GroupBox groupBox16;
+        private System.Windows.Forms.GroupBox groupBox17;
     }
 }
 
