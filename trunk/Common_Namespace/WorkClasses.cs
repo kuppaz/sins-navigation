@@ -234,7 +234,8 @@ namespace Common_Namespace
         public bool Experiment_NoiseModelFlag;
         public double Experiment_GPS_PositionError;
 
-        public bool Imitator_addNoisSample;
+        public bool Imitator_addNoisSample_DUS, Imitator_addNoisSample_ACCS;
+        public string Imitator_addNoisSamplePath_DUS, Imitator_addNoisSamplePath_ACCS;
         public double Imitator_Noise_Vel, Imitator_Noise_Angl;
         public double Imitator_stdR;
         public double Imitator_stdOdoR;

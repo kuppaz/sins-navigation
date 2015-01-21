@@ -86,10 +86,8 @@ namespace Common_Namespace
             double[] sampleCurrSumDUC = new double[3], sampleCurrAvgDUC = new double[3], sampleCurrSumAccs = new double[3], sampleCurrAvgAccs = new double[3];
 
 
-            string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
-            //string pathToSampleDUC = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
-            StreamReader NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
-            if (ParamStart.Imitator_addNoisSample)
+            StreamReader NoisImputSampleDUS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_DUS);
+            if (ParamStart.Imitator_addNoisSample_DUS)
             {
                 for (noisSampleCountDUS = 0; ; noisSampleCountDUS++)
                 {
@@ -98,15 +96,15 @@ namespace Common_Namespace
                     NoisImputSampleDUS.ReadLine();
                 }
                 NoisImputSampleDUS.Close();
-                NoisImputSampleDUS = new StreamReader(pathToSampleDUC);
+                NoisImputSampleDUS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_DUS);
             }
 
             noisSampleDUS_1 = new double[noisSampleCountDUS];
             noisSampleDUS_2 = new double[noisSampleCountDUS];
             noisSampleDUS_3 = new double[noisSampleCountDUS];
-            if (ParamStart.Imitator_addNoisSample)
+            if (ParamStart.Imitator_addNoisSample_DUS)
             {
-                if (pathToSampleDUC == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.dat")
+                if (ParamStart.Imitator_addNoisSamplePath_DUS == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt")
                 {
                     for (int i = 0; i < noisSampleCountDUS; i++)
                     {
@@ -114,27 +112,24 @@ namespace Common_Namespace
                         string[] strArray = str.Split(' ');
                         int t1 = 0;
                         for (int y = 0; y < strArray.Length; y++)
-                        {
                             if (strArray[y] != "")
                                 t1++;
-                        }
                         string[] strArray2 = new string[t1];
                         t1 = 0;
 
                         for (int y = 0; y < strArray.Length; y++)
-                        {
                             if (strArray[y] != "")
                             {
                                 strArray2[t1] = strArray[y];
                                 t1++;
                             }
-                        }
+
                         noisSampleDUS_1[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
                         noisSampleDUS_2[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
                         noisSampleDUS_3[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
                     }
                 }
-                else if (pathToSampleDUC == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat")
+                else if (ParamStart.Imitator_addNoisSamplePath_DUS == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat")
                 {
                     for (int i = 0; i < noisSampleCountDUS; i++)
                     {
@@ -161,9 +156,8 @@ namespace Common_Namespace
 
 
             /////////-----///////
-            string pathToSampleACCS = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
-            StreamReader NoisImputSampleACCS = new StreamReader(pathToSampleACCS);
-            if (ParamStart.Imitator_addNoisSample)
+            StreamReader NoisImputSampleACCS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_ACCS);
+            if (ParamStart.Imitator_addNoisSample_ACCS)
             {
                 for (noisSampleCountAccs = 0; ; noisSampleCountAccs++)
                 {
@@ -172,13 +166,13 @@ namespace Common_Namespace
                     NoisImputSampleACCS.ReadLine();
                 }
                 NoisImputSampleACCS.Close();
-                NoisImputSampleACCS = new StreamReader(pathToSampleACCS);
+                NoisImputSampleACCS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_ACCS);
             }
 
             noisSampleAccs_1 = new double[noisSampleCountAccs];
             noisSampleAccs_2 = new double[noisSampleCountAccs];
             noisSampleAccs_3 = new double[noisSampleCountAccs];
-            if (ParamStart.Imitator_addNoisSample)
+            if (ParamStart.Imitator_addNoisSample_ACCS)
             {
                 for (int i = 0; i < noisSampleCountAccs; i++)
                 {
@@ -200,15 +194,22 @@ namespace Common_Namespace
                 }
             }
 
-            //if (addNoisSample)
-            //{
-            //    Params_df_0[0] = 5E-4;
-            //    Params_df_0[1] = -5E-4;
-            //    Params_df_0[2] = 3E-4;
-            //    Params_dnu_0[0] = 0.005;
-            //    Params_dnu_0[1] = -0.003;
-            //    Params_dnu_0[2] = 0.004;
-            //}
+            if (ParamStart.Imitator_addNoisSample_ACCS || ParamStart.Imitator_addNoisSample_DUS)
+            {
+                //Params_df_0[0] = 3E-4;
+                //Params_df_0[1] = 2E-4;
+                //Params_df_0[2] = 1E-4;
+                //Params_dnu_0[0] = 0.005;
+                //Params_dnu_0[1] = -0.003;
+                //Params_dnu_0[2] = 0.004;
+
+                Params_df_0[0] = 5E-4;
+                Params_df_0[1] = -5E-4;
+                Params_df_0[2] = 3E-4;
+                Params_dnu_0[0] = 0.005;
+                Params_dnu_0[1] = -0.003;
+                Params_dnu_0[2] = 0.004;
+            }
 
 
 
@@ -333,12 +334,14 @@ namespace Common_Namespace
 
 
                 //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
-                if (ParamStart.Imitator_addNoisSample)
+                if (ParamStart.Imitator_addNoisSample_DUS)
                 {
                     SINSstate.W_z[0] -= noisSampleDUS_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
                     SINSstate.W_z[1] -= noisSampleDUS_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
                     SINSstate.W_z[2] -= noisSampleDUS_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
-
+                }
+                if (ParamStart.Imitator_addNoisSample_ACCS)
+                {
                     SINSstate.F_z[0] += noisSampleAccs_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
                     SINSstate.F_z[1] += noisSampleAccs_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
                     SINSstate.F_z[2] += noisSampleAccs_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
