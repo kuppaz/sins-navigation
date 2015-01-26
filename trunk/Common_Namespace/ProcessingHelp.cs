@@ -486,9 +486,18 @@ namespace Common_Namespace
 
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + KalmanVars.ErrorConditionVector_p[0] + " " + KalmanVars.ErrorConditionVector_p[1] + " " + KalmanVars.ErrorConditionVector_p[2]
                                  + " " + KalmanVars.ErrorConditionVector_p[3] + " " + (KalmanVars.ErrorConditionVector_p[4] * SimpleData.ToDegree) + " " + (KalmanVars.ErrorConditionVector_p[5] * SimpleData.ToDegree)
-                                  + " " + (KalmanVars.ErrorConditionVector_p[6] * SimpleData.ToDegree) + " " + (KalmanVars.ErrorConditionVector_p[7] * SimpleData.ToDegree * 3600.0) + " " + (KalmanVars.ErrorConditionVector_p[8] * SimpleData.ToDegree * 3600.0)
-                                   + " " + (KalmanVars.ErrorConditionVector_p[9] * SimpleData.ToDegree * 3600.0) + " " + KalmanVars.ErrorConditionVector_p[10] + " " + KalmanVars.ErrorConditionVector_p[11]
-                                    + " " + KalmanVars.ErrorConditionVector_p[12];
+                                  + " " + (KalmanVars.ErrorConditionVector_p[6] * SimpleData.ToDegree);
+
+                if (SINSstate.flag_DoFeedBackDeltaFW)
+                {
+                    ProcHelp.datastring = ProcHelp.datastring + " " + SINSstate.ComulativeInstrumental_Wz[0] * SimpleData.ToDegree * 3600.0 + " " + SINSstate.ComulativeInstrumental_Wz[1] * SimpleData.ToDegree * 3600.0 + " " + SINSstate.ComulativeInstrumental_Wz[2] * SimpleData.ToDegree * 3600.0;
+                    ProcHelp.datastring = ProcHelp.datastring + " " + SINSstate.ComulativeInstrumental_Fz[0] + " " + SINSstate.ComulativeInstrumental_Fz[1] + " " + SINSstate.ComulativeInstrumental_Fz[2];
+                }
+                else
+                {
+                    ProcHelp.datastring = ProcHelp.datastring + " " + (KalmanVars.ErrorConditionVector_p[7] * SimpleData.ToDegree * 3600.0) + " " + (KalmanVars.ErrorConditionVector_p[8] * SimpleData.ToDegree * 3600.0) + " " + (KalmanVars.ErrorConditionVector_p[9] * SimpleData.ToDegree * 3600.0);
+                    ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[10] + " " + KalmanVars.ErrorConditionVector_p[11] + " " + KalmanVars.ErrorConditionVector_p[12];
+                }
 
                 if (SINSstate.flag_iMx_r3_dV3)
                     ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r3_dV3] + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r3_dV3 + 1];
@@ -502,6 +511,7 @@ namespace Common_Namespace
                                                               + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_odo_model + 1] * SimpleData.ToDegree
                                                               + " " + KalmanVars.ErrorConditionVector_p[SINSstate.iMx_odo_model + 2];
 
+
                 if (SINSstate.flag_FeedbackExist)
                 {
                     if (SINSstate.flag_Odometr_SINS_case)
@@ -509,13 +519,8 @@ namespace Common_Namespace
                     if (!SINSstate.flag_Odometr_SINS_case && SINSstate.flag_iMx_kappa_13_ds)
                         ProcHelp.datastring = ProcHelp.datastring + " " + SINSstate.ComulativeKappaEst[0] * SimpleData.ToDegree + " " + SINSstate.ComulativeKappaEst[2] * SimpleData.ToDegree + " " + SINSstate.ComulativeKappaEst[1];
                 }
-                if (SINSstate.flag_DoFeedBackDeltaFW)
-                {
-                    ProcHelp.datastring = ProcHelp.datastring + " " + SINSstate.ComulativeInstrumental_Fz[0] + " " + SINSstate.ComulativeInstrumental_Fz[1] + " " + SINSstate.ComulativeInstrumental_Fz[2];
-                    ProcHelp.datastring = ProcHelp.datastring + " " + SINSstate.ComulativeInstrumental_Wz[0] * SimpleData.ToDegree * 3600.0 + " " + SINSstate.ComulativeInstrumental_Wz[1] * SimpleData.ToDegree * 3600.0 + " " + SINSstate.ComulativeInstrumental_Wz[2] * SimpleData.ToDegree * 3600.0;
-                }
+                
 
-                //ProcHelp.datastring += " " + KalmanVars.kappa1_est + " " + KalmanVars.kappa3_est;
                 Nav_StateErrorsVector.WriteLine(ProcHelp.datastring);
 
 
