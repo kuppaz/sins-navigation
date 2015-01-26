@@ -82,11 +82,11 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdOdoR = 1.1; // метров
             ParamStart.Imitator_stdV = 0.1;
             ParamStart.Imitator_stdScale = 0.01;
-            ParamStart.Imitator_stdKappa1 = 20.0; //минут
-            ParamStart.Imitator_stdKappa3 = 20.0; //минут
+            ParamStart.Imitator_stdKappa1 = 10.0; //минут
+            ParamStart.Imitator_stdKappa3 = 10.0; //минут
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 60000.0;
-            ParamStart.Imitator_GPS_PositionError = 5.0; // в метрах
+            ParamStart.Imitator_GPS_IsReadyDistance = 30000.0;
+            ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах
@@ -534,8 +534,9 @@ namespace SINS_motion_processing_new_data
                 SINSstate.iMx_odo_model = value_iMx_kappa_13_ds;
 
             SINSstate.flag_DoFeedBackDeltaFW = this.DoFeedBackDeltaFW.Checked;
-            if (this.Odometr_SINS_case.Checked)
-                SINSstate.flag_DoFeedBackKappa = this.DoFeedBackKappa.Checked;
+            SINSstate.flag_DoFeedBackKappa = this.DoFeedBackKappa.Checked;
+            SINSstate.flag_DoFeedBackOdoScale = this.DoFeedBackOdoScale.Checked;
+            
 
             //---флаги---
             SINSstate.flag_Autonomous_Solution = this.OnlyIntegrating.Checked;
@@ -946,8 +947,29 @@ namespace SINS_motion_processing_new_data
                 this.WeakConnect.Enabled = false;
                 this.ModifWeakConnect.Enabled = false;
 
-                //this.DoFeedBackKappa.Checked = true;
-                //this.DoFeedBackDeltaFW.Checked = true;
+                this.DoFeedBackKappa.Enabled = true;
+                this.DoFeedBackOdoScale.Enabled = true;
+
+                this.DoFeedBackDeltaFW.Enabled = true;
+                this.DoFeedBackDeltaFW.Checked = true;
+
+                if (this.Odometr_SINS_case.Checked == true)
+                {
+                    this.DoFeedBackKappa.Checked = true;
+                    this.DoFeedBackOdoScale.Checked = true;
+                }
+                else if (this.iMx_kappa_1_3_ds.Checked == true)
+                {
+                    this.DoFeedBackKappa.Checked = true;
+                    this.DoFeedBackKappa.Enabled = false;
+                    this.DoFeedBackOdoScale.Checked = true;
+                    this.DoFeedBackOdoScale.Enabled = false;
+                }
+                else if (this.iMx_kappa_1_3_ds.Checked == false)
+                {
+                    this.DoFeedBackKappa.Enabled = false;
+                    this.DoFeedBackOdoScale.Enabled = false;
+                }
             }
             else
             {
@@ -960,8 +982,13 @@ namespace SINS_motion_processing_new_data
                 this.WeakConnect.Enabled = true;
                 this.ModifWeakConnect.Enabled = true;
 
-                //this.DoFeedBackKappa.Checked = false;
-                //this.DoFeedBackDeltaFW.Checked = false;
+                this.DoFeedBackKappa.Enabled = false;
+                this.DoFeedBackOdoScale.Enabled = false;
+                this.DoFeedBackDeltaFW.Enabled = false;
+
+                this.DoFeedBackKappa.Checked = false;
+                this.DoFeedBackOdoScale.Checked = false;
+                this.DoFeedBackDeltaFW.Checked = false;
             }
         }
 
@@ -1182,6 +1209,35 @@ namespace SINS_motion_processing_new_data
         private void SINS_Processing_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void DoFeedBackKappa_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void iMx_kappa_1_3_ds_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.iMx_kappa_1_3_ds.Checked == true)
+            {
+                if (this.feedbackExist.Checked == true && this.Odometr_SINS_case.Checked == false)
+                {
+                    this.DoFeedBackKappa.Checked = true;
+                    this.DoFeedBackOdoScale.Checked = true;
+                    this.DoFeedBackKappa.Enabled = false;
+                    this.DoFeedBackOdoScale.Enabled = false;
+                }
+            }
+            if (this.iMx_kappa_1_3_ds.Checked == false)
+            {
+                if (this.feedbackExist.Checked == true && this.Odometr_SINS_case.Checked == false)
+                {
+                    this.DoFeedBackKappa.Checked = false;
+                    this.DoFeedBackOdoScale.Checked = false;
+                    this.DoFeedBackKappa.Enabled = false;
+                    this.DoFeedBackOdoScale.Enabled = false;
+                }
+            }
         }
 
 

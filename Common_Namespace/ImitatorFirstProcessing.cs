@@ -196,19 +196,19 @@ namespace Common_Namespace
 
             if (ParamStart.Imitator_addNoisSample_ACCS || ParamStart.Imitator_addNoisSample_DUS)
             {
-                //Params_df_0[0] = 3E-4;
-                //Params_df_0[1] = 2E-4;
-                //Params_df_0[2] = 1E-4;
-                //Params_dnu_0[0] = 0.005;
-                //Params_dnu_0[1] = -0.003;
-                //Params_dnu_0[2] = 0.004;
-
-                Params_df_0[0] = 5E-4;
-                Params_df_0[1] = -5E-4;
-                Params_df_0[2] = 3E-4;
+                Params_df_0[0] = 3E-4;
+                Params_df_0[1] = 2E-4;
+                Params_df_0[2] = 1E-4;
                 Params_dnu_0[0] = 0.005;
                 Params_dnu_0[1] = -0.003;
                 Params_dnu_0[2] = 0.004;
+
+                //Params_df_0[0] = 5E-4;
+                //Params_df_0[1] = -5E-4;
+                //Params_df_0[2] = 3E-4;
+                //Params_dnu_0[0] = 0.005;
+                //Params_dnu_0[1] = -0.003;
+                //Params_dnu_0[2] = 0.004;
             }
 
 

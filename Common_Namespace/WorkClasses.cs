@@ -70,7 +70,8 @@ namespace Common_Namespace
         public int iMx_r3_dV3 = 0, iMx_r12_odo = 0, iMx_odo_model = 0;
 
         //---мод запуска программы---
-        public bool flag_Alignment = false, flag_Autonomous_Solution = false, flag_FeedbackExist = false, flag_EstimateExist = false, flag_DoFeedBackDeltaFW = false, flag_DoFeedBackKappa = false;
+        public bool flag_Alignment = false, flag_Autonomous_Solution = false, flag_FeedbackExist = false, flag_EstimateExist = false;
+        public bool flag_DoFeedBackDeltaFW = false, flag_DoFeedBackKappa = false, flag_DoFeedBackOdoScale = false;
         public bool flag_UsingClasAlignment = false, flag_UsingNavAlignment = false, flag_OnlyAlignment = false;
         public bool flag_OdoSINSWeakConnect = false, flag_OdoSINSWeakConnect_MODIF = false;
 

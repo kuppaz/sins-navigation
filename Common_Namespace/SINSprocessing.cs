@@ -90,12 +90,25 @@ namespace Common_Namespace
             if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
             {
                 //--- Ведем расчет оценки ошибок модели одометра в случае обратных связей ---//
-                SINSstate.ComulativeKappaEst[0] += ErrorVector[SINSstate.iMx_odo_model + 0];
-                SINSstate.ComulativeKappaEst[2] += ErrorVector[SINSstate.iMx_odo_model + 1];
-                SINSstate.ComulativeKappaEst[1] += ErrorVector[SINSstate.iMx_odo_model + 2];
+                if (SINSstate.flag_DoFeedBackKappa == true)
+                {
+                    SINSstate.ComulativeKappaEst[0] += ErrorVector[SINSstate.iMx_odo_model + 0];
+                    SINSstate.ComulativeKappaEst[2] += ErrorVector[SINSstate.iMx_odo_model + 1];
+                }
+                else
+                {
+                    //--- Ведь если мы не списываем каппа, то и списывать эти ошибки из показаний одометра также не нужно.
+                    //SINSstate.ComulativeKappaEst[0] = ErrorVector[SINSstate.iMx_odo_model + 0];
+                    //SINSstate.ComulativeKappaEst[2] = ErrorVector[SINSstate.iMx_odo_model + 1];
+                }
+                if (SINSstate.flag_DoFeedBackOdoScale == true)
+                {
+                    SINSstate.ComulativeKappaEst[1] += ErrorVector[SINSstate.iMx_odo_model + 2];
+                }
+
 
                 //--- Коррекция весовых матриц в случае обрытных связей без уравнений ошибок одометра ---//
-                if (SINSstate.flag_Odometr_SINS_case == false)
+                if (SINSstate.flag_Odometr_SINS_case == false && (SINSstate.flag_DoFeedBackKappa == true && SINSstate.flag_DoFeedBackOdoScale == true))
                 {
                     double[] d_2 = new double[3];
                     Matrix matr_1 = new Matrix(3, 3), matr_2 = new Matrix(3, 3);
@@ -171,8 +184,8 @@ namespace Common_Namespace
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    SINSstate2.ComulativeInstrumental_Fz[i] += ErrorVector[7 + i];
-                    SINSstate2.ComulativeInstrumental_Wz[i] += ErrorVector[10 + i];
+                    SINSstate2.ComulativeInstrumental_Fz[i] += ErrorVector[10 + i];
+                    SINSstate2.ComulativeInstrumental_Wz[i] += ErrorVector[7 + i];
                 }
             }
 
@@ -213,6 +226,11 @@ namespace Common_Namespace
             {
                 //---зануляем только если имеется соответсвующая настройка запуска---
                 if (SINSstate.flag_DoFeedBackDeltaFW == false && i >= 7 && i <= 12)
+                    continue;
+
+                if (SINSstate.flag_DoFeedBackKappa == false && (i == SINSstate.iMx_odo_model || i == SINSstate.iMx_odo_model + 1))
+                    continue;
+                if (SINSstate.flag_DoFeedBackOdoScale == false && i == SINSstate.iMx_odo_model + 2)
                     continue;
 
                 KalmanVars.ErrorConditionVector_p[i] = 0.0;
