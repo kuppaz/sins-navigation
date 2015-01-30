@@ -124,9 +124,16 @@ namespace SINSProcessingModes
 
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
 
+                SINSstate.OdoTimeStepCount++;
+                if (SINSstate.Global_file == "Saratov_run_2014_07_23")
+                    SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
+
                 //---------------- Формируем вектора измерений одометра ---------------//
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {
+                    SINSstate.OdometerVector = SimpleOperations.NullingOfArray(SINSstate.OdometerVector);
+                    SINSstate.OdoSpeed_s = SimpleOperations.NullingOfArray(SINSstate.OdoSpeed_s);
+
                     SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
                     SINSstate.OdoSpeed_s[1] = SINSstate.OdometerVector[1] / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
 
@@ -250,6 +257,13 @@ namespace SINSProcessingModes
                 //--- Вывод данных для телеметрического имитатора ---//
                 ProcessingHelp.OutPutInfo_Telemetric(SINSstate, SINSstate2, Imitator_Telemetric, i, l);
 
+                if (i % 100 == 0)
+                    ForHelp.WriteLine(SINSstate.Count + " " + SINSstate_OdoMod.Omega_x[0] + " " + SINSstate_OdoMod.Omega_x[1] + " " + SINSstate_OdoMod.Omega_x[2]
+                        + " " + SINSstate_OdoMod.OdoSpeed_s[1] + " " + SINSstate_OdoMod.OdoSpeed_s[0] + " " + SINSstate_OdoMod.OdoSpeed_s[2]
+                        + " " + SINSstate.OdoSpeed_s[1] + " " + SINSstate.OdoSpeed_s[0] + " " + SINSstate.OdoSpeed_s[2]
+                        + " " + SINSstate_OdoMod.Vx_0[0] + " " + SINSstate_OdoMod.Vx_0[1] + " " + SINSstate_OdoMod.Vx_0[2]
+                        + " " + SimpleOperations.AbsoluteVectorValue(SINSstate_OdoMod.OdoSpeed_x0));
+
                 //--- Вывод в файл значений оцененной позиционной ошибки до коррекции (важно в обратных связях) ---//
                 if (SINSstate.flag_ControlPointCorrection)
                 {
@@ -261,11 +275,14 @@ namespace SINSProcessingModes
                 }
 
                 //--- Расчет корректирующего вектора состояния ---//
-                SINSprocessing.CalcStateErrors(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate_OdoMod);
-                if (SINSstate.flag_EstimateExist == true)
-                    SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate2, SINSstate_OdoMod);
-                if (SINSstate.flag_FeedbackExist == true)
-                    SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate, SINSstate_OdoMod);
+                if (SINSstate.flag_UsingCorrection == true)
+                {
+                    SINSprocessing.CalcStateErrors(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate_OdoMod);
+                    if (SINSstate.flag_EstimateExist == true)
+                        SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate2, SINSstate_OdoMod);
+                    if (SINSstate.flag_FeedbackExist == true)
+                        SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate, SINSstate_OdoMod);
+                }
 
                 //----------------------------ЭТАП КОРРЕКЦИИ END---------------------------------//
 

@@ -216,20 +216,6 @@ namespace Common_Namespace
                 SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
                 SINSstate.firstLineRead = true;
             }
-
-            SINSstate.OdoTimeStepCount++;
-            if (SINSstate.OdometerData.odometer_left.isReady == 1)
-            {
-                SINSstate.OdoSpeed_s = SimpleOperations.NullingOfArray(SINSstate.OdoSpeed_s);
-                SINSstate.OdometerVector = SimpleOperations.NullingOfArray(SINSstate.OdometerVector);
-            }
-
-            if (SINSstate.Global_file == "Saratov_run_2014_07_23")
-            {
-                SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
-                if (SINSstate.NowSmoothing == true)
-                    SINSstate.OdoTimeStepCount = -SINSstate.OdoTimeStepCount;
-            }
         }
 
 
