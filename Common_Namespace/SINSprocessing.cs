@@ -176,8 +176,8 @@ namespace Common_Namespace
                     //--- Ведем расчет оценки ошибок модели одометра в случае обратных связей ---//
                     if (SINSstate.flag_DoFeedBackKappa == true)
                     {
-                        SINSstate.ComulativeKappaEst[0] += ErrorVector[SINSstate.iMx_odo_model + 0];
-                        SINSstate.ComulativeKappaEst[2] += ErrorVector[SINSstate.iMx_odo_model + 1];
+                        SINSstate2.ComulativeKappaEst[0] += ErrorVector[SINSstate.iMx_odo_model + 0];
+                        SINSstate2.ComulativeKappaEst[2] += ErrorVector[SINSstate.iMx_odo_model + 1];
                     }
                     else
                     {
@@ -187,7 +187,7 @@ namespace Common_Namespace
                     }
                     if (SINSstate.flag_DoFeedBackOdoScale == true)
                     {
-                        SINSstate.ComulativeKappaEst[1] += ErrorVector[SINSstate.iMx_odo_model + 2];
+                        SINSstate2.ComulativeKappaEst[1] += ErrorVector[SINSstate.iMx_odo_model + 2];
                     }
                 }
             }
@@ -348,9 +348,9 @@ namespace Common_Namespace
 
             // так как в векторе состояния дрейфы в проекции на приборные оси, надо задавать соответственно матрицу шумов //
             KalmanVars.CovarianceMatrixNoise[2 * iMq + tmpCounter + 0] = Noise_Vel_in_Mx[0] * sqrt_freq;
-            //KalmanVars.CovarianceMatrixNoise[2 * iMq + tmpCounter + 2] = SINSstate.Vx_0[1] * Noise_Angl_in_Mx[0] * sqrt_freq;
+            KalmanVars.CovarianceMatrixNoise[2 * iMq + tmpCounter + 2] = SINSstate.Vx_0[1] * Noise_Angl_in_Mx[0] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[3 * iMq + tmpCounter + 1] = Noise_Vel_in_Mx[1] * sqrt_freq;
-            //KalmanVars.CovarianceMatrixNoise[3 * iMq + tmpCounter + 3] = SINSstate.Vx_0[0] * Noise_Angl_in_Mx[1] * sqrt_freq;
+            KalmanVars.CovarianceMatrixNoise[3 * iMq + tmpCounter + 3] = SINSstate.Vx_0[0] * Noise_Angl_in_Mx[1] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[4 * iMq + tmpCounter + 2] = Noise_Angl_in_Mx[0] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[5 * iMq + tmpCounter + 3] = Noise_Angl_in_Mx[1] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[6 * iMq + tmpCounter + 4] = Noise_Angl_in_Mx[2] * sqrt_freq;
@@ -554,6 +554,8 @@ namespace Common_Namespace
                 KalmanVars.Matrix_A[(iMx_r3_dV3 + 1) * iMx + 10] = SINSstate.A_x0s[2, 0];
                 KalmanVars.Matrix_A[(iMx_r3_dV3 + 1) * iMx + 11] = SINSstate.A_x0s[2, 1];
                 KalmanVars.Matrix_A[(iMx_r3_dV3 + 1) * iMx + 12] = SINSstate.A_x0s[2, 2];
+
+                KalmanVars.Matrix_A[(iMx_r3_dV3 + 1) * iMx + iMx_r3_dV3] = 2 * 0.000001538;
             }
 
         }
