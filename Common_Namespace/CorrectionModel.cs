@@ -40,21 +40,21 @@ namespace Common_Namespace
 
             if (SINSstate.flag_UsingOdoPosition && SINSstate.flag_iMx_kappa_13_ds)
             {
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = -Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate.Ds2_ComulativeByOdoTrack[0, 2] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = -SINSstate.Ds2_ComulativeByOdoTrack[0, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = -SINSstate.Ds2_ComulativeByOdoTrack[0, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = -SINSstate.Ds2_ComulativeByOdoTrack[0, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 0] = -Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate.Ds2_ComulativeByOdoTrack[1, 2] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 4] = -SINSstate.Ds2_ComulativeByOdoTrack[1, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 5] = -SINSstate.Ds2_ComulativeByOdoTrack[1, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 6] = -SINSstate.Ds2_ComulativeByOdoTrack[1, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = -Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate.Ds2_CumulativeByOdoTrack[0, 2] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = -SINSstate.Ds2_CumulativeByOdoTrack[0, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = -SINSstate.Ds2_CumulativeByOdoTrack[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = -SINSstate.Ds2_CumulativeByOdoTrack[0, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 0] = -Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate.Ds2_CumulativeByOdoTrack[1, 2] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 4] = -SINSstate.Ds2_CumulativeByOdoTrack[1, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 5] = -SINSstate.Ds2_CumulativeByOdoTrack[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 6] = -SINSstate.Ds2_CumulativeByOdoTrack[1, 2];
 
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.Ds_ComulativeByOdoTrack[0, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.Ds_ComulativeByOdoTrack[0, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = SINSstate.Ds_ComulativeByOdoTrack[0, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 0] = -SINSstate.Ds_ComulativeByOdoTrack[1, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 1] = SINSstate.Ds_ComulativeByOdoTrack[1, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 2] = SINSstate.Ds_ComulativeByOdoTrack[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.Ds_CumulativeByOdoTrack[0, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.Ds_CumulativeByOdoTrack[0, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = SINSstate.Ds_CumulativeByOdoTrack[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 0] = -SINSstate.Ds_CumulativeByOdoTrack[1, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 1] = SINSstate.Ds_CumulativeByOdoTrack[1, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 2] = SINSstate.Ds_CumulativeByOdoTrack[1, 1];
 
                 KalmanVars.Measure[KalmanVars.cnt_measures + 0] = (SINSstate_OdoMod.Longitude - Longitude_CP) * SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) * Math.Cos(SINSstate_OdoMod.Latitude);
                 KalmanVars.Measure[KalmanVars.cnt_measures + 1] = (SINSstate_OdoMod.Latitude - Latitude_CP) * SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
@@ -66,14 +66,14 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_iMx_r3_dV3)
                 {
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = -Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_ComulativeByOdoTrack[2, 2] / SINSstate.R_e;
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = -SINSstate.Ds2_ComulativeByOdoTrack[2, 0];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = -SINSstate.Ds2_ComulativeByOdoTrack[2, 1];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = -SINSstate.Ds2_ComulativeByOdoTrack[2, 2];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = -Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_CumulativeByOdoTrack[2, 2] / SINSstate.R_e;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = -SINSstate.Ds2_CumulativeByOdoTrack[2, 0];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = -SINSstate.Ds2_CumulativeByOdoTrack[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = -SINSstate.Ds2_CumulativeByOdoTrack[2, 2];
 
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.Ds_ComulativeByOdoTrack[2, 2];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.Ds_ComulativeByOdoTrack[2, 0];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = SINSstate.Ds_ComulativeByOdoTrack[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.Ds_CumulativeByOdoTrack[2, 2];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.Ds_CumulativeByOdoTrack[2, 0];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = SINSstate.Ds_CumulativeByOdoTrack[2, 1];
 
                     KalmanVars.Measure[KalmanVars.cnt_measures + 0] = SINSstate_OdoMod.Altitude - Altitude_CP;
                     KalmanVars.Noize_Z[KalmanVars.cnt_measures + 0] = SINSstate.Imitator_GPS_PositionError;
@@ -99,7 +99,7 @@ namespace Common_Namespace
 
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = 1.0;
                 if (SINSstate.flag_FeedbackExist)
-                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.ComulativeKappaEst[1]) - l_true) / l_true;
+                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.Cumulative_KappaEst[1]) - l_true) / l_true;
                 else
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value - l_true) / l_true;
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.002;
@@ -148,21 +148,21 @@ namespace Common_Namespace
 
             if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
             {
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = SINSstate.Ds2_ComulativeByOdoTrack[0, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = SINSstate.Ds2_ComulativeByOdoTrack[0, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = SINSstate.Ds2_ComulativeByOdoTrack[0, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] += Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_ComulativeByOdoTrack[0, 2] / SINSstate.R_e;
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 4] = SINSstate.Ds2_ComulativeByOdoTrack[1, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 5] = SINSstate.Ds2_ComulativeByOdoTrack[1, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 6] = SINSstate.Ds2_ComulativeByOdoTrack[1, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 0] += Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_ComulativeByOdoTrack[1, 2] / SINSstate.R_e;
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = SINSstate.Ds2_CumulativeByOdoTrack[0, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = SINSstate.Ds2_CumulativeByOdoTrack[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = SINSstate.Ds2_CumulativeByOdoTrack[0, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] += Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_CumulativeByOdoTrack[0, 2] / SINSstate.R_e;
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 4] = SINSstate.Ds2_CumulativeByOdoTrack[1, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 5] = SINSstate.Ds2_CumulativeByOdoTrack[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 6] = SINSstate.Ds2_CumulativeByOdoTrack[1, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 0] += Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_CumulativeByOdoTrack[1, 2] / SINSstate.R_e;
 
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstate.Ds_ComulativeByOdoTrack[0, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstate.Ds_ComulativeByOdoTrack[0, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.Ds_ComulativeByOdoTrack[0, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 0] = SINSstate.Ds_ComulativeByOdoTrack[1, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 1] = -SINSstate.Ds_ComulativeByOdoTrack[1, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 2] = -SINSstate.Ds_ComulativeByOdoTrack[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstate.Ds_CumulativeByOdoTrack[0, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstate.Ds_CumulativeByOdoTrack[0, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.Ds_CumulativeByOdoTrack[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 0] = SINSstate.Ds_CumulativeByOdoTrack[1, 2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 1] = -SINSstate.Ds_CumulativeByOdoTrack[1, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 2] = -SINSstate.Ds_CumulativeByOdoTrack[1, 1];
             }
 
 
@@ -185,14 +185,14 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
                 {
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_ComulativeByOdoTrack[2, 2] / SINSstate.R_e;
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = SINSstate.Ds2_ComulativeByOdoTrack[2, 0];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = SINSstate.Ds2_ComulativeByOdoTrack[2, 1];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = SINSstate.Ds2_ComulativeByOdoTrack[2, 2];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = Math.Tan(SINSstate.Latitude) * SINSstate.Ds2_CumulativeByOdoTrack[2, 2] / SINSstate.R_e;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = SINSstate.Ds2_CumulativeByOdoTrack[2, 0];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = SINSstate.Ds2_CumulativeByOdoTrack[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = SINSstate.Ds2_CumulativeByOdoTrack[2, 2];
 
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstate.Ds_ComulativeByOdoTrack[2, 2];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstate.Ds_ComulativeByOdoTrack[2, 0];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.Ds_ComulativeByOdoTrack[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstate.Ds_CumulativeByOdoTrack[2, 2];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstate.Ds_CumulativeByOdoTrack[2, 0];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.Ds_CumulativeByOdoTrack[2, 1];
                 }
 
                 KalmanVars.cnt_measures += 1;

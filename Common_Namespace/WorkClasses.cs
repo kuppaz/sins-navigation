@@ -71,7 +71,6 @@ namespace Common_Namespace
 
         //---мод запуска программы---
         public bool flag_Alignment = false, flag_Autonomous_Solution = false, flag_FeedbackExist = false, flag_EstimateExist = false;
-        public bool flag_DoFeedBackDeltaFW = false, flag_DoFeedBackKappa = false, flag_DoFeedBackOdoScale = false;
         public bool flag_UsingClasAlignment = false, flag_UsingNavAlignment = false, flag_OnlyAlignment = false;
         public bool flag_OdoSINSWeakConnect = false, flag_OdoSINSWeakConnect_MODIF = false;
 
@@ -180,9 +179,9 @@ namespace Common_Namespace
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
         //---Комулятивные величины---
-        public Matrix Ds_ComulativeByOdoTrack = new Matrix(3, 3), Ds2_ComulativeByOdoTrack = new Matrix(3, 3);
-        public double[] ComulativeInstrumental_Fz = new double[3], ComulativeInstrumental_Wz = new double[3];
-        public double[] ComulativeKappaEst = new double[3];
+        public Matrix Ds_CumulativeByOdoTrack = new Matrix(3, 3), Ds2_CumulativeByOdoTrack = new Matrix(3, 3);
+        public double[] Cumulative_KappaEst = new double[3];
+        public double[] Cumulative_KalmanErrorVector = new double[SimpleData.iMx], Cumulative_StateErrorVector = new double[9];
 
 
         public double[] tempVect = new double[3];
@@ -208,6 +207,7 @@ namespace Common_Namespace
         public double CountPrev;
         public bool flag_AccuracyClass_0_0grph;
         public double Imitator_GPS_PositionError;
+        public bool flag_VupOdo_till_VupSINS;
 
         public static SINS_State DeepCopy(SINS_State other)
         {
