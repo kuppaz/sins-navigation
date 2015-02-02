@@ -732,10 +732,13 @@ namespace Common_Namespace
 
             //--------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------
+
+            if (SINSstate.flag_OdoSINSWeakConnect == false && SINSstate.flag_OdoSINSWeakConnect_MODIF == false)
+                SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_x0s, SINSstate.A_x0s);
+
             //--------- ДЛЯ SINSstate_OdoModel ---------//
 
             SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0_prev, SINSstate_OdoMod.Vx_0);
-
             SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdoSpeed_s);
             SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_s, SINSstate.OdoSpeed_s);
 
@@ -750,6 +753,8 @@ namespace Common_Namespace
             //--- если слабосвязанный вариант, то используем БИНСовую матрицу ориентации ---//
             else if (SINSstate.flag_OdoSINSWeakConnect)
                 SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdoSpeed_s);
+            else
+                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.OdoSpeed_x0);
 
 
             //---------ВЫЧИСЛЕНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z для одометрического счисления--------------
