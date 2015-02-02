@@ -54,8 +54,8 @@ namespace Common_Namespace
             SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
-            SINSstate.Omega_x[0] = -SINSstate.Vx_0[1] / SINSstate.R_n;
-            SINSstate.Omega_x[1] = SINSstate.Vx_0[0] / SINSstate.R_e;
+            SINSstate.Omega_x[0] = -(SINSstate.Vx_0[1] + SINSstate.Vx_0_prev[1]) / 2.0 / SINSstate.R_n;
+            SINSstate.Omega_x[1] = (SINSstate.Vx_0[0] + SINSstate.Vx_0_prev[0]) / 2.0 / SINSstate.R_e;
             SINSstate.Omega_x[2] = Math.Tan(SINSstate.Latitude) * SINSstate.Omega_x[1];
 
             SINSstate.g = 9.78049 * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014;
@@ -123,7 +123,7 @@ namespace Common_Namespace
 
 
 
-            //---Случай Одометр+БИНС. Обратная связть.---
+            //--- Случай Одометр+БИНС. Обратная связть ---//
             if (SINSstate.flag_Odometr_SINS_case == true)
             {
                 SINSstate_OdoMod.DeltaLatitude = ErrorVector[SINSstate.iMx_r12_odo + 1] / SINSstate_OdoMod.R_n;
@@ -192,40 +192,21 @@ namespace Common_Namespace
             {
                 SINSstate_OdoMod.Latitude_Corr = SINSstate_OdoMod.Latitude - SINSstate_OdoMod.DeltaLatitude;
                 SINSstate_OdoMod.Longitude_Corr = SINSstate_OdoMod.Longitude - SINSstate_OdoMod.DeltaLongitude;
-
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                     SINSstate_OdoMod.Altitude_Corr = SINSstate_OdoMod.Altitude - SINSstate_OdoMod.DeltaAltitude;
+
 
                 if (SINSstate.flag_FeedbackExist == true)
                 {
                     SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude - SINSstate_OdoMod.DeltaLatitude;
                     SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude - SINSstate_OdoMod.DeltaLongitude;
+
                     if (SINSstate.flag_Using_iMx_r_odo_3)
                         SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude - SINSstate_OdoMod.DeltaAltitude;
+
+                    SINSstate_OdoMod.A_x0n = A_x0n(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Longitude);
+                    SINSstate_OdoMod.A_nx0 = SINSstate_OdoMod.A_x0n.Transpose();
                 }
-
-                SINSstate_OdoMod.A_x0n = A_x0n(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Longitude);
-                SINSstate_OdoMod.A_nx0 = SINSstate_OdoMod.A_x0n.Transpose();
-
-
-
-                SINSstate.OdometerVector = SimpleOperations.NullingOfArray(SINSstate.OdometerVector);
-                SINSstate.OdoSpeed_s = SimpleOperations.NullingOfArray(SINSstate.OdoSpeed_s);
-                SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
-                SINSstate.OdoSpeed_s[1] = SINSstate.OdometerVector[1] / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
-                //--- Если обратные связи, то сразу корректируем измерение одометра по честной оценке ---//
-                if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
-                {
-                    SimpleOperations.CopyArray(SINSstate.OdoSpeed_s,
-                        (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdoSpeed_s);
-                    SimpleOperations.CopyArray(SINSstate.OdometerVector,
-                        (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdometerVector);
-                }
-                SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0, SINSstate_OdoMod.A_x0s * SINSstate.OdoSpeed_s);
-
-                SINSstate_OdoMod.Omega_x[0] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
-                SINSstate_OdoMod.Omega_x[1] = SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
-                SINSstate_OdoMod.Omega_x[2] = Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate_OdoMod.Omega_x[1];
             }
             else if (SINSstate.flag_FeedbackExist == true)
             {
@@ -653,7 +634,7 @@ namespace Common_Namespace
 
             dVx = SINSstate.F_x[0] + Vx_0[1] * (2.0 * u[2] + SINSstate.Omega_x[2]) - Vx_0[2] * (2.0 * u[1] + SINSstate.Omega_x[1]);
             dVy = SINSstate.F_x[1] - Vx_0[0] * (2.0 * u[2] + SINSstate.Omega_x[2]) + Vx_0[2] * (2.0 * u[0] + SINSstate.Omega_x[0]);
-            
+
             Vx_0[0] += dVx * SINSstate.timeStep;
             Vx_0[1] += dVy * SINSstate.timeStep;
 
@@ -676,32 +657,6 @@ namespace Common_Namespace
             {
                 Vx_0[2] = SINSstate_OdoMod.Vx_0[2];
             }
-
-
-
-
-
-            //--- Сюда заходим если установлен флажок при автономном счислении ИЛИ объект есть чисто одометрическое решение ---//
-            SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, D_x_z * SINSstate.OdoSpeed_s);
-            SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_s, SINSstate.OdoSpeed_s);
-
-            if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
-            {
-                CopyMatrix(W_x_xi, SINSstate_OdoMod.A_x0n * SINSstate.A_nxi);
-                CopyMatrix(SINSstate_OdoMod.A_x0s, W_x_xi * SINSstate.AT.Transpose());
-
-                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate_OdoMod.A_x0s * SINSstate.OdoSpeed_s);
-                SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0, SINSstate_OdoMod.OdoSpeed_x0);
-            }
-            else if (SINSstate.flag_OdoSINSWeakConnect)
-            {
-                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, D_x_z * SINSstate.OdoSpeed_s);
-                SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0, SINSstate.OdoSpeed_x0);
-            }
-
-
-
-
 
 
             //---------ИНТЕГРИРОВАНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z--------------
@@ -740,71 +695,11 @@ namespace Common_Namespace
             CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
             CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
 
-
-
             //----------------Вычисление углов и переприсвоение матриц---------------------------
             CopyMatrix(SINSstate.A_sx0, D_x_z.Transpose());
             CopyMatrix(SINSstate.A_x0s, D_x_z);
             CopyMatrix(SINSstate.A_x0n, B_x_eta);
             CopyMatrix(SINSstate.A_nx0, B_x_eta.Transpose());
-
-
-
-
-
-            //---------ДЛЯ SINSstate_OdoModel---------
-            //---------ИНТЕГРИРОВАНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z--------------
-            {
-                SINSstate_OdoMod.Omega_x[0] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
-                SINSstate_OdoMod.Omega_x[1] = SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
-                SINSstate_OdoMod.Omega_x[2] = Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate_OdoMod.Omega_x[1];
-
-                if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
-                {
-                    Omega_x_abs = Math.Sqrt(SINSstate_OdoMod.Omega_x[0] * SINSstate_OdoMod.Omega_x[0] + SINSstate_OdoMod.Omega_x[1] * SINSstate_OdoMod.Omega_x[1] + SINSstate_OdoMod.Omega_x[2] * SINSstate_OdoMod.Omega_x[2]);
-                    if (Omega_x_abs != 0)
-                    {
-                        dlt = Math.Sin(Omega_x_abs * SINSstate.timeStep) / Omega_x_abs;
-                        dlt2 = (1.0 - Math.Cos(Omega_x_abs * SINSstate.timeStep)) / (Omega_x_abs * Omega_x_abs);
-                    }
-                    else
-                    {
-                        dlt = 1.0;
-                        dlt2 = 0.0;
-                    }
-
-                    Hat1 = Matrix.SkewSymmetricMatrix(SINSstate_OdoMod.Omega_x);
-                    Hat2 = Matrix.SkewSymmetricMatrixSquare(SINSstate_OdoMod.Omega_x);
-
-                    CopyMatrix(B_x_eta, SINSstate_OdoMod.A_x0n);
-
-                    CopyMatrix(dMatrix, E + Hat1 * dlt + Hat2 * dlt2);
-                    CopyMatrix(B_x_eta, dMatrix * B_x_eta);
-
-                    //Нормировка
-                    for (int i = 0; i < 3; i++)
-                    {
-                        tempV[i] = Math.Sqrt(B_x_eta[i, 0] * B_x_eta[i, 0] + B_x_eta[i, 1] * B_x_eta[i, 1] + B_x_eta[i, 2] * B_x_eta[i, 2]);
-                        for (int j = 0; j < 3; j++)
-                            B_x_eta[i, j] = B_x_eta[i, j] / tempV[i];
-                    }
-
-
-                    CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
-                    CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
-                }
-
-
-                //----------------Вычисление углов и переприсвоение матриц---------------------------
-                CopyMatrix(SINSstate_OdoMod.A_sx0, D_x_z.Transpose());
-                CopyMatrix(SINSstate_OdoMod.A_x0s, D_x_z);
-                CopyMatrix(SINSstate_OdoMod.A_x0n, B_x_eta);
-                CopyMatrix(SINSstate_OdoMod.A_nx0, B_x_eta.Transpose());
-            }
-
-
-
-
 
 
 
@@ -815,36 +710,6 @@ namespace Common_Namespace
 
             SINSstate.Altitude_prev = SINSstate.Altitude;
             SINSstate.Altitude = Altitude;
-
-
-            {
-                //---ОПРЕДЕЛЕНИЕ ГЕОГРАФИЧЕСКИХ КООРДИНАТ ДЛЯ ОДОМЕТРИЧЕСКОГО РЕШЕНИЯ---
-                if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_OdoSINSWeakConnect_MODIF)
-                {
-                    SINSstate_OdoMod.Longitude = Math.Atan2(SINSstate_OdoMod.A_x0n[2, 1], SINSstate_OdoMod.A_x0n[2, 0]);
-                    SINSstate_OdoMod.Latitude = Math.Atan2(SINSstate_OdoMod.A_x0n[2, 2], Math.Sqrt(SINSstate_OdoMod.A_x0n[0, 2] * SINSstate_OdoMod.A_x0n[0, 2] + SINSstate_OdoMod.A_x0n[1, 2] * SINSstate_OdoMod.A_x0n[1, 2]));
-                    if (SINSstate.OdometerData.odometer_left.isReady == 1)
-                    {
-                        double[] dS_x = new double[3];
-                        SimpleOperations.CopyArray(dS_x, SINSstate_OdoMod.A_x0s * SINSstate.OdometerVector);
-
-                        SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
-                    }
-                }
-                else
-                {
-                    if (SINSstate.OdometerData.odometer_left.isReady == 1)
-                    {
-                        double[] dS_x = new double[3];
-                        SimpleOperations.CopyArray(dS_x, SINSstate.A_x0s * SINSstate.OdometerVector);
-
-                        SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-                        SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) / Math.Cos(SINSstate_OdoMod.Latitude);
-                        SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
-                    }
-                }
-            }
-
 
 
             //SINSstate.Heading = gkurs - Azimth;
@@ -865,36 +730,70 @@ namespace Common_Namespace
             CopyArray(SINSstate.W_x, SINSstate.A_x0s * Wz);
 
 
+
+
+
+            //--------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------
+            //--------- ДЛЯ SINSstate_OdoModel ---------//
+
+            SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0_prev, SINSstate_OdoMod.Vx_0);
+
+            SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdoSpeed_s);
+            SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_s, SINSstate.OdoSpeed_s);
+
+            //--- Если flag_Odometr_SINS_case = true (режим Одометр+БИНС) и модифицированый вариант, то считаем для одометрического счисления свою матрицу ориентации ---//
+            if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
+            {
+                SimpleOperations.CopyMatrix(W_x_xi, SINSstate_OdoMod.A_x0n * SINSstate.A_nxi);
+                SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_x0s, W_x_xi * SINSstate.AT.Transpose());
+
+                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate_OdoMod.A_x0s * SINSstate.OdoSpeed_s);
+            }
+            //--- если слабосвязанный вариант, то используем БИНСовую матрицу ориентации ---//
+            else if (SINSstate.flag_OdoSINSWeakConnect)
+                SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdoSpeed_s);
+
+
+            //---------ВЫЧИСЛЕНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z для одометрического счисления--------------
+            {
+                SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0, SINSstate_OdoMod.OdoSpeed_x0);
+
+                SINSstate_OdoMod.Omega_x[0] = -(SINSstate_OdoMod.Vx_0[1] + SINSstate_OdoMod.Vx_0_prev[1]) / 2.0 / SINSstate_OdoMod.R_n;
+                SINSstate_OdoMod.Omega_x[1] = (SINSstate_OdoMod.Vx_0[0] + SINSstate_OdoMod.Vx_0_prev[0]) / 2.0 / SINSstate_OdoMod.R_e;
+                SINSstate_OdoMod.Omega_x[2] = Math.Tan(SINSstate_OdoMod.Latitude) * SINSstate_OdoMod.Omega_x[1];
+
+                //--- Если используется Слабосвязанный вариант Одометр+БИНС, то в качестве матрица ориетации используем БИНСовую ---//
+                if (SINSstate.flag_OdoSINSWeakConnect)
+                    SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_x0s, SINSstate.A_x0s);
+
+                //--- Производим одометрическое счисление координат ---//
+                if (SINSstate.OdometerData.odometer_left.isReady == 1)
+                {
+                    double[] dS_x = new double[3];
+                    SimpleOperations.CopyArray(dS_x, SINSstate_OdoMod.A_x0s * SINSstate.OdometerVector);
+
+                    SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+                    SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) / Math.Cos(SINSstate_OdoMod.Latitude);
+                    SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
+                }
+
+                //----------------Вычисление углов и переприсвоение матриц---------------------------
+                SINSstate_OdoMod.A_x0n = SimpleOperations.A_x0n(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Longitude);
+                SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_nx0, SINSstate_OdoMod.A_x0n.Transpose());
+
+                if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
+                {
+                    SimpleOperations.CopyMatrix(W_x_xi, SINSstate_OdoMod.A_x0n * SINSstate.A_nxi);
+                    SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_x0s, W_x_xi * SINSstate.AT.Transpose());
+                }
+
+                SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_sx0, SINSstate_OdoMod.A_x0s.Transpose());
+            }
+
             SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
             SINSstate_OdoMod.R_n = RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-            CopyArray(SINSstate_OdoMod.Vx_0_prev, SINSstate_OdoMod.Vx_0);
             //--------------------------------------------------------------------------------------
-
-
-
-
-            //---ВЫЧИСЛЯЕМ СКОРОСТНЫЕ УГЛЫ---//
-            double[] Vx_0_temp = new double[3];
-            if ((SINSstate.flag_FeedbackExist == true && SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0) > 2.0) 
-                || (SINSstate.flag_FeedbackExist == false && SimpleOperations.AbsoluteVectorValue(SINSstate2.Vx_0) > 2.0))
-            {
-                if (SINSstate.flag_FeedbackExist == true) SimpleOperations.CopyArray(Vx_0_temp, SINSstate.Vx_0);
-                if (SINSstate.flag_FeedbackExist == false) SimpleOperations.CopyArray(Vx_0_temp, SINSstate2.Vx_0);
-
-                SINSstate.CoursePitch = Math.Atan2(Vx_0_temp[2], Math.Sqrt(Vx_0_temp[0] * Vx_0_temp[0] + Vx_0_temp[1] * Vx_0_temp[1]));
-                SINSstate.CourseHeading = Math.Atan2(Vx_0_temp[0], Vx_0_temp[1]);
-            }
-            else
-            {
-                SINSstate.CoursePitch = SINSstate.Pitch;
-                SINSstate.CourseHeading = SINSstate.Heading;
-            }
-            SINSstate.A_cx0 = SimpleOperations.A_cx0(SINSstate); SINSstate.A_x0c = SINSstate.A_cx0.Transpose();
-            SimpleOperations.CopyMatrix(SINSstate.A_sc, SINSstate.A_sx0 * SINSstate.A_x0c);
-            SINSstate.alpha_c = -Math.Atan2(SINSstate.A_sc[2, 1], SINSstate.A_sc[1, 1]);
-            SINSstate.gamma_c = -Math.Atan2(SINSstate.A_sc[0, 2], SINSstate.A_sc[0, 0]);
-            SINSstate.beta_c = Math.Atan2(SINSstate.A_sc[0, 1] * Math.Cos(SINSstate.gamma_c), SINSstate.A_sc[0, 0]);
-
         }
 
 
