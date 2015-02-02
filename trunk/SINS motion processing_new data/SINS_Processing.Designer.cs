@@ -86,8 +86,6 @@
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.ModifWeakConnect = new System.Windows.Forms.CheckBox();
             this.WeakConnect = new System.Windows.Forms.CheckBox();
-            this.DoFeedBackDeltaFW = new System.Windows.Forms.CheckBox();
-            this.DoFeedBackKappa = new System.Windows.Forms.CheckBox();
             this.flag_autonomous_dinamic_mode = new System.Windows.Forms.CheckBox();
             this.EstimateExist = new System.Windows.Forms.CheckBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
@@ -110,7 +108,7 @@
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.DoFeedBackOdoScale = new System.Windows.Forms.CheckBox();
+            this.flag_VupOdo_till_VupSINS = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -179,7 +177,7 @@
             this.OnlyIntegrating.AutoSize = true;
             this.OnlyIntegrating.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.OnlyIntegrating.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.OnlyIntegrating.Location = new System.Drawing.Point(6, 32);
+            this.OnlyIntegrating.Location = new System.Drawing.Point(6, 27);
             this.OnlyIntegrating.Name = "OnlyIntegrating";
             this.OnlyIntegrating.Size = new System.Drawing.Size(85, 17);
             this.OnlyIntegrating.TabIndex = 4;
@@ -192,7 +190,7 @@
             this.feedbackExist.AutoSize = true;
             this.feedbackExist.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.feedbackExist.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.feedbackExist.Location = new System.Drawing.Point(6, 72);
+            this.feedbackExist.Location = new System.Drawing.Point(6, 62);
             this.feedbackExist.Name = "feedbackExist";
             this.feedbackExist.Size = new System.Drawing.Size(74, 17);
             this.feedbackExist.TabIndex = 5;
@@ -215,7 +213,7 @@
             // UsingAltitudeCorrection
             // 
             this.UsingAltitudeCorrection.AutoSize = true;
-            this.UsingAltitudeCorrection.Location = new System.Drawing.Point(30, 42);
+            this.UsingAltitudeCorrection.Location = new System.Drawing.Point(30, 38);
             this.UsingAltitudeCorrection.Name = "UsingAltitudeCorrection";
             this.UsingAltitudeCorrection.Size = new System.Drawing.Size(123, 17);
             this.UsingAltitudeCorrection.TabIndex = 7;
@@ -301,7 +299,7 @@
             // iMx_kappa_1_3_ds
             // 
             this.iMx_kappa_1_3_ds.AutoSize = true;
-            this.iMx_kappa_1_3_ds.Location = new System.Drawing.Point(18, 80);
+            this.iMx_kappa_1_3_ds.Location = new System.Drawing.Point(18, 89);
             this.iMx_kappa_1_3_ds.Name = "iMx_kappa_1_3_ds";
             this.iMx_kappa_1_3_ds.Size = new System.Drawing.Size(78, 17);
             this.iMx_kappa_1_3_ds.TabIndex = 26;
@@ -562,14 +560,15 @@
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.flag_VupOdo_till_VupSINS);
             this.groupBox9.Controls.Add(this.UsingAltitudeCorrection);
             this.groupBox9.Controls.Add(this.OdoModelOnlyCP);
             this.groupBox9.Controls.Add(this.iMx_r_odo_3);
             this.groupBox9.Controls.Add(this.iMx_r_3_dV_3);
             this.groupBox9.Controls.Add(this.iMx_kappa_1_3_ds);
-            this.groupBox9.Location = new System.Drawing.Point(750, 202);
+            this.groupBox9.Location = new System.Drawing.Point(750, 195);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(155, 125);
+            this.groupBox9.Size = new System.Drawing.Size(155, 132);
             this.groupBox9.TabIndex = 38;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Dimention of Error Vector";
@@ -577,7 +576,7 @@
             // OdoModelOnlyCP
             // 
             this.OdoModelOnlyCP.AutoSize = true;
-            this.OdoModelOnlyCP.Location = new System.Drawing.Point(33, 99);
+            this.OdoModelOnlyCP.Location = new System.Drawing.Point(33, 108);
             this.OdoModelOnlyCP.Name = "OdoModelOnlyCP";
             this.OdoModelOnlyCP.Size = new System.Drawing.Size(114, 17);
             this.OdoModelOnlyCP.TabIndex = 2;
@@ -588,7 +587,7 @@
             // iMx_r_odo_3
             // 
             this.iMx_r_odo_3.AutoSize = true;
-            this.iMx_r_odo_3.Location = new System.Drawing.Point(18, 63);
+            this.iMx_r_odo_3.Location = new System.Drawing.Point(18, 72);
             this.iMx_r_odo_3.Name = "iMx_r_odo_3";
             this.iMx_r_odo_3.Size = new System.Drawing.Size(65, 17);
             this.iMx_r_odo_3.TabIndex = 27;
@@ -738,7 +737,7 @@
             this.Odometr_SINS_case.AutoSize = true;
             this.Odometr_SINS_case.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.Odometr_SINS_case.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Odometr_SINS_case.Location = new System.Drawing.Point(6, 163);
+            this.Odometr_SINS_case.Location = new System.Drawing.Point(6, 107);
             this.Odometr_SINS_case.Name = "Odometr_SINS_case";
             this.Odometr_SINS_case.Size = new System.Drawing.Size(87, 17);
             this.Odometr_SINS_case.TabIndex = 42;
@@ -748,19 +747,16 @@
             // 
             // groupBox12
             // 
-            this.groupBox12.Controls.Add(this.DoFeedBackOdoScale);
             this.groupBox12.Controls.Add(this.ModifWeakConnect);
             this.groupBox12.Controls.Add(this.WeakConnect);
-            this.groupBox12.Controls.Add(this.DoFeedBackDeltaFW);
-            this.groupBox12.Controls.Add(this.DoFeedBackKappa);
             this.groupBox12.Controls.Add(this.flag_autonomous_dinamic_mode);
             this.groupBox12.Controls.Add(this.EstimateExist);
             this.groupBox12.Controls.Add(this.Odometr_SINS_case);
             this.groupBox12.Controls.Add(this.feedbackExist);
             this.groupBox12.Controls.Add(this.OnlyIntegrating);
-            this.groupBox12.Location = new System.Drawing.Point(419, 113);
+            this.groupBox12.Location = new System.Drawing.Point(419, 136);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(124, 244);
+            this.groupBox12.Size = new System.Drawing.Size(124, 169);
             this.groupBox12.TabIndex = 43;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "Method of Processing";
@@ -769,7 +765,7 @@
             // 
             this.ModifWeakConnect.AutoSize = true;
             this.ModifWeakConnect.Enabled = false;
-            this.ModifWeakConnect.Location = new System.Drawing.Point(20, 197);
+            this.ModifWeakConnect.Location = new System.Drawing.Point(20, 141);
             this.ModifWeakConnect.Name = "ModifWeakConnect";
             this.ModifWeakConnect.Size = new System.Drawing.Size(100, 17);
             this.ModifWeakConnect.TabIndex = 61;
@@ -781,7 +777,7 @@
             // 
             this.WeakConnect.AutoSize = true;
             this.WeakConnect.Enabled = false;
-            this.WeakConnect.Location = new System.Drawing.Point(20, 181);
+            this.WeakConnect.Location = new System.Drawing.Point(20, 125);
             this.WeakConnect.Name = "WeakConnect";
             this.WeakConnect.Size = new System.Drawing.Size(95, 17);
             this.WeakConnect.TabIndex = 60;
@@ -789,35 +785,10 @@
             this.WeakConnect.UseVisualStyleBackColor = true;
             this.WeakConnect.CheckedChanged += new System.EventHandler(this.WeakConnect_CheckedChanged);
             // 
-            // DoFeedBackDeltaFW
-            // 
-            this.DoFeedBackDeltaFW.AutoSize = true;
-            this.DoFeedBackDeltaFW.Enabled = false;
-            this.DoFeedBackDeltaFW.Location = new System.Drawing.Point(21, 121);
-            this.DoFeedBackDeltaFW.Name = "DoFeedBackDeltaFW";
-            this.DoFeedBackDeltaFW.Size = new System.Drawing.Size(58, 17);
-            this.DoFeedBackDeltaFW.TabIndex = 59;
-            this.DoFeedBackDeltaFW.Text = "fb_f_w";
-            this.DoFeedBackDeltaFW.UseVisualStyleBackColor = true;
-            // 
-            // DoFeedBackKappa
-            // 
-            this.DoFeedBackKappa.AccessibleDescription = "";
-            this.DoFeedBackKappa.AutoSize = true;
-            this.DoFeedBackKappa.Enabled = false;
-            this.DoFeedBackKappa.Location = new System.Drawing.Point(21, 91);
-            this.DoFeedBackKappa.Name = "DoFeedBackKappa";
-            this.DoFeedBackKappa.Size = new System.Drawing.Size(71, 17);
-            this.DoFeedBackKappa.TabIndex = 58;
-            this.DoFeedBackKappa.Tag = "";
-            this.DoFeedBackKappa.Text = "fb_kappa";
-            this.DoFeedBackKappa.UseVisualStyleBackColor = true;
-            this.DoFeedBackKappa.CheckedChanged += new System.EventHandler(this.DoFeedBackKappa_CheckedChanged);
-            // 
             // flag_autonomous_dinamic_mode
             // 
             this.flag_autonomous_dinamic_mode.AutoSize = true;
-            this.flag_autonomous_dinamic_mode.Location = new System.Drawing.Point(22, 49);
+            this.flag_autonomous_dinamic_mode.Location = new System.Drawing.Point(22, 44);
             this.flag_autonomous_dinamic_mode.Name = "flag_autonomous_dinamic_mode";
             this.flag_autonomous_dinamic_mode.Size = new System.Drawing.Size(64, 17);
             this.flag_autonomous_dinamic_mode.TabIndex = 44;
@@ -828,7 +799,7 @@
             // EstimateExist
             // 
             this.EstimateExist.AutoSize = true;
-            this.EstimateExist.Location = new System.Drawing.Point(6, 141);
+            this.EstimateExist.Location = new System.Drawing.Point(6, 79);
             this.EstimateExist.Name = "EstimateExist";
             this.EstimateExist.Size = new System.Drawing.Size(66, 17);
             this.EstimateExist.TabIndex = 43;
@@ -1057,16 +1028,15 @@
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Matrix Noise Dimension";
             // 
-            // DoFeedBackOdoScale
+            // flag_VupOdo_till_VupSINS
             // 
-            this.DoFeedBackOdoScale.AutoSize = true;
-            this.DoFeedBackOdoScale.Enabled = false;
-            this.DoFeedBackOdoScale.Location = new System.Drawing.Point(21, 105);
-            this.DoFeedBackOdoScale.Name = "DoFeedBackOdoScale";
-            this.DoFeedBackOdoScale.Size = new System.Drawing.Size(86, 17);
-            this.DoFeedBackOdoScale.TabIndex = 62;
-            this.DoFeedBackOdoScale.Text = "fb_odoScale";
-            this.DoFeedBackOdoScale.UseVisualStyleBackColor = true;
+            this.flag_VupOdo_till_VupSINS.AutoSize = true;
+            this.flag_VupOdo_till_VupSINS.Location = new System.Drawing.Point(30, 54);
+            this.flag_VupOdo_till_VupSINS.Name = "flag_VupOdo_till_VupSINS";
+            this.flag_VupOdo_till_VupSINS.Size = new System.Drawing.Size(124, 17);
+            this.flag_VupOdo_till_VupSINS.TabIndex = 28;
+            this.flag_VupOdo_till_VupSINS.Text = "VupOdo -> VupSINS";
+            this.flag_VupOdo_till_VupSINS.UseVisualStyleBackColor = true;
             // 
             // SINS_Processing
             // 
@@ -1179,8 +1149,6 @@
         private System.Windows.Forms.CheckBox Azimut_514_08Nov2013_11_15;
         private System.Windows.Forms.CheckBox flag_UsingScalarOdoMeasure;
         private System.Windows.Forms.CheckBox OdoModelOnlyCP;
-        private System.Windows.Forms.CheckBox DoFeedBackDeltaFW;
-        private System.Windows.Forms.CheckBox DoFeedBackKappa;
         private System.Windows.Forms.CheckBox ModifWeakConnect;
         private System.Windows.Forms.CheckBox WeakConnect;
         private System.Windows.Forms.CheckBox flag_using_GoCalibrInCP;
@@ -1208,7 +1176,7 @@
         private System.Windows.Forms.GroupBox groupBox15;
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.GroupBox groupBox17;
-        private System.Windows.Forms.CheckBox DoFeedBackOdoScale;
+        private System.Windows.Forms.CheckBox flag_VupOdo_till_VupSINS;
     }
 }
 

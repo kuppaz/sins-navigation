@@ -79,7 +79,7 @@ namespace SINSProcessingModes
 
             ProcessingHelp.FillKMLOutputFile(KMLFileOutSmthd, "Start", "Smoothing");
 
-            Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");
+            Nav_Errors.WriteLine("Time dLat  dLong dAltitude  dV_x1  dV_x2  dV_x3  dHeading_Grad  dRoll_Grad  dPitch_Grad");
             Nav_Smoothed.WriteLine("time  count LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch ");
             DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3");
             Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch Correct PositError PositErrStart difHeadingSINStoODO difToTrueHeading");
@@ -141,9 +141,9 @@ namespace SINSProcessingModes
                     if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
                     {
                         SimpleOperations.CopyArray(SINSstate.OdoSpeed_s,
-                            (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.ComulativeKappaEst)) / (1.0 + SINSstate.ComulativeKappaEst[1]) * SINSstate.OdoSpeed_s);
+                            (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdoSpeed_s);
                         SimpleOperations.CopyArray(SINSstate.OdometerVector,
-                            (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.ComulativeKappaEst)) / (1.0 + SINSstate.ComulativeKappaEst[1]) * SINSstate.OdometerVector);
+                            (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdometerVector);
                     }
                 }
                 //---------------------------------------------------------------------//
@@ -169,8 +169,8 @@ namespace SINSProcessingModes
                     {
                         double[] d_2 = new double[3];
                         for (int u = 0; u < 3; u++) d_2[u] = SINSstate.A_x0s[u, 1];
-                        SimpleOperations.CopyMatrix(SINSstate.Ds_ComulativeByOdoTrack, SINSstate.Ds_ComulativeByOdoTrack + SINSstate.OdometerVector[1] * SINSstate.A_x0s);
-                        SimpleOperations.CopyMatrix(SINSstate.Ds2_ComulativeByOdoTrack, SINSstate.Ds2_ComulativeByOdoTrack + SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2));
+                        SimpleOperations.CopyMatrix(SINSstate.Ds_CumulativeByOdoTrack, SINSstate.Ds_CumulativeByOdoTrack + SINSstate.OdometerVector[1] * SINSstate.A_x0s);
+                        SimpleOperations.CopyMatrix(SINSstate.Ds2_CumulativeByOdoTrack, SINSstate.Ds2_CumulativeByOdoTrack + SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2));
                     }
                 }
 

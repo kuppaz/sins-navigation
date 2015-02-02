@@ -161,13 +161,13 @@ namespace Common_Namespace
 
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = 1.0;
                 if (SINSstate.flag_FeedbackExist)
-                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.ComulativeKappaEst[1]) - l_true) / l_true;
+                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.Cumulative_KappaEst[1]) - l_true) / l_true;
                 else
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value - l_true) / l_true;
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
                 KalmanVars.cnt_measures += 1;
 
-                double tmp = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.ComulativeKappaEst[1]) - l_true) / l_true;
+                double tmp = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.Cumulative_KappaEst[1]) - l_true) / l_true;
                 double tst = Math.Atan2(long_dif_calc, lat_dif_calc);
                 double tst2 = Math.Atan2(long_dif_true, lat_dif_true);
 
@@ -177,13 +177,13 @@ namespace Common_Namespace
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = 1.0;
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = 1.0;
                 if (SINSstate.flag_FeedbackExist)
-                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Heading - SINSstate.ComulativeKappaEst[2] - Math.Atan2(long_dif_true, lat_dif_true);
+                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Heading - SINSstate.Cumulative_KappaEst[2] - Math.Atan2(long_dif_true, lat_dif_true);
                 else
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Heading - Math.Atan2(long_dif_true, lat_dif_true);
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.0 * SimpleData.ToRadian_min;
                 KalmanVars.cnt_measures += 1;
 
-                double tmp2 = SINSstate.Heading - SINSstate.ComulativeKappaEst[2] - Math.Atan2(long_dif_true, lat_dif_true);
+                double tmp2 = SINSstate.Heading - SINSstate.Cumulative_KappaEst[2] - Math.Atan2(long_dif_true, lat_dif_true);
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {

@@ -88,7 +88,7 @@ namespace Common_Namespace
             if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
             {
                 //--- Коррекция весовых матриц в случае обрытных связей без уравнений ошибок одометра ---//
-                if (SINSstate.flag_Odometr_SINS_case == false && (SINSstate.flag_DoFeedBackKappa == true && SINSstate.flag_DoFeedBackOdoScale == true))
+                if (SINSstate.flag_Odometr_SINS_case == false)
                 {
                     double[] d_2 = new double[3];
                     Matrix matr_1 = new Matrix(3, 3), matr_2 = new Matrix(3, 3);
@@ -100,19 +100,19 @@ namespace Common_Namespace
                     vect_1[0] = ErrorVector[4]; vect_1[1] = ErrorVector[5]; vect_1[2] = ErrorVector[6] + ErrorVector[0] / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
                     vect_2[0] = ErrorVector[SINSstate.iMx_odo_model + 1]; vect_2[1] = ErrorVector[SINSstate.iMx_odo_model + 2]; vect_2[2] = -ErrorVector[SINSstate.iMx_odo_model + 0];
 
-                    CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * SINSstate.A_x0s + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds_ComulativeByOdoTrack);
-                    CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.A_x0s + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds_ComulativeByOdoTrack);
+                    CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * SINSstate.A_x0s + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds_CumulativeByOdoTrack);
+                    CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.A_x0s + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds_CumulativeByOdoTrack);
                     //--- Корректируем весовую матрицу Ds_ComulativeByOdoTrack ---//
-                    CopyMatrix(SINSstate.Ds_ComulativeByOdoTrack, SINSstate.Ds_ComulativeByOdoTrack - matr_1 - matr_2);
+                    CopyMatrix(SINSstate.Ds_CumulativeByOdoTrack, SINSstate.Ds_CumulativeByOdoTrack - matr_1 - matr_2);
 
-                    CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2) + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds2_ComulativeByOdoTrack);
-                    CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(Matrix.SkewSymmetricMatrix(vect_1) * d_2) + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds2_ComulativeByOdoTrack);
+                    CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2) + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds2_CumulativeByOdoTrack);
+                    CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(Matrix.SkewSymmetricMatrix(vect_1) * d_2) + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds2_CumulativeByOdoTrack);
                     //--- Корректируем весовую матрицу Ds2_ComulativeByOdoTrack ---//
-                    CopyMatrix(SINSstate.Ds2_ComulativeByOdoTrack, SINSstate.Ds2_ComulativeByOdoTrack - matr_1 - matr_2);
+                    CopyMatrix(SINSstate.Ds2_CumulativeByOdoTrack, SINSstate.Ds2_CumulativeByOdoTrack - matr_1 - matr_2);
 
 
-                    SimpleOperations.CopyArray(vect_result, SINSstate.Ds2_ComulativeByOdoTrack * vect_1);
-                    SimpleOperations.CopyArray(vect_3, SINSstate.Ds_ComulativeByOdoTrack * vect_2);
+                    SimpleOperations.CopyArray(vect_result, SINSstate.Ds2_CumulativeByOdoTrack * vect_1);
+                    SimpleOperations.CopyArray(vect_3, SINSstate.Ds_CumulativeByOdoTrack * vect_2);
 
                     //------------------------------------------------------------//
 
@@ -159,37 +159,30 @@ namespace Common_Namespace
 
 
 
-            //---Суммируем инструментальные ошибки---
             if (SINSstate.flag_FeedbackExist)
             {
-                if (SINSstate.flag_DoFeedBackDeltaFW)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        SINSstate2.ComulativeInstrumental_Fz[i] += ErrorVector[10 + i];
-                        SINSstate2.ComulativeInstrumental_Wz[i] += ErrorVector[7 + i];
-                    }
-                }
-
+                //--- Ведем расчет оценки ошибок модели одометра в случае обратных связей ---//
                 if (SINSstate.flag_iMx_kappa_13_ds)
                 {
-                    //--- Ведем расчет оценки ошибок модели одометра в случае обратных связей ---//
-                    if (SINSstate.flag_DoFeedBackKappa == true)
-                    {
-                        SINSstate2.ComulativeKappaEst[0] += ErrorVector[SINSstate.iMx_odo_model + 0];
-                        SINSstate2.ComulativeKappaEst[2] += ErrorVector[SINSstate.iMx_odo_model + 1];
-                    }
-                    else
-                    {
-                        //--- Ведь если мы не списываем каппа, то и списывать эти ошибки из показаний одометра также не нужно.
-                        //SINSstate.ComulativeKappaEst[0] = ErrorVector[SINSstate.iMx_odo_model + 0];
-                        //SINSstate.ComulativeKappaEst[2] = ErrorVector[SINSstate.iMx_odo_model + 1];
-                    }
-                    if (SINSstate.flag_DoFeedBackOdoScale == true)
-                    {
-                        SINSstate2.ComulativeKappaEst[1] += ErrorVector[SINSstate.iMx_odo_model + 2];
-                    }
+                    SINSstate2.Cumulative_KappaEst[0] += ErrorVector[SINSstate.iMx_odo_model + 0];
+                    SINSstate2.Cumulative_KappaEst[2] += ErrorVector[SINSstate.iMx_odo_model + 1];
+                    SINSstate2.Cumulative_KappaEst[1] += ErrorVector[SINSstate.iMx_odo_model + 2];
                 }
+
+                //--- Кумулируем ошибки вектора ошибок "x" для вывода в файлы ---//
+                for (int i = 0; i < SimpleData.iMx; i++)
+                    SINSstate2.Cumulative_KalmanErrorVector[i] += ErrorVector[i];
+
+                //--- Кумулируем ошибки в большом для вывода в файлы ---//
+                SINSstate2.Cumulative_StateErrorVector[0] += SINSstate.DeltaLatitude;
+                SINSstate2.Cumulative_StateErrorVector[1] += SINSstate.DeltaLongitude;
+                SINSstate2.Cumulative_StateErrorVector[2] += SINSstate.DeltaAltitude;
+                SINSstate2.Cumulative_StateErrorVector[3] += SINSstate.DeltaV_1;
+                SINSstate2.Cumulative_StateErrorVector[4] += SINSstate.DeltaV_2;
+                SINSstate2.Cumulative_StateErrorVector[5] += SINSstate.DeltaV_3;
+                SINSstate2.Cumulative_StateErrorVector[6] += SINSstate.DeltaHeading;
+                SINSstate2.Cumulative_StateErrorVector[7] += SINSstate.DeltaRoll;
+                SINSstate2.Cumulative_StateErrorVector[8] += SINSstate.DeltaPitch;
             }
 
 
@@ -224,9 +217,9 @@ namespace Common_Namespace
                 if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
                 {
                     SimpleOperations.CopyArray(SINSstate.OdoSpeed_s,
-                        (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.ComulativeKappaEst)) / (1.0 + SINSstate.ComulativeKappaEst[1]) * SINSstate.OdoSpeed_s);
+                        (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdoSpeed_s);
                     SimpleOperations.CopyArray(SINSstate.OdometerVector,
-                        (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.ComulativeKappaEst)) / (1.0 + SINSstate.ComulativeKappaEst[1]) * SINSstate.OdometerVector);
+                        (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdometerVector);
                 }
                 SimpleOperations.CopyArray(SINSstate_OdoMod.Vx_0, SINSstate_OdoMod.A_x0s * SINSstate.OdoSpeed_s);
 
@@ -248,15 +241,6 @@ namespace Common_Namespace
 
             for (int i = 0; i < SimpleData.iMx; i++)
             {
-                //---зануляем только если имеется соответсвующая настройка запуска---
-                if (SINSstate.flag_DoFeedBackDeltaFW == false && i >= 7 && i <= 12)
-                    continue;
-
-                if (SINSstate.flag_DoFeedBackKappa == false && (i == SINSstate.iMx_odo_model || i == SINSstate.iMx_odo_model + 1))
-                    continue;
-                if (SINSstate.flag_DoFeedBackOdoScale == false && i == SINSstate.iMx_odo_model + 2)
-                    continue;
-
                 KalmanVars.ErrorConditionVector_p[i] = 0.0;
                 KalmanVars.ErrorConditionVector_m[i] = 0.0;
             }
@@ -597,12 +581,12 @@ namespace Common_Namespace
             Wz[2] = SINSstate.W_z[2];
             Wz[0] = SINSstate.W_z[0];
 
-            if (SINSstate.flag_FeedbackExist && SINSstate.flag_DoFeedBackDeltaFW)
+            if (SINSstate.flag_FeedbackExist)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    fz[i] -= SINSstate.ComulativeInstrumental_Fz[i];
-                    Wz[i] -= SINSstate.ComulativeInstrumental_Wz[i];
+                    fz[i] -= SINSstate.Cumulative_KalmanErrorVector[10 + i];
+                    Wz[i] -= SINSstate.Cumulative_KalmanErrorVector[7 + i];
                 }
             }
 
@@ -677,11 +661,9 @@ namespace Common_Namespace
 
 
 
+
             //--- Интегрируем вертикальную скорость ---//
-            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS)
-                //&& !(SINSstate.flag_Autonomous_Solution && SINSstate.flag_autonomous_dinamic_mode)
-                //&& SINSstate.OdoSpeed_s[1] > 1.0
-                )
+            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS))
             {
                 dVh = SINSstate.F_x[2] - SINSstate.g + (Vx_0[0] + Vx_0_prev[0]) / 2.0 * (2 * u[1] + SINSstate.Omega_x[1]) - (Vx_0[1] + Vx_0_prev[1]) / 2.0 * (2 * u[0] + SINSstate.Omega_x[0]);
                 Vx_0[2] += dVh * SINSstate.timeStep;
@@ -689,13 +671,17 @@ namespace Common_Namespace
                 dh = (Vx_0[2] + Vx_0_prev[2]) / 2.0;
                 Altitude += dh * SINSstate.timeStep;
             }
+            //--- Если выставлен соответствующий флаг - переопределяем Vup вертикальной скоростью, вычисленной по одомеру ---//
+            if (SINSstate.flag_iMx_r3_dV3 && SINSstate.flag_VupOdo_till_VupSINS)
+            {
+                Vx_0[2] = SINSstate_OdoMod.Vx_0[2];
+            }
 
 
 
 
 
-
-            //--- Сюда заходим если установлен флажок при автономном счислении ИЛИ объект есть чисто одометрическое решение. ---//
+            //--- Сюда заходим если установлен флажок при автономном счислении ИЛИ объект есть чисто одометрическое решение ---//
             SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, D_x_z * SINSstate.OdoSpeed_s);
             SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_s, SINSstate.OdoSpeed_s);
 
