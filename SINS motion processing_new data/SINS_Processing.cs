@@ -553,7 +553,6 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_using_GoCalibrInCP = this.flag_using_GoCalibrInCP.Checked;
             SINSstate.add_velocity_to_position = this.add_velocity_to_position.Checked;
             SINSstate.flag_UseAlgebraDrift = this.flag_UseAlgebraDrift.Checked;
-            SINSstate.flag_UsingScalarOdoMeasure = this.flag_UsingScalarOdoMeasure.Checked;
             SINSstate.flag_OdoModelOnlyCP = this.OdoModelOnlyCP.Checked;
             SINSstate.flag_VupOdo_till_VupSINS = this.flag_VupOdo_till_VupSINS.Checked;
 
@@ -923,7 +922,8 @@ namespace SINS_motion_processing_new_data
         private void feedbackExist_CheckedChanged(object sender, EventArgs e)
         {
             if (this.Ungolonom_model.Checked == true)
-                return;
+                return;      
+
 
             if (this.feedbackExist.Checked == true)
             {
@@ -945,6 +945,14 @@ namespace SINS_motion_processing_new_data
                 this.WeakConnect.Enabled = true;
                 this.ModifWeakConnect.Enabled = true;
             }
+
+            if (this.feedbackExist.Checked && !this.Odometr_SINS_case.Checked)
+            {
+                this.flag_UsingOdoPosition.Checked = false;
+                this.flag_UsingOdoPosition.Enabled = false;
+            }
+            if (this.feedbackExist.Checked && this.Odometr_SINS_case.Checked)
+                this.flag_UsingOdoPosition.Enabled = true;
         }
 
         private void EstimateExist_CheckedChanged(object sender, EventArgs e)
@@ -971,6 +979,14 @@ namespace SINS_motion_processing_new_data
                 this.WeakConnect.Enabled = true;
                 this.ModifWeakConnect.Enabled = true;
             }
+
+            if (this.EstimateExist.Checked && !this.Odometr_SINS_case.Checked)
+            {
+                this.flag_UsingOdoPosition.Checked = false;
+                this.flag_UsingOdoPosition.Enabled = false;
+            }
+            if (this.EstimateExist.Checked && this.Odometr_SINS_case.Checked)
+                this.flag_UsingOdoPosition.Enabled = true;
         }
 
         private void Odometr_SINS_case_CheckedChanged(object sender, EventArgs e)
@@ -1001,37 +1017,37 @@ namespace SINS_motion_processing_new_data
         }
         private void WeakConnect_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.WeakConnect.Checked == true)
-            {
-                FreeTypesOfCorrection();
-                this.ModifWeakConnect.Enabled = false;
-                this.usingSNS.Enabled = true;
-                this.Main_Block_Click_new.Enabled = true;
-            }
-            else
-            {
-                LockTypesOfCorrection();
-                this.usingSNS.Enabled = false;
-                this.Main_Block_Click_new.Enabled = false;
-                this.ModifWeakConnect.Enabled = true;
-            }
+            //if (this.WeakConnect.Checked == true)
+            //{
+            //    FreeTypesOfCorrection();
+            //    this.ModifWeakConnect.Enabled = false;
+            //    this.usingSNS.Enabled = true;
+            //    this.Main_Block_Click_new.Enabled = true;
+            //}
+            //else
+            //{
+            //    LockTypesOfCorrection();
+            //    this.usingSNS.Enabled = false;
+            //    this.Main_Block_Click_new.Enabled = false;
+            //    this.ModifWeakConnect.Enabled = true;
+            //}
         }
         private void ModifWeakConnect_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.ModifWeakConnect.Checked == true)
-            {
-                FreeTypesOfCorrection();
-                this.WeakConnect.Enabled = false;
-                this.usingSNS.Enabled = true;
-                this.Main_Block_Click_new.Enabled = true;
-            }
-            else
-            {
-                LockTypesOfCorrection();
-                this.usingSNS.Enabled = false;
-                this.Main_Block_Click_new.Enabled = false;
-                this.WeakConnect.Enabled = true;
-            }
+            //if (this.ModifWeakConnect.Checked == true)
+            //{
+            //    FreeTypesOfCorrection();
+            //    this.WeakConnect.Enabled = false;
+            //    this.usingSNS.Enabled = true;
+            //    this.Main_Block_Click_new.Enabled = true;
+            //}
+            //else
+            //{
+            //    LockTypesOfCorrection();
+            //    this.usingSNS.Enabled = false;
+            //    this.Main_Block_Click_new.Enabled = false;
+            //    this.WeakConnect.Enabled = true;
+            //}
         }
 
 
@@ -1202,6 +1218,11 @@ namespace SINS_motion_processing_new_data
         }
 
         private void iMx_kappa_1_3_ds_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OdoModelOnlyCP_CheckedChanged(object sender, EventArgs e)
         {
 
         }
