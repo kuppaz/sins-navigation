@@ -87,7 +87,7 @@ namespace SINSProcessingModes
 
 
 
-            int temp_cnt_V_more = 0, start_i = l;
+            int start_i = l;
             SINSstate.NowSmoothing = NowSmoothing;
             if (SINSstate.NowSmoothing) start_i = SINSstate.LastCountForRead - 1;
 
@@ -162,30 +162,8 @@ namespace SINSProcessingModes
 
 
 
-                //--------------- Формируем флаг коррекции по одометру---------------//
+
                 SINSstate.flag_UsingCorrection = false;
-                if (SINSstate.OdometerData.odometer_left.isReady == 1 && SINSstate.flag_UseOnlyStops == false)
-                {
-                    SINSstate.flag_UsingCorrection = true;
-
-                    //--- Вычисляем весовые матрицы пройденного пути если SINS+odo по позиции ---//
-                    if (SINSstate.flag_Odometr_SINS_case == false)
-                    {
-                        double[] d_2 = new double[3];
-                        for (int u = 0; u < 3; u++) d_2[u] = SINSstate.A_x0s[u, 1];
-                        SimpleOperations.CopyMatrix(SINSstate.Ds_CumulativeByOdoTrack, SINSstate.Ds_CumulativeByOdoTrack + SINSstate.OdometerVector[1] * SINSstate.A_x0s);
-                        SimpleOperations.CopyMatrix(SINSstate.Ds2_CumulativeByOdoTrack, SINSstate.Ds2_CumulativeByOdoTrack + SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2));
-                    }
-                }
-
-                //--- Датчик проскальзывания как разность текущей скорректированной и скорости по одометру -(Пока только для коррекции по скорости)--//
-                if (SINSstate.flag_using_slippage == true && SINSstate.flag_UsingOdoVelocity == true)
-                    SINSprocessing.SlipageProcessing(SINSstate, SINSstate2, KalmanVars, SlippageLog, temp_cnt_V_more);
-
-                //---------------------------------------------------------------------//
-
-
-
 
                 //---------------Формирование флага остановки------------//
                 SINSstate.flag_ZUPT = false;
@@ -195,12 +173,14 @@ namespace SINSProcessingModes
                     SINSstate.flag_UsingCorrection = true;
                 }
 
-
-
+                //--------------- Формируем флаг коррекции по одометру---------------//
+                if (SINSstate.OdometerData.odometer_left.isReady == 1 && SINSstate.flag_UseOnlyStops == false)
+                    SINSstate.flag_UsingCorrection = true;
 
                 //----------------------------ЭТАП КОРРЕКЦИИ start---------------------------------------------------------------------//
                 //--- Счетчик cnt_measures заполняется по ходу, характеризует количество измерений, которые будут поданы на коррекцию ---//
                 KalmanVars.cnt_measures = 0;
+
                 SimpleOperations.NullingOfArray(KalmanVars.Matrix_H);
 
                 if (SINSstate.flag_using_Checkpotints == true)
@@ -213,23 +193,11 @@ namespace SINSProcessingModes
                 ProcHelp.corrected = 0;
                 if (SINSstate.flag_UsingCorrection == true)
                 {
-                    for (int u = 1; u < SINSstate.Heading_Array.Length; u++)
-                        SINSstate.Heading_Array[u - 1] = SINSstate.Heading_Array[u];
-                    SINSstate.Heading_Array[SINSstate.Heading_Array.Length - 1] = SINSstate.Heading;
-
                     //=== КОРРЕКЦИЯ В СЛУЧАЕ БИНС+ ОДОМЕТР ===//
                     if (SINSstate.flag_Odometr_SINS_case == false && SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
-                        if (SINSstate.flag_UsingOdoPosition == true && SINSstate.flag_ZUPT == false)
-                            CorrectionModel.Make_H_POSITION(KalmanVars, SINSstate, SINSstate_OdoMod, ProcHelp);
-
-                        if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false && SINSstate.flag_UsingOdoPosition == false && SINSstate.flag_Using_SNS == false)
-                        {
-                            if (SINSstate.flag_UsingScalarOdoMeasure == true && Math.Abs(SINSstate.Heading_Array[19] - SINSstate.Heading_Array[1]) > 3.0 * SimpleData.ToRadian)
-                                CorrectionModel.Make_H_VELOCITY_Scalar(KalmanVars, SINSstate, SINSstate_OdoMod);
-                            else
-                                CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
-                        }
+                        if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false)
+                            CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
                     }
                     //=== КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС ===//
                     else if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.OdometerData.odometer_left.isReady == 1)

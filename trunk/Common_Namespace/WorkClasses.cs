@@ -84,7 +84,6 @@ namespace Common_Namespace
         public bool flag_UseOdoVelocity_In_Oz = false;
 
         public bool flag_UsingOdoPosition = false, flag_UsingOdoVelocity = false, add_velocity_to_position = false;
-        public bool flag_UsingScalarOdoMeasure = false;
         public bool flag_OdoModelOnlyCP = false;
 
         public bool Ungolonom_Velocity_model = false, UseStatisticCoeff = false,
@@ -154,7 +153,6 @@ namespace Common_Namespace
         public double CourseHeading, CoursePitch, beta_c, gamma_c, alpha_c;
         public double Latitude, Longitude, Altitude, Latitude_Start, Longitude_Start, Altitude_Start, Latitude_Point, Altitude_prev, Latitude_prev, Longitude_prev;
         public double Latitude_Corr, Longitude_Corr, Altitude_Corr;
-        public double[] Heading_Array = new double[20];
 
         public double[] Vx_0 = new double[3]
                       , Vx_0_prev = new double[3]
@@ -179,7 +177,6 @@ namespace Common_Namespace
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
         //---Комулятивные величины---
-        public Matrix Ds_CumulativeByOdoTrack = new Matrix(3, 3), Ds2_CumulativeByOdoTrack = new Matrix(3, 3);
         public double[] Cumulative_KappaEst = new double[3];
         public double[] Cumulative_KalmanErrorVector = new double[SimpleData.iMx], Cumulative_StateErrorVector = new double[9];
 

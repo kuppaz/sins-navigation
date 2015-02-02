@@ -86,41 +86,6 @@ namespace Common_Namespace
             SINSstate.DeltaHeading = ErrorVector[6] + SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude) + SINSstate.DeltaRoll * Math.Sin(SINSstate.Pitch);
 
 
-            if (SINSstate.flag_Odometr_SINS_case == false && SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
-            {
-                //--- Коррекция весовых матриц в случае обрытных связей без уравнений ошибок одометра ---//
-                double[] d_2 = new double[3];
-                Matrix matr_1 = new Matrix(3, 3), matr_2 = new Matrix(3, 3);
-                double[] vect_1 = new double[3], vect_2 = new double[3], vect_3 = new double[3], vect_result = new double[3];
-
-                for (int u = 0; u < 3; u++)
-                    d_2[u] = SINSstate.A_x0s[u, 1];
-
-                vect_1[0] = ErrorVector[4]; vect_1[1] = ErrorVector[5]; vect_1[2] = ErrorVector[6] + ErrorVector[0] / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
-                vect_2[0] = ErrorVector[SINSstate.iMx_odo_model + 1]; vect_2[1] = ErrorVector[SINSstate.iMx_odo_model + 2]; vect_2[2] = -ErrorVector[SINSstate.iMx_odo_model + 0];
-
-                CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * SINSstate.A_x0s + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds_CumulativeByOdoTrack);
-                CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.A_x0s + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds_CumulativeByOdoTrack);
-                //--- Корректируем весовую матрицу Ds_ComulativeByOdoTrack ---//
-                CopyMatrix(SINSstate.Ds_CumulativeByOdoTrack, SINSstate.Ds_CumulativeByOdoTrack - matr_1 - matr_2);
-
-                CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2) + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds2_CumulativeByOdoTrack);
-                CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(Matrix.SkewSymmetricMatrix(vect_1) * d_2) + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds2_CumulativeByOdoTrack);
-                //--- Корректируем весовую матрицу Ds2_ComulativeByOdoTrack ---//
-                CopyMatrix(SINSstate.Ds2_CumulativeByOdoTrack, SINSstate.Ds2_CumulativeByOdoTrack - matr_1 - matr_2);
-
-
-                SimpleOperations.CopyArray(vect_result, SINSstate.Ds2_CumulativeByOdoTrack * vect_1);
-                SimpleOperations.CopyArray(vect_3, SINSstate.Ds_CumulativeByOdoTrack * vect_2);
-
-                //------------------------------------------------------------//
-
-                SINSstate_OdoMod.DeltaLatitude = (-vect_result[1] + vect_3[1]) / SINSstate.R_n;
-                SINSstate_OdoMod.DeltaLongitude = (-vect_result[0] + vect_3[0]) / SINSstate.R_e / Math.Cos(SINSstate_OdoMod.Latitude);
-            }
-
-
-
             //--- Случай Одометр+БИНС. Обратная связть ---//
             if (SINSstate.flag_Odometr_SINS_case == true)
             {
@@ -796,43 +761,6 @@ namespace Common_Namespace
             SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
             SINSstate_OdoMod.R_n = RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
             //--------------------------------------------------------------------------------------
-        }
-
-
-
-
-
-        public static void SlipageProcessing(SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, System.IO.StreamWriter SlippageLog, int temp_cnt_V_more)
-        {
-            SINSstate.flag_slipping = false;
-            string str;
-            double V_sins_mod = 0.0, V_odo_mod = SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_x0);
-
-            if (SINSstate.flag_FeedbackExist == true) V_sins_mod = SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0);
-            if (SINSstate.flag_FeedbackExist == false) V_sins_mod = SimpleOperations.AbsoluteVectorValue(SINSstate2.Vx_0);
-
-            str = SINSstate.Count + " " + (SINSstate.Count * Math.Abs(SINSstate.timeStep)) + " " + V_sins_mod + " " + V_odo_mod;
-
-            if (SINSstate.OdometerData.odometer_left.isReady == 1)
-            {
-                if (Math.Abs(V_sins_mod - V_odo_mod) > KalmanVars.OdoNoise_V)
-                {
-                    SINSstate.flag_UsingCorrection = false;
-                    SINSstate.flag_slipping = true;
-
-                    temp_cnt_V_more++;
-                    if (temp_cnt_V_more > 1) str = str + " 3";
-                    else str = str + " 1";
-                }
-                else { temp_cnt_V_more = 0; str = str + " 0"; }
-            }
-            else
-            {
-                if (temp_cnt_V_more == 0) str = str + " 0";
-                else if (temp_cnt_V_more > 1) str = str + " 3";
-                else str = str + " 1";
-            }
-            SlippageLog.WriteLine(str);
         }
 
 

@@ -49,7 +49,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Ungolonom_model = new System.Windows.Forms.CheckBox();
             this.flag_UsingOdoVelocity = new System.Windows.Forms.CheckBox();
-            this.flag_UsingScalarOdoMeasure = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.add_velocity_to_position = new System.Windows.Forms.CheckBox();
             this.flag_UsingOdoPosition = new System.Windows.Forms.CheckBox();
@@ -88,7 +87,6 @@
             this.ModifWeakConnect = new System.Windows.Forms.CheckBox();
             this.WeakConnect = new System.Windows.Forms.CheckBox();
             this.EstimateExist = new System.Windows.Forms.CheckBox();
-            this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.iMq_eq_iMx = new System.Windows.Forms.CheckBox();
             this.flag_Smoothing = new System.Windows.Forms.CheckBox();
             this.iMqDeltaR = new System.Windows.Forms.CheckBox();
@@ -121,7 +119,6 @@
             this.groupBox11.SuspendLayout();
             this.groupBox15.SuspendLayout();
             this.groupBox12.SuspendLayout();
-            this.groupBox13.SuspendLayout();
             this.groupBox14.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox17.SuspendLayout();
@@ -153,7 +150,7 @@
             this.UsingClasAlignment.AutoSize = true;
             this.UsingClasAlignment.Checked = true;
             this.UsingClasAlignment.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.UsingClasAlignment.Location = new System.Drawing.Point(43, 41);
+            this.UsingClasAlignment.Location = new System.Drawing.Point(43, 45);
             this.UsingClasAlignment.Name = "UsingClasAlignment";
             this.UsingClasAlignment.Size = new System.Drawing.Size(108, 17);
             this.UsingClasAlignment.TabIndex = 2;
@@ -163,7 +160,7 @@
             // OnlyAlignment
             // 
             this.OnlyAlignment.AutoSize = true;
-            this.OnlyAlignment.Location = new System.Drawing.Point(21, 18);
+            this.OnlyAlignment.Location = new System.Drawing.Point(21, 26);
             this.OnlyAlignment.Name = "OnlyAlignment";
             this.OnlyAlignment.Size = new System.Drawing.Size(96, 17);
             this.OnlyAlignment.TabIndex = 3;
@@ -222,7 +219,7 @@
             // UsingNavAlignment
             // 
             this.UsingNavAlignment.AutoSize = true;
-            this.UsingNavAlignment.Location = new System.Drawing.Point(43, 64);
+            this.UsingNavAlignment.Location = new System.Drawing.Point(43, 62);
             this.UsingNavAlignment.Name = "UsingNavAlignment";
             this.UsingNavAlignment.Size = new System.Drawing.Size(107, 17);
             this.UsingNavAlignment.TabIndex = 8;
@@ -232,7 +229,7 @@
             // Use_Only_Stops
             // 
             this.Use_Only_Stops.AutoSize = true;
-            this.Use_Only_Stops.Location = new System.Drawing.Point(35, 59);
+            this.Use_Only_Stops.Location = new System.Drawing.Point(35, 56);
             this.Use_Only_Stops.Name = "Use_Only_Stops";
             this.Use_Only_Stops.Size = new System.Drawing.Size(79, 17);
             this.Use_Only_Stops.TabIndex = 12;
@@ -357,16 +354,6 @@
             this.flag_UsingOdoVelocity.UseVisualStyleBackColor = true;
             this.flag_UsingOdoVelocity.CheckedChanged += new System.EventHandler(this.flag_UsingOdoVelocity_CheckedChanged);
             // 
-            // flag_UsingScalarOdoMeasure
-            // 
-            this.flag_UsingScalarOdoMeasure.AutoSize = true;
-            this.flag_UsingScalarOdoMeasure.Location = new System.Drawing.Point(16, 22);
-            this.flag_UsingScalarOdoMeasure.Name = "flag_UsingScalarOdoMeasure";
-            this.flag_UsingScalarOdoMeasure.Size = new System.Drawing.Size(123, 17);
-            this.flag_UsingScalarOdoMeasure.TabIndex = 56;
-            this.flag_UsingScalarOdoMeasure.Text = "Scalar, when Rotate";
-            this.flag_UsingScalarOdoMeasure.UseVisualStyleBackColor = true;
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.add_velocity_to_position);
@@ -415,7 +402,7 @@
             // flag_using_GoCalibrInCP
             // 
             this.flag_using_GoCalibrInCP.AutoSize = true;
-            this.flag_using_GoCalibrInCP.Location = new System.Drawing.Point(21, 35);
+            this.flag_using_GoCalibrInCP.Location = new System.Drawing.Point(21, 38);
             this.flag_using_GoCalibrInCP.Name = "flag_using_GoCalibrInCP";
             this.flag_using_GoCalibrInCP.Size = new System.Drawing.Size(66, 17);
             this.flag_using_GoCalibrInCP.TabIndex = 53;
@@ -426,7 +413,7 @@
             // flag_using_Checkpotints
             // 
             this.flag_using_Checkpotints.AutoSize = true;
-            this.flag_using_Checkpotints.Location = new System.Drawing.Point(21, 19);
+            this.flag_using_Checkpotints.Location = new System.Drawing.Point(21, 22);
             this.flag_using_Checkpotints.Name = "flag_using_Checkpotints";
             this.flag_using_Checkpotints.Size = new System.Drawing.Size(110, 17);
             this.flag_using_Checkpotints.TabIndex = 52;
@@ -436,7 +423,7 @@
             // flag_not_use_zupt
             // 
             this.flag_not_use_zupt.AutoSize = true;
-            this.flag_not_use_zupt.Location = new System.Drawing.Point(35, 75);
+            this.flag_not_use_zupt.Location = new System.Drawing.Point(35, 72);
             this.flag_not_use_zupt.Name = "flag_not_use_zupt";
             this.flag_not_use_zupt.Size = new System.Drawing.Size(101, 17);
             this.flag_not_use_zupt.TabIndex = 51;
@@ -513,7 +500,7 @@
             // 
             this.Imitator_Telemetric.AutoSize = true;
             this.Imitator_Telemetric.Enabled = false;
-            this.Imitator_Telemetric.Location = new System.Drawing.Point(32, 42);
+            this.Imitator_Telemetric.Location = new System.Drawing.Point(32, 40);
             this.Imitator_Telemetric.Name = "Imitator_Telemetric";
             this.Imitator_Telemetric.Size = new System.Drawing.Size(174, 17);
             this.Imitator_Telemetric.TabIndex = 52;
@@ -565,7 +552,7 @@
             this.groupBox9.Controls.Add(this.iMx_r_odo_3);
             this.groupBox9.Controls.Add(this.iMx_r_3_dV_3);
             this.groupBox9.Controls.Add(this.iMx_kappa_1_3_ds);
-            this.groupBox9.Location = new System.Drawing.Point(750, 195);
+            this.groupBox9.Location = new System.Drawing.Point(750, 163);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(155, 132);
             this.groupBox9.TabIndex = 38;
@@ -592,6 +579,7 @@
             this.OdoModelOnlyCP.Text = "OdoModel only CP";
             this.OdoModelOnlyCP.UseVisualStyleBackColor = true;
             this.OdoModelOnlyCP.Visible = false;
+            this.OdoModelOnlyCP.CheckedChanged += new System.EventHandler(this.OdoModelOnlyCP_CheckedChanged);
             // 
             // iMx_r_odo_3
             // 
@@ -773,7 +761,7 @@
             // 
             this.ModifWeakConnect.AutoSize = true;
             this.ModifWeakConnect.Enabled = false;
-            this.ModifWeakConnect.Location = new System.Drawing.Point(24, 128);
+            this.ModifWeakConnect.Location = new System.Drawing.Point(24, 123);
             this.ModifWeakConnect.Name = "ModifWeakConnect";
             this.ModifWeakConnect.Size = new System.Drawing.Size(100, 17);
             this.ModifWeakConnect.TabIndex = 61;
@@ -785,7 +773,7 @@
             // 
             this.WeakConnect.AutoSize = true;
             this.WeakConnect.Enabled = false;
-            this.WeakConnect.Location = new System.Drawing.Point(24, 112);
+            this.WeakConnect.Location = new System.Drawing.Point(24, 109);
             this.WeakConnect.Name = "WeakConnect";
             this.WeakConnect.Size = new System.Drawing.Size(95, 17);
             this.WeakConnect.TabIndex = 60;
@@ -803,16 +791,6 @@
             this.EstimateExist.Text = "Estimate";
             this.EstimateExist.UseVisualStyleBackColor = true;
             this.EstimateExist.CheckedChanged += new System.EventHandler(this.EstimateExist_CheckedChanged);
-            // 
-            // groupBox13
-            // 
-            this.groupBox13.Controls.Add(this.flag_UsingScalarOdoMeasure);
-            this.groupBox13.Location = new System.Drawing.Point(750, 140);
-            this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(155, 49);
-            this.groupBox13.TabIndex = 27;
-            this.groupBox13.TabStop = false;
-            this.groupBox13.Text = "Numb of Measures";
             // 
             // iMq_eq_iMx
             // 
@@ -998,7 +976,7 @@
             this.groupBox16.Controls.Add(this.iMSmthd_Is_2);
             this.groupBox16.Controls.Add(this.iMSmthd_Is_4);
             this.groupBox16.Controls.Add(this.iMSmthd_Is_7);
-            this.groupBox16.Location = new System.Drawing.Point(750, 333);
+            this.groupBox16.Location = new System.Drawing.Point(750, 301);
             this.groupBox16.Name = "groupBox16";
             this.groupBox16.Size = new System.Drawing.Size(155, 100);
             this.groupBox16.TabIndex = 81;
@@ -1014,7 +992,7 @@
             this.groupBox17.Controls.Add(this.iMqDeltaF);
             this.groupBox17.Controls.Add(this.iMqKappa);
             this.groupBox17.Controls.Add(this.iMqDeltaNu);
-            this.groupBox17.Location = new System.Drawing.Point(750, 25);
+            this.groupBox17.Location = new System.Drawing.Point(750, 48);
             this.groupBox17.Name = "groupBox17";
             this.groupBox17.Size = new System.Drawing.Size(206, 100);
             this.groupBox17.TabIndex = 82;
@@ -1030,7 +1008,6 @@
             this.Controls.Add(this.groupBox16);
             this.Controls.Add(this.groupBox14);
             this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.groupBox13);
             this.Controls.Add(this.groupBox12);
             this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.groupBox9);
@@ -1065,8 +1042,6 @@
             this.groupBox15.PerformLayout();
             this.groupBox12.ResumeLayout(false);
             this.groupBox12.PerformLayout();
-            this.groupBox13.ResumeLayout(false);
-            this.groupBox13.PerformLayout();
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
             this.groupBox16.ResumeLayout(false);
@@ -1112,7 +1087,6 @@
         private System.Windows.Forms.CheckBox Odometr_SINS_case;
         private System.Windows.Forms.CheckBox flag_UsingOdoPosition;
         private System.Windows.Forms.GroupBox groupBox12;
-        private System.Windows.Forms.GroupBox groupBox13;
         private System.Windows.Forms.CheckBox EstimateExist;
         private System.Windows.Forms.CheckBox iMx_r_odo_3;
         private System.Windows.Forms.CheckBox Imitator_Data;
@@ -1129,7 +1103,6 @@
         private System.Windows.Forms.CheckBox Ungolonom_model;
         private System.Windows.Forms.CheckBox flag_UseAlgebraDrift;
         private System.Windows.Forms.CheckBox Azimut_514_08Nov2013_11_15;
-        private System.Windows.Forms.CheckBox flag_UsingScalarOdoMeasure;
         private System.Windows.Forms.CheckBox OdoModelOnlyCP;
         private System.Windows.Forms.CheckBox ModifWeakConnect;
         private System.Windows.Forms.CheckBox WeakConnect;
