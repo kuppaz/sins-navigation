@@ -565,7 +565,6 @@ namespace SINS_motion_processing_new_data
             //---флаги коррекции---
             SINSstate.flag_UsingOdoVelocity = this.flag_UsingOdoVelocity.Checked;
             SINSstate.flag_UsingOdoPosition = this.flag_UsingOdoPosition.Checked;
-            SINSstate.Ungolonom_Velocity_model = this.Ungolonom_model.Checked;
         }
 
         public void DataInCheck(string FileLink)
@@ -695,13 +694,11 @@ namespace SINS_motion_processing_new_data
 
         public void LockTypesOfCorrection()
         {
-            this.flag_UsingOdoPosition.Enabled = false; this.flag_UsingOdoVelocity.Enabled = false;
-            this.Use_Only_Stops.Enabled = false; this.Ungolonom_model.Enabled = false;
+            this.flag_UsingOdoPosition.Enabled = false; this.flag_UsingOdoVelocity.Enabled = false; this.Use_Only_Stops.Enabled = false;
         }
         public void FreeTypesOfCorrection()
         {
-            this.flag_UsingOdoPosition.Enabled = true; this.flag_UsingOdoVelocity.Enabled = true;
-            this.Use_Only_Stops.Enabled = true; this.Ungolonom_model.Enabled = true;
+            this.flag_UsingOdoPosition.Enabled = true; this.flag_UsingOdoVelocity.Enabled = true; this.Use_Only_Stops.Enabled = true;
         }
 
         public void LockInData()
@@ -921,10 +918,6 @@ namespace SINS_motion_processing_new_data
 
         private void feedbackExist_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.Ungolonom_model.Checked == true)
-                return;      
-
-
             if (this.feedbackExist.Checked == true)
             {
                 LockTheWayOfStart(); this.feedbackExist.Enabled = true;
@@ -957,8 +950,6 @@ namespace SINS_motion_processing_new_data
 
         private void EstimateExist_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.Ungolonom_model.Checked == true)
-                return;
             if (this.EstimateExist.Checked == true)
             {
                 LockTheWayOfStart(); this.EstimateExist.Enabled = true;
@@ -1091,24 +1082,6 @@ namespace SINS_motion_processing_new_data
             }
             else CheckedFlaseTypesOfCorrection();
         }
-
-        private void Ungolonom_model_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.Ungolonom_model.Checked == true)
-            {
-                CheckedTrueTypesOfCorrection();
-                this.Ungolonom_model.Enabled = true;
-            }
-            else CheckedFlaseTypesOfCorrection();
-
-            if (this.Ungolonom_model.Checked == true)
-            {
-                this.feedbackExist.Checked = true; this.feedbackExist.Enabled = true;
-                this.EstimateExist.Checked = false; this.EstimateExist.Enabled = false;
-            }
-        }
-
-
 
 
         private void flag_UsingOdoPosition_CheckedChanged(object sender, EventArgs e)

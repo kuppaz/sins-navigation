@@ -47,7 +47,6 @@
             this.Output_Freq = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.Ungolonom_model = new System.Windows.Forms.CheckBox();
             this.flag_UsingOdoVelocity = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.add_velocity_to_position = new System.Windows.Forms.CheckBox();
@@ -323,34 +322,22 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.Ungolonom_model);
             this.groupBox1.Controls.Add(this.flag_UsingOdoVelocity);
-            this.groupBox1.Location = new System.Drawing.Point(15, 126);
+            this.groupBox1.Location = new System.Drawing.Point(15, 127);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(159, 64);
+            this.groupBox1.Size = new System.Drawing.Size(159, 47);
             this.groupBox1.TabIndex = 30;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Correction by Velocity";
             // 
-            // Ungolonom_model
-            // 
-            this.Ungolonom_model.AutoSize = true;
-            this.Ungolonom_model.Location = new System.Drawing.Point(21, 39);
-            this.Ungolonom_model.Name = "Ungolonom_model";
-            this.Ungolonom_model.Size = new System.Drawing.Size(138, 17);
-            this.Ungolonom_model.TabIndex = 55;
-            this.Ungolonom_model.Text = "_2. New Volocity Model";
-            this.Ungolonom_model.UseVisualStyleBackColor = true;
-            this.Ungolonom_model.CheckedChanged += new System.EventHandler(this.Ungolonom_model_CheckedChanged);
-            // 
             // flag_UsingOdoVelocity
             // 
             this.flag_UsingOdoVelocity.AutoSize = true;
-            this.flag_UsingOdoVelocity.Location = new System.Drawing.Point(21, 19);
+            this.flag_UsingOdoVelocity.Location = new System.Drawing.Point(18, 21);
             this.flag_UsingOdoVelocity.Name = "flag_UsingOdoVelocity";
-            this.flag_UsingOdoVelocity.Size = new System.Drawing.Size(135, 17);
+            this.flag_UsingOdoVelocity.Size = new System.Drawing.Size(117, 17);
             this.flag_UsingOdoVelocity.TabIndex = 16;
-            this.flag_UsingOdoVelocity.Text = "_1. Each new measure";
+            this.flag_UsingOdoVelocity.Text = "Each new measure";
             this.flag_UsingOdoVelocity.UseVisualStyleBackColor = true;
             this.flag_UsingOdoVelocity.CheckedChanged += new System.EventHandler(this.flag_UsingOdoVelocity_CheckedChanged);
             // 
@@ -358,7 +345,7 @@
             // 
             this.groupBox2.Controls.Add(this.add_velocity_to_position);
             this.groupBox2.Controls.Add(this.flag_UsingOdoPosition);
-            this.groupBox2.Location = new System.Drawing.Point(15, 196);
+            this.groupBox2.Location = new System.Drawing.Point(15, 180);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(159, 72);
             this.groupBox2.TabIndex = 31;
@@ -433,7 +420,7 @@
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.usingSNS);
-            this.groupBox4.Location = new System.Drawing.Point(15, 274);
+            this.groupBox4.Location = new System.Drawing.Point(15, 258);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(159, 45);
             this.groupBox4.TabIndex = 33;
@@ -597,9 +584,9 @@
             this.groupBox10.Controls.Add(this.groupBox1);
             this.groupBox10.Controls.Add(this.groupBox2);
             this.groupBox10.Controls.Add(this.groupBox3);
-            this.groupBox10.Location = new System.Drawing.Point(549, 53);
+            this.groupBox10.Location = new System.Drawing.Point(553, 72);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(189, 329);
+            this.groupBox10.Size = new System.Drawing.Size(189, 310);
             this.groupBox10.TabIndex = 39;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Correction Modes";
@@ -1100,7 +1087,6 @@
         private System.Windows.Forms.CheckBox Imitator_Telemetric;
         private System.Windows.Forms.CheckBox topo_saratov;
         private System.Windows.Forms.CheckBox AZIMUT_T_12_32_16_09_13_TLM_2z;
-        private System.Windows.Forms.CheckBox Ungolonom_model;
         private System.Windows.Forms.CheckBox flag_UseAlgebraDrift;
         private System.Windows.Forms.CheckBox Azimut_514_08Nov2013_11_15;
         private System.Windows.Forms.CheckBox OdoModelOnlyCP;
