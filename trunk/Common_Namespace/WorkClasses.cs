@@ -86,9 +86,6 @@ namespace Common_Namespace
         public bool flag_UsingOdoPosition = false, flag_UsingOdoVelocity = false, add_velocity_to_position = false;
         public bool flag_OdoModelOnlyCP = false;
 
-        public bool Ungolonom_Velocity_model = false, UseStatisticCoeff = false,
-                    Use_dV_Constraints = false;
-
         //---остальное вспомогательное---
         public bool flag_UseLastMinusOneOdo = false, flag_slipping = false;
 
