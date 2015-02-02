@@ -68,6 +68,7 @@
             this.flag_using_slippage = new System.Windows.Forms.CheckBox();
             this.flag_UseAlgebraDrift = new System.Windows.Forms.CheckBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.flag_VupOdo_till_VupSINS = new System.Windows.Forms.CheckBox();
             this.OdoModelOnlyCP = new System.Windows.Forms.CheckBox();
             this.iMx_r_odo_3 = new System.Windows.Forms.CheckBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
@@ -86,7 +87,6 @@
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.ModifWeakConnect = new System.Windows.Forms.CheckBox();
             this.WeakConnect = new System.Windows.Forms.CheckBox();
-            this.flag_autonomous_dinamic_mode = new System.Windows.Forms.CheckBox();
             this.EstimateExist = new System.Windows.Forms.CheckBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.iMq_eq_iMx = new System.Windows.Forms.CheckBox();
@@ -108,7 +108,6 @@
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.flag_VupOdo_till_VupSINS = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -177,7 +176,7 @@
             this.OnlyIntegrating.AutoSize = true;
             this.OnlyIntegrating.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.OnlyIntegrating.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.OnlyIntegrating.Location = new System.Drawing.Point(6, 27);
+            this.OnlyIntegrating.Location = new System.Drawing.Point(15, 22);
             this.OnlyIntegrating.Name = "OnlyIntegrating";
             this.OnlyIntegrating.Size = new System.Drawing.Size(85, 17);
             this.OnlyIntegrating.TabIndex = 4;
@@ -190,7 +189,7 @@
             this.feedbackExist.AutoSize = true;
             this.feedbackExist.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.feedbackExist.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.feedbackExist.Location = new System.Drawing.Point(6, 62);
+            this.feedbackExist.Location = new System.Drawing.Point(15, 49);
             this.feedbackExist.Name = "feedbackExist";
             this.feedbackExist.Size = new System.Drawing.Size(74, 17);
             this.feedbackExist.TabIndex = 5;
@@ -573,6 +572,16 @@
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Dimention of Error Vector";
             // 
+            // flag_VupOdo_till_VupSINS
+            // 
+            this.flag_VupOdo_till_VupSINS.AutoSize = true;
+            this.flag_VupOdo_till_VupSINS.Location = new System.Drawing.Point(30, 54);
+            this.flag_VupOdo_till_VupSINS.Name = "flag_VupOdo_till_VupSINS";
+            this.flag_VupOdo_till_VupSINS.Size = new System.Drawing.Size(124, 17);
+            this.flag_VupOdo_till_VupSINS.TabIndex = 28;
+            this.flag_VupOdo_till_VupSINS.Text = "VupOdo -> VupSINS";
+            this.flag_VupOdo_till_VupSINS.UseVisualStyleBackColor = true;
+            // 
             // OdoModelOnlyCP
             // 
             this.OdoModelOnlyCP.AutoSize = true;
@@ -737,7 +746,7 @@
             this.Odometr_SINS_case.AutoSize = true;
             this.Odometr_SINS_case.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.Odometr_SINS_case.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Odometr_SINS_case.Location = new System.Drawing.Point(6, 107);
+            this.Odometr_SINS_case.Location = new System.Drawing.Point(15, 94);
             this.Odometr_SINS_case.Name = "Odometr_SINS_case";
             this.Odometr_SINS_case.Size = new System.Drawing.Size(87, 17);
             this.Odometr_SINS_case.TabIndex = 42;
@@ -749,14 +758,13 @@
             // 
             this.groupBox12.Controls.Add(this.ModifWeakConnect);
             this.groupBox12.Controls.Add(this.WeakConnect);
-            this.groupBox12.Controls.Add(this.flag_autonomous_dinamic_mode);
             this.groupBox12.Controls.Add(this.EstimateExist);
             this.groupBox12.Controls.Add(this.Odometr_SINS_case);
             this.groupBox12.Controls.Add(this.feedbackExist);
             this.groupBox12.Controls.Add(this.OnlyIntegrating);
             this.groupBox12.Location = new System.Drawing.Point(419, 136);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(124, 169);
+            this.groupBox12.Size = new System.Drawing.Size(124, 153);
             this.groupBox12.TabIndex = 43;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "Method of Processing";
@@ -765,7 +773,7 @@
             // 
             this.ModifWeakConnect.AutoSize = true;
             this.ModifWeakConnect.Enabled = false;
-            this.ModifWeakConnect.Location = new System.Drawing.Point(20, 141);
+            this.ModifWeakConnect.Location = new System.Drawing.Point(24, 128);
             this.ModifWeakConnect.Name = "ModifWeakConnect";
             this.ModifWeakConnect.Size = new System.Drawing.Size(100, 17);
             this.ModifWeakConnect.TabIndex = 61;
@@ -777,7 +785,7 @@
             // 
             this.WeakConnect.AutoSize = true;
             this.WeakConnect.Enabled = false;
-            this.WeakConnect.Location = new System.Drawing.Point(20, 125);
+            this.WeakConnect.Location = new System.Drawing.Point(24, 112);
             this.WeakConnect.Name = "WeakConnect";
             this.WeakConnect.Size = new System.Drawing.Size(95, 17);
             this.WeakConnect.TabIndex = 60;
@@ -785,21 +793,10 @@
             this.WeakConnect.UseVisualStyleBackColor = true;
             this.WeakConnect.CheckedChanged += new System.EventHandler(this.WeakConnect_CheckedChanged);
             // 
-            // flag_autonomous_dinamic_mode
-            // 
-            this.flag_autonomous_dinamic_mode.AutoSize = true;
-            this.flag_autonomous_dinamic_mode.Location = new System.Drawing.Point(22, 44);
-            this.flag_autonomous_dinamic_mode.Name = "flag_autonomous_dinamic_mode";
-            this.flag_autonomous_dinamic_mode.Size = new System.Drawing.Size(64, 17);
-            this.flag_autonomous_dinamic_mode.TabIndex = 44;
-            this.flag_autonomous_dinamic_mode.Text = "Dinamic";
-            this.flag_autonomous_dinamic_mode.UseVisualStyleBackColor = true;
-            this.flag_autonomous_dinamic_mode.CheckedChanged += new System.EventHandler(this.flag_autonomous_dinamic_mode_CheckedChanged);
-            // 
             // EstimateExist
             // 
             this.EstimateExist.AutoSize = true;
-            this.EstimateExist.Location = new System.Drawing.Point(6, 79);
+            this.EstimateExist.Location = new System.Drawing.Point(15, 66);
             this.EstimateExist.Name = "EstimateExist";
             this.EstimateExist.Size = new System.Drawing.Size(66, 17);
             this.EstimateExist.TabIndex = 43;
@@ -820,13 +817,13 @@
             // iMq_eq_iMx
             // 
             this.iMq_eq_iMx.AutoSize = true;
-            this.iMq_eq_iMx.Enabled = false;
             this.iMq_eq_iMx.Location = new System.Drawing.Point(68, 19);
             this.iMq_eq_iMx.Name = "iMq_eq_iMx";
             this.iMq_eq_iMx.Size = new System.Drawing.Size(71, 17);
             this.iMq_eq_iMx.TabIndex = 49;
             this.iMq_eq_iMx.Text = "iMq = iMx";
             this.iMq_eq_iMx.UseVisualStyleBackColor = true;
+            this.iMq_eq_iMx.CheckedChanged += new System.EventHandler(this.iMq_eq_iMx_CheckedChanged);
             // 
             // flag_Smoothing
             // 
@@ -841,8 +838,6 @@
             // iMqDeltaR
             // 
             this.iMqDeltaR.AutoSize = true;
-            this.iMqDeltaR.Checked = true;
-            this.iMqDeltaR.CheckState = System.Windows.Forms.CheckState.Checked;
             this.iMqDeltaR.Location = new System.Drawing.Point(10, 42);
             this.iMqDeltaR.Name = "iMqDeltaR";
             this.iMqDeltaR.Size = new System.Drawing.Size(77, 17);
@@ -893,8 +888,6 @@
             // iMqDeltaRodo
             // 
             this.iMqDeltaRodo.AutoSize = true;
-            this.iMqDeltaRodo.Checked = true;
-            this.iMqDeltaRodo.CheckState = System.Windows.Forms.CheckState.Checked;
             this.iMqDeltaRodo.Location = new System.Drawing.Point(96, 78);
             this.iMqDeltaRodo.Name = "iMqDeltaRodo";
             this.iMqDeltaRodo.Size = new System.Drawing.Size(98, 17);
@@ -1028,16 +1021,6 @@
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Matrix Noise Dimension";
             // 
-            // flag_VupOdo_till_VupSINS
-            // 
-            this.flag_VupOdo_till_VupSINS.AutoSize = true;
-            this.flag_VupOdo_till_VupSINS.Location = new System.Drawing.Point(30, 54);
-            this.flag_VupOdo_till_VupSINS.Name = "flag_VupOdo_till_VupSINS";
-            this.flag_VupOdo_till_VupSINS.Size = new System.Drawing.Size(124, 17);
-            this.flag_VupOdo_till_VupSINS.TabIndex = 28;
-            this.flag_VupOdo_till_VupSINS.Text = "VupOdo -> VupSINS";
-            this.flag_VupOdo_till_VupSINS.UseVisualStyleBackColor = true;
-            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1144,7 +1127,6 @@
         private System.Windows.Forms.CheckBox topo_saratov;
         private System.Windows.Forms.CheckBox AZIMUT_T_12_32_16_09_13_TLM_2z;
         private System.Windows.Forms.CheckBox Ungolonom_model;
-        private System.Windows.Forms.CheckBox flag_autonomous_dinamic_mode;
         private System.Windows.Forms.CheckBox flag_UseAlgebraDrift;
         private System.Windows.Forms.CheckBox Azimut_514_08Nov2013_11_15;
         private System.Windows.Forms.CheckBox flag_UsingScalarOdoMeasure;

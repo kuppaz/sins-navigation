@@ -500,9 +500,6 @@ namespace SINS_motion_processing_new_data
                 iMxSmthd = SimpleData.iMxSmthd = 4;
             if (this.iMSmthd_Is_7.Checked)
                 iMxSmthd = SimpleData.iMxSmthd = 7;
-
-            //if (iMq_eq_iMx.Checked == true)
-            //    iMq = SimpleData.iMq = iMx;
         }
 
         public void DefineClassElementAndFlags()
@@ -554,7 +551,6 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_using_slippage = this.flag_using_slippage.Checked;
             SINSstate.flag_using_Checkpotints = this.flag_using_Checkpotints.Checked;
             SINSstate.flag_using_GoCalibrInCP = this.flag_using_GoCalibrInCP.Checked;
-            SINSstate.flag_autonomous_dinamic_mode = this.flag_autonomous_dinamic_mode.Checked;
             SINSstate.add_velocity_to_position = this.add_velocity_to_position.Checked;
             SINSstate.flag_UseAlgebraDrift = this.flag_UseAlgebraDrift.Checked;
             SINSstate.flag_UsingScalarOdoMeasure = this.flag_UsingScalarOdoMeasure.Checked;
@@ -792,9 +788,6 @@ namespace SINS_motion_processing_new_data
 
                 this.AccuracyClass_NoErr.Enabled = true;
                 this.AccuracyClass_0_0grph.Enabled = true;
-                this.AccuracyClass_0_02grph.Enabled = true;
-                this.AccuracyClass_0_2_grph.Enabled = true;
-                this.AccuracyClass_2_0_grph.Enabled = true;
             }
             else
             {
@@ -802,9 +795,6 @@ namespace SINS_motion_processing_new_data
 
                 this.AccuracyClass_NoErr.Enabled = false;
                 this.AccuracyClass_0_0grph.Enabled = false;
-                this.AccuracyClass_0_02grph.Enabled = false;
-                this.AccuracyClass_0_2_grph.Enabled = false;
-                this.AccuracyClass_2_0_grph.Enabled = false;
             }
 
             this.Imitator_Telemetric.Enabled = true;
@@ -990,19 +980,23 @@ namespace SINS_motion_processing_new_data
                 //LockTheWayOfStart(); this.Odometr_SINS_case.Enabled = true;
                 //LockNumbOfMeasures();
                 this.iMx_kappa_1_3_ds.Checked = true;
-                //this.flag_autonomous_dinamic_mode.Checked = true;
                 this.WeakConnect.Enabled = true;
                 this.ModifWeakConnect.Enabled = true;
                 this.Use_Only_Stops.Enabled = false;
+
+                this.iMqDeltaR.Checked = true;
+                this.iMqDeltaRodo.Checked = true;
             }
             else
             {
                 FreeTheWayOfStart();
-                this.flag_autonomous_dinamic_mode.Checked = false;
                 this.iMx_kappa_1_3_ds.Checked = false;
                 this.WeakConnect.Enabled = false;
                 this.ModifWeakConnect.Enabled = false;
                 this.Use_Only_Stops.Enabled = true;
+
+                this.iMqDeltaR.Checked = false;
+                this.iMqDeltaRodo.Checked = false;
             }
         }
         private void WeakConnect_CheckedChanged(object sender, EventArgs e)
@@ -1171,6 +1165,32 @@ namespace SINS_motion_processing_new_data
             }
         }
 
+        private void iMq_eq_iMx_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.iMq_eq_iMx.Checked == true)
+            {
+                this.iMqKappa.Checked = true;
+                this.iMqDeltaR.Checked = true;
+                this.iMqDeltaF.Checked = true;
+                this.iMqDeltaNu.Checked = true;
+                this.iMqDeltaRodo.Checked = true;
+                this.iMqVarkappa13.Checked = true;
+            }
+            else
+            {
+                this.iMqKappa.Checked = false;
+                this.iMqDeltaF.Checked = false;
+                this.iMqDeltaNu.Checked = false;
+                this.iMqVarkappa13.Checked = false;
+
+                if (this.Odometr_SINS_case.Checked == false)
+                {
+                    this.iMqDeltaR.Checked = false;
+                    this.iMqDeltaRodo.Checked = false;
+                }
+            }
+        }
+
         private void SINS_Processing_Load(object sender, EventArgs e)
         {
 
@@ -1185,7 +1205,6 @@ namespace SINS_motion_processing_new_data
         {
 
         }
-
 
     }
 }
