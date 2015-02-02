@@ -18,8 +18,8 @@ namespace SINSProcessingModes
 
         public static StreamWriter STD_data = new StreamWriter(SimpleData.PathOutputString + "Debaging//S_STD.txt");
         public static StreamWriter Kinematic_solution = new StreamWriter(SimpleData.PathOutputString + "S_Kinem.txt");
-        public static StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Debaging//Speed_Angles.txt");
         public static StreamWriter DinamicOdometer = new StreamWriter(SimpleData.PathOutputString + "DinamicOdometer.txt");
+        public static StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Debaging//Speed_Angles.txt");
 
         public static StreamWriter Smthing_Backward, Smthing_P, Smthing_X;
         public static StreamReader Back_Input_File_read, Back_Input_X, Back_Input_P;
@@ -46,24 +46,24 @@ namespace SINSProcessingModes
                 str_name_forvard_back = "_back";
                 SINSstate.odotime_prev = SINSstate.Time + SINSstate.timeStep;
 
-                Back_Input_File_read = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full.txt");
+                ForHelpSmoothed = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_Smoothed.txt");
                 Back_Input_X = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_X.txt");
                 Back_Input_P = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full_P.txt");
-                ForHelpSmoothed = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_Smoothed.txt");
+                Back_Input_File_read = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full.txt");
 
                 KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Back.kml");
                 ProcessingHelp.FillKMLOutputFile(KMLFileOut, "Start", "Backward");
             }
 
-            Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnFeedBack.txt");
-            Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate.txt");
+            Nav_Smoothed = new StreamWriter(SimpleData.PathOutputString + "S_smoothed_SlnFeedBack.txt");
+            KMLFileOutSmthd = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Smoothed.kml");
             Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_Errors.txt");
+            ForHelp = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp" + str_name_forvard_back + ".txt");
             Nav_Autonomous = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_Autonomous.txt");
             Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_ErrVect.txt");
-            Nav_Smoothed = new StreamWriter(SimpleData.PathOutputString + "S_smoothed_SlnFeedBack.txt");
-            ForHelp = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp" + str_name_forvard_back + ".txt");
-            KMLFileOutSmthd = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Smoothed.kml");
             StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
+            Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnFeedBack.txt");
+            Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate.txt");
 
 
             string str = "count  dr1 dr2 dV1 dV2 Alpha1_grad Alpha2_grad Beta3_grad Nu_1_grad Nu_2_grad/h Nu_3_grad/h dF_1 dF_2 dF_3";
@@ -115,8 +115,10 @@ namespace SINSProcessingModes
                 if (t == 0)
                 {
                     t = 1;
-                    if (!SINSstate.NowSmoothing) start_i = i;
-                    if (SINSstate.NowSmoothing) i = i + 2;
+                    if (!SINSstate.NowSmoothing) 
+                        start_i = i;
+                    if (SINSstate.NowSmoothing) 
+                        i = i + 2;
                 }
 
 
@@ -125,6 +127,7 @@ namespace SINSProcessingModes
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
 
                 SINSstate.OdoTimeStepCount++;
+
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
 
@@ -153,6 +156,7 @@ namespace SINSProcessingModes
                 //-------------------------- MAIN STEPS ------------------------------//
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
+
                 KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars);
                 KalmanProcs.KalmanForecast(KalmanVars);
 
@@ -213,7 +217,7 @@ namespace SINSProcessingModes
                         SINSstate.Heading_Array[u - 1] = SINSstate.Heading_Array[u];
                     SINSstate.Heading_Array[SINSstate.Heading_Array.Length - 1] = SINSstate.Heading;
 
-                    //===КОРРЕКЦИЯ В СЛУЧАЕ БИНС+ ОДОМЕТР===//
+                    //=== КОРРЕКЦИЯ В СЛУЧАЕ БИНС+ ОДОМЕТР ===//
                     if (SINSstate.flag_Odometr_SINS_case == false && SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
                         if (SINSstate.flag_UsingOdoPosition == true && SINSstate.flag_ZUPT == false)
@@ -227,24 +231,21 @@ namespace SINSProcessingModes
                                 CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
                         }
                     }
-                    //===КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС===//
+                    //=== КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС ===//
                     else if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
                         if (SINSstate.flag_UsingOdoPosition == true && SINSstate.flag_ZUPT == false)
-                        {
-                            //---Если корректировать по измерениям, полученным в прямом проходе, то сглаженное решение будет стремиться именно к последнему---
                             Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstate_OdoMod, ProcHelp);
-                        }
 
                         if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false)
                             Odometr_SINS.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
                     }
 
-                    //===SNS коррекция===//
+                    //=== SNS коррекция ===//
                     if (SINSstate.flag_Using_SNS == true)
                         CorrectionModel.Make_H_GPS(KalmanVars, SINSstate, SINSstate_OdoMod);
 
-                    //===ZUPT коррекция===//
+                    //=== ZUPT коррекция ===//
                     if (SINSstate.flag_ZUPT == true)
                         CorrectionModel.Make_H_KNS(KalmanVars, SINSstate, SINSstate_OdoMod);
 
@@ -256,13 +257,6 @@ namespace SINSProcessingModes
 
                 //--- Вывод данных для телеметрического имитатора ---//
                 ProcessingHelp.OutPutInfo_Telemetric(SINSstate, SINSstate2, Imitator_Telemetric, i, l);
-
-                if (i % 100 == 0)
-                    ForHelp.WriteLine(SINSstate.Count + " " + SINSstate_OdoMod.Omega_x[0] + " " + SINSstate_OdoMod.Omega_x[1] + " " + SINSstate_OdoMod.Omega_x[2]
-                        + " " + SINSstate_OdoMod.OdoSpeed_s[1] + " " + SINSstate_OdoMod.OdoSpeed_s[0] + " " + SINSstate_OdoMod.OdoSpeed_s[2]
-                        + " " + SINSstate.OdoSpeed_s[1] + " " + SINSstate.OdoSpeed_s[0] + " " + SINSstate.OdoSpeed_s[2]
-                        + " " + SINSstate_OdoMod.Vx_0[0] + " " + SINSstate_OdoMod.Vx_0[1] + " " + SINSstate_OdoMod.Vx_0[2]
-                        + " " + SimpleOperations.AbsoluteVectorValue(SINSstate_OdoMod.OdoSpeed_x0));
 
                 //--- Вывод в файл значений оцененной позиционной ошибки до коррекции (важно в обратных связях) ---//
                 if (SINSstate.flag_ControlPointCorrection)
@@ -380,16 +374,17 @@ namespace SINSProcessingModes
             ProcessingHelp.FillKMLOutputFile(KMLFileOut, "End", "");
             ProcessingHelp.FillKMLOutputFile(KMLFileOutSmthd, "End", "");
 
-            ForHelp.Close();
+            Nav_StateErrorsVector.Close();
             Nav_FeedbackSolution.Close();
             Nav_EstimateSolution.Close();
-            Nav_StateErrorsVector.Close();
+            Imitator_Telemetric.Close();
+            KMLFileOutSmthd.Close();
             Nav_Autonomous.Close();
             Speed_Angles.Close();
-            Imitator_Telemetric.Close();
             Nav_Smoothed.Close();
             KMLFileOut.Close();
-            KMLFileOutSmthd.Close();
+            ForHelp.Close();
+            
         }
 
 

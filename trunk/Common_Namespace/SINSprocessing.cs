@@ -85,40 +85,38 @@ namespace Common_Namespace
             SINSstate.DeltaPitch = -ErrorVector[4] * Math.Cos(SINSstate.Heading) + ErrorVector[5] * Math.Sin(SINSstate.Heading);
             SINSstate.DeltaHeading = ErrorVector[6] + SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude) + SINSstate.DeltaRoll * Math.Sin(SINSstate.Pitch);
 
-            if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
+
+            if (SINSstate.flag_Odometr_SINS_case == false && SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
             {
                 //--- Коррекция весовых матриц в случае обрытных связей без уравнений ошибок одометра ---//
-                if (SINSstate.flag_Odometr_SINS_case == false)
-                {
-                    double[] d_2 = new double[3];
-                    Matrix matr_1 = new Matrix(3, 3), matr_2 = new Matrix(3, 3);
-                    double[] vect_1 = new double[3], vect_2 = new double[3], vect_3 = new double[3], vect_result = new double[3];
+                double[] d_2 = new double[3];
+                Matrix matr_1 = new Matrix(3, 3), matr_2 = new Matrix(3, 3);
+                double[] vect_1 = new double[3], vect_2 = new double[3], vect_3 = new double[3], vect_result = new double[3];
 
-                    for (int u = 0; u < 3; u++)
-                        d_2[u] = SINSstate.A_x0s[u, 1];
+                for (int u = 0; u < 3; u++)
+                    d_2[u] = SINSstate.A_x0s[u, 1];
 
-                    vect_1[0] = ErrorVector[4]; vect_1[1] = ErrorVector[5]; vect_1[2] = ErrorVector[6] + ErrorVector[0] / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
-                    vect_2[0] = ErrorVector[SINSstate.iMx_odo_model + 1]; vect_2[1] = ErrorVector[SINSstate.iMx_odo_model + 2]; vect_2[2] = -ErrorVector[SINSstate.iMx_odo_model + 0];
+                vect_1[0] = ErrorVector[4]; vect_1[1] = ErrorVector[5]; vect_1[2] = ErrorVector[6] + ErrorVector[0] / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
+                vect_2[0] = ErrorVector[SINSstate.iMx_odo_model + 1]; vect_2[1] = ErrorVector[SINSstate.iMx_odo_model + 2]; vect_2[2] = -ErrorVector[SINSstate.iMx_odo_model + 0];
 
-                    CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * SINSstate.A_x0s + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds_CumulativeByOdoTrack);
-                    CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.A_x0s + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds_CumulativeByOdoTrack);
-                    //--- Корректируем весовую матрицу Ds_ComulativeByOdoTrack ---//
-                    CopyMatrix(SINSstate.Ds_CumulativeByOdoTrack, SINSstate.Ds_CumulativeByOdoTrack - matr_1 - matr_2);
+                CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * SINSstate.A_x0s + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds_CumulativeByOdoTrack);
+                CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.A_x0s + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds_CumulativeByOdoTrack);
+                //--- Корректируем весовую матрицу Ds_ComulativeByOdoTrack ---//
+                CopyMatrix(SINSstate.Ds_CumulativeByOdoTrack, SINSstate.Ds_CumulativeByOdoTrack - matr_1 - matr_2);
 
-                    CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2) + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds2_CumulativeByOdoTrack);
-                    CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(Matrix.SkewSymmetricMatrix(vect_1) * d_2) + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds2_CumulativeByOdoTrack);
-                    //--- Корректируем весовую матрицу Ds2_ComulativeByOdoTrack ---//
-                    CopyMatrix(SINSstate.Ds2_CumulativeByOdoTrack, SINSstate.Ds2_CumulativeByOdoTrack - matr_1 - matr_2);
+                CopyMatrix(matr_1, ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(d_2) + ErrorVector[SINSstate.iMx_odo_model + 2] * SINSstate.Ds2_CumulativeByOdoTrack);
+                CopyMatrix(matr_2, SINSstate.OdometerVector[1] * Matrix.SkewSymmetricMatrix(Matrix.SkewSymmetricMatrix(vect_1) * d_2) + Matrix.SkewSymmetricMatrix(vect_1) * SINSstate.Ds2_CumulativeByOdoTrack);
+                //--- Корректируем весовую матрицу Ds2_ComulativeByOdoTrack ---//
+                CopyMatrix(SINSstate.Ds2_CumulativeByOdoTrack, SINSstate.Ds2_CumulativeByOdoTrack - matr_1 - matr_2);
 
 
-                    SimpleOperations.CopyArray(vect_result, SINSstate.Ds2_CumulativeByOdoTrack * vect_1);
-                    SimpleOperations.CopyArray(vect_3, SINSstate.Ds_CumulativeByOdoTrack * vect_2);
+                SimpleOperations.CopyArray(vect_result, SINSstate.Ds2_CumulativeByOdoTrack * vect_1);
+                SimpleOperations.CopyArray(vect_3, SINSstate.Ds_CumulativeByOdoTrack * vect_2);
 
-                    //------------------------------------------------------------//
+                //------------------------------------------------------------//
 
-                    SINSstate_OdoMod.DeltaLatitude = (-vect_result[1] + vect_3[1]) / SINSstate.R_n;
-                    SINSstate_OdoMod.DeltaLongitude = (-vect_result[0] + vect_3[0]) / SINSstate.R_e / Math.Cos(SINSstate_OdoMod.Latitude);
-                }
+                SINSstate_OdoMod.DeltaLatitude = (-vect_result[1] + vect_3[1]) / SINSstate.R_n;
+                SINSstate_OdoMod.DeltaLongitude = (-vect_result[0] + vect_3[0]) / SINSstate.R_e / Math.Cos(SINSstate_OdoMod.Latitude);
             }
 
 
@@ -185,7 +183,7 @@ namespace Common_Namespace
                 SINSstate2.Cumulative_StateErrorVector[8] += SINSstate.DeltaPitch;
             }
 
-
+                
 
             //---Случай Одометр+БИНС. Обратная связть.---
             if (SINSstate.flag_Odometr_SINS_case == true)
@@ -361,7 +359,6 @@ namespace Common_Namespace
                     tmpCounter = tmpCounter + 1;
                 }
             }
-
 
             return tmpCounter;
             //PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, iMx, iMq);
