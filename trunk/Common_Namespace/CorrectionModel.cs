@@ -140,29 +140,6 @@ namespace Common_Namespace
             }
         }
 
-        public static void Make_H_VELOCITY_Scalar(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
-        {
-            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model,
-                iMx_r12_odo = SINSstate.iMx_r12_odo;
-
-
-            double[] tempVect = new double[3];
-
-            KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 2] = SINSstate.A_sx0[1, 0];
-            KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 3] = SINSstate.A_sx0[1, 1];
-
-            KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.A_sx0[1, 0] * SINSstate.Vx_0[0] + SINSstate.A_sx0[1, 1] * SINSstate.Vx_0[1] + SINSstate.A_sx0[1, 2] * SINSstate.Vx_0[2] - SINSstate.OdoSpeed_s[1];
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_V;
-
-            if (SINSstate.flag_iMx_r3_dV3)
-            {
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3 + 1] = SINSstate.A_sx0[1, 2];
-            }
-
-            KalmanVars.cnt_measures += 1;
-        }
-
-
 
 
 
