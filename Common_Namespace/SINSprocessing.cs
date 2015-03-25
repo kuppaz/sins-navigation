@@ -9,7 +9,7 @@ namespace Common_Namespace
 {
     public class SINSprocessing : SimpleOperations
     {
-        public static double dVh_global = 0.0; 
+        public static double dVh_global = 0.0;
         public static int Can = 0;
 
         public static void Redifinition_OdoCounts(SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod)
