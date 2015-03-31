@@ -17,6 +17,7 @@ namespace SINSProcessingModes
             double[,] distance_GK_Sarat = new double[5, 46];
 
             StreamWriter STD_data = new StreamWriter(SimpleData.PathOutputString + "Debaging//S_STD.txt");
+            StreamWriter ForHelp_2 = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_2.txt");
 
             StreamWriter Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnFeedBack.txt");
             StreamWriter Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S_SlnEstimate.txt");
@@ -85,6 +86,13 @@ namespace SINSProcessingModes
                 SINSprocessing.Make_A(SINSstate, KalmanVars, SINSstate_OdoMod);
                 //if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 //KalmanProcs.KalmanForecast(KalmanVars);
+
+                double dT = SINSstate.timeStep;
+                SINSstate.InertialOdometer = SINSstate.InertialOdometer + dT * (SINSstate.InertialOdometer_V + dT * (SINSstate.F_z[1] - SINSstate.g * Math.Sin(SINSstate.Pitch)));
+                SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_V + dT * (SINSstate.F_z[1] - SINSstate.g * Math.Sin(SINSstate.Pitch));
+                if (i % 10 == 0)
+                    ForHelp_2.WriteLine(SINSstate.Time + " " + SINSstate.InertialOdometer + " " + SINSstate.OdometerData.odometer_left.Value + " " + SINSstate.InertialOdometer_V + " " + SINSstate.OdoSpeed_s[1]);
+                //SINSstate.OdometerData.odometer_left.Value = SINSstate.InertialOdometer;
 
                 SimpleOperations.CopyArray(SINSstate.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdometerVector);
                 if (i % 10 == 0)

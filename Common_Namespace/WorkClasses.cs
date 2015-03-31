@@ -173,6 +173,8 @@ namespace Common_Namespace
         public double OdometerLeftPrev, OdometerRightPrev, OdoAbsSpeed;
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
+        public double InertialOdometer, InertialOdometer_V;
+
         //---Комулятивные величины---
         public double[] Cumulative_KappaEst = new double[3];
         public double[] Cumulative_KalmanErrorVector = new double[SimpleData.iMx], Cumulative_StateErrorVector = new double[9];
