@@ -212,6 +212,7 @@ namespace SINSProcessingModes
                         if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false)
                             //CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
                             CorrectionModel.Make_H_VELOCITY_inertialOdometer(KalmanVars, SINSstate, SINSstate_OdoMod);
+                            //CorrectionModel.Make_H_VELOCITY_inertialOdometer_2(KalmanVars, SINSstate, SINSstate_OdoMod);
                     }
                     //=== КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС ===//
                     else if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.OdometerData.odometer_left.isReady == 1)

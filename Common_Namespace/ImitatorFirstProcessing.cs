@@ -223,9 +223,10 @@ namespace Common_Namespace
             SimpleOperations.CopyArray(Params_df_0_x0, SINSstate.A_x0s * Params_df_0);
 
             outFile.WriteLine("Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Height= " + SINSstate.Altitude + " SINS_Freq= " + 1.0 / SINSstate.timeStep + " df_0(E)= "
-                + Params_df_0_x0[0] + " df_0(N)= " + Params_df_0_x0[1] + " df_s= " + Params_df_s + " nu_0= " + Params_dnu_0_x0[0] + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
+                + Params_df_0_x0[0] + " df_0(N)= " + Params_df_0_x0[1] + " df_s= " + Params_df_s + " nu_x0[0]= " + Params_dnu_0_x0[0] + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
                 + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString()
-                + " Roll= " + SINSstate.Roll + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString());
+                + " Roll= " + SINSstate.Roll + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString()
+                + " nu_z0= " + Params_dnu_0[0]);
 
 
             int t = 0;

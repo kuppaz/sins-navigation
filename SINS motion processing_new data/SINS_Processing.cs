@@ -58,8 +58,8 @@ namespace SINS_motion_processing_new_data
             //------------------------------------------------------------------------
 
             //---для имитатора---
-            ParamStart.Imitator_addNoisSample_DUS = true;
-            ParamStart.Imitator_addNoisSample_ACCS = true;
+            ParamStart.Imitator_addNoisSample_DUS = false;
+            ParamStart.Imitator_addNoisSample_ACCS = false;
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
             ParamStart.Imitator_Noise_Vel = 3E-3; 
             ParamStart.Imitator_Noise_Angl = 3E-5;
@@ -67,10 +67,10 @@ namespace SINS_motion_processing_new_data
             //Нужно как-то свести к одному виду задание частоты в имитаторе. Видимо придется вставлять ReSample в код сюда.
             //+привести в ходные файлы в единый формат (в первой строке должна идти частота)
             //+все настройки параметров вынести сюда
-            ParamStart.Imitator_addNoisSamplePath_DUS = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
-            //ParamStart.Imitator_addNoisSamplePath_DUS = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
+            ParamStart.Imitator_addNoisSamplePath_DUS = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
+            //ParamStart.Imitator_addNoisSamplePath_DUS = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
 
-            ParamStart.Imitator_addNoisSamplePath_ACCS = "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
+            ParamStart.Imitator_addNoisSamplePath_ACCS = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;

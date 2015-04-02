@@ -63,7 +63,7 @@ namespace MovingImitator
             Matrix A_odoZ = new Matrix(3, 3);
 
             //FileStream FileExitInfoClear = new FileStream("ExitInfoClear.dat", FileMode.OpenOrCreate, FileAccess.Write);
-            StreamWriter ExitInfoClear = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//Imitator_data//ExitInfoClear.dat");
+            StreamWriter ExitInfoClear = new StreamWriter("D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//ExitInfoClear.dat");
             ExitInfoClear.WriteLine("Time \t f_s1 \t f_s2 \t f_s3 \t W_s1 \t W_s2 \t W_s3 \t Velocity_s[0] \t Velocity_s[1] \t Velocity_s[2] \t Velocity_x0_1 \t Velocity_x0_2 \t Velocity_x0_3 CourseHeading  CoursePitch  beta_c  alpha_c  gamma_c  \t Heading \t Roll \t Pitch \t Latitude \t Longitude \t Altitude \t OdoLatitude \t OdoLongitude \t OdoAltitude");
 
             StreamWriter Imitator_Data_for_Process = new StreamWriter(SimpleData.PathInputString + "Imitator_Analytic_Clear.dat");
@@ -113,7 +113,7 @@ namespace MovingImitator
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 26000.0)
+            while (CurTimeWithAlign < 2000.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
