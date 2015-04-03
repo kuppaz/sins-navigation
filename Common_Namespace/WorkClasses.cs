@@ -162,7 +162,7 @@ namespace Common_Namespace
 
         //---Начальные  сигма для матриц S---
         public double[] stdF = new double[3];
-        public double stdR, stdOdoR, stdV, stdAlpha1, stdAlpha2, stdBeta3, stdNu, stdScale, stdKappa1, stdKappa3;
+        public double stdR, stdOdoR, stdV, stdAlpha1, stdAlpha2, stdBeta3, stdNu, stdNu_Oz1, stdScale, stdKappa1, stdKappa3;
 
         //---Ошибки вектора состояния системы---
         public double DeltaLatitude, DeltaLongitude, DeltaV_1, DeltaV_2, DeltaV_3, DeltaHeading, DeltaRoll, DeltaPitch, DeltaAltitude;
@@ -187,7 +187,7 @@ namespace Common_Namespace
 
         public bool flag_iMqDeltaR = false, flag_iMqDeltaF = false, flag_iMqDeltaNu = false, flag_iMqVarkappa13 = false, flag_iMqKappa = false, flag_iMqDeltaRodo = false;
         public bool flag_AccuracyClass_NoErr;
-        public bool flag_AccuracyClass_0_02grph, flag_AccuracyClass_2_0_grph, flag_AccuracyClass_0_2_grph;
+        public bool flag_AccuracyClass_0_02grph, flag_AccuracyClass_2_0_grph, flag_AccuracyClass_0_2_grph, flag_AccuracyClass_Custom, flag_AccuracyClass_Rebuild;
 
         public double odotime_cur, odotime_prev;
         public bool flag_ControlPointCorrection;

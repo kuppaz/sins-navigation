@@ -74,12 +74,29 @@ namespace Common_Namespace
                         Params_df_0[j] = 1E-3; //далее умножается G
                         Params_dnu_0[j] = 2.0; //град/час
                     }
+                if (SINSstate.flag_AccuracyClass_Custom)
+                {
+                    //Params_df_0[0] = 3E-4;
+                    //Params_df_0[1] = 2E-4;
+                    //Params_df_0[2] = 1E-4;
+                    //Params_dnu_0[0] = 0.005;
+                    //Params_dnu_0[1] = -0.003;
+                    //Params_dnu_0[2] = 0.004;
+
+                    Params_df_0[0] = 1E-5;
+                    Params_df_0[1] = 1E-5;
+                    Params_df_0[2] = 1E-5;
+                    Params_dnu_0[0] = 0.003;
+                    Params_dnu_0[1] = 0.003;
+                    Params_dnu_0[2] = 0.003;
+                }
             }
-            //----------------------------------------------------------------------------------------//
 
 
 
-
+            //----------------------------------------------------------------------------------------
+            //---------------------------------READING NOIS SAMPLES---------------------------------------
+            
             int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
             double[] avgSampleAccs = new double[3], avgSampleDUC = new double[3];
             double[] noisSampleDUS_1, noisSampleDUS_2, noisSampleDUS_3, noisSampleAccs_1, noisSampleAccs_2, noisSampleAccs_3;
@@ -104,7 +121,7 @@ namespace Common_Namespace
             noisSampleDUS_3 = new double[noisSampleCountDUS];
             if (ParamStart.Imitator_addNoisSample_DUS)
             {
-                if (ParamStart.Imitator_addNoisSamplePath_DUS == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt")
+                if (ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "20141207_AA_sensors.txt")
                 {
                     for (int i = 0; i < noisSampleCountDUS; i++)
                     {
@@ -129,7 +146,7 @@ namespace Common_Namespace
                         noisSampleDUS_3[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
                     }
                 }
-                else if (ParamStart.Imitator_addNoisSamplePath_DUS == "D://SINS Solution//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat")
+                else if (ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat")
                 {
                     for (int i = 0; i < noisSampleCountDUS; i++)
                     {
@@ -194,26 +211,11 @@ namespace Common_Namespace
                 }
             }
 
-            if (ParamStart.Imitator_addNoisSample_ACCS || ParamStart.Imitator_addNoisSample_DUS)
-            {
-                Params_df_0[0] = 3E-4;
-                Params_df_0[1] = 2E-4;
-                Params_df_0[2] = 1E-4;
-                Params_dnu_0[0] = 0.005;
-                Params_dnu_0[1] = -0.003;
-                Params_dnu_0[2] = 0.004;
-
-                //Params_df_0[0] = 5E-4;
-                //Params_df_0[1] = -5E-4;
-                //Params_df_0[2] = 3E-4;
-                //Params_dnu_0[0] = 0.005;
-                //Params_dnu_0[1] = -0.003;
-                //Params_dnu_0[2] = 0.004;
-            }
 
 
 
-
+            //-------------------------------------------------------------------------------------------------
+            //---------------------------------------------START IMITATION--------------------------------------
 
 
 
@@ -222,14 +224,28 @@ namespace Common_Namespace
             SimpleOperations.CopyArray(Params_dnu_0_x0, SINSstate.A_x0s * Params_dnu_0);
             SimpleOperations.CopyArray(Params_df_0_x0, SINSstate.A_x0s * Params_df_0);
 
-            outFile.WriteLine("Latitude= " + SINSstate.Latitude + " Longitude= " + SINSstate.Longitude + " Height= " + SINSstate.Altitude + " SINS_Freq= " + 1.0 / SINSstate.timeStep + " df_0(E)= "
-                + Params_df_0_x0[0] + " df_0(N)= " + Params_df_0_x0[1] + " df_s= " + Params_df_s + " nu_x0[0]= " + Params_dnu_0_x0[0] + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
-                + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString()
-                + " Roll= " + SINSstate.Roll + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString()
-                + " nu_z0= " + Params_dnu_0[0]);
+            outFile.WriteLine("Latitude= " + SINSstate.Latitude 
+                + " Longitude= " + SINSstate.Longitude 
+                + " Height= " + SINSstate.Altitude 
+                + " SINS_Freq= " + 1.0 / SINSstate.timeStep 
+                + " df_0(E)= " + Params_df_0_x0[0] 
+                + " df_0(N)= " + Params_df_0_x0[1] 
+                + " df_s= " + Params_df_s 
+                + " nu_x0[0]= " + Params_dnu_0_x0[0] 
+                + " nu_s= " + Params_dnu_s 
+                + " OdoKappa1= " + Params_OdoKappa1 
+                + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
+                + " OdoScale= " + Params_OdoScaleErr 
+                + " OdoIncrement= " + Params_OdoIncrement 
+                + " OdoFreq= " + Params_OdoFrequency 
+                + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString()
+                + " Roll= " + SINSstate.Roll 
+                + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString()
+                + " nu_z0[1]= " + Params_dnu_0[0]);
 
 
             int t = 0;
+            double odometer_left_ValueTrue = 0.0;
             for (int i = 1; i < SINSstate.LastCountForRead; i++)
             {
                 ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
@@ -257,7 +273,8 @@ namespace Common_Namespace
                          + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 3) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 3)
                          + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3)
                          + " " + SINSstate.Azimth + " " + SINSstate.OdometerData.odometer_left.isReady
-                         + " " + SINSstate.OdometerData.odometer_left.Value
+                         + " " + OdometerData_odometer_left_Value
+                         + " " + odometer_left_ValueTrue
                          + " " + Math.Round(SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0), 3)
                         ;
                     Autonomous.WriteLine(ProcHelp.datastring);
@@ -268,7 +285,7 @@ namespace Common_Namespace
                 /*------------------------------------FORMING ERRORS-------------------------------------------------*/
 
                 //---расчет с учетом инкремента---//
-                double odometer_left_ValueTrue = SINSstate.OdometerData.odometer_left.Value;
+                odometer_left_ValueTrue = SINSstate.OdometerData.odometer_left.Value;
                 SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value * Params_OdoScaleErr;
                 if (Params_OdoIncrement > 0.001)
                 {

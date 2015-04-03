@@ -105,6 +105,8 @@
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.AccuracyClass_Custom = new System.Windows.Forms.CheckBox();
+            this.AccuracyClass_Rebuild = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -874,7 +876,7 @@
             // AccuracyClass_0_02grph
             // 
             this.AccuracyClass_0_02grph.AutoSize = true;
-            this.AccuracyClass_0_02grph.Location = new System.Drawing.Point(21, 63);
+            this.AccuracyClass_0_02grph.Location = new System.Drawing.Point(21, 66);
             this.AccuracyClass_0_02grph.Name = "AccuracyClass_0_02grph";
             this.AccuracyClass_0_02grph.Size = new System.Drawing.Size(158, 17);
             this.AccuracyClass_0_02grph.TabIndex = 65;
@@ -884,7 +886,7 @@
             // AccuracyClass_0_2_grph
             // 
             this.AccuracyClass_0_2_grph.AutoSize = true;
-            this.AccuracyClass_0_2_grph.Location = new System.Drawing.Point(21, 82);
+            this.AccuracyClass_0_2_grph.Location = new System.Drawing.Point(21, 85);
             this.AccuracyClass_0_2_grph.Name = "AccuracyClass_0_2_grph";
             this.AccuracyClass_0_2_grph.Size = new System.Drawing.Size(152, 17);
             this.AccuracyClass_0_2_grph.TabIndex = 66;
@@ -894,7 +896,7 @@
             // AccuracyClass_2_0_grph
             // 
             this.AccuracyClass_2_0_grph.AutoSize = true;
-            this.AccuracyClass_2_0_grph.Location = new System.Drawing.Point(21, 99);
+            this.AccuracyClass_2_0_grph.Location = new System.Drawing.Point(21, 103);
             this.AccuracyClass_2_0_grph.Name = "AccuracyClass_2_0_grph";
             this.AccuracyClass_2_0_grph.Size = new System.Drawing.Size(152, 17);
             this.AccuracyClass_2_0_grph.TabIndex = 67;
@@ -945,6 +947,8 @@
             // 
             // groupBox14
             // 
+            this.groupBox14.Controls.Add(this.AccuracyClass_Rebuild);
+            this.groupBox14.Controls.Add(this.AccuracyClass_Custom);
             this.groupBox14.Controls.Add(this.AccuracyClass_NoErr);
             this.groupBox14.Controls.Add(this.AccuracyClass_0_0grph);
             this.groupBox14.Controls.Add(this.AccuracyClass_0_02grph);
@@ -952,7 +956,7 @@
             this.groupBox14.Controls.Add(this.AccuracyClass_2_0_grph);
             this.groupBox14.Location = new System.Drawing.Point(232, 241);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(181, 122);
+            this.groupBox14.Size = new System.Drawing.Size(181, 173);
             this.groupBox14.TabIndex = 80;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Aprior SINS Accuracy Class";
@@ -985,6 +989,28 @@
             this.groupBox17.TabIndex = 82;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Matrix Noise Dimension";
+            // 
+            // AccuracyClass_Custom
+            // 
+            this.AccuracyClass_Custom.AutoSize = true;
+            this.AccuracyClass_Custom.Enabled = false;
+            this.AccuracyClass_Custom.Location = new System.Drawing.Point(21, 132);
+            this.AccuracyClass_Custom.Name = "AccuracyClass_Custom";
+            this.AccuracyClass_Custom.Size = new System.Drawing.Size(134, 17);
+            this.AccuracyClass_Custom.TabIndex = 80;
+            this.AccuracyClass_Custom.Text = "AccuracyClass Custom";
+            this.AccuracyClass_Custom.UseVisualStyleBackColor = true;
+            // 
+            // AccuracyClass_Rebuild
+            // 
+            this.AccuracyClass_Rebuild.AutoSize = true;
+            this.AccuracyClass_Rebuild.Enabled = false;
+            this.AccuracyClass_Rebuild.Location = new System.Drawing.Point(35, 149);
+            this.AccuracyClass_Rebuild.Name = "AccuracyClass_Rebuild";
+            this.AccuracyClass_Rebuild.Size = new System.Drawing.Size(99, 17);
+            this.AccuracyClass_Rebuild.TabIndex = 81;
+            this.AccuracyClass_Rebuild.Text = "Rebuild Imitator";
+            this.AccuracyClass_Rebuild.UseVisualStyleBackColor = true;
             // 
             // SINS_Processing
             // 
@@ -1118,6 +1144,8 @@
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.GroupBox groupBox17;
         private System.Windows.Forms.CheckBox flag_VupOdo_till_VupSINS;
+        private System.Windows.Forms.CheckBox AccuracyClass_Rebuild;
+        private System.Windows.Forms.CheckBox AccuracyClass_Custom;
     }
 }
 

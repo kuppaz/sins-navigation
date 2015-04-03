@@ -141,7 +141,7 @@ namespace Common_Namespace
         }
 
 
-        public static void Make_H_VELOCITY_inertialOdometer(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
+        public static void Make_H_VELOCITY_OnlyZeroSide(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
             int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model,
                 iMx_r12_odo = SINSstate.iMx_r12_odo;
@@ -155,7 +155,7 @@ namespace Common_Namespace
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 2] = SINSstate.A_sx0[0, 0];
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 3] = SINSstate.A_sx0[0, 1];
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_V;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.001;
             KalmanVars.cnt_measures += 1;
 
 
@@ -174,7 +174,7 @@ namespace Common_Namespace
                 KalmanVars.cnt_measures += 1;
             }
         }
-        public static void Make_H_VELOCITY_inertialOdometer_2(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
+        public static void Make_H_VELOCITY_inOz(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
             int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model,
                 iMx_r12_odo = SINSstate.iMx_r12_odo;
@@ -191,8 +191,8 @@ namespace Common_Namespace
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 2] = SINSstate.A_sx0[1, 0];
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 3] = SINSstate.A_sx0[1, 1];
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_V / 10.0;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = KalmanVars.OdoNoise_V;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.001;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = KalmanVars.OdoNoise_V / 10.0;
             KalmanVars.cnt_measures += 2;
 
 

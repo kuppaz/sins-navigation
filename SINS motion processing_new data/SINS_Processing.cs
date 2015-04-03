@@ -58,8 +58,8 @@ namespace SINS_motion_processing_new_data
             //------------------------------------------------------------------------
 
             //---для имитатора---
-            ParamStart.Imitator_addNoisSample_DUS = false;
-            ParamStart.Imitator_addNoisSample_ACCS = false;
+            ParamStart.Imitator_addNoisSample_DUS = true;
+            ParamStart.Imitator_addNoisSample_ACCS = true;
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
             ParamStart.Imitator_Noise_Vel = 3E-3; 
             ParamStart.Imitator_Noise_Angl = 3E-5;
@@ -67,10 +67,10 @@ namespace SINS_motion_processing_new_data
             //Нужно как-то свести к одному виду задание частоты в имитаторе. Видимо придется вставлять ReSample в код сюда.
             //+привести в ходные файлы в единый формат (в первой строке должна идти частота)
             //+все настройки параметров вынести сюда
-            ParamStart.Imitator_addNoisSamplePath_DUS = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//20141207_AA_sensors.txt";
-            //ParamStart.Imitator_addNoisSamplePath_DUS = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
+            ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141207_AA_sensors.txt";
+            //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
 
-            ParamStart.Imitator_addNoisSamplePath_ACCS = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//20141212_AA_accselsNoise.dat";
+            ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -89,8 +89,8 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах
-            ParamStart.Modeling_Params_OdoScaleErr = 1.002;
+            ParamStart.Modeling_Params_OdoIncrement = 0.1; // в сантиметрах
+            ParamStart.Modeling_Params_OdoScaleErr = 1.005;
             ParamStart.Modeling_Params_OdoFrequency = 5;
             ParamStart.Modeling_Params_df_s = 100000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
             ParamStart.Modeling_Params_dnu_s = 10000000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
@@ -142,14 +142,21 @@ namespace SINS_motion_processing_new_data
                 DateTime fileCreatedDate2 = File.GetLastWriteTime(this.GlobalPrefixTelemetric + "_Errors.dat");
 
                 //сюда заходим, если уже выбран myFile= Errors
-                if (fileCreatedDate1 < fileCreatedDate2)
+                if (fileCreatedDate1 < fileCreatedDate2 || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true))
                 {
                     ImitatorHeaderReadAndApply();
-                    if ((SINSstate.stdNu == 0.2 && SINSstate.flag_AccuracyClass_0_2_grph == false)
-                        || (SINSstate.stdNu < 0.0001 && SINSstate.flag_AccuracyClass_0_0grph == false)
-                        || (SINSstate.stdNu == 0.02 && SINSstate.flag_AccuracyClass_0_02grph == false)
-                        || (SINSstate.stdNu == 2.0 && SINSstate.flag_AccuracyClass_2_0_grph == false)
-                        || (SINSstate.stdNu < 0.0001 && SINSstate.flag_AccuracyClass_NoErr == false))
+                    if (SINSstate.flag_Autonomous_Solution == false && 
+                            (
+                                (SINSstate.flag_AccuracyClass_Custom == false &&
+                                    (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_0_0grph == false)
+                                    || (SINSstate.stdNu_Oz1 == 0.02 && SINSstate.flag_AccuracyClass_0_02grph == false)
+                                    || (SINSstate.stdNu_Oz1 == 0.2 && SINSstate.flag_AccuracyClass_0_2_grph == false)
+                                    || (SINSstate.stdNu_Oz1 == 2.0 && SINSstate.flag_AccuracyClass_2_0_grph == false)
+                                    || (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_NoErr == false)
+                                )
+                                || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true)
+                            )
+                        )
                     {
                         myFile.Close();
                         myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Clear.dat");
@@ -170,6 +177,10 @@ namespace SINS_motion_processing_new_data
                     SINSstate_OdoMod = new SINS_State();
                     KalmanVars = new Kalman_Vars();
                     ProcHelp = new Proc_Help();
+
+                    //--- Убираем флаг пересчета при кастомизации, чтобы снова не подхватился Clear файл ---
+                    SINSstate.flag_AccuracyClass_Rebuild = false;
+                    this.AccuracyClass_Rebuild.Checked = false;
 
                     this.DefineClassElementAndFlags();
                     this.SelectDataIn();
@@ -354,6 +365,7 @@ namespace SINS_motion_processing_new_data
             SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
             SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
             SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
+            SINSstate.stdNu_Oz1 = Convert.ToDouble(dataArray[35]);
             for (int j = 0; j < 3; j++)
             {
                 if (ParamStart.Imitator_NoiseModelFlag == true)
@@ -561,6 +573,8 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_AccuracyClass_0_02grph = this.AccuracyClass_0_02grph.Checked;
             SINSstate.flag_AccuracyClass_0_2_grph = this.AccuracyClass_0_2_grph.Checked;
             SINSstate.flag_AccuracyClass_2_0_grph = this.AccuracyClass_2_0_grph.Checked;
+            SINSstate.flag_AccuracyClass_Custom = this.AccuracyClass_Custom.Checked;
+            SINSstate.flag_AccuracyClass_Rebuild = this.AccuracyClass_Rebuild.Checked;
 
             //---флаги коррекции---
             SINSstate.flag_UsingOdoVelocity = this.flag_UsingOdoVelocity.Checked;
@@ -572,7 +586,7 @@ namespace SINS_motion_processing_new_data
             DateTime fileCreatedDate1 = File.GetLastWriteTime(FileLink + "_Clear.dat");
             DateTime fileCreatedDate2 = File.GetLastWriteTime(FileLink + "_Errors.dat");
 
-            if (fileCreatedDate1 >= fileCreatedDate2)
+            if (fileCreatedDate1 >= fileCreatedDate2 || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true))
                 myFile = new StreamReader(FileLink + "_Clear.dat");
             else
                 myFile = new StreamReader(FileLink + "_Errors.dat");
@@ -784,6 +798,8 @@ namespace SINS_motion_processing_new_data
 
                 this.AccuracyClass_NoErr.Enabled = true;
                 this.AccuracyClass_0_0grph.Enabled = true;
+                this.AccuracyClass_Custom.Enabled = true;
+                this.AccuracyClass_Rebuild.Enabled = true;
             }
             else
             {
@@ -791,6 +807,8 @@ namespace SINS_motion_processing_new_data
 
                 this.AccuracyClass_NoErr.Enabled = false;
                 this.AccuracyClass_0_0grph.Enabled = false;
+                this.AccuracyClass_Custom.Enabled = false;
+                this.AccuracyClass_Rebuild.Enabled = false;
             }
 
             this.Imitator_Telemetric.Enabled = true;

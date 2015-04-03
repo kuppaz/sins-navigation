@@ -9,7 +9,8 @@ namespace Common_Namespace
     {
         public static string PathInputString = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//All_data//",
                              PathOutputString = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Output//",
-                             PathTelemetricString = "D://SINS Solution//Imitator_Kompas_temp//Work//DataForImitator//Imitator_";
+                             PathTelemetricString = "D://SINS Solution//Imitator_Kompas_temp//Work//DataForImitator//Imitator_",
+                             PathImitatorData = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//";
 
         //public static string PathInputString = "",
         //                     PathOutputString = "",

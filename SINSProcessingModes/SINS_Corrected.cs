@@ -123,16 +123,16 @@ namespace SINSProcessingModes
 
 
 
-                //double dT = SINSstate.timeStep;
-                //double F_z2 = SINSstate.F_z[1];
-                //if (SINSstate.flag_FeedbackExist)
-                //    F_z2 -= SINSstate.Cumulative_KalmanErrorVector[10 + 1];
-                //SINSstate.InertialOdometer = SINSstate.InertialOdometer + dT * (SINSstate.InertialOdometer_V + dT * (F_z2 - SINSstate.g * Math.Sin(SINSstate.Pitch)));
-                //SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_V + dT * (F_z2 - SINSstate.g * Math.Sin(SINSstate.Pitch));
-                ////ForHelp_2.WriteLine(SINSstate.Time + " " + SINSstate.InertialOdometer + " " + SINSstate.OdometerData.odometer_left.Value + " " + SINSstate.InertialOdometer_V + " " + SINSstate.OdoSpeed_s[1]);
+                double dT = SINSstate.timeStep;
+                double F_z2 = SINSstate.F_z[1];
+                if (SINSstate.flag_FeedbackExist)
+                    F_z2 -= SINSstate.Cumulative_KalmanErrorVector[10 + 1];
+                SINSstate.InertialOdometer = SINSstate.InertialOdometer + dT * (SINSstate.InertialOdometer_V + dT * (F_z2 - SINSstate.g * Math.Sin(SINSstate.Pitch)));
+                SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_V + dT * (F_z2 - SINSstate.g * Math.Sin(SINSstate.Pitch));
                 //SINSstate.OdometerData.odometer_left.Value = SINSstate.InertialOdometer;
                 if (SINSstate.Count > 400000)
                     i = i;
+                //SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value / 1.02;
 
 
                 //---------------------------------------------------------------------//
@@ -211,8 +211,8 @@ namespace SINSProcessingModes
                     {
                         if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false)
                             //CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
-                            CorrectionModel.Make_H_VELOCITY_inertialOdometer(KalmanVars, SINSstate, SINSstate_OdoMod);
-                            //CorrectionModel.Make_H_VELOCITY_inertialOdometer_2(KalmanVars, SINSstate, SINSstate_OdoMod);
+                            CorrectionModel.Make_H_VELOCITY_OnlyZeroSide(KalmanVars, SINSstate, SINSstate_OdoMod);
+                            //CorrectionModel.Make_H_VELOCITY_inOz(KalmanVars, SINSstate, SINSstate_OdoMod);
                     }
                     //=== КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС ===//
                     else if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.OdometerData.odometer_left.isReady == 1)
