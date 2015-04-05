@@ -192,7 +192,7 @@ namespace Common_Namespace
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 3] = SINSstate.A_sx0[1, 1];
 
             KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.001;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = KalmanVars.OdoNoise_V / 10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = KalmanVars.OdoNoise_V;
             KalmanVars.cnt_measures += 2;
 
 

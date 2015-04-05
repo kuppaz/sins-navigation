@@ -83,12 +83,12 @@ namespace Common_Namespace
                     //Params_dnu_0[1] = -0.003;
                     //Params_dnu_0[2] = 0.004;
 
-                    Params_df_0[0] = 1E-5;
-                    Params_df_0[1] = 1E-5;
-                    Params_df_0[2] = 1E-5;
-                    Params_dnu_0[0] = 0.003;
-                    Params_dnu_0[1] = 0.003;
-                    Params_dnu_0[2] = 0.003;
+                    Params_df_0[0] = 1E-4;
+                    Params_df_0[1] = 1E-4;
+                    Params_df_0[2] = 1E-4;
+                    Params_dnu_0[0] = 0.03;
+                    Params_dnu_0[1] = 0.03;
+                    Params_dnu_0[2] = 0.03;
                 }
             }
 
@@ -286,16 +286,14 @@ namespace Common_Namespace
 
                 //---расчет с учетом инкремента---//
                 odometer_left_ValueTrue = SINSstate.OdometerData.odometer_left.Value;
-                SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value * Params_OdoScaleErr;
-                if (Params_OdoIncrement > 0.001)
+                OdometerData_odometer_left_Value = SINSstate.OdometerData.odometer_left.Value * Params_OdoScaleErr;
+                if (Params_OdoIncrement > 0.1)
                 {
-                    double tmp1 = Math.Floor(SINSstate.OdometerData.odometer_left.Value);
-                    double tmp2 = Math.Floor(SINSstate.OdometerData.odometer_left.Value * 100) - Math.Floor(SINSstate.OdometerData.odometer_left.Value) * 100;
+                    double tmp1 = Math.Floor(OdometerData_odometer_left_Value);
+                    double tmp2 = Math.Floor(OdometerData_odometer_left_Value * 100) - Math.Floor(OdometerData_odometer_left_Value) * 100;
                     double tmp3 = Math.Floor((tmp2) / Params_OdoIncrement);
                     OdometerData_odometer_left_Value = tmp1 + tmp3 * Params_OdoIncrement / 100.0;
                 }
-                else
-                    OdometerData_odometer_left_Value = SINSstate.OdometerData.odometer_left.Value;
 
                 if (i % Params_OdoFrequency == 0)
                     SINSstate.OdometerData.odometer_left.isReady = 1;

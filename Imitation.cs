@@ -104,7 +104,7 @@ namespace MovingImitator
             Imitator_Data_for_Process.WriteLine("Latitude= " + StartLatitude + " Longitude= " + StartLongitude + " Height= " + StartAltitude + " SINS_Freq= " + 1.0 / dT + " df_0(E)= "
                 + Params_df_0 + " df_0(N)= " + Params_df_0 + " df_s= " + Params_df_s
                 + " nu_0= " + Params_dnu_0 + " nu_s= " + Params_dnu_s + " OdoKappa1= " + Params_OdoKappa1 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) + " OdoScale= " + Params_OdoScaleErr + " OdoIncrement= " + Params_OdoIncrement
-                + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (StartHeading - Params_OdoKappa3).ToString() + " Roll= " + StartRoll + " Pitch= " + (StartPitch + Params_OdoKappa1).ToString());
+                + " OdoFreq= " + Params_OdoFrequency + " Heading= " + (StartHeading - Params_OdoKappa3).ToString() + " Roll= " + StartRoll + " Pitch= " + (StartPitch + Params_OdoKappa1).ToString() + " nu_z2= 0");
 
 
             Random rnd_1 = new Random(), rnd_2 = new Random(), rnd_3 = new Random(), rnd_4 = new Random(), rnd_5 = new Random(), rnd_6 = new Random();
@@ -113,7 +113,7 @@ namespace MovingImitator
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 2000.0)
+            while (CurTimeWithAlign < 3 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
