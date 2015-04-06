@@ -131,28 +131,43 @@ namespace SINSProcessingModes
                 SINSstate.OdoTimeStepCount++;
 
 
-                //--------------------------------------------------------------
-                //--------------------------------------------------------------
+
+                //----------------------------------------------------------------------------------------------------------------------------
+                //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------
+                bool flag_InertialOdometer = false;
+                bool flag_onlyZeroSideVelocity = true;
                 {
-                    //--Интегрировать нужно все тики ньютонометра, а не только последний. Или же среднее значение.
+                    SINSstate.F_z2_localAvg += SINSstate.F_z[1];
                     if (SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
                         SINSstate.InertialOdometer_Count++;
                         double dT = SINSstate.timeStep * SINSstate.OdoTimeStepCount;
 
-                        SINSstate.InertialOdometer_temp += (SINSstate.F_z[1] - SINSstate.g * Math.Sin(SINSstate.Pitch)) * dT * dT;
+                        double Pitch = SINSstate.Pitch;
+                        if (SINSstate.flag_FeedbackExist)
+                            Pitch = SINSstate2.Pitch;
+
+                        SINSstate.InertialOdometer_temp += (SINSstate.F_z2_localAvg / SINSstate.OdoTimeStepCount - SINSstate.g * Math.Sin(Pitch)) * dT * dT;
+                        SINSstate.InertialOdometer_tempDelta += (SINSstate.Cumulative_KalmanErrorVector[10 + 1] - SINSstate.g * Math.Cos(Pitch) * SINSstate.DeltaPitch) * dT * dT;
 
                         SINSstate.InertialOdometer_Increment = SINSstate.InertialOdometer_temp;
-                        //if (SINSstate.flag_FeedbackExist)
-                        //    SINSstate.InertialOdometer_Increment -= SINSstate.Cumulative_KalmanErrorVector[10 + 1] * dT * dT * SINSstate.InertialOdometer_Count;
+                        //--- А здесь + или - ??? Правильно наверно минус, но опыт показывает иное
+                        if (SINSstate.flag_FeedbackExist)
+                            SINSstate.InertialOdometer_Increment += SINSstate.InertialOdometer_tempDelta;
 
                         SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_Increment / dT;
-                        SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerLeftPrev + SINSstate.InertialOdometer_Increment;
+
+                        if (flag_InertialOdometer)
+                            SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerLeftPrev + SINSstate.InertialOdometer_Increment;
+
+                        SINSstate.F_z2_localAvg = 0.0;
                     }
                 }
                 //SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value / 1.005;
-                //--------------------------------------------------------------
-                //--------------------------------------------------------------
+                //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------
+                //------------------------------------------------------------------------------------------------------------------------
+
+
 
 
 
@@ -182,6 +197,12 @@ namespace SINSProcessingModes
 
 
                 //-------------------------- MAIN STEPS ------------------------------//
+                if (SINSstate.flag_FeedbackExist && flag_InertialOdometer)
+                {
+                    SINSstate2.flag_FeedbackExist = false;
+                    SimpleOperations.CopyArray(SINSstate2.F_z, SINSstate.F_z); SimpleOperations.CopyArray(SINSstate2.W_z, SINSstate.W_z);
+                    SINSprocessing.StateIntegration_AT(SINSstate2, KalmanVars, SINSstate2, SINSstate_OdoMod);
+                }
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
 
@@ -225,9 +246,13 @@ namespace SINSProcessingModes
                     if (SINSstate.flag_Odometr_SINS_case == false && SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
                         if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false)
-                            //CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
-                            //CorrectionModel.Make_H_VELOCITY_OnlyZeroSide(KalmanVars, SINSstate, SINSstate_OdoMod);
-                            CorrectionModel.Make_H_VELOCITY_inOz(KalmanVars, SINSstate, SINSstate_OdoMod);
+                        {
+                            if (!flag_onlyZeroSideVelocity)
+                                CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
+                                //CorrectionModel.Make_H_VELOCITY_inOz(KalmanVars, SINSstate, SINSstate_OdoMod);
+                            else
+                                CorrectionModel.Make_H_VELOCITY_OnlyZeroSide(KalmanVars, SINSstate, SINSstate_OdoMod);
+                        }
                     }
                     //=== КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС ===//
                     else if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.OdometerData.odometer_left.isReady == 1)

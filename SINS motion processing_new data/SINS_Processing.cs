@@ -322,6 +322,7 @@ namespace SINS_motion_processing_new_data
             DateTime start = DateTime.Now;
             if (SINSstate.flag_OnlyAlignment == false)
             {
+                SINSstate2 = SINS_State.DeepCopy(SINSstate);
                 ////------БИНС + ОДОМЕТР------
                 if (OnlyIntegrating.Checked == false && SINSstate.flag_OnlyAlignment == false || SINSstate.flag_Odometr_SINS_case == true)
                     SINS_Corrected.SINS_Corrected_Processing(l, false, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);

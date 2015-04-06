@@ -101,6 +101,7 @@ namespace Common_Namespace
         public gps_data GPS_Data = new gps_data();
         public odometer_data OdometerData = new odometer_data();
 
+        public double F_z2_localAvg;
         public double[] F_z = new double[3]
                       , F_x = new double[3]
                       , F_z_prev = new double[3]
@@ -146,7 +147,7 @@ namespace Common_Namespace
         //---Вычисляемые переменные---
         public bool init_bins = false, firstLineRead = false;
         public double[] AlignAlgebraDrifts = new double[3];
-        public double GyroHeading, Heading, Roll, Pitch, Heading_prev, Roll_prev, Pitch_prev, Azimth, LongSNS, LatSNS, AltSNS, g, g_0, F_mod, R_e, R_n, HeadingImitator;
+        public double GyroHeading, Heading, Roll, Pitch, PitchAuto, Heading_prev, Roll_prev, Pitch_prev, Azimth, LongSNS, LatSNS, AltSNS, g, g_0, F_mod, R_e, R_n, HeadingImitator;
         public double CourseHeading, CoursePitch, beta_c, gamma_c, alpha_c;
         public double Latitude, Longitude, Altitude, Latitude_Start, Longitude_Start, Altitude_Start, Latitude_Point, Altitude_prev, Latitude_prev, Longitude_prev;
         public double Latitude_Corr, Longitude_Corr, Altitude_Corr;
@@ -174,7 +175,7 @@ namespace Common_Namespace
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
         public int InertialOdometer_Count;
-        public double InertialOdometer, InertialOdometer_Increment, InertialOdometer_V, InertialOdometer_temp;
+        public double InertialOdometer, InertialOdometer_Increment, InertialOdometer_V, InertialOdometer_temp, InertialOdometer_tempDelta;
 
         //---Комулятивные величины---
         public double[] Cumulative_KappaEst = new double[3];
