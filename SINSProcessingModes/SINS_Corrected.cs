@@ -123,32 +123,38 @@ namespace SINSProcessingModes
 
 
 
-                double dT = SINSstate.timeStep;
-                double F_z2 = SINSstate.F_z[1];
-
-                double tst = 0.0;
-                {
-                    SINSstate.InertialOdometer = SINSstate.InertialOdometer + dT * (SINSstate.InertialOdometer_V + dT * (F_z2 - SINSstate.g * Math.Sin(SINSstate.Pitch)));
-                    SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_V + dT * (F_z2 - SINSstate.g * Math.Sin(SINSstate.Pitch));
-
-                    tst = SINSstate.InertialOdometer;
-                    if (SINSstate.flag_FeedbackExist)
-                    {
-                        //tst = SINSstate.InertialOdometer - SINSstate.Cumulative_KalmanErrorVector[10 + 1] * (SINSstate.Time) * (SINSstate.Time);
-
-
-                    }
-
-                    SINSstate.OdometerData.odometer_left.Value = tst;
-                }
-                //SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value / 1.005;
-
 
                 //---------------------------------------------------------------------//
 
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
 
                 SINSstate.OdoTimeStepCount++;
+
+
+                //--------------------------------------------------------------
+                //--------------------------------------------------------------
+                {
+                    //--Интегрировать нужно все тики ньютонометра, а не только последний. Или же среднее значение.
+                    if (SINSstate.OdometerData.odometer_left.isReady == 1)
+                    {
+                        SINSstate.InertialOdometer_Count++;
+                        double dT = SINSstate.timeStep * SINSstate.OdoTimeStepCount;
+
+                        SINSstate.InertialOdometer_temp += (SINSstate.F_z[1] - SINSstate.g * Math.Sin(SINSstate.Pitch)) * dT * dT;
+
+                        SINSstate.InertialOdometer_Increment = SINSstate.InertialOdometer_temp;
+                        //if (SINSstate.flag_FeedbackExist)
+                        //    SINSstate.InertialOdometer_Increment -= SINSstate.Cumulative_KalmanErrorVector[10 + 1] * dT * dT * SINSstate.InertialOdometer_Count;
+
+                        SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_Increment / dT;
+                        SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerLeftPrev + SINSstate.InertialOdometer_Increment;
+                    }
+                }
+                //SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value / 1.005;
+                //--------------------------------------------------------------
+                //--------------------------------------------------------------
+
+
 
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
@@ -376,7 +382,7 @@ namespace SINSProcessingModes
             Nav_Smoothed.Close();
             KMLFileOut.Close();
             ForHelp.Close();
-            
+
         }
 
 

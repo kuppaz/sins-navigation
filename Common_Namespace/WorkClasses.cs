@@ -173,7 +173,8 @@ namespace Common_Namespace
         public double OdometerLeftPrev, OdometerRightPrev, OdoAbsSpeed;
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
-        public double InertialOdometer, InertialOdometer_V;
+        public int InertialOdometer_Count;
+        public double InertialOdometer, InertialOdometer_Increment, InertialOdometer_V, InertialOdometer_temp;
 
         //---Комулятивные величины---
         public double[] Cumulative_KappaEst = new double[3];
