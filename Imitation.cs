@@ -113,7 +113,7 @@ namespace MovingImitator
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 3 * 3600.0)
+            while (CurTimeWithAlign < 0.5 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;

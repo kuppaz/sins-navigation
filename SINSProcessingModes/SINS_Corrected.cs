@@ -82,8 +82,8 @@ namespace SINSProcessingModes
             Nav_Errors.WriteLine("Time dLat  dLong dAltitude  dV_x1  dV_x2  dV_x3  dHeading_Grad  dRoll_Grad  dPitch_Grad");
             Nav_Smoothed.WriteLine("time  count LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch ");
             DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3");
-            Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch Correct PositError PositErrStart difHeadingSINStoODO difToTrueHeading");
-            Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_x1  V_x2  V_x3  Correct  Yaw YawCor  Roll RollCor  Pitch PitchCor PositError V_abs");
+            Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS difHeadingSINStoODO difToTrueHeading");
+            Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_abs");
 
 
 
@@ -135,7 +135,7 @@ namespace SINSProcessingModes
                 //----------------------------------------------------------------------------------------------------------------------------
                 //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------
                 bool flag_InertialOdometer = false;
-                bool flag_onlyZeroSideVelocity = true;
+                bool flag_onlyZeroSideVelocity = false;
                 {
                     SINSstate.F_z2_localAvg += SINSstate.F_z[1];
                     if (SINSstate.OdometerData.odometer_left.isReady == 1)
@@ -162,6 +162,9 @@ namespace SINSProcessingModes
 
                         SINSstate.F_z2_localAvg = 0.0;
                     }
+
+                    //if (i == 200000)
+                    //    break;
                 }
                 //SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value / 1.005;
                 //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------

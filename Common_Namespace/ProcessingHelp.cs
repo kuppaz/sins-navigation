@@ -375,15 +375,19 @@ namespace Common_Namespace
                                  + " " + Math.Round(((SINSstate2.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
                                  + " " + Math.Round(((SINSstate2.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate2.Latitude)), 2) + " " + SINSstate2.Altitude
                                  + " " + ((SINSstate2.Latitude)) + " " + ((SINSstate2.Longitude))
+                                 + " " + Math.Round(SINSstate2.Vx_0[0], 3) + " " + Math.Round(SINSstate2.Vx_0[1], 3) + " " + Math.Round(SINSstate2.Vx_0[2], 3)
+                                 //+ " " + ProcHelp.corrected
+                                 //+ " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 4) 
+                                 + " " + Math.Round((SINSstate2.Heading * SimpleData.ToDegree), 4)
+                                 //+ " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 4) 
+                                 + " " + Math.Round((SINSstate2.Roll * SimpleData.ToDegree), 4)
+                                 //+ " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 4) 
+                                 + " " + Math.Round((SINSstate2.Pitch * SimpleData.ToDegree), 4)
+                                 + " " + Math.Round(ProcHelp.distance, 3) 
+                                 + " " + Math.Round(ProcHelp.distance_from_start, 3) + " " + Math.Round(SINSstate.V_norm, 3)
                                  + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate2.Latitude) * SINSstate.R_n), 2)
                                  + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate2.Longitude) * SINSstate.R_e * Math.Cos(SINSstate2.Latitude)), 2)
                                  + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
-                                 + " " + Math.Round(SINSstate2.Vx_0[0], 3) + " " + Math.Round(SINSstate2.Vx_0[1], 3) + " " + Math.Round(SINSstate2.Vx_0[2], 3)
-                                 + " " + ProcHelp.corrected
-                                 + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Heading * SimpleData.ToDegree), 4)
-                                 + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Roll * SimpleData.ToDegree), 4)
-                                 + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 4) + " " + Math.Round((SINSstate2.Pitch * SimpleData.ToDegree), 4)
-                                 + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3) + " " + Math.Round(SINSstate.V_norm, 3)
                                  + " " + SINSstate.OdometerVector[1] + " " + SINSstate.OdoSpeed_x0[1]
                                  ;
                 Nav_EstimateSolution.WriteLine(ProcHelp.datastring);
@@ -421,13 +425,15 @@ namespace Common_Namespace
                                         + " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2) + " " + SINSstate.Altitude
                                         + " " + ((SINSstate.Latitude)) + " " + ((SINSstate.Longitude))
-                                        + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 2)
-                                        + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2)
-                                        + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
                                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
                                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
-                                        + " " + ProcHelp.corrected + " " + ProcHelp.distance + " " + ProcHelp.distance_from_start
+                                        //+ " " + ProcHelp.corrected 
+                                        + " " + ProcHelp.distance 
+                                        + " " + ProcHelp.distance_from_start
+                                        + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 2)
+                                        + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2)
+                                        + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
                                         + " " + Math.Round((SINSstate.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8);
                     ;
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);
