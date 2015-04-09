@@ -83,12 +83,12 @@ namespace Common_Namespace
                     //Params_dnu_0[1] = -0.003;
                     //Params_dnu_0[2] = 0.004;
 
-                    Params_df_0[0] = 1E-4;
-                    Params_df_0[1] = 1E-4;
-                    Params_df_0[2] = 1E-4;
-                    Params_dnu_0[0] = 0.2;
-                    Params_dnu_0[1] = 0.2;
-                    Params_dnu_0[2] = 0.2;
+                    Params_df_0[0] = 1E-5;
+                    Params_df_0[1] = 1E-5;
+                    Params_df_0[2] = 1E-5;
+                    Params_dnu_0[0] = 0.03;
+                    Params_dnu_0[1] = 0.03;
+                    Params_dnu_0[2] = 0.03;
                 }
             }
 

@@ -134,7 +134,7 @@ namespace SINSProcessingModes
 
                 //----------------------------------------------------------------------------------------------------------------------------
                 //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------
-                bool flag_InertialOdometer = false;
+                bool flag_InertialOdometer = true;
                 bool flag_onlyZeroSideVelocity = false;
                 {
                     SINSstate.F_z2_localAvg += SINSstate.F_z[1];
@@ -158,7 +158,10 @@ namespace SINSProcessingModes
                         SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_Increment / dT;
 
                         if (flag_InertialOdometer)
+                        {
+                            KalmanVars.OdoNoise_V = 5.0;
                             SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerLeftPrev + SINSstate.InertialOdometer_Increment;
+                        }
 
                         SINSstate.F_z2_localAvg = 0.0;
                     }
