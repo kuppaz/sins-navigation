@@ -78,26 +78,26 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
             ParamStart.Imitator_Noise_Accel = 0.000000002;
 
-            ParamStart.Imitator_stdR = 1.1;
-            ParamStart.Imitator_stdOdoR = 1.1; // метров
+            ParamStart.Imitator_stdR = 0.5;
+            ParamStart.Imitator_stdOdoR = 0.5; // метров
             ParamStart.Imitator_stdV = 0.1;
             ParamStart.Imitator_stdScale = 0.01;
-            ParamStart.Imitator_stdKappa1 = 10.0; //минут
-            ParamStart.Imitator_stdKappa3 = 10.0; //минут
+            ParamStart.Imitator_stdKappa1 = 5.0; //минут
+            ParamStart.Imitator_stdKappa3 = 5.0; //минут
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 30000.0;
+            ParamStart.Imitator_GPS_IsReadyDistance = 10000.0;
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoIncrement = 0.1; // в сантиметрах
-            ParamStart.Modeling_Params_OdoScaleErr = 1.005;
+            ParamStart.Modeling_Params_OdoIncrement = 1.0; // в сантиметрах
+            ParamStart.Modeling_Params_OdoScaleErr = 1.01;
             ParamStart.Modeling_Params_OdoFrequency = 5;
             ParamStart.Modeling_Params_df_s = 100000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
             ParamStart.Modeling_Params_dnu_s = 10000000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
 
             //---Если хочешь маленькую ошибку масштаба, то нужно и маленький OdoIncrement, иначе не будет чувствоваться
             if (Math.Abs(ParamStart.Modeling_Params_OdoScaleErr - 1.0) < 0.01)
-                ParamStart.Modeling_Params_OdoIncrement = 0.1;
+                ParamStart.Modeling_Params_OdoIncrement = 1.0;
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
@@ -151,12 +151,12 @@ namespace SINS_motion_processing_new_data
                     ImitatorHeaderReadAndApply();
                     if (SINSstate.flag_Autonomous_Solution == false && 
                             (
-                                (SINSstate.flag_AccuracyClass_Custom == false &&
+                                (SINSstate.flag_AccuracyClass_Custom == false && (
                                     (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_0_0grph == false)
                                     || (SINSstate.stdNu_Oz1 == 0.02 && SINSstate.flag_AccuracyClass_0_02grph == false)
                                     || (SINSstate.stdNu_Oz1 == 0.2 && SINSstate.flag_AccuracyClass_0_2_grph == false)
                                     || (SINSstate.stdNu_Oz1 == 2.0 && SINSstate.flag_AccuracyClass_2_0_grph == false)
-                                    || (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_NoErr == false)
+                                    || (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_NoErr == false))
                                 )
                                 || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true)
                             )
@@ -173,6 +173,7 @@ namespace SINS_motion_processing_new_data
                 if (fileCreatedDate1 >= fileCreatedDate2)
                 {
                     ImitatorHeaderReadAndApply();
+                    SINSstate.flag_iMx_r3_dV3 = false; //--- Потом переопределится в DefineClassElementAndFlags
                     ImitatorFirstProcessing.mainProcessing(SINSstate, SINSstate_OdoMod, KalmanVars, ProcHelp, myFile, this.GlobalPrefixTelemetric, ParamStart);
 
                     myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Errors.dat");

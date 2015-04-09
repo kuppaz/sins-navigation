@@ -153,7 +153,7 @@ namespace SINSProcessingModes
                         SINSstate.InertialOdometer_Increment = SINSstate.InertialOdometer_temp;
                         //--- А здесь + или - ??? Правильно наверно минус, но опыт показывает иное
                         if (SINSstate.flag_FeedbackExist)
-                            SINSstate.InertialOdometer_Increment += SINSstate.InertialOdometer_tempDelta;
+                            SINSstate.InertialOdometer_Increment -= SINSstate.InertialOdometer_tempDelta;
 
                         SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_Increment / dT;
 
