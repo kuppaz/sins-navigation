@@ -219,10 +219,10 @@ namespace Common_Namespace
             //---КОРРЕКТИРОВАНИЕ ПО СКОРОСТИ В ПРОЕКЦИИ НА ГЕОГРАФИЮ---
             if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
             {
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = -SINSstate.Omega_x[0] * Math.Tan(SINSstate.Latitude);
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo] = SINSstate.Omega_x[0] * Math.Tan(SINSstate.Latitude);
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 0] = -SINSstate.Omega_x[2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_r12_odo] = SINSstate.Omega_x[2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = -SINSstate_OdoMod.Omega_x[0] * Math.Tan(SINSstate_OdoMod.Latitude);
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo] = SINSstate_OdoMod.Omega_x[0] * Math.Tan(SINSstate_OdoMod.Latitude);
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + 0] = -SINSstate_OdoMod.Omega_x[2];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_r12_odo] = SINSstate_OdoMod.Omega_x[2];
             }
 
             if (SINSstate.flag_iMx_kappa_13_ds)
@@ -244,7 +244,6 @@ namespace Common_Namespace
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3 + 1] = 1.0;
-                //ТУТ ПО ХОРОШЕМУ НАДО РАЗБИТЬ НА МОДИФИЦИРОВАННЫЙ И СЛАБОСВЯЗАННЫЕ ВАРИАНТЫ
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_V;
 
                 if (SINSstate.flag_iMx_kappa_13_ds)
@@ -254,9 +253,54 @@ namespace Common_Namespace
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[2, 1];
                 }
 
+                if (SINSstate.flag_OdoSINSWeakConnect_MODIF)
+                {
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures - 2) * iMx + 0] = -SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_e;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures - 2) * iMx + iMx_r12_odo] = SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_e;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures - 1) * iMx + 1] = -SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_n;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures - 1) * iMx + iMx_r12_odo + 1] = SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_n;
+
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo] = -SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 1] = SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 1] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
+                }
+
                 KalmanVars.cnt_measures += 1;
             }
 
+        }
+
+        public static void Make_H_VELOCITY_Mz13(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
+        {
+            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3, iMx_odo_model = SINSstate.iMx_odo_model,
+                iMx_r12_odo = SINSstate.iMx_r12_odo;
+
+            double[] Vz = new double[3];
+            SimpleOperations.CopyArray(Vz, SINSstate.A_sx0 * SINSstate.Vx_0);
+
+            KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = Vz[0];
+
+            KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 2] = SINSstate.A_sx0[0, 0];
+            KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 3] = SINSstate.A_sx0[0, 1];
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
+
+            KalmanVars.cnt_measures += 1;
+
+
+            if (SINSstate.flag_iMx_r3_dV3)
+            {
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures - 1) * iMx + iMx_r3_dV3 + 1] = SINSstate.A_sx0[0, 2];
+
+                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = Vz[2];
+
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 2] = SINSstate.A_sx0[2, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 3] = SINSstate.A_sx0[2, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3 + 1] = SINSstate.A_sx0[2, 2];
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
+
+                KalmanVars.cnt_measures += 1;
+            }
         }
 
 

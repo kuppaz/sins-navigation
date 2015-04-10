@@ -103,10 +103,11 @@
             this.iMSmthd_Is_4 = new System.Windows.Forms.CheckBox();
             this.AccuracyClass_0_0grph = new System.Windows.Forms.CheckBox();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.AccuracyClass_Rebuild = new System.Windows.Forms.CheckBox();
+            this.AccuracyClass_Custom = new System.Windows.Forms.CheckBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.AccuracyClass_Custom = new System.Windows.Forms.CheckBox();
-            this.AccuracyClass_Rebuild = new System.Windows.Forms.CheckBox();
+            this.flag_onlyZeroSideVelocity = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -324,10 +325,11 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.flag_onlyZeroSideVelocity);
             this.groupBox1.Controls.Add(this.flag_UsingOdoVelocity);
             this.groupBox1.Location = new System.Drawing.Point(15, 127);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(159, 47);
+            this.groupBox1.Size = new System.Drawing.Size(159, 61);
             this.groupBox1.TabIndex = 30;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Correction by Velocity";
@@ -335,7 +337,7 @@
             // flag_UsingOdoVelocity
             // 
             this.flag_UsingOdoVelocity.AutoSize = true;
-            this.flag_UsingOdoVelocity.Location = new System.Drawing.Point(18, 21);
+            this.flag_UsingOdoVelocity.Location = new System.Drawing.Point(21, 20);
             this.flag_UsingOdoVelocity.Name = "flag_UsingOdoVelocity";
             this.flag_UsingOdoVelocity.Size = new System.Drawing.Size(117, 17);
             this.flag_UsingOdoVelocity.TabIndex = 16;
@@ -347,7 +349,7 @@
             // 
             this.groupBox2.Controls.Add(this.add_velocity_to_position);
             this.groupBox2.Controls.Add(this.flag_UsingOdoPosition);
-            this.groupBox2.Location = new System.Drawing.Point(15, 180);
+            this.groupBox2.Location = new System.Drawing.Point(15, 194);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(159, 72);
             this.groupBox2.TabIndex = 31;
@@ -422,7 +424,7 @@
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.usingSNS);
-            this.groupBox4.Location = new System.Drawing.Point(15, 258);
+            this.groupBox4.Location = new System.Drawing.Point(15, 272);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(159, 45);
             this.groupBox4.TabIndex = 33;
@@ -588,7 +590,7 @@
             this.groupBox10.Controls.Add(this.groupBox3);
             this.groupBox10.Location = new System.Drawing.Point(553, 72);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(189, 310);
+            this.groupBox10.Size = new System.Drawing.Size(189, 329);
             this.groupBox10.TabIndex = 39;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Correction Modes";
@@ -961,6 +963,28 @@
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Aprior SINS Accuracy Class";
             // 
+            // AccuracyClass_Rebuild
+            // 
+            this.AccuracyClass_Rebuild.AutoSize = true;
+            this.AccuracyClass_Rebuild.Enabled = false;
+            this.AccuracyClass_Rebuild.Location = new System.Drawing.Point(35, 149);
+            this.AccuracyClass_Rebuild.Name = "AccuracyClass_Rebuild";
+            this.AccuracyClass_Rebuild.Size = new System.Drawing.Size(99, 17);
+            this.AccuracyClass_Rebuild.TabIndex = 81;
+            this.AccuracyClass_Rebuild.Text = "Rebuild Imitator";
+            this.AccuracyClass_Rebuild.UseVisualStyleBackColor = true;
+            // 
+            // AccuracyClass_Custom
+            // 
+            this.AccuracyClass_Custom.AutoSize = true;
+            this.AccuracyClass_Custom.Enabled = false;
+            this.AccuracyClass_Custom.Location = new System.Drawing.Point(21, 132);
+            this.AccuracyClass_Custom.Name = "AccuracyClass_Custom";
+            this.AccuracyClass_Custom.Size = new System.Drawing.Size(134, 17);
+            this.AccuracyClass_Custom.TabIndex = 80;
+            this.AccuracyClass_Custom.Text = "AccuracyClass Custom";
+            this.AccuracyClass_Custom.UseVisualStyleBackColor = true;
+            // 
             // groupBox16
             // 
             this.groupBox16.Controls.Add(this.flag_Smoothing);
@@ -990,27 +1014,15 @@
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Matrix Noise Dimension";
             // 
-            // AccuracyClass_Custom
+            // flag_onlyZeroSideVelocity
             // 
-            this.AccuracyClass_Custom.AutoSize = true;
-            this.AccuracyClass_Custom.Enabled = false;
-            this.AccuracyClass_Custom.Location = new System.Drawing.Point(21, 132);
-            this.AccuracyClass_Custom.Name = "AccuracyClass_Custom";
-            this.AccuracyClass_Custom.Size = new System.Drawing.Size(134, 17);
-            this.AccuracyClass_Custom.TabIndex = 80;
-            this.AccuracyClass_Custom.Text = "AccuracyClass Custom";
-            this.AccuracyClass_Custom.UseVisualStyleBackColor = true;
-            // 
-            // AccuracyClass_Rebuild
-            // 
-            this.AccuracyClass_Rebuild.AutoSize = true;
-            this.AccuracyClass_Rebuild.Enabled = false;
-            this.AccuracyClass_Rebuild.Location = new System.Drawing.Point(35, 149);
-            this.AccuracyClass_Rebuild.Name = "AccuracyClass_Rebuild";
-            this.AccuracyClass_Rebuild.Size = new System.Drawing.Size(99, 17);
-            this.AccuracyClass_Rebuild.TabIndex = 81;
-            this.AccuracyClass_Rebuild.Text = "Rebuild Imitator";
-            this.AccuracyClass_Rebuild.UseVisualStyleBackColor = true;
+            this.flag_onlyZeroSideVelocity.AutoSize = true;
+            this.flag_onlyZeroSideVelocity.Location = new System.Drawing.Point(35, 39);
+            this.flag_onlyZeroSideVelocity.Name = "flag_onlyZeroSideVelocity";
+            this.flag_onlyZeroSideVelocity.Size = new System.Drawing.Size(110, 17);
+            this.flag_onlyZeroSideVelocity.TabIndex = 17;
+            this.flag_onlyZeroSideVelocity.Text = "Only Vz1, Vz3 = 0";
+            this.flag_onlyZeroSideVelocity.UseVisualStyleBackColor = true;
             // 
             // SINS_Processing
             // 
@@ -1146,6 +1158,7 @@
         private System.Windows.Forms.CheckBox flag_VupOdo_till_VupSINS;
         private System.Windows.Forms.CheckBox AccuracyClass_Rebuild;
         private System.Windows.Forms.CheckBox AccuracyClass_Custom;
+        private System.Windows.Forms.CheckBox flag_onlyZeroSideVelocity;
     }
 }
 

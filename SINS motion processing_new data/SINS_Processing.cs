@@ -584,6 +584,7 @@ namespace SINS_motion_processing_new_data
 
             //---флаги коррекции---
             SINSstate.flag_UsingOdoVelocity = this.flag_UsingOdoVelocity.Checked;
+            SINSstate.flag_onlyZeroSideVelocity = this.flag_onlyZeroSideVelocity.Checked;
             SINSstate.flag_UsingOdoPosition = this.flag_UsingOdoPosition.Checked;
         }
 

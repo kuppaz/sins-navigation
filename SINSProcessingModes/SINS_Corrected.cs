@@ -134,8 +134,7 @@ namespace SINSProcessingModes
 
                 //----------------------------------------------------------------------------------------------------------------------------
                 //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------
-                bool flag_InertialOdometer = true;
-                bool flag_onlyZeroSideVelocity = false;
+                bool flag_InertialOdometer = false;
                 {
                     SINSstate.F_z2_localAvg += SINSstate.F_z[1];
                     if (SINSstate.OdometerData.odometer_left.isReady == 1)
@@ -253,11 +252,10 @@ namespace SINSProcessingModes
                     {
                         if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false)
                         {
-                            if (!flag_onlyZeroSideVelocity)
+                            if (!SINSstate.flag_onlyZeroSideVelocity)
                                 CorrectionModel.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
-                                //CorrectionModel.Make_H_VELOCITY_inOz(KalmanVars, SINSstate, SINSstate_OdoMod);
                             else
-                                CorrectionModel.Make_H_VELOCITY_OnlyZeroSide(KalmanVars, SINSstate, SINSstate_OdoMod);
+                                CorrectionModel.Make_H_VELOCITY_Mz13(KalmanVars, SINSstate, SINSstate_OdoMod);
                         }
                     }
                     //=== КОРРЕКЦИЯ В СЛУЧАЕ ОДОМЕТР + БИНС ===//
@@ -267,7 +265,12 @@ namespace SINSProcessingModes
                             Odometr_SINS.Make_H_POSITION(KalmanVars, SINSstate, SINSstate_OdoMod, ProcHelp);
 
                         if (SINSstate.flag_UsingOdoVelocity == true && SINSstate.flag_ZUPT == false)
-                            Odometr_SINS.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
+                        {
+                            if (!SINSstate.flag_onlyZeroSideVelocity)
+                                Odometr_SINS.Make_H_VELOCITY(KalmanVars, SINSstate, SINSstate_OdoMod);
+                            else
+                                Odometr_SINS.Make_H_VELOCITY_Mz13(KalmanVars, SINSstate, SINSstate_OdoMod);
+                        }
                     }
 
                     //=== SNS коррекция ===//
