@@ -204,7 +204,7 @@ namespace Common_Namespace
         public double[,] MarkersInputData = new double[1000, 7];
         public double CountPrev;
         public bool flag_AccuracyClass_0_0grph;
-        public double Imitator_GPS_PositionError;
+        public double Noise_GPS_PositionError;
         public bool flag_VupOdo_till_VupSINS;
 
         public static SINS_State DeepCopy(SINS_State other)

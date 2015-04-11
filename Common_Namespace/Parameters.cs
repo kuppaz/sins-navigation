@@ -217,14 +217,15 @@ namespace Common_Namespace
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
-                KalmanVars.OdoNoise_STOP = 0.01;
+                KalmanVars.OdoNoise_STOP = 0.5;
 
                 //=== 
+                //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // Брать модельные значения, а не задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-4; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 3E-6; //3E-6- optim
-                ParamStart.Experiment_stdR = 1.0;
-                ParamStart.Experiment_stdOdoR = 1.0; // метров
+                ParamStart.Experiment_stdR = 0.5;
+                ParamStart.Experiment_stdOdoR = 0.5; // метров
                 ParamStart.Experiment_stdV = 0.1;
                 ParamStart.Experiment_stdScale = 0.01;
                 ParamStart.Experiment_stdKappa1 = 5.0; //минут
@@ -232,14 +233,14 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
                 //===
 
-                KalmanVars.Noise_Pos = 1.1;
+                KalmanVars.Noise_Pos = 0.5;
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.0001;
                 KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
 
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 43.0851083 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 56.28939 * SimpleData.ToRadian;
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 0.7520087;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 0.9824307;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 91.48914;
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;

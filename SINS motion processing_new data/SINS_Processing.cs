@@ -197,9 +197,9 @@ namespace SINS_motion_processing_new_data
 
 
             if (SINSstate.Global_file.ToLower().Contains("imitator"))
-                SINSstate.Imitator_GPS_PositionError = ParamStart.Imitator_GPS_PositionError;
+                SINSstate.Noise_GPS_PositionError = ParamStart.Imitator_GPS_PositionError;
             else
-                SINSstate.Imitator_GPS_PositionError = 2.0;
+                SINSstate.Noise_GPS_PositionError = ParamStart.Experiment_GPS_PositionError;
 
 
 
