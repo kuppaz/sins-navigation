@@ -196,15 +196,15 @@ namespace SINS_motion_processing_new_data
 
 
 
+            //---Инициализация начальных условий при отсутствии выставки---//
+            Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);     
+
+
             if (SINSstate.Global_file.ToLower().Contains("imitator"))
                 SINSstate.Noise_GPS_PositionError = ParamStart.Imitator_GPS_PositionError;
             else
                 SINSstate.Noise_GPS_PositionError = ParamStart.Experiment_GPS_PositionError;
 
-
-
-            //---Инициализация начальных условий при отсутствии выставки---//
-            Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);     
 
 
 
