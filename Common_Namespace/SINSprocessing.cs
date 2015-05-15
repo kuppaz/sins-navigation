@@ -71,19 +71,33 @@ namespace Common_Namespace
 
             SINSstate.DeltaV_1 = ErrorVector[2] + SINSstate.Vx_0[1] * ErrorVector[6] + SINSstate.Vx_0[1] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
             SINSstate.DeltaV_2 = ErrorVector[3] - SINSstate.Vx_0[0] * ErrorVector[6] - SINSstate.Vx_0[0] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
+            //--- В случае обратных связей не должно быть списывания углов бетта
+            if (!SINSstate.flag_FeedbackExist)
+            {
+                SINSstate.DeltaV_1 += SINSstate.Vx_0[1] * ErrorVector[6] + SINSstate.Vx_0[1] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
+                SINSstate.DeltaV_2 += - SINSstate.Vx_0[0] * ErrorVector[6] - SINSstate.Vx_0[0] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
+            }
 
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 SINSstate.DeltaAltitude = ErrorVector[SINSstate.iMx_r3_dV3];
+                SINSstate.DeltaV_3 = ErrorVector[SINSstate.iMx_r3_dV3 + 1];
 
-                SINSstate.DeltaV_1 += SINSstate.Vx_0[2] * (ErrorVector[0] / SINSstate.R_e - ErrorVector[5]);
-                SINSstate.DeltaV_2 += SINSstate.Vx_0[2] * (ErrorVector[1] / SINSstate.R_n - ErrorVector[4]);
-                SINSstate.DeltaV_3 = ErrorVector[SINSstate.iMx_r3_dV3 + 1] + SINSstate.Vx_0[0] * (ErrorVector[5] - ErrorVector[0] / SINSstate.R_e) - SINSstate.Vx_0[1] * (ErrorVector[4] + ErrorVector[1] / SINSstate.R_n);
+                //--- В случае обратных связей не должно быть списывания углов бетта
+                if (!SINSstate.flag_FeedbackExist)
+                {
+                    SINSstate.DeltaV_1 += SINSstate.Vx_0[2] * (ErrorVector[0] / SINSstate.R_e - ErrorVector[5]);
+                    SINSstate.DeltaV_2 += SINSstate.Vx_0[2] * (ErrorVector[1] / SINSstate.R_n - ErrorVector[4]);
+                    SINSstate.DeltaV_3 += SINSstate.Vx_0[0] * (ErrorVector[5] - ErrorVector[0] / SINSstate.R_e) - SINSstate.Vx_0[1] * (ErrorVector[4] + ErrorVector[1] / SINSstate.R_n);
+                }
             }
 
             SINSstate.DeltaRoll = -(ErrorVector[4] * Math.Sin(SINSstate.Heading) + ErrorVector[5] * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch);
             SINSstate.DeltaPitch = -ErrorVector[4] * Math.Cos(SINSstate.Heading) + ErrorVector[5] * Math.Sin(SINSstate.Heading);
-            SINSstate.DeltaHeading = ErrorVector[6] + SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude) + SINSstate.DeltaRoll * Math.Sin(SINSstate.Pitch);
+            SINSstate.DeltaHeading = ErrorVector[6] + SINSstate.DeltaRoll * Math.Sin(SINSstate.Pitch);
+            //--- В случае обратных связей не должно быть повторного списывания меридиальной составляющей
+            if (!SINSstate.flag_FeedbackExist)
+                SINSstate.DeltaHeading = SINSstate.DeltaHeading + SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
 
 
             //--- Случай Одометр+БИНС. Обратная связть ---//

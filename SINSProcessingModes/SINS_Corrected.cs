@@ -202,6 +202,7 @@ namespace SINSProcessingModes
 
 
                 //-------------------------- MAIN STEPS ------------------------------//
+                KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars);
                 if (SINSstate.flag_FeedbackExist && flag_InertialOdometer)
                 {
                     SINSstate2.flag_FeedbackExist = false;
@@ -211,7 +212,6 @@ namespace SINSProcessingModes
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
 
-                KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars);
                 KalmanProcs.KalmanForecast(KalmanVars);
 
 
