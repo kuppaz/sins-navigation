@@ -113,7 +113,7 @@ namespace MovingImitator
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 3.0 * 3600.0)
+            while (CurTimeWithAlign < 2.0 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -132,8 +132,8 @@ namespace MovingImitator
 
                 //Задание углов ориентации Курса, крена, тангажа и их производных
                 //SINSstate.Heading = StartHeading + 45.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 1000.0 * CurTimeWithAlign);
-                if (CurTimeWithAlign <= 13000.0) SINSstate.Heading = StartHeading + 45.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 100.0 * CurTimeWithAlign);
-                else if (CurTimeWithAlign > 13000.0 && CurTimeWithAlign <= 13100.0) SINSstate.Heading = StartHeading + Math.PI / 3.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 13000.0) / 100.0);
+                if (CurTimeWithAlign <= 12.5 * 3600.0) SINSstate.Heading = StartHeading + 45.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 100.0 * CurTimeWithAlign);
+                else if (CurTimeWithAlign > 12.5 * 3600.0 && CurTimeWithAlign <= 12.5 * 3600.0 + 100) SINSstate.Heading = StartHeading + Math.PI / 3.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 12.5 * 3600.0) / 100.0);
                 else
                     SINSstate.Heading = StartHeading + Math.PI / 3.0 + 45.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 100.0 * CurTimeWithAlign);
 
@@ -193,9 +193,9 @@ namespace MovingImitator
                 //Задание относительной линейной скорости в различных проекциях, а так же их производных
                 SINSstate.Vz[0] = 0.0;
                 SINSstate.Vz[1] = 0.0;
-                if (CurTimeWithAlign > 0.0 && CurTimeWithAlign <= 50.0) SINSstate.Vz[1] = 40.0 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 0) / 50.0);
-                if (CurTimeWithAlign > 50.0 && CurTimeWithAlign <= 25500.0) SINSstate.Vz[1] = 40.0;
-                if (CurTimeWithAlign > 25500.0 && CurTimeWithAlign <= 25550.0) SINSstate.Vz[1] = 40.0 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 25500.0) / 50.0);
+                if (CurTimeWithAlign > 300.0 && CurTimeWithAlign <= 350.0) SINSstate.Vz[1] = 40.0 / 1 * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - 300) / 50.0);
+                if (CurTimeWithAlign > 350.0 && CurTimeWithAlign <= 24.0 * 3600.0) SINSstate.Vz[1] = 40.0 / 1;
+                if (CurTimeWithAlign > 24.0 * 3600.0 && CurTimeWithAlign <= 24.0 * 3600.0 + 50) SINSstate.Vz[1] = 40.0 / 1 * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - 24.0 * 3600.0) / 50.0);
 
                 //if (CurTimeWithAlign > 75.0 && CurTimeWithAlign <= 95.0) SINSstate.Vz[1] = 3.0 * Math.Sin(Math.PI * (CurTimeWithAlign - 75.0) / 20.0);
 
@@ -344,7 +344,7 @@ namespace MovingImitator
                 //SINSstate.W_z[2] -= dW_0;
 
                 //Вывод сформированных данных в файл
-                if (SINSstate.Count % 5 == 0)
+                if (SINSstate.Count % 50 == 0)
                     ExitInfoClear.WriteLine(CurrentTime.ToString() + " " + SINSstate.F_z[0].ToString() + " " + SINSstate.F_z[1].ToString() + " " + SINSstate.F_z[2].ToString() + " " +
                                 SINSstate.W_z[0].ToString() + " " + SINSstate.W_z[1].ToString() + " " + SINSstate.W_z[2].ToString() + " " + SINSstate.Vz[0].ToString() + " " + SINSstate.Vz[1].ToString() + " " + SINSstate.Vz[2].ToString() + " " +
                                 SINSstate.Vx_0[0].ToString() + " " + SINSstate.Vx_0[1].ToString() + " " + SINSstate.Vx_0[2].ToString() + " " +
@@ -352,7 +352,8 @@ namespace MovingImitator
                                 SINSstate.Heading.ToString() + " " + SINSstate.Roll.ToString() + " " + SINSstate.Pitch.ToString() + " " +
                                 SINSstate.Latitude.ToString() + " " + SINSstate.Longitude.ToString() + " " + SINSstate.Altitude.ToString() + " " +
                                 OdometerPosition[0].ToString() + " " + OdometerPosition[1].ToString() + " " + OdometerPosition[2].ToString() + " " +
-                                SimpleOperations.AbsoluteVectorValue(SINSstate.F_z).ToString() + " " + SINSstate.g.ToString());
+                                SimpleOperations.AbsoluteVectorValue(SINSstate.F_z).ToString() + " " + SINSstate.g.ToString()
+                                + " " + SINSstate.OdometerData.odometer_left.Value.ToString());
 
 
                 Imitator_Data_for_Process.WriteLine(SINSstate.Count + " " + SINSstate.F_z[1] + " " + SINSstate.F_z[2] + " " + SINSstate.F_z[0] + " " + SINSstate.W_z[1] + " " + SINSstate.W_z[2] + " " + SINSstate.W_z[0]

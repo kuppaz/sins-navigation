@@ -85,12 +85,12 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdKappa1 = 5.0; //минут
             ParamStart.Imitator_stdKappa3 = 5.0; //минут
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 15000.0;
+            ParamStart.Imitator_GPS_IsReadyDistance = 10000.0;
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoIncrement = 1.0; // в сантиметрах
-            ParamStart.Modeling_Params_OdoScaleErr = 1.005;
+            ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах
+            ParamStart.Modeling_Params_OdoScaleErr = 1.002;
             ParamStart.Modeling_Params_OdoFrequency = 5;
             ParamStart.Modeling_Params_df_s = 100000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
             ParamStart.Modeling_Params_dnu_s = 10000000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
