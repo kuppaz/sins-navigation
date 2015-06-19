@@ -74,18 +74,18 @@ namespace SINS_motion_processing_new_data
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
-            ParamStart.Imitator_Noise_Pos = 0.1;
+            ParamStart.Imitator_Noise_Pos = 0.75;
             ParamStart.Imitator_Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
             ParamStart.Imitator_Noise_Accel = 0.000000002;
 
-            ParamStart.Imitator_stdR = 0.5;
-            ParamStart.Imitator_stdOdoR = 0.5; // метров
+            ParamStart.Imitator_stdR = 1.1;
+            ParamStart.Imitator_stdOdoR = 1.1; // метров
             ParamStart.Imitator_stdV = 0.1;
             ParamStart.Imitator_stdScale = 0.01;
-            ParamStart.Imitator_stdKappa1 = 5.0; //минут
-            ParamStart.Imitator_stdKappa3 = 5.0; //минут
+            ParamStart.Imitator_stdKappa1 = 20.0; //минут
+            ParamStart.Imitator_stdKappa3 = 20.0; //минут
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 10000.0;
+            ParamStart.Imitator_GPS_IsReadyDistance = 30000.0;
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
@@ -371,7 +371,9 @@ namespace SINS_motion_processing_new_data
             SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
             SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
             SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
+            //SINSstate.stdNu = 0.0014142135623731;
             SINSstate.stdNu_Oz1 = Convert.ToDouble(dataArray[35]);
+            //SINSstate.stdNu_Oz1 = 0.005;
             for (int j = 0; j < 3; j++)
             {
                 if (ParamStart.Imitator_NoiseModelFlag == true)

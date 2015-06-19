@@ -389,6 +389,7 @@ namespace Common_Namespace
                                  + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate2.Longitude) * SINSstate.R_e * Math.Cos(SINSstate2.Latitude)), 2)
                                  + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
                                  + " " + SINSstate.OdometerVector[1] + " " + SINSstate.OdoSpeed_x0[1]
+                                 + " " + Math.Round((SINSstate2.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8)
                                  ;
                 Nav_EstimateSolution.WriteLine(ProcHelp.datastring);
 
