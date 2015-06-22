@@ -76,22 +76,22 @@ namespace Common_Namespace
                     }
                 if (SINSstate.flag_AccuracyClass_Custom)
                 {
-                    //Params_df_0[0] = 3E-4;
-                    //Params_df_0[1] = 2E-4;
-                    //Params_df_0[2] = 1E-4;
-                    Params_df_0[0] = 5E-4;
-                    Params_df_0[1] = -5E-4;
-                    Params_df_0[2] = 3E-4;
+                    Params_df_0[0] = 3E-4;
+                    Params_df_0[1] = 2E-4;
+                    Params_df_0[2] = 1E-4;
                     Params_dnu_0[0] = 0.005;
-                    Params_dnu_0[1] = -0.003;
-                    Params_dnu_0[2] = 0.004;
+                    Params_dnu_0[1] = -0.005;
+                    Params_dnu_0[2] = 0.003;
+                    //Params_dnu_0[0] = 0.001;
+                    //Params_dnu_0[1] = 0.001;
+                    //Params_dnu_0[2] = 0.001;
 
-                    //Params_df_0[0] = 1E-5;
-                    //Params_df_0[1] = 1E-5;
-                    //Params_df_0[2] = 1E-5;
-                    //Params_dnu_0[0] = 0.03;
-                    //Params_dnu_0[1] = 0.03;
-                    //Params_dnu_0[2] = 0.03;
+                    //Params_df_0[0] = 1E-7;
+                    //Params_df_0[1] = 1E-7;
+                    //Params_df_0[2] = 1E-7;
+                    //Params_dnu_0[0] = 0.00001;
+                    //Params_dnu_0[1] = 0.00001;
+                    //Params_dnu_0[2] = 0.00001;
                 }
             }
 
@@ -99,7 +99,7 @@ namespace Common_Namespace
 
             //----------------------------------------------------------------------------------------
             //---------------------------------READING NOIS SAMPLES---------------------------------------
-            
+
             int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
             double[] avgSampleAccs = new double[3], avgSampleDUC = new double[3];
             double[] noisSampleDUS_1, noisSampleDUS_2, noisSampleDUS_3, noisSampleAccs_1, noisSampleAccs_2, noisSampleAccs_3;
@@ -227,22 +227,22 @@ namespace Common_Namespace
             SimpleOperations.CopyArray(Params_dnu_0_x0, SINSstate.A_x0s * Params_dnu_0);
             SimpleOperations.CopyArray(Params_df_0_x0, SINSstate.A_x0s * Params_df_0);
 
-            outFile.WriteLine("Latitude= " + SINSstate.Latitude 
-                + " Longitude= " + SINSstate.Longitude 
-                + " Height= " + SINSstate.Altitude 
-                + " SINS_Freq= " + 1.0 / SINSstate.timeStep 
-                + " df_0(E)= " + Params_df_0_x0[0] 
-                + " df_0(N)= " + Params_df_0_x0[1] 
-                + " df_s= " + Params_df_s 
-                + " nu_x0[0]= " + Params_dnu_0_x0[0] 
-                + " nu_s= " + Params_dnu_s 
-                + " OdoKappa1= " + Params_OdoKappa1 
+            outFile.WriteLine("Latitude= " + SINSstate.Latitude
+                + " Longitude= " + SINSstate.Longitude
+                + " Height= " + SINSstate.Altitude
+                + " SINS_Freq= " + 1.0 / SINSstate.timeStep
+                + " df_0(E)= " + Params_df_0_x0[0]
+                + " df_0(N)= " + Params_df_0_x0[1]
+                + " df_s= " + Params_df_s
+                + " nu_x0[0]= " + Params_dnu_0_x0[0]
+                + " nu_s= " + Params_dnu_s
+                + " OdoKappa1= " + Params_OdoKappa1
                 + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
-                + " OdoScale= " + Params_OdoScaleErr 
-                + " OdoIncrement= " + Params_OdoIncrement 
-                + " OdoFreq= " + Params_OdoFrequency 
+                + " OdoScale= " + Params_OdoScaleErr
+                + " OdoIncrement= " + Params_OdoIncrement
+                + " OdoFreq= " + Params_OdoFrequency
                 + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString()
-                + " Roll= " + SINSstate.Roll 
+                + " Roll= " + SINSstate.Roll
                 + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString()
                 + " nu_z0[1]= " + Params_dnu_0[0]);
 
@@ -330,7 +330,7 @@ namespace Common_Namespace
                 SINSstate.W_z[2] -= Params_dnu_0[2] * SimpleData.ToRadian / 3600.0;
 
 
-                
+
 
                 SINSstate.GPS_Data.gps_Latitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Longitude.isReady = 2;
@@ -345,7 +345,7 @@ namespace Common_Namespace
                     SINSstate.GPS_Data.gps_Latitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Longitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Altitude.isReady = 1;
-                    SINSstate.GPS_Data.gps_Latitude.Value +=  (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_n;
+                    SINSstate.GPS_Data.gps_Latitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_n;
                     SINSstate.GPS_Data.gps_Longitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
                     SINSstate.GPS_Data.gps_Altitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError;
                 }
@@ -353,17 +353,18 @@ namespace Common_Namespace
 
 
                 //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
+                double noiseMultiple = 1.0;
                 if (ParamStart.Imitator_addNoisSample_DUS)
                 {
-                    SINSstate.W_z[0] -= noisSampleDUS_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
-                    SINSstate.W_z[1] -= noisSampleDUS_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
-                    SINSstate.W_z[2] -= noisSampleDUS_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS];
+                    SINSstate.W_z[0] -= noisSampleDUS_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS] * noiseMultiple;
+                    SINSstate.W_z[1] -= noisSampleDUS_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS] * noiseMultiple;
+                    SINSstate.W_z[2] -= noisSampleDUS_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS] * noiseMultiple;
                 }
                 if (ParamStart.Imitator_addNoisSample_ACCS)
                 {
-                    SINSstate.F_z[0] += noisSampleAccs_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
-                    SINSstate.F_z[1] += noisSampleAccs_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
-                    SINSstate.F_z[2] += noisSampleAccs_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs];
+                    SINSstate.F_z[0] += noisSampleAccs_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs] * noiseMultiple;
+                    SINSstate.F_z[1] += noisSampleAccs_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs] * noiseMultiple;
+                    SINSstate.F_z[2] += noisSampleAccs_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs] * noiseMultiple;
                 }
                 //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
 
@@ -377,10 +378,10 @@ namespace Common_Namespace
                      + " " + SINSstate.GPS_Data.gps_Latitude.Value.ToString() + " " + SINSstate.GPS_Data.gps_Latitude.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Longitude.Value.ToString()
                      + " " + SINSstate.GPS_Data.gps_Longitude.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.Value.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.isReady.ToString()
                      + " " + SINSstate.Vx_0[1].ToString() + " " + SINSstate.GPS_Data.gps_Vn.isReady.ToString() + " " + SINSstate.Vx_0[0].ToString() + " " + SINSstate.GPS_Data.gps_Ve.isReady.ToString()
-                     + " " + SINSstate.FLG_Stop.ToString() 
+                     + " " + SINSstate.FLG_Stop.ToString()
                      + " " + OdometerData_odometer_left_Value.ToString() + " " + SINSstate.OdometerData.odometer_left.isReady.ToString()
                      + " " + SINSstate.OdometerData.odometer_left.Value.ToString() + " " + SINSstate.OdometerData.odometer_right.isReady.ToString()
-                     + " " + (SINSstate.Heading - Params_OdoKappa3) + " " + SINSstate.Roll + " " + (SINSstate.Pitch + Params_OdoKappa1)); 
+                     + " " + (SINSstate.Heading - Params_OdoKappa3) + " " + SINSstate.Roll + " " + (SINSstate.Pitch + Params_OdoKappa1));
 
 
             }

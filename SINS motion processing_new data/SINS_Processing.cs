@@ -61,7 +61,7 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_addNoisSample_DUS = true;
             ParamStart.Imitator_addNoisSample_ACCS = true;
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-            ParamStart.Imitator_Noise_Vel = 3E-3; 
+            ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
 
             //Нужно как-то свести к одному виду задание частоты в имитаторе. Видимо придется вставлять ReSample в код сюда.
@@ -74,18 +74,18 @@ namespace SINS_motion_processing_new_data
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
-            ParamStart.Imitator_Noise_Pos = 0.75;
+            ParamStart.Imitator_Noise_Pos = 0.1;
             ParamStart.Imitator_Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
             ParamStart.Imitator_Noise_Accel = 0.000000002;
 
-            ParamStart.Imitator_stdR = 1.1;
-            ParamStart.Imitator_stdOdoR = 1.1; // метров
+            ParamStart.Imitator_stdR = 0.5;
+            ParamStart.Imitator_stdOdoR = 0.5; // метров
             ParamStart.Imitator_stdV = 0.1;
             ParamStart.Imitator_stdScale = 0.01;
-            ParamStart.Imitator_stdKappa1 = 20.0; //минут
-            ParamStart.Imitator_stdKappa3 = 20.0; //минут
+            ParamStart.Imitator_stdKappa1 = 5.0; //минут
+            ParamStart.Imitator_stdKappa3 = 5.0; //минут
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 30000.0;
+            ParamStart.Imitator_GPS_IsReadyDistance = 60000.0;
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
@@ -149,7 +149,7 @@ namespace SINS_motion_processing_new_data
                 if (fileCreatedDate1 < fileCreatedDate2 || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true))
                 {
                     ImitatorHeaderReadAndApply();
-                    if (SINSstate.flag_Autonomous_Solution == false && 
+                    if (SINSstate.flag_Autonomous_Solution == false &&
                             (
                                 (SINSstate.flag_AccuracyClass_Custom == false && (
                                     (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_0_0grph == false)
@@ -197,7 +197,7 @@ namespace SINS_motion_processing_new_data
 
 
             //---Инициализация начальных условий при отсутствии выставки---//
-            Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);     
+            Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);
 
 
             if (SINSstate.Global_file.ToLower().Contains("imitator"))
@@ -239,7 +239,7 @@ namespace SINS_motion_processing_new_data
                 if (this.SaratAlignStart.Checked == true || this.SaratENDStart.Checked == true)
                     ProcHelp.AlgnCnt = SINSstate.LastCountForRead;
             }
-            
+
 
 
             SINS_State SINSstate2;
@@ -371,9 +371,7 @@ namespace SINS_motion_processing_new_data
             SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
             SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
             SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
-            //SINSstate.stdNu = 0.0014142135623731;
             SINSstate.stdNu_Oz1 = Convert.ToDouble(dataArray[35]);
-            //SINSstate.stdNu_Oz1 = 0.005;
             for (int j = 0; j < 3; j++)
             {
                 if (ParamStart.Imitator_NoiseModelFlag == true)
@@ -549,7 +547,7 @@ namespace SINS_motion_processing_new_data
 
             if (SINSstate.flag_iMx_kappa_13_ds)
                 SINSstate.iMx_odo_model = value_iMx_kappa_13_ds;
-            
+
 
             //---флаги---
             SINSstate.flag_Autonomous_Solution = this.OnlyIntegrating.Checked;
