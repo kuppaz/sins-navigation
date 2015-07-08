@@ -113,7 +113,7 @@ namespace MovingImitator
             double CurTimeWithAlign = 0.0;
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 14.0 * 3600.0)
+            while (CurTimeWithAlign < 0.5 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -223,12 +223,7 @@ namespace MovingImitator
 
                 /*неправильная формула*/
                 SINSstate.OdoAbsSpeed = Math.Sign(SINSstate.Vz[1]) * SimpleOperations.AbsoluteVectorValue(SINSstate.Vz);
-                //SINSstate.OdoAbsSpeed = SINSstate.OdoAbsSpeed * Math.Cos(SINSstate.beta_c);
-                //SINSstate.OdoAbsSpeed = SINSstate.OdoAbsSpeed * Params_OdoScaleErr;
-                //SINSstate.OdoAbsSpeed = SINSstate.OdoAbsSpeed * Math.Cos(kappa[0]) * Math.Cos(kappa[2]);
-
-
-
+                
 
 
 
@@ -240,15 +235,6 @@ namespace MovingImitator
                 //---Формирование ПОКАЗАНИЙ ОДОМЕТРА---//
                 odometer_left_ValueTrue = odometer_left_ValueTrue + SINSstate.OdoAbsSpeed * dT;
 
-                //---расчет с учетом инкремента---//
-                //if (Params_OdoIncrement > 0.001)
-                //{
-                //    double tmp1 = Math.Floor(odometer_left_ValueTrue);
-                //    double tmp2 = Math.Floor(odometer_left_ValueTrue * 100) - Math.Floor(odometer_left_ValueTrue) * 100;
-                //    double tmp3 = Math.Floor((tmp2) / Params_OdoIncrement);
-                //    SINSstate.OdometerData.odometer_left.Value = tmp1 + tmp3 * Params_OdoIncrement / 100.0;
-                //}
-                //else
                 SINSstate.OdometerData.odometer_left.Value = odometer_left_ValueTrue;
 
                 if (SINSstate.Count % Params_OdoFrequency == 0)
@@ -270,13 +256,6 @@ namespace MovingImitator
                 SINSstate.GPS_Data.gps_Longitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
                 SINSstate.GPS_Data.gps_Altitude.isReady = 2;
-
-                //if (odometer_left_ValueTrue % 30000.0 < SINSstate.Vz[1] * dT + 0.01 && odometer_left_ValueTrue > 1.0)
-                //{
-                //    SINSstate.GPS_Data.gps_Latitude.isReady = 1;
-                //    SINSstate.GPS_Data.gps_Longitude.isReady = 1;
-                //    SINSstate.GPS_Data.gps_Altitude.isReady = 1;
-                //}
 
 
                 //Относительные угловые скорости
@@ -300,50 +279,7 @@ namespace MovingImitator
                 for (int i = 0; i < 3; i++)
                     SINSstate.W_z[i] = RelativeAngular_sx0[i] + RelativeAngular_x0_in_s[i] + SINSstate.u_s[i];
 
-                //-----------------------------------------Информации о местоположении одометра---------------------------------------------
-                //OdometerCoordinate_x0 = Matrix.Multiply(A_x0s, OdometerCoordinate_s);
-                //OdometerPosition[0] = Position[0] + OdometerCoordinate_x0[1] / SimpleOperations.RadiusN(Position[0], Position[2]);
-                //OdometerPosition[1] = Position[1] + OdometerCoordinate_x0[0] / SimpleOperations.RadiusE(Position[0], Position[2]) / Math.Cos(Position[0]);
-                //OdometerPosition[2] = Position[2] + OdometerCoordinate_x0[2];
-
-                //temp = Matrix.Multiply(Matrix.SkewSymmetricMatrix(RelativeAngular_x0s), OdometerCoordinate_x0);
-                //for (int i = 0; i < 3; i++)
-                //    OdometerVelocity_x0[i] = Velocity_x0[i] + temp[i];
-
-                ////Добавление несоосности оси одометра и оси Oz1
-                //temp = Matrix.Multiply(A_odoZ, Matrix.Multiply(A_sx0, OdometerVelocity_x0));
-
-                ////---Формирование самого измерения пройденного пути---//
-                //OdometerMeasure = SimpleOperations.AbsoluteVectorValue(temp);///////////!!!///////////
-
-
-                //---Поворот приборных осей относительно динамической---//
-                //double[] kappa = new double[3];
-                //kappa[0] = Params_OdoKappa1;
-                //kappa[2] = Params_OdoKappa3;
-                //SimpleOperations.CopyArray(SINSstate.F_z, SimpleOperations.A_odoZ(kappa[0], kappa[2]) * SINSstate.F_z);
-                //SimpleOperations.CopyArray(SINSstate.W_z, SimpleOperations.A_odoZ(kappa[0], kappa[2]) * SINSstate.W_z);
-
-                //double df_0 = 9.81 * Params_df_0;
-                //double dW_0 = Params_dnu_0 * SimpleData.ToRadian / 3600.0; //0.2 grad/hour
-
-                //if (Math.Abs(Params_df_s) > 0.001 || Math.Abs(Params_dnu_s) > 0.001)
-                //{
-                //    SINSstate.F_z[0] += (rnd_1.NextDouble() - 0.5) / Params_df_s;
-                //    SINSstate.F_z[1] += (rnd_2.NextDouble() - 0.5) / Params_df_s;
-                //    SINSstate.F_z[2] += (rnd_3.NextDouble() - 0.5) / Params_df_s;
-                //    SINSstate.W_z[0] -= (rnd_4.NextDouble() - 0.5) / Params_dnu_s;
-                //    SINSstate.W_z[1] -= (rnd_5.NextDouble() - 0.5) / Params_dnu_s;
-                //    SINSstate.W_z[2] -= (rnd_6.NextDouble() - 0.5) / Params_dnu_s;
-                //}
-
-
-                //SINSstate.F_z[0] += df_0;
-                //SINSstate.F_z[1] += df_0;
-                //SINSstate.F_z[2] += df_0;
-                //SINSstate.W_z[0] -= dW_0;
-                //SINSstate.W_z[1] -= dW_0;
-                //SINSstate.W_z[2] -= dW_0;
+                
 
                 //Вывод сформированных данных в файл
                 if (SINSstate.Count % 100 == 0)
@@ -384,7 +320,507 @@ namespace MovingImitator
 
 
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            ParamToStart ParamStart = new ParamToStart();
+
+            double Params_OdoKappa1 = 0.0, Params_OdoKappa3 = 0.0, Params_OdoIncrement = 0.0, Params_OdoScaleErr = 0.0, Params_OdoFrequency = 0.0;
+            double OdometerData_odometer_left_Value = 0.0;
+            double Params_df_s = 0.0, Params_dnu_s = 0.0;
+            double[] Params_df_0 = new double[3], Params_dnu_0 = new double[3];
+
+            //------------------------------------------------------------------------
+            //------------------------------------------------------------------------
+
+            //---для имитатора---
+            ParamStart.Imitator_addNoisSample_DUS = true;
+            ParamStart.Imitator_addNoisSample_ACCS = true;
+            ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
+            ParamStart.Imitator_Noise_Vel = 3E-3;
+            ParamStart.Imitator_Noise_Angl = 3E-5;
+
+            //Нужно как-то свести к одному виду задание частоты в имитаторе. Видимо придется вставлять ReSample в код сюда.
+            //+привести в ходные файлы в единый формат (в первой строке должна идти частота)
+            //+все настройки параметров вынести сюда
+            ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141207_AA_sensors.txt";
+            //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
+            ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
+
+            ParamStart.Imitator_GPS_IsReadyDistance = 30000.0;
+            ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
+            ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
+            ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
+            ParamStart.Modeling_Params_OdoIncrement = 25.0; // в сантиметрах // Маленький лучше не ставить.
+            ParamStart.Modeling_Params_OdoScaleErr = 1.002;
+            ParamStart.Modeling_Params_OdoFrequency = 5;
+            ParamStart.Modeling_Params_df_s = 100000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
+            ParamStart.Modeling_Params_dnu_s = 10000000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
+
+            //---Если хочешь маленькую ошибку масштаба, то нужно и маленький OdoIncrement, иначе не будет чувствоваться
+            if (Math.Abs(ParamStart.Modeling_Params_OdoScaleErr - 1.0) < 0.001)
+                ParamStart.Modeling_Params_OdoIncrement = 1.0;
+
+
+            //for (int j = 0; j < 3; j++)
+            //{
+            //    Params_df_0[j] = 0.0; //далее умножается G
+            //    Params_dnu_0[j] = 0.0; //град/час
+            //}
+
+            //for (int j = 0; j < 3; j++)
+            //{
+            //    Params_df_0[j] = 1E-5; //далее умножается G
+            //    Params_dnu_0[j] = 0.02; //град/час
+            //}
+
+            //for (int j = 0; j < 3; j++)
+            //{
+            //    Params_df_0[j] = 1E-4; //далее умножается G
+            //    Params_dnu_0[j] = 0.2; //град/час
+            //}
+
+            //for (int j = 0; j < 3; j++)
+            //{
+            //    Params_df_0[j] = 1E-3; //далее умножается G
+            //    Params_dnu_0[j] = 2.0; //град/час
+            //}
+
+            Params_df_0[0] = 3E-4;
+            Params_df_0[1] = 2E-4;
+            Params_df_0[2] = 1E-4;
+            Params_dnu_0[0] = 0.005;
+            Params_dnu_0[1] = -0.005;
+            Params_dnu_0[2] = 0.003;
+            //Params_dnu_0[0] = 0.001;
+            //Params_dnu_0[1] = 0.001;
+            //Params_dnu_0[2] = 0.001;
+
+            //Params_df_0[0] = 1E-7;
+            //Params_df_0[1] = 1E-7;
+            //Params_df_0[2] = 1E-7;
+            //Params_dnu_0[0] = 0.00001;
+            //Params_dnu_0[1] = 0.00001;
+            //Params_dnu_0[2] = 0.00001;
+            //------------------------------------------------------------------------
+            //------------------------------------------------------------------------
+
+
+            StreamReader myFile = new StreamReader(SimpleData.PathInputString + "Imitator_Analytic" + "_Clear.dat");
+
+            SINS_State SINSstate, SINSstate_OdoMod;
+            Kalman_Vars KalmanVars;
+            SINSstate = new SINS_State(); SINSstate_OdoMod = new SINS_State();
+            KalmanVars = new Kalman_Vars();
+            Proc_Help ProcHelp = new Proc_Help();
+
+
+
+
+            //=== Вычисляем LastCountForRead ===
+            SINSstate.LastCountForRead = -20;
+            int maxStrLength = 0;
+            for (; ; )
+            {
+                string tmpstr = myFile.ReadLine();
+                if (myFile.EndOfStream) break;
+                SINSstate.LastCountForRead++;
+                maxStrLength = Math.Max(maxStrLength, tmpstr.Length);
+            }
+            int LastCountForRead = SINSstate.LastCountForRead;
+            myFile.Close();
+
+            myFile = new StreamReader(SimpleData.PathInputString + "Imitator_Analytic" + "_Clear.dat");
+
+
+
+
+            string[] dataArray;
+            ProcHelp.datastring = myFile.ReadLine();
+            dataArray = ProcHelp.datastring.Split(' ');
+
+            SINSstate.timeStep = SINSstate.Freq = 1.0 / Convert.ToDouble(dataArray[7]);
+            SINSstate.odo_min_increment = Convert.ToDouble(dataArray[25]) / 100.0;
+            if (SINSstate.odo_min_increment < 0.0001)
+                SINSstate.odo_min_increment = 0.01;
+
+            SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
+            SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
+            SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
+            SINSstate.stdNu_Oz1 = Convert.ToDouble(dataArray[35]);
+
+
+            ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = Convert.ToDouble(dataArray[3]);
+            ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = Convert.ToDouble(dataArray[1]);
+            ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = Convert.ToDouble(dataArray[5]);
+            ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
+            ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
+
+            //Углы найденные подбором минимизацией максимальной ошибки по позиции.
+            SINSstate.Heading = Convert.ToDouble(dataArray[29]) + SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude));
+            SINSstate.Pitch = Convert.ToDouble(dataArray[33]) + (SINSstate.stdF[1] / 9.81 * Math.Cos(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Sin(SINSstate.Heading));
+            SINSstate.Roll = Convert.ToDouble(dataArray[31]) + (-(-SINSstate.stdF[1] / 9.81 * Math.Sin(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch));
+
+            SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
+            SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
+            SINSstate.A_x0n = SimpleOperations.A_x0n(SINSstate.Latitude, SINSstate.Longitude);
+            SINSstate.A_nx0 = SINSstate.A_x0n.Transpose();
+            SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
+            SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
+            SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
+
+            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+
+
+
+
+
+
+
+            Random rnd_1 = new Random(), rnd_2 = new Random(), rnd_3 = new Random(), rnd_4 = new Random(), rnd_5 = new Random(), rnd_6 = new Random();
+
+            StreamWriter outFile = new StreamWriter(SimpleData.PathInputString + "Imitator_Analytic" + "_Errors.dat");
+            StreamWriter Autonomous = new StreamWriter(SimpleData.PathOutputString + "S_AutoClear.txt");
+
+            Autonomous.WriteLine("Time OdoCnt OdoV Latitude Longitude Altitude LatSNS-Lat LngSNS-Lng LatSNS LongSNS LatSNSrad LongSNSrad SpeedSNS V_x1  V_x2  V_x3 Yaw  Roll  Pitch PosError PosError_Start Azimth");
+
+            //----------------------------------------------------------------------------------------//
+            Params_OdoKappa1 = ParamStart.Modeling_Params_OdoKappa1;
+            Params_OdoKappa3 = ParamStart.Modeling_Params_OdoKappa3;
+            Params_OdoIncrement = ParamStart.Modeling_Params_OdoIncrement; // в сантиметрах
+            Params_OdoScaleErr = ParamStart.Modeling_Params_OdoScaleErr;
+            Params_OdoFrequency = ParamStart.Modeling_Params_OdoFrequency;
+            Params_df_s = ParamStart.Modeling_Params_df_s; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
+            Params_dnu_s = ParamStart.Modeling_Params_dnu_s; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма                
+            
+
+
+            //----------------------------------------------------------------------------------------
+            //---------------------------------READING NOIS SAMPLES---------------------------------------
+
+            int noisSampleCountDUS = 0, noisSampleCountAccs = 0;
+            double[] avgSampleAccs = new double[3], avgSampleDUC = new double[3];
+            double[] noisSampleDUS_1, noisSampleDUS_2, noisSampleDUS_3, noisSampleAccs_1, noisSampleAccs_2, noisSampleAccs_3;
+            double[] sampleCurrSumDUC = new double[3], sampleCurrAvgDUC = new double[3], sampleCurrSumAccs = new double[3], sampleCurrAvgAccs = new double[3];
+
+
+            StreamReader NoisImputSampleDUS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_DUS);
+            if (ParamStart.Imitator_addNoisSample_DUS)
+            {
+                for (noisSampleCountDUS = 0; ; noisSampleCountDUS++)
+                {
+                    if (NoisImputSampleDUS.EndOfStream == true || noisSampleCountDUS > 2000000)
+                        break;
+                    NoisImputSampleDUS.ReadLine();
+                }
+                NoisImputSampleDUS.Close();
+                NoisImputSampleDUS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_DUS);
+            }
+
+            noisSampleDUS_1 = new double[noisSampleCountDUS];
+            noisSampleDUS_2 = new double[noisSampleCountDUS];
+            noisSampleDUS_3 = new double[noisSampleCountDUS];
+            if (ParamStart.Imitator_addNoisSample_DUS)
+            {
+                if (ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "20141207_AA_sensors.txt")
+                {
+                    for (int i = 0; i < noisSampleCountDUS; i++)
+                    {
+                        string str = NoisImputSampleDUS.ReadLine();
+                        string[] strArray = str.Split(' ');
+                        int t1 = 0;
+                        for (int y = 0; y < strArray.Length; y++)
+                            if (strArray[y] != "")
+                                t1++;
+                        string[] strArray2 = new string[t1];
+                        t1 = 0;
+
+                        for (int y = 0; y < strArray.Length; y++)
+                            if (strArray[y] != "")
+                            {
+                                strArray2[t1] = strArray[y];
+                                t1++;
+                            }
+
+                        noisSampleDUS_1[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
+                        noisSampleDUS_2[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
+                        noisSampleDUS_3[i] = Convert.ToDouble(strArray2[1]) * Math.PI / 180.0;
+                    }
+                }
+                else if (ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat")
+                {
+                    for (int i = 0; i < noisSampleCountDUS; i++)
+                    {
+                        string str = NoisImputSampleDUS.ReadLine();
+                        string[] strArray = str.Split(' ');
+                        noisSampleDUS_1[i] = Convert.ToDouble(strArray[6]);
+                        noisSampleDUS_2[i] = Convert.ToDouble(strArray[4]);
+                        noisSampleDUS_3[i] = Convert.ToDouble(strArray[5]);
+                    }
+                }
+
+                avgSampleDUC[0] = noisSampleDUS_1.Sum() / noisSampleCountDUS;
+                avgSampleDUC[1] = noisSampleDUS_2.Sum() / noisSampleCountDUS;
+                avgSampleDUC[2] = noisSampleDUS_3.Sum() / noisSampleCountDUS;
+                for (int i = 0; i < noisSampleCountDUS; i++)
+                {
+                    noisSampleDUS_1[i] -= avgSampleDUC[0];
+                    noisSampleDUS_2[i] -= avgSampleDUC[1];
+                    noisSampleDUS_3[i] -= avgSampleDUC[2];
+                }
+                NoisImputSampleDUS.Close();
+            }
+
+
+
+            /////////-----///////
+            StreamReader NoisImputSampleACCS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_ACCS);
+            if (ParamStart.Imitator_addNoisSample_ACCS)
+            {
+                for (noisSampleCountAccs = 0; ; noisSampleCountAccs++)
+                {
+                    if (NoisImputSampleACCS.EndOfStream == true || noisSampleCountAccs > 2000000)
+                        break;
+                    NoisImputSampleACCS.ReadLine();
+                }
+                NoisImputSampleACCS.Close();
+                NoisImputSampleACCS = new StreamReader(ParamStart.Imitator_addNoisSamplePath_ACCS);
+            }
+
+            noisSampleAccs_1 = new double[noisSampleCountAccs];
+            noisSampleAccs_2 = new double[noisSampleCountAccs];
+            noisSampleAccs_3 = new double[noisSampleCountAccs];
+            if (ParamStart.Imitator_addNoisSample_ACCS)
+            {
+                for (int i = 0; i < noisSampleCountAccs; i++)
+                {
+                    string str = NoisImputSampleACCS.ReadLine();
+                    string[] strArray = str.Split(' ');
+                    noisSampleAccs_1[i] = Convert.ToDouble(strArray[3]);
+                    noisSampleAccs_2[i] = Convert.ToDouble(strArray[1]);
+                    noisSampleAccs_3[i] = Convert.ToDouble(strArray[2]);
+                }
+
+                avgSampleAccs[0] = noisSampleAccs_1.Sum() / noisSampleCountAccs;
+                avgSampleAccs[1] = noisSampleAccs_2.Sum() / noisSampleCountAccs;
+                avgSampleAccs[2] = noisSampleAccs_3.Sum() / noisSampleCountAccs;
+                for (int i = 0; i < noisSampleCountAccs; i++)
+                {
+                    noisSampleAccs_1[i] -= avgSampleAccs[0];
+                    noisSampleAccs_2[i] -= avgSampleAccs[1];
+                    noisSampleAccs_3[i] -= avgSampleAccs[2];
+                }
+            }
+
+
+
+
+            //-------------------------------------------------------------------------------------------------
+            //---------------------------------------------START IMITATION--------------------------------------
+
+
+
+
+            double[] Params_df_0_x0 = new double[3], Params_dnu_0_x0 = new double[3];
+            SimpleOperations.CopyArray(Params_dnu_0_x0, SINSstate.A_x0s * Params_dnu_0);
+            SimpleOperations.CopyArray(Params_df_0_x0, SINSstate.A_x0s * Params_df_0);
+
+            outFile.WriteLine("Latitude= " + SINSstate.Latitude
+                + " Longitude= " + SINSstate.Longitude
+                + " Height= " + SINSstate.Altitude
+                + " SINS_Freq= " + 1.0 / SINSstate.timeStep
+                + " df_0(E)= " + Params_df_0_x0[0]
+                + " df_0(N)= " + Params_df_0_x0[1]
+                + " df_s= " + Params_df_s
+                + " nu_x0[0]= " + Params_dnu_0_x0[0]
+                + " nu_s= " + Params_dnu_s
+                + " OdoKappa1= " + Params_OdoKappa1
+                + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
+                + " OdoScale= " + Params_OdoScaleErr
+                + " OdoIncrement= " + Params_OdoIncrement
+                + " OdoFreq= " + Params_OdoFrequency
+                + " Heading= " + (SINSstate.Heading - Params_OdoKappa3).ToString()
+                + " Roll= " + SINSstate.Roll
+                + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString()
+                + " nu_z0[1]= " + Params_dnu_0[0]
+                + " GPS_PositionError= " + ParamStart.Imitator_GPS_PositionError
+                );
+
+
+            int t = 0;
+            double odometer_left_ValueTrue = 0.0;
+            for (int i = 1; i < SINSstate.LastCountForRead; i++)
+            {
+                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
+
+                if (t == 0) { SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z); SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z); t = 1; }
+
+                SINSprocessing.StateIntegration_AT_ForImitator(SINSstate, KalmanVars, SINSstate, SINSstate_OdoMod);
+
+
+                /*----------------------------------OUTPUT AUTONOMOUS------------------------------------------------------*/
+                if (i % 100 == 0)
+                {
+                    ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.OdoTimeStepCount + " " + SINSstate.OdometerVector[1]
+                         + " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
+                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3) + " " + SINSstate.Altitude
+                         + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 3)
+                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3)
+                         + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
+                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3)
+                         + " " + ((ProcHelp.LatSNS * SimpleData.ToRadian)) + " " + ((ProcHelp.LongSNS * SimpleData.ToRadian))
+                         + " " + Math.Round(ProcHelp.SpeedSNS, 3)
+                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
+                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 3)
+                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 3) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 3)
+                         + " " + Math.Round(ProcHelp.distance, 3) + " " + Math.Round(ProcHelp.distance_from_start, 3)
+                         + " " + SINSstate.Azimth + " " + SINSstate.OdometerData.odometer_left.isReady
+                         + " " + OdometerData_odometer_left_Value
+                         + " " + odometer_left_ValueTrue
+                         + " " + Math.Round(SimpleOperations.AbsoluteVectorValue(SINSstate.Vx_0), 3)
+                        ;
+                    Autonomous.WriteLine(ProcHelp.datastring);
+                }
+
+
+
+                /*------------------------------------FORMING ERRORS-------------------------------------------------*/
+
+                //---расчет с учетом инкремента---//
+                odometer_left_ValueTrue = SINSstate.OdometerData.odometer_left.Value;
+                OdometerData_odometer_left_Value = SINSstate.OdometerData.odometer_left.Value * Params_OdoScaleErr;
+                if (Params_OdoIncrement > 0.1)
+                {
+                    double tmp1 = Math.Floor(OdometerData_odometer_left_Value);
+                    double tmp2 = Math.Floor(OdometerData_odometer_left_Value * 100) - Math.Floor(OdometerData_odometer_left_Value) * 100;
+                    double tmp3 = Math.Floor((tmp2) / Params_OdoIncrement);
+                    OdometerData_odometer_left_Value = tmp1 + tmp3 * Params_OdoIncrement / 100.0;
+                }
+
+                if (i % Params_OdoFrequency == 0)
+                    SINSstate.OdometerData.odometer_left.isReady = 1;
+                else
+                    SINSstate.OdometerData.odometer_left.isReady = 2;
+
+
+                //-----------------------------------------Информации о местоположении одометра---------------------------------------------
+                //OdometerCoordinate_x0 = Matrix.Multiply(A_x0s, OdometerCoordinate_s);
+                //OdometerPosition[0] = Position[0] + OdometerCoordinate_x0[1] / SimpleOperations.RadiusN(Position[0], Position[2]);
+                //OdometerPosition[1] = Position[1] + OdometerCoordinate_x0[0] / SimpleOperations.RadiusE(Position[0], Position[2]) / Math.Cos(Position[0]);
+                //OdometerPosition[2] = Position[2] + OdometerCoordinate_x0[2];
+
+                //temp = Matrix.Multiply(Matrix.SkewSymmetricMatrix(RelativeAngular_x0s), OdometerCoordinate_x0);
+                //for (int i = 0; i < 3; i++)
+                //    OdometerVelocity_x0[i] = Velocity_x0[i] + temp[i];
+
+                ////Добавление несоосности оси одометра и оси Oz1
+                //temp = Matrix.Multiply(A_odoZ, Matrix.Multiply(A_sx0, OdometerVelocity_x0));
+
+                ////---Формирование самого измерения пройденного пути---//
+                //OdometerMeasure = SimpleOperations.AbsoluteVectorValue(temp);///////////!!!///////////
+
+
+
+                //---Поворот приборных осей относительно динамической---//
+                double[] kappa = new double[3];
+                kappa[0] = Params_OdoKappa1;
+                kappa[2] = Params_OdoKappa3;
+                SimpleOperations.CopyArray(SINSstate.F_z, SimpleOperations.A_odoZ(kappa[0], kappa[2]) * SINSstate.F_z);
+                SimpleOperations.CopyArray(SINSstate.W_z, SimpleOperations.A_odoZ(kappa[0], kappa[2]) * SINSstate.W_z);
+
+
+                if (Math.Abs(Params_df_s) > 0.1 && Math.Abs(Params_dnu_s) > 0.1)
+                {
+                    SINSstate.F_z[0] += (rnd_1.NextDouble() - 0.5) / Params_df_s;
+                    SINSstate.F_z[1] += (rnd_2.NextDouble() - 0.5) / Params_df_s;
+                    SINSstate.F_z[2] += (rnd_3.NextDouble() - 0.5) / Params_df_s;
+                    SINSstate.W_z[0] -= (rnd_4.NextDouble() - 0.5) / Params_dnu_s;
+                    SINSstate.W_z[1] -= (rnd_5.NextDouble() - 0.5) / Params_dnu_s;
+                    SINSstate.W_z[2] -= (rnd_6.NextDouble() - 0.5) / Params_dnu_s;
+                }
+
+                SINSstate.F_z[0] += Params_df_0[0] * 9.81;
+                SINSstate.F_z[1] += Params_df_0[1] * 9.81;
+                SINSstate.F_z[2] += Params_df_0[2] * 9.81;
+
+                SINSstate.W_z[0] -= Params_dnu_0[0] * SimpleData.ToRadian / 3600.0;
+                SINSstate.W_z[1] -= Params_dnu_0[1] * SimpleData.ToRadian / 3600.0;
+                SINSstate.W_z[2] -= Params_dnu_0[2] * SimpleData.ToRadian / 3600.0;
+
+
+
+
+                SINSstate.GPS_Data.gps_Latitude.isReady = 2;
+                SINSstate.GPS_Data.gps_Longitude.isReady = 2;
+                SINSstate.GPS_Data.gps_Altitude.isReady = 2;
+                SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.Latitude;
+                SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.Longitude;
+                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
+
+                SimpleOperations.CopyArray(SINSstate.Vz, SINSstate.A_sx0 * SINSstate.Vx_0);
+                if (odometer_left_ValueTrue % ParamStart.Imitator_GPS_IsReadyDistance < SINSstate.Vz[1] * SINSstate.timeStep + 0.01 && odometer_left_ValueTrue > 1.0)
+                {
+                    SINSstate.GPS_Data.gps_Latitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Longitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Altitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Latitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_n;
+                    SINSstate.GPS_Data.gps_Longitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+                    SINSstate.GPS_Data.gps_Altitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError;
+                }
+
+
+
+                //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
+                double noiseMultiple = 1.0;
+                if (ParamStart.Imitator_addNoisSample_DUS)
+                {
+                    SINSstate.W_z[0] -= noisSampleDUS_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS] * noiseMultiple;
+                    SINSstate.W_z[1] -= noisSampleDUS_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS] * noiseMultiple;
+                    SINSstate.W_z[2] -= noisSampleDUS_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountDUS] * noiseMultiple;
+                }
+                if (ParamStart.Imitator_addNoisSample_ACCS)
+                {
+                    SINSstate.F_z[0] += noisSampleAccs_1[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs] * noiseMultiple;
+                    SINSstate.F_z[1] += noisSampleAccs_2[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs] * noiseMultiple;
+                    SINSstate.F_z[2] += noisSampleAccs_3[Convert.ToInt32(SINSstate.Count) % noisSampleCountAccs] * noiseMultiple;
+                }
+                //===ПОПЫТКА ДОБАВИТЬ ШУМЫ ПО СЭМПЛУ С РЕАЛЬНЫХ ДАТЧИКОВ===
+
+
+
+
+
+                /*------------------------------------OUTPUT-------------------------------------------------*/
+
+                outFile.WriteLine(SINSstate.Count + " " + SINSstate.F_z[1] + " " + SINSstate.F_z[2] + " " + SINSstate.F_z[0] + " " + SINSstate.W_z[1] + " " + SINSstate.W_z[2] + " " + SINSstate.W_z[0]
+                     + " " + SINSstate.GPS_Data.gps_Latitude.Value.ToString() + " " + SINSstate.GPS_Data.gps_Latitude.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Longitude.Value.ToString()
+                     + " " + SINSstate.GPS_Data.gps_Longitude.isReady.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.Value.ToString() + " " + SINSstate.GPS_Data.gps_Altitude.isReady.ToString()
+                     + " " + SINSstate.Vx_0[1].ToString() + " " + SINSstate.GPS_Data.gps_Vn.isReady.ToString() + " " + SINSstate.Vx_0[0].ToString() + " " + SINSstate.GPS_Data.gps_Ve.isReady.ToString()
+                     + " " + SINSstate.FLG_Stop.ToString()
+                     + " " + OdometerData_odometer_left_Value.ToString() + " " + SINSstate.OdometerData.odometer_left.isReady.ToString()
+                     + " " + SINSstate.OdometerData.odometer_left.Value.ToString() + " " + SINSstate.OdometerData.odometer_right.isReady.ToString()
+                     + " " + (SINSstate.Heading - Params_OdoKappa3) + " " + SINSstate.Roll + " " + (SINSstate.Pitch + Params_OdoKappa1));
+
+
+            }
+
+            outFile.Close();
+            Autonomous.Close();
+            this.Close();
+        }
+
+
+
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -992,7 +1428,6 @@ namespace MovingImitator
             Close();
 
         }
-
 
 
 

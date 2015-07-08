@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Alignment.cs" />
     <Compile Include="CorrectionModel.cs" />
-    <Compile Include="ImitatorFirstProcessing.cs" />
     <Compile Include="Odometr_SINS.cs" />
     <Compile Include="ProcessingHelp.cs" />
     <Compile Include="XmlPars.cs" />

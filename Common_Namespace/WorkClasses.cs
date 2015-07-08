@@ -189,7 +189,7 @@ namespace Common_Namespace
 
         public bool flag_iMqDeltaR = false, flag_iMqDeltaF = false, flag_iMqDeltaNu = false, flag_iMqVarkappa13 = false, flag_iMqKappa = false, flag_iMqDeltaRodo = false;
         public bool flag_AccuracyClass_NoErr;
-        public bool flag_AccuracyClass_0_02grph, flag_AccuracyClass_2_0_grph, flag_AccuracyClass_0_2_grph, flag_AccuracyClass_Custom, flag_AccuracyClass_Rebuild;
+        public bool flag_AccuracyClass_0_02grph, flag_AccuracyClass_2_0_grph, flag_AccuracyClass_0_2_grph, flag_AccuracyClass_Custom;
 
         public double odotime_cur, odotime_prev;
         public bool flag_ControlPointCorrection;

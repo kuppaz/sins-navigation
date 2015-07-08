@@ -58,19 +58,9 @@ namespace SINS_motion_processing_new_data
             //------------------------------------------------------------------------
 
             //---для имитатора---
-            ParamStart.Imitator_addNoisSample_DUS = true;
-            ParamStart.Imitator_addNoisSample_ACCS = true;
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
             ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
-
-            //Нужно как-то свести к одному виду задание частоты в имитаторе. Видимо придется вставлять ReSample в код сюда.
-            //+привести в ходные файлы в единый формат (в первой строке должна идти частота)
-            //+все настройки параметров вынести сюда
-            ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141207_AA_sensors.txt";
-            //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
-
-            ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -85,25 +75,8 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdKappa1 = 5.0; //минут
             ParamStart.Imitator_stdKappa3 = 5.0; //минут
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 60000.0;
-            ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
-            ParamStart.Modeling_Params_OdoKappa1 = 0 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoIncrement = 5.0; // в сантиметрах
-            ParamStart.Modeling_Params_OdoScaleErr = 1.002;
-            ParamStart.Modeling_Params_OdoFrequency = 5;
-            ParamStart.Modeling_Params_df_s = 100000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
-            ParamStart.Modeling_Params_dnu_s = 10000000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
-
-            //---Если хочешь маленькую ошибку масштаба, то нужно и маленький OdoIncrement, иначе не будет чувствоваться
-            if (Math.Abs(ParamStart.Modeling_Params_OdoScaleErr - 1.0) < 0.01)
-                ParamStart.Modeling_Params_OdoIncrement = 1.0;
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
-
-
-
-
 
 
 
@@ -139,72 +112,8 @@ namespace SINS_motion_processing_new_data
             //=== ===
 
 
-
-            if (SINSstate.Global_file.ToLower().Contains("imitator"))
-            {
-                DateTime fileCreatedDate1 = File.GetLastWriteTime(this.GlobalPrefixTelemetric + "_Clear.dat");
-                DateTime fileCreatedDate2 = File.GetLastWriteTime(this.GlobalPrefixTelemetric + "_Errors.dat");
-
-                //сюда заходим, если уже выбран myFile= Errors
-                if (fileCreatedDate1 < fileCreatedDate2 || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true))
-                {
-                    ImitatorHeaderReadAndApply();
-                    if (SINSstate.flag_Autonomous_Solution == false &&
-                            (
-                                (SINSstate.flag_AccuracyClass_Custom == false && (
-                                    (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_0_0grph == false)
-                                    || (SINSstate.stdNu_Oz1 == 0.02 && SINSstate.flag_AccuracyClass_0_02grph == false)
-                                    || (SINSstate.stdNu_Oz1 == 0.2 && SINSstate.flag_AccuracyClass_0_2_grph == false)
-                                    || (SINSstate.stdNu_Oz1 == 2.0 && SINSstate.flag_AccuracyClass_2_0_grph == false)
-                                    || (SINSstate.stdNu_Oz1 < 0.0001 && SINSstate.flag_AccuracyClass_NoErr == false))
-                                )
-                                || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true)
-                            )
-                        )
-                    {
-                        myFile.Close();
-                        myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Clear.dat");
-                        fileCreatedDate2 = File.GetLastWriteTime(this.GlobalPrefixTelemetric + "_Clear.dat");
-                    }
-                    else
-                        myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Errors.dat");
-                }
-
-                if (fileCreatedDate1 >= fileCreatedDate2)
-                {
-                    ImitatorHeaderReadAndApply();
-                    SINSstate.flag_iMx_r3_dV3 = false; //--- Потом переопределится в DefineClassElementAndFlags
-                    ImitatorFirstProcessing.mainProcessing(SINSstate, SINSstate_OdoMod, KalmanVars, ProcHelp, myFile, this.GlobalPrefixTelemetric, ParamStart);
-
-                    myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Errors.dat");
-
-                    SINSstate = new SINS_State();
-                    SINSstate_OdoMod = new SINS_State();
-                    KalmanVars = new Kalman_Vars();
-                    ProcHelp = new Proc_Help();
-
-                    //--- Убираем флаг пересчета при кастомизации, чтобы снова не подхватился Clear файл ---
-                    SINSstate.flag_AccuracyClass_Rebuild = false;
-                    this.AccuracyClass_Rebuild.Checked = false;
-
-                    this.DefineClassElementAndFlags();
-                    this.SelectDataIn();
-
-                    SINSstate.LastCountForRead = LastCountForRead - 10;
-                }
-            }
-
-
-
             //---Инициализация начальных условий при отсутствии выставки---//
             Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);
-
-
-            if (SINSstate.Global_file.ToLower().Contains("imitator"))
-                SINSstate.Noise_GPS_PositionError = ParamStart.Imitator_GPS_PositionError;
-            else
-                SINSstate.Noise_GPS_PositionError = ParamStart.Experiment_GPS_PositionError;
-
 
 
 
@@ -307,6 +216,13 @@ namespace SINS_motion_processing_new_data
             }
 
 
+            if (SINSstate.Global_file.ToLower().Contains("imitator"))
+                SINSstate.Noise_GPS_PositionError = ParamStart.Imitator_GPS_PositionError;
+            else
+                SINSstate.Noise_GPS_PositionError = ParamStart.Experiment_GPS_PositionError;
+
+
+
             //---Инициализация начальной матрицы ковариации---
             if (SINSstate.flag_Odometr_SINS_case == true)
                 Odometr_SINS.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
@@ -364,7 +280,7 @@ namespace SINS_motion_processing_new_data
             dataArray = ProcHelp.datastring.Split(' ');
 
             SINSstate.timeStep = SINSstate.Freq = 1.0 / Convert.ToDouble(dataArray[7]);
-            SINSstate.odo_min_increment = Convert.ToDouble(dataArray[25]) / 100.0;
+            SINSstate.odo_min_increment = Convert.ToDouble(dataArray[25]) / 100.0 * 10.0;               /*Поставил *10.0, чтобы шум был заведомо больше - так лучше оценивается*/
             if (SINSstate.odo_min_increment < 0.0001)
                 SINSstate.odo_min_increment = 0.01;
 
@@ -390,6 +306,9 @@ namespace SINS_motion_processing_new_data
             KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / Convert.ToDouble(dataArray[27]);
             KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
             KalmanVars.OdoNoise_STOP = 0.01;
+
+            ParamStart.Imitator_GPS_PositionError = Convert.ToDouble(dataArray[37]);
+
 
             KalmanVars.Noise_OdoScale = ParamStart.Imitator_Noise_OdoScale;
             KalmanVars.Noise_OdoKappa = ParamStart.Imitator_Noise_OdoKappa;
@@ -580,23 +499,11 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_AccuracyClass_0_2_grph = this.AccuracyClass_0_2_grph.Checked;
             SINSstate.flag_AccuracyClass_2_0_grph = this.AccuracyClass_2_0_grph.Checked;
             SINSstate.flag_AccuracyClass_Custom = this.AccuracyClass_Custom.Checked;
-            SINSstate.flag_AccuracyClass_Rebuild = this.AccuracyClass_Rebuild.Checked;
 
             //---флаги коррекции---
             SINSstate.flag_UsingOdoVelocity = this.flag_UsingOdoVelocity.Checked;
             SINSstate.flag_onlyZeroSideVelocity = this.flag_onlyZeroSideVelocity.Checked;
             SINSstate.flag_UsingOdoPosition = this.flag_UsingOdoPosition.Checked;
-        }
-
-        public void DataInCheck(string FileLink)
-        {
-            DateTime fileCreatedDate1 = File.GetLastWriteTime(FileLink + "_Clear.dat");
-            DateTime fileCreatedDate2 = File.GetLastWriteTime(FileLink + "_Errors.dat");
-
-            if (fileCreatedDate1 >= fileCreatedDate2 || (SINSstate.flag_AccuracyClass_Custom == true && SINSstate.flag_AccuracyClass_Rebuild == true))
-                myFile = new StreamReader(FileLink + "_Clear.dat");
-            else
-                myFile = new StreamReader(FileLink + "_Errors.dat");
         }
 
         public void SelectDataIn()
@@ -622,7 +529,7 @@ namespace SINS_motion_processing_new_data
                 if (this.Imitator_Telemetric.Checked == true)
                 {
                     this.GlobalPrefixTelemetric = SimpleData.PathInputString + "TelemetricData//Telemetric_Imitator_" + SINSstate.Global_file;
-                    this.DataInCheck(this.GlobalPrefixTelemetric);
+                    myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Errors.dat");
                     SINSstate.Global_file = "Imitator_Telemetric";
                 }
                 else
@@ -636,13 +543,12 @@ namespace SINS_motion_processing_new_data
                 if (this.Imitator_Telemetric.Checked == true)
                 {
                     this.GlobalPrefixTelemetric = SimpleData.PathInputString + "TelemetricData//Telemetric_Imitator_" + SINSstate.Global_file;
-                    this.DataInCheck(this.GlobalPrefixTelemetric);
+                    myFile = new StreamReader(this.GlobalPrefixTelemetric + "_Errors.dat");
                     SINSstate.Global_file = "Imitator_Telemetric";
                 }
                 else
                 {
-                    this.GlobalPrefixTelemetric = SimpleData.PathInputString + "Imitator_Analytic";
-                    this.DataInCheck(this.GlobalPrefixTelemetric);
+                    myFile = new StreamReader(SimpleData.PathInputString + "Imitator_Analytic_Errors.dat");
                 }
             }
 
@@ -806,7 +712,6 @@ namespace SINS_motion_processing_new_data
                 this.AccuracyClass_NoErr.Enabled = true;
                 this.AccuracyClass_0_0grph.Enabled = true;
                 this.AccuracyClass_Custom.Enabled = true;
-                this.AccuracyClass_Rebuild.Enabled = true;
             }
             else
             {
@@ -815,7 +720,6 @@ namespace SINS_motion_processing_new_data
                 this.AccuracyClass_NoErr.Enabled = false;
                 this.AccuracyClass_0_0grph.Enabled = false;
                 this.AccuracyClass_Custom.Enabled = false;
-                this.AccuracyClass_Rebuild.Enabled = false;
             }
 
             this.Imitator_Telemetric.Enabled = true;

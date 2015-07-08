@@ -784,6 +784,199 @@ namespace Common_Namespace
 
 
 
+
+
+        public static void StateIntegration_AT_ForImitator(SINS_State SINSstate, Kalman_Vars KalmanVars, SINS_State SINSstate2, SINS_State SINSstate_OdoMod)
+        {
+            double[] fz = new double[3], Wz = new double[3], u = new double[3], tempV = new double[3], Wz_avg = new double[3];
+            double[] Vx_0 = new double[3], Vx_0_prev = new double[3];
+
+            Matrix AT_z_xi = new Matrix(3, 3); Matrix B_x_eta = new Matrix(3, 3);
+            Matrix dAT = new Matrix(3, 3); Matrix D_x_z = new Matrix(3, 3);
+            Matrix W_x_xi = new Matrix(3, 3); Matrix C_eta_xi = new Matrix(3, 3);
+
+            Matrix Hat1 = new Matrix(3, 3);
+            Matrix Hat2 = new Matrix(3, 3);
+            Matrix E = Matrix.UnitMatrix(3);
+            Matrix dMatrix = new Matrix(3, 3);
+
+            double W_z_abs, Omega_x_abs, dlt, dlt2, Altitude, Altitude_prev, dh, dVx, dVy, dVh, Azimth;
+
+            CopyMatrix(AT_z_xi, SINSstate.AT);
+            CopyMatrix(B_x_eta, SINSstate.A_x0n);
+
+            SINSstate2.Time = SINSstate.Time;
+            SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
+            Altitude = SINSstate.Altitude;
+            Altitude_prev = SINSstate.Altitude_prev;
+
+            fz[1] = SINSstate.F_z[1];
+            fz[2] = SINSstate.F_z[2];
+            fz[0] = SINSstate.F_z[0];
+            Wz[1] = SINSstate.W_z[1];
+            Wz[2] = SINSstate.W_z[2];
+            Wz[0] = SINSstate.W_z[0];
+
+            CopyArray(SINSstate.F_z, fz);
+            CopyArray(SINSstate.W_z, Wz);
+            CopyArray(Vx_0, SINSstate.Vx_0);
+            CopyArray(Vx_0_prev, SINSstate.Vx_0_prev);
+
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+
+            SINSstate.u_x = U_x0(SINSstate.Latitude);
+
+            u[0] = 0.0;
+            u[1] = SimpleData.U * Math.Cos(SINSstate.Latitude);
+            u[2] = SimpleData.U * Math.Sin(SINSstate.Latitude);
+
+
+
+
+            //-------------ИНТЕГРИРОВАНИЕ МАТРИЦЫ AT_Z_XI И ПЕРВОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z---------
+            if (SINSstate.flag_UsingAvegering == true)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    fz[i] = (fz[i] + SINSstate.F_z_prev[i]) / 2.0;
+                    Wz[i] = (Wz[i] + SINSstate.W_z_prev[i]) / 2.0;
+                }
+            }
+
+            W_z_abs = Math.Sqrt(Wz[0] * Wz[0] + Wz[1] * Wz[1] + Wz[2] * Wz[2]);
+            dlt = Math.Sin(W_z_abs * SINSstate.timeStep) / W_z_abs;
+            dlt2 = (1.0 - Math.Cos(W_z_abs * SINSstate.timeStep)) / (W_z_abs * W_z_abs);
+
+            Hat1 = Matrix.SkewSymmetricMatrix(Wz);
+            Hat2 = Matrix.SkewSymmetricMatrixSquare(Wz);
+
+            CopyMatrix(dMatrix, (E + Hat1 * dlt + Hat2 * dlt2));
+            CopyMatrix(AT_z_xi, (dMatrix * AT_z_xi));
+
+            //Нормировка
+            for (int i = 0; i < 3; i++)
+            {
+                tempV[i] = Math.Sqrt(AT_z_xi[i, 0] * AT_z_xi[i, 0] + AT_z_xi[i, 1] * AT_z_xi[i, 1] + AT_z_xi[i, 2] * AT_z_xi[i, 2]);
+                for (int j = 0; j < 3; j++)
+                    AT_z_xi[i, j] = AT_z_xi[i, j] / tempV[i];
+            }
+
+            CopyMatrix(SINSstate.AT, AT_z_xi);
+
+            CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
+            CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
+            //--------------------------------------------------------------------------------------
+
+
+
+            //---------------------------------ИНТЕГРИРОВАНИЕ СКОРОСТЕЙ----------------------------
+            CopyArray(SINSstate.F_x, D_x_z * fz);
+            SINSstate.g = SimpleData.Gravity_Normal * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014 - 2 * 0.000001538 * Altitude;
+
+            dVx = SINSstate.F_x[0] + Vx_0[1] * (2.0 * u[2] + SINSstate.Omega_x[2]) - Vx_0[2] * (2.0 * u[1] + SINSstate.Omega_x[1]);
+            dVy = SINSstate.F_x[1] - Vx_0[0] * (2.0 * u[2] + SINSstate.Omega_x[2]) + Vx_0[2] * (2.0 * u[0] + SINSstate.Omega_x[0]);
+
+            Vx_0[0] += dVx * SINSstate.timeStep;
+            Vx_0[1] += dVy * SINSstate.timeStep;
+
+            //--------------------------------------------------------------------------------------
+
+
+
+
+            //--- Интегрируем вертикальную скорость ---//
+            if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS))
+            {
+                dVh = SINSstate.F_x[2] - SINSstate.g + (Vx_0[0] + Vx_0_prev[0]) / 2.0 * (2 * u[1] + SINSstate.Omega_x[1]) - (Vx_0[1] + Vx_0_prev[1]) / 2.0 * (2 * u[0] + SINSstate.Omega_x[0]);
+                Vx_0[2] += dVh * SINSstate.timeStep;
+
+                dh = (Vx_0[2] + Vx_0_prev[2]) / 2.0;
+                Altitude += dh * SINSstate.timeStep;
+            }
+            //--- Если выставлен соответствующий флаг - переопределяем Vup вертикальной скоростью, вычисленной по одомеру ---//
+            if (SINSstate.flag_iMx_r3_dV3 && SINSstate.flag_VupOdo_till_VupSINS)
+            {
+                Vx_0[2] = SINSstate_OdoMod.Vx_0[2];
+            }
+
+
+            //---------ИНТЕГРИРОВАНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z--------------
+
+            SINSstate.Omega_x[0] = -(Vx_0[1] + Vx_0_prev[1]) / 2.0 / SINSstate.R_n;
+            SINSstate.Omega_x[1] = (Vx_0[0] + Vx_0_prev[0]) / 2.0 / SINSstate.R_e;
+            SINSstate.Omega_x[2] = Math.Tan(SINSstate.Latitude) * SINSstate.Omega_x[1];
+
+            Omega_x_abs = Math.Sqrt(SINSstate.Omega_x[0] * SINSstate.Omega_x[0] + SINSstate.Omega_x[1] * SINSstate.Omega_x[1] + SINSstate.Omega_x[2] * SINSstate.Omega_x[2]);
+            if (Omega_x_abs != 0)
+            {
+                dlt = Math.Sin(Omega_x_abs * SINSstate.timeStep) / Omega_x_abs;
+                dlt2 = (1.0 - Math.Cos(Omega_x_abs * SINSstate.timeStep)) / (Omega_x_abs * Omega_x_abs);
+            }
+            else
+            {
+                dlt = 1.0;
+                dlt2 = 0.0;
+            }
+
+            Hat1 = Matrix.SkewSymmetricMatrix(SINSstate.Omega_x);
+            Hat2 = Matrix.SkewSymmetricMatrixSquare(SINSstate.Omega_x);
+
+            CopyMatrix(dMatrix, E + Hat1 * dlt + Hat2 * dlt2);
+            CopyMatrix(B_x_eta, dMatrix * B_x_eta);
+
+            //Нормировка
+            for (int i = 0; i < 3; i++)
+            {
+                tempV[i] = Math.Sqrt(B_x_eta[i, 0] * B_x_eta[i, 0] + B_x_eta[i, 1] * B_x_eta[i, 1] + B_x_eta[i, 2] * B_x_eta[i, 2]);
+                for (int j = 0; j < 3; j++)
+                    B_x_eta[i, j] = B_x_eta[i, j] / tempV[i];
+            }
+
+
+            CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
+            CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
+
+            //----------------Вычисление углов и переприсвоение матриц---------------------------
+            CopyMatrix(SINSstate.A_sx0, D_x_z.Transpose());
+            CopyMatrix(SINSstate.A_x0s, D_x_z);
+            CopyMatrix(SINSstate.A_x0n, B_x_eta);
+            CopyMatrix(SINSstate.A_nx0, B_x_eta.Transpose());
+
+
+
+            //---ОПРЕДЕЛЕНИЕ ГЕОГРАФИЧЕСКИХ КООРДИНАТ---
+            SINSstate.Longitude = Math.Atan2(SINSstate.A_x0n[2, 1], SINSstate.A_x0n[2, 0]);
+            SINSstate.Latitude = Math.Atan2(SINSstate.A_x0n[2, 2], Math.Sqrt(SINSstate.A_x0n[0, 2] * SINSstate.A_x0n[0, 2] + SINSstate.A_x0n[1, 2] * SINSstate.A_x0n[1, 2]));
+            Azimth = Math.Atan2(SINSstate.A_x0n[0, 2], SINSstate.A_x0n[1, 2]);
+
+            SINSstate.Altitude_prev = SINSstate.Altitude;
+            SINSstate.Altitude = Altitude;
+
+
+            //SINSstate.Heading = gkurs - Azimth;
+            SINSstate.Heading = Math.Atan2(SINSstate.A_sx0[1, 0], SINSstate.A_sx0[1, 1]);
+            SINSstate.Roll = -Math.Atan2(SINSstate.A_sx0[0, 2], SINSstate.A_sx0[2, 2]);
+            SINSstate.Pitch = Math.Atan2(SINSstate.A_sx0[1, 2], Math.Sqrt(SINSstate.A_sx0[0, 2] * SINSstate.A_sx0[0, 2] + SINSstate.A_sx0[2, 2] * SINSstate.A_sx0[2, 2]));
+            //SINSstate.Azimth = Azimth;
+
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.u_x = U_x0(SINSstate.Latitude);
+
+            CopyArray(SINSstate.Vx_0_prev, SINSstate.Vx_0);
+            CopyArray(SINSstate.Vx_0, Vx_0);
+
+            CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
+            CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
+            CopyArray(SINSstate.W_x, SINSstate.A_x0s * Wz);
+        }
+
+
+
+
+
+
         //------------------ Функции для СГЛАЖИВАНИЯ --------------------//
         public static void FuncSmoothing_BackwardAndSmooth(SINS_State SINSstate, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, Proc_Help ProcHelp, StreamReader Back_Input_X, StreamReader Back_Input_P, StreamWriter ForHelpSmoothed)
         {

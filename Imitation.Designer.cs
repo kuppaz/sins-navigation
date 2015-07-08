@@ -34,6 +34,7 @@
             this.Filtering = new System.Windows.Forms.Button();
             this.Smoothing = new System.Windows.Forms.Button();
             this.RelativeV = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -42,7 +43,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(109, 49);
             this.button1.TabIndex = 0;
-            this.button1.Text = "push the button";
+            this.button1.Text = "Analitical Ideal Imitator";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -96,11 +97,22 @@
             this.RelativeV.UseVisualStyleBackColor = true;
             this.RelativeV.Click += new System.EventHandler(this.RelativeV_Click);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(137, 120);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(99, 49);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Add Error to analitical traj";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Imitation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(558, 229);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.RelativeV);
             this.Controls.Add(this.Smoothing);
             this.Controls.Add(this.Filtering);
@@ -122,6 +134,7 @@
         private System.Windows.Forms.Button Filtering;
         private System.Windows.Forms.Button Smoothing;
         private System.Windows.Forms.Button RelativeV;
+        private System.Windows.Forms.Button button3;
     }
 }
 
