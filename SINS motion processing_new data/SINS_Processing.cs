@@ -72,8 +72,8 @@ namespace SINS_motion_processing_new_data
             ParamStart.Imitator_stdOdoR = 0.5; // метров
             ParamStart.Imitator_stdV = 0.1;
             ParamStart.Imitator_stdScale = 0.01;
-            ParamStart.Imitator_stdKappa1 = 5.0; //минут
-            ParamStart.Imitator_stdKappa3 = 5.0; //минут
+            ParamStart.Imitator_stdKappa1 = 20.0; //минут
+            ParamStart.Imitator_stdKappa3 = 20.0; //минут
 
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------

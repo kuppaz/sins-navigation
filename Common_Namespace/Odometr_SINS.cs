@@ -150,6 +150,8 @@ namespace Common_Namespace
             //---АЛГЕБРАИЧЕСКАЯ КАЛИБРОВКА---//
             if (SINSstate.flag_using_GoCalibrInCP == true && SINSstate.flag_iMx_kappa_13_ds)
             {
+                KalmanVars.cnt_measures = 0;
+
                 double lat_dif_calc = (SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n;
                 double long_dif_calc = (SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
                 double lat_dif_true = (Latitude_CP - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(Latitude_CP, Altitude_CP);
@@ -164,7 +166,7 @@ namespace Common_Namespace
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.Cumulative_KappaEst[1]) - l_true) / l_true;
                 else
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value - l_true) / l_true;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.001;
                 KalmanVars.cnt_measures += 1;
 
                 double tmp = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.Cumulative_KappaEst[1]) - l_true) / l_true;
@@ -194,6 +196,8 @@ namespace Common_Namespace
                     KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.1;
                     KalmanVars.cnt_measures += 1;
                 }
+
+                SINSstate.flag_using_GoCalibrInCP = false;
             }
         }
 
