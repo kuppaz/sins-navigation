@@ -313,6 +313,12 @@ namespace Common_Namespace
                 tmpCounter = tmpCounter + 3;
             }
 
+
+            //////////////////////////////
+            //Noise_Vel_in_Mx[2] = 3E-4;
+            //////////////////////////////
+
+
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 if (SINSstate.flag_iMqDeltaR)

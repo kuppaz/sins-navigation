@@ -22,7 +22,7 @@ namespace MovingImitator
                       StartLongitude = 37.0 * SimpleData.ToRadian,
                       StartAltitude = 100.0;
 
-        double dT = 0.01;
+        double dT = 0.02;
 
         public Imitation()
         {
@@ -342,8 +342,8 @@ namespace MovingImitator
             //------------------------------------------------------------------------
 
             //---для имитатора---
-            ParamStart.Imitator_addNoisSample_DUS = false;
-            ParamStart.Imitator_addNoisSample_ACCS = false;
+            ParamStart.Imitator_addNoisSample_DUS = true;
+            ParamStart.Imitator_addNoisSample_ACCS = true;
             ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
             ParamStart.Imitator_Noise_Vel = 3E-3;
             ParamStart.Imitator_Noise_Angl = 3E-5;
@@ -351,9 +351,20 @@ namespace MovingImitator
             //Нужно как-то свести к одному виду задание частоты в имитаторе. Видимо придется вставлять ReSample в код сюда.
             //+привести в ходные файлы в единый формат (в первой строке должна идти частота)
             //+все настройки параметров вынести сюда
+
+            //===ШУМЫ ДЛЯ РАМЕНСКОГО===//
             ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141207_AA_sensors.txt";
             //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
             ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat";
+
+            //===ШУМЫ ПЕРМСКИЕ===//
+            //---Race 4---
+            //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt";
+            //ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt";
+            //---Autolab_120814---
+            ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
+            ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
+
 
             ParamStart.Imitator_GPS_IsReadyDistance = 100000.0;
             ParamStart.Imitator_GPS_IsReady_Target[0] = 1000.0;
@@ -558,6 +569,18 @@ namespace MovingImitator
                         noisSampleDUS_3[i] = Convert.ToDouble(strArray[5]);
                     }
                 }
+                else if (ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt"
+                    || ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt")
+                {
+                    for (int i = 0; i < noisSampleCountDUS; i++)
+                    {
+                        string str = NoisImputSampleDUS.ReadLine();
+                        string[] strArray = str.Split(' ');
+                        noisSampleDUS_1[i] = Convert.ToDouble(strArray[6]);
+                        noisSampleDUS_2[i] = Convert.ToDouble(strArray[4]);
+                        noisSampleDUS_3[i] = Convert.ToDouble(strArray[5]);
+                    }
+                }
 
                 avgSampleDUC[0] = noisSampleDUS_1.Sum() / noisSampleCountDUS;
                 avgSampleDUC[1] = noisSampleDUS_2.Sum() / noisSampleCountDUS;
@@ -592,13 +615,28 @@ namespace MovingImitator
             noisSampleAccs_3 = new double[noisSampleCountAccs];
             if (ParamStart.Imitator_addNoisSample_ACCS)
             {
-                for (int i = 0; i < noisSampleCountAccs; i++)
+                if (ParamStart.Imitator_addNoisSamplePath_ACCS == SimpleData.PathImitatorData + "20141212_AA_accselsNoise.dat")
                 {
-                    string str = NoisImputSampleACCS.ReadLine();
-                    string[] strArray = str.Split(' ');
-                    noisSampleAccs_1[i] = Convert.ToDouble(strArray[3]);
-                    noisSampleAccs_2[i] = Convert.ToDouble(strArray[1]);
-                    noisSampleAccs_3[i] = Convert.ToDouble(strArray[2]);
+                    for (int i = 0; i < noisSampleCountAccs; i++)
+                    {
+                        string str = NoisImputSampleACCS.ReadLine();
+                        string[] strArray = str.Split(' ');
+                        noisSampleAccs_1[i] = Convert.ToDouble(strArray[3]);
+                        noisSampleAccs_2[i] = Convert.ToDouble(strArray[1]);
+                        noisSampleAccs_3[i] = Convert.ToDouble(strArray[2]);
+                    }
+                }
+                else if (ParamStart.Imitator_addNoisSamplePath_ACCS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt"
+                    || ParamStart.Imitator_addNoisSamplePath_ACCS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt")
+                {
+                    for (int i = 0; i < noisSampleCountAccs; i++)
+                    {
+                        string str = NoisImputSampleACCS.ReadLine();
+                        string[] strArray = str.Split(' ');
+                        noisSampleAccs_1[i] = Convert.ToDouble(strArray[3]);
+                        noisSampleAccs_2[i] = Convert.ToDouble(strArray[1]);
+                        noisSampleAccs_3[i] = Convert.ToDouble(strArray[2]);
+                    }
                 }
 
                 avgSampleAccs[0] = noisSampleAccs_1.Sum() / noisSampleCountAccs;
