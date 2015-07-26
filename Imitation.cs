@@ -22,7 +22,7 @@ namespace MovingImitator
                       StartLongitude = 37.0 * SimpleData.ToRadian,
                       StartAltitude = 100.0;
 
-        double dT = 0.02;
+        double dT = 0.01;
 
         public Imitation()
         {
@@ -364,6 +364,9 @@ namespace MovingImitator
             //---Autolab_120814---
             ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
             ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
+            //---Autolab_120814 DPC---
+            //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt";
+            //ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt";
 
 
             ParamStart.Imitator_GPS_IsReadyDistance = 100000.0;
@@ -570,7 +573,8 @@ namespace MovingImitator
                     }
                 }
                 else if (ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt"
-                    || ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt")
+                    || ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt"
+                    || ParamStart.Imitator_addNoisSamplePath_DUS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt")
                 {
                     for (int i = 0; i < noisSampleCountDUS; i++)
                     {
@@ -627,7 +631,8 @@ namespace MovingImitator
                     }
                 }
                 else if (ParamStart.Imitator_addNoisSamplePath_ACCS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt"
-                    || ParamStart.Imitator_addNoisSamplePath_ACCS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt")
+                    || ParamStart.Imitator_addNoisSamplePath_ACCS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt"
+                    || ParamStart.Imitator_addNoisSamplePath_ACCS == SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt")
                 {
                     for (int i = 0; i < noisSampleCountAccs; i++)
                     {
