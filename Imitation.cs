@@ -22,7 +22,7 @@ namespace MovingImitator
                       StartLongitude = 37.0 * SimpleData.ToRadian,
                       StartAltitude = 100.0;
 
-        double dT = 0.01;
+        double dT = 0.02;
 
         public Imitation()
         {
@@ -334,7 +334,7 @@ namespace MovingImitator
             ParamToStart ParamStart = new ParamToStart();
 
             double Params_OdoKappa1 = 0.0, Params_OdoKappa3 = 0.0, Params_OdoIncrement = 0.0, Params_OdoScaleErr = 0.0, Params_OdoFrequency = 0.0;
-            double OdometerData_odometer_left_Value = 0.0;
+            double OdometerData_odometer_left_Value = 0.0, OdometerData_odometer_left_Value_Discrete = 0.0;
             double Params_df_s = 0.0, Params_dnu_s = 0.0;
             double[] Params_df_0 = new double[3], Params_dnu_0 = new double[3];
 
@@ -359,11 +359,11 @@ namespace MovingImitator
 
             //===ШУМЫ ПЕРМСКИЕ===//
             //---Race 4---
-            //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt";
-            //ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt";
+            ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt";
+            ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Race_4.txt";
             //---Autolab_120814---
-            ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
-            ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
+            //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
+            //ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120814.txt";
             //---Autolab_120814 DPC---
             //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt";
             //ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt";
@@ -495,6 +495,9 @@ namespace MovingImitator
 
             StreamWriter outFile = new StreamWriter(SimpleData.PathInputString + "Imitator_Analytic" + "_Errors.dat");
             StreamWriter Autonomous = new StreamWriter(SimpleData.PathOutputString + "S_AutoClear.txt");
+
+            StreamWriter outFilePERM = new StreamWriter(SimpleData.PathInputString + "Imitator_Analytic" + ".txt");
+            outFilePERM.WriteLine("Count;Fx;Fy;Fz;Wx;Wy;Wz;gps_Latitude;gps_Latitude_flag;gps_Longitude;gps_Longitude_flag;gps_Height;gps_Height_flag;gps_Vn;gps_Vn_flag;gps_Ve;gps_Ve_flag;odometer_left;odometer_left_flag;odometer_right;odometer_right_flag;");
 
             Autonomous.WriteLine("Time OdoCnt OdoV Latitude Longitude Altitude LatSNS-Lat LngSNS-Lng LatSNS LongSNS LatSNSrad LongSNSrad SpeedSNS V_x1  V_x2  V_x3 Yaw  Roll  Pitch PosError PosError_Start Azimth");
 
@@ -797,6 +800,8 @@ namespace MovingImitator
                 SINSstate.GPS_Data.gps_Latitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Longitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Altitude.isReady = 2;
+                SINSstate.GPS_Data.gps_Ve.isReady = 2;
+                SINSstate.GPS_Data.gps_Vn.isReady = 2;
                 SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.Latitude;
                 SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.Longitude;
                 SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
@@ -818,6 +823,8 @@ namespace MovingImitator
                     SINSstate.GPS_Data.gps_Latitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Longitude.isReady = 1;
                     SINSstate.GPS_Data.gps_Altitude.isReady = 1;
+                    SINSstate.GPS_Data.gps_Ve.isReady = 1;
+                    SINSstate.GPS_Data.gps_Vn.isReady = 1;
                     if (flag_GPS_ControlPoint != 1)
                     {
                         SINSstate.GPS_Data.gps_Latitude.Value += (rnd_1.NextDouble() - 0.5) * 2.0 * ParamStart.Imitator_GPS_PositionError / SINSstate.R_n;
@@ -860,9 +867,39 @@ namespace MovingImitator
                      + " " + (SINSstate.Heading - Params_OdoKappa3) + " " + SINSstate.Roll + " " + (SINSstate.Pitch + Params_OdoKappa1));
 
 
+                double Ve, Vn;
+                if (SINSstate.GPS_Data.gps_Latitude.isReady != 1)
+                {
+                    SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.GPS_Data.gps_Latitude.isReady = 0;
+                    SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.GPS_Data.gps_Longitude.isReady = 0;
+                    SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.GPS_Data.gps_Altitude.isReady = 0;
+                    SINSstate.GPS_Data.gps_Vn.Value = SINSstate.GPS_Data.gps_Vn.isReady = 0;
+                    SINSstate.GPS_Data.gps_Ve.Value = SINSstate.GPS_Data.gps_Ve.isReady = 0;
+                    Ve = Vn = 0;
+                }
+                else
+                {
+                    Ve = SINSstate.Vx_0[0];
+                    Vn = SINSstate.Vx_0[1];
+                }
+                if (SINSstate.OdometerData.odometer_left.isReady == 1)
+                    OdometerData_odometer_left_Value_Discrete = OdometerData_odometer_left_Value;
+
+                outFilePERM.WriteLine(SINSstate.Count
+                    + ";" + SINSstate.F_z[1] + ";" + SINSstate.F_z[2] + ";" + SINSstate.F_z[0]          //Ньютонометры
+                    + ";" + SINSstate.W_z[1] + ";" + SINSstate.W_z[2] + ";" + SINSstate.W_z[0]          //ДУСы
+                     + ";" + SINSstate.GPS_Data.gps_Latitude.Value.ToString() + ";" + SINSstate.GPS_Data.gps_Latitude.isReady.ToString()
+                     + ";" + SINSstate.GPS_Data.gps_Longitude.Value.ToString() + ";" + SINSstate.GPS_Data.gps_Longitude.isReady.ToString()
+                     + ";" + SINSstate.GPS_Data.gps_Altitude.Value.ToString() + ";" + SINSstate.GPS_Data.gps_Altitude.isReady.ToString()
+                     + ";" + Vn.ToString() + ";" + SINSstate.GPS_Data.gps_Vn.isReady.ToString()
+                     + ";" + Ve.ToString() + ";" + SINSstate.GPS_Data.gps_Ve.isReady.ToString()
+                     + ";" + OdometerData_odometer_left_Value_Discrete.ToString() + ";" + SINSstate.OdometerData.odometer_left.isReady.ToString()
+                     + ";" + OdometerData_odometer_left_Value_Discrete.ToString() + ";" + SINSstate.OdometerData.odometer_left.isReady.ToString()
+                     );
             }
 
             outFile.Close();
+            outFilePERM.Close();
             Autonomous.Close();
             this.Close();
         }
