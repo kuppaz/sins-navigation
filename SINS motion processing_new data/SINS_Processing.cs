@@ -64,7 +64,7 @@ namespace SINS_motion_processing_new_data
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
-            ParamStart.Imitator_Noise_Pos = 0.1;
+            ParamStart.Imitator_Noise_Pos = 0.01;
             ParamStart.Imitator_Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
             ParamStart.Imitator_Noise_Accel = 0.000000002;
 
@@ -280,7 +280,7 @@ namespace SINS_motion_processing_new_data
             dataArray = ProcHelp.datastring.Split(' ');
 
             SINSstate.timeStep = SINSstate.Freq = 1.0 / Convert.ToDouble(dataArray[7]);
-            SINSstate.odo_min_increment = Convert.ToDouble(dataArray[25]) / 100.0 * 10.0;               /*Поставил *10.0, чтобы шум был заведомо больше - так лучше оценивается*/
+            SINSstate.odo_min_increment = Convert.ToDouble(dataArray[25]) / 100.0;               /*Поставил *10.0, чтобы шум был заведомо больше - так лучше оценивается*/
             if (SINSstate.odo_min_increment < 0.0001)
                 SINSstate.odo_min_increment = 0.01;
 

@@ -30,8 +30,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist);
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Max(Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist);
 
             KalmanVars.cnt_measures += 2;
 
@@ -76,7 +76,7 @@ namespace Common_Namespace
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3] = 1.0;
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 2] = -1.0;
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
-                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist;
+                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist);
                     //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
 
                     //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
