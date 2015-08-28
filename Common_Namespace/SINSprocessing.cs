@@ -447,13 +447,13 @@ namespace Common_Namespace
 
             if (SINSstate.flag_iMx_r3_dV3)
             {
-                KalmanVars.Matrix_A[0 * iMx + 0] += SINSstate.Vx_0[2] / SINSstate.R_e;
-                KalmanVars.Matrix_A[0 * iMx + 5] += -SINSstate.Vx_0[2];
-                KalmanVars.Matrix_A[0 * iMx + iMx_r3_dV3] = -SINSstate.Omega_x[1];
+                //KalmanVars.Matrix_A[0 * iMx + 0] += SINSstate.Vx_0[2] / SINSstate.R_e;
+                //KalmanVars.Matrix_A[0 * iMx + 5] += -SINSstate.Vx_0[2];
+                //KalmanVars.Matrix_A[0 * iMx + iMx_r3_dV3] = -SINSstate.Omega_x[1];
 
-                KalmanVars.Matrix_A[1 * iMx + 1] += SINSstate.Vx_0[2] / SINSstate.R_n;
-                KalmanVars.Matrix_A[1 * iMx + 4] += SINSstate.Vx_0[2];
-                KalmanVars.Matrix_A[1 * iMx + iMx_r3_dV3] = SINSstate.Omega_x[0];
+                //KalmanVars.Matrix_A[1 * iMx + 1] += SINSstate.Vx_0[2] / SINSstate.R_n;
+                //KalmanVars.Matrix_A[1 * iMx + 4] += SINSstate.Vx_0[2];
+                //KalmanVars.Matrix_A[1 * iMx + iMx_r3_dV3] = SINSstate.Omega_x[0];
 
                 KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 0] = SINSstate.Omega_x[1] - SINSstate.Vx_0[0] / SINSstate.R_e;
                 KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + 1] = -SINSstate.Omega_x[0] - SINSstate.Vx_0[1] / SINSstate.R_n;
@@ -462,27 +462,27 @@ namespace Common_Namespace
                 KalmanVars.Matrix_A[iMx_r3_dV3 * iMx + iMx_r3_dV3 + 1] = 1.0;
 
 
-                KalmanVars.Matrix_A[2 * iMx + 1] += SINSstate.u_x[2] * SINSstate.Vx_0[2] / SINSstate.R_n;
-                KalmanVars.Matrix_A[2 * iMx + 4] += SINSstate.u_x[2] * SINSstate.Vx_0[2];
-                KalmanVars.Matrix_A[2 * iMx + 6] += -SINSstate.u_x[0] * SINSstate.Vx_0[2];
+                //KalmanVars.Matrix_A[2 * iMx + 1] += SINSstate.u_x[2] * SINSstate.Vx_0[2] / SINSstate.R_n;
+                //KalmanVars.Matrix_A[2 * iMx + 4] += SINSstate.u_x[2] * SINSstate.Vx_0[2];
+                //KalmanVars.Matrix_A[2 * iMx + 6] += -SINSstate.u_x[0] * SINSstate.Vx_0[2];
 
-                KalmanVars.Matrix_A[2 * iMx + 7] += SINSstate.Vx_0[2] * SINSstate.A_x0s[1, 0];
-                KalmanVars.Matrix_A[2 * iMx + 8] += SINSstate.Vx_0[2] * SINSstate.A_x0s[1, 1];
-                KalmanVars.Matrix_A[2 * iMx + 9] += SINSstate.Vx_0[2] * SINSstate.A_x0s[1, 2];
+                //KalmanVars.Matrix_A[2 * iMx + 7] += SINSstate.Vx_0[2] * SINSstate.A_x0s[1, 0];
+                //KalmanVars.Matrix_A[2 * iMx + 8] += SINSstate.Vx_0[2] * SINSstate.A_x0s[1, 1];
+                //KalmanVars.Matrix_A[2 * iMx + 9] += SINSstate.Vx_0[2] * SINSstate.A_x0s[1, 2];
 
-                KalmanVars.Matrix_A[2 * iMx + iMx_r3_dV3 + 1] = -SINSstate.Omega_x[1] - 2 * SINSstate.u_x[1];
+                //KalmanVars.Matrix_A[2 * iMx + iMx_r3_dV3 + 1] = -SINSstate.Omega_x[1] - 2 * SINSstate.u_x[1];
 
 
 
-                KalmanVars.Matrix_A[3 * iMx + 0] += -SINSstate.u_x[2] * SINSstate.Vx_0[2] / SINSstate.R_e;
-                KalmanVars.Matrix_A[3 * iMx + 5] += SINSstate.u_x[2] * SINSstate.Vx_0[2];
-                KalmanVars.Matrix_A[3 * iMx + 6] += -SINSstate.u_x[1] * SINSstate.Vx_0[2];
+                //KalmanVars.Matrix_A[3 * iMx + 0] += -SINSstate.u_x[2] * SINSstate.Vx_0[2] / SINSstate.R_e;
+                //KalmanVars.Matrix_A[3 * iMx + 5] += SINSstate.u_x[2] * SINSstate.Vx_0[2];
+                //KalmanVars.Matrix_A[3 * iMx + 6] += -SINSstate.u_x[1] * SINSstate.Vx_0[2];
 
-                KalmanVars.Matrix_A[3 * iMx + 7] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 0];
-                KalmanVars.Matrix_A[3 * iMx + 8] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 1];
-                KalmanVars.Matrix_A[3 * iMx + 9] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 2];
+                //KalmanVars.Matrix_A[3 * iMx + 7] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 0];
+                //KalmanVars.Matrix_A[3 * iMx + 8] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 1];
+                //KalmanVars.Matrix_A[3 * iMx + 9] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 2];
 
-                KalmanVars.Matrix_A[3 * iMx + iMx_r3_dV3 + 1] = SINSstate.Omega_x[0] + 2 * SINSstate.u_x[0];
+                //KalmanVars.Matrix_A[3 * iMx + iMx_r3_dV3 + 1] = SINSstate.Omega_x[0] + 2 * SINSstate.u_x[0];
 
 
 

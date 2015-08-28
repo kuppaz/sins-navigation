@@ -114,7 +114,7 @@ namespace MovingImitator
 
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 1.5 * 3600.0)
+            while (CurTimeWithAlign < 3.0 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -143,12 +143,12 @@ namespace MovingImitator
 
                 double rotateDuration, rotateStartTime;
                 rotateDuration = 20.0;
-                rotateStartTime = 0.5 * 3600.0;
+                rotateStartTime = 1.0 * 3600.0;
                 if (CurTimeWithAlign > rotateStartTime && CurTimeWithAlign <= rotateStartTime + rotateDuration)
                     SINSstate.Heading = StartHeading - Math.PI / 4.0 * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
 
                 rotateDuration = 20.0;
-                rotateStartTime = 1.0 * 3600.0;
+                rotateStartTime = 2.0 * 3600.0;
                 if (CurTimeWithAlign > rotateStartTime && CurTimeWithAlign <= rotateStartTime + rotateDuration)
                     SINSstate.Heading = StartHeading - Math.PI / 4.0 + 3.0 * Math.PI / 4.0 * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
 
@@ -206,19 +206,19 @@ namespace MovingImitator
                 SINSstate.Vz[1] = 0.0;
                 SINSstate.Vz[2] = 0.0;
 
-                
+
 
 
                 //-----------СКОРОСТЬ---------------//
                 double constantV, leftTimeMoving, rightTimeMoving, accelerationDuration;
                 constantV = 40.0 / 3.6;
                 leftTimeMoving = 0.0;
-                rightTimeMoving = 1.3 * 3600.0; 
+                rightTimeMoving = 2.7 * 3600.0;
                 accelerationDuration = 50.0;
 
-                if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration) 
+                if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
                     SINSstate.Vz[1] = constantV * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - leftTimeMoving) / accelerationDuration);
-                if (CurTimeWithAlign > leftTimeMoving + accelerationDuration && CurTimeWithAlign <= rightTimeMoving) 
+                if (CurTimeWithAlign > leftTimeMoving + accelerationDuration && CurTimeWithAlign <= rightTimeMoving)
                     SINSstate.Vz[1] = constantV;
                 if (CurTimeWithAlign > rightTimeMoving && CurTimeWithAlign <= rightTimeMoving + accelerationDuration)
                     SINSstate.Vz[1] = constantV * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - rightTimeMoving) / accelerationDuration);
@@ -228,7 +228,7 @@ namespace MovingImitator
 
                 /*неправильная формула*/
                 SINSstate.OdoAbsSpeed = Math.Sign(SINSstate.Vz[1]) * SimpleOperations.AbsoluteVectorValue(SINSstate.Vz);
-                
+
 
 
 
@@ -284,7 +284,7 @@ namespace MovingImitator
                 for (int i = 0; i < 3; i++)
                     SINSstate.W_z[i] = RelativeAngular_sx0[i] + RelativeAngular_x0_in_s[i] + SINSstate.u_s[i];
 
-                
+
 
                 //Вывод сформированных данных в файл
                 if (SINSstate.Count % 100 == 0)
@@ -341,13 +341,6 @@ namespace MovingImitator
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
-            //---для имитатора---
-            ParamStart.Imitator_addNoisSample_DUS = true;
-            ParamStart.Imitator_addNoisSample_ACCS = true;
-            ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-            ParamStart.Imitator_Noise_Vel = 3E-3;
-            ParamStart.Imitator_Noise_Angl = 3E-5;
-
             //Нужно как-то свести к одному виду задание частоты в имитаторе. Видимо придется вставлять ReSample в код сюда.
             //+привести в ходные файлы в единый формат (в первой строке должна идти частота)
             //+все настройки параметров вынести сюда
@@ -368,17 +361,24 @@ namespace MovingImitator
             //ParamStart.Imitator_addNoisSamplePath_DUS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt";
             //ParamStart.Imitator_addNoisSamplePath_ACCS = SimpleData.PathImitatorData + "Perm_Noises_AzimutB_Autolab_120815_DPC.txt";
 
+            //---для имитатора---
+            ParamStart.Imitator_addNoisSample_DUS = false;
+            ParamStart.Imitator_addNoisSample_ACCS = false;
+            ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
+            ParamStart.Imitator_Noise_Vel = 3E-3;
+            ParamStart.Imitator_Noise_Angl = 3E-5;
+
 
             ParamStart.Imitator_GPS_IsReadyDistance = 100000.0;
-            ParamStart.Imitator_GPS_IsReady_Target[0] = 1000.0;
+            ParamStart.Imitator_GPS_IsReady_Target[0] = 3000.0;
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = -1 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -2 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoIncrement = 25.0; // в сантиметрах // Маленький лучше не ставить.
+            ParamStart.Modeling_Params_OdoIncrement = 20.0; // в сантиметрах // Маленький лучше не ставить.
             ParamStart.Modeling_Params_OdoScaleErr = 1.01;
             ParamStart.Modeling_Params_OdoFrequency = 5;
-            ParamStart.Modeling_Params_df_s = 10.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
-            ParamStart.Modeling_Params_dnu_s = 1000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
+            ParamStart.Modeling_Params_df_s = 20.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
+            ParamStart.Modeling_Params_dnu_s = 2000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
 
             //---Если хочешь маленькую ошибку масштаба, то нужно и маленький OdoIncrement, иначе не будет чувствоваться
             if (Math.Abs(ParamStart.Modeling_Params_OdoScaleErr - 1.0) < 0.001)
@@ -391,11 +391,11 @@ namespace MovingImitator
             //    Params_dnu_0[j] = 0.0; //град/час
             //}
 
-            //for (int j = 0; j < 3; j++)
-            //{
-            //    Params_df_0[j] = 1E-5; //далее умножается G
-            //    Params_dnu_0[j] = 0.02; //град/час
-            //}
+            for (int j = 0; j < 3; j++)
+            {
+                Params_df_0[j] = 1E-5; //далее умножается G
+                Params_dnu_0[j] = 0.02; //град/час
+            }
 
             //for (int j = 0; j < 3; j++)
             //{
@@ -409,12 +409,12 @@ namespace MovingImitator
             //    Params_dnu_0[j] = 2.0; //град/час
             //}
 
-            Params_df_0[0] = 1E-3;
-            Params_df_0[1] = 1E-3;
-            Params_df_0[2] = 1E-3;
-            Params_dnu_0[0] = 0.05;
-            Params_dnu_0[1] = 0.05;
-            Params_dnu_0[2] = 0.05;
+            //Params_df_0[0] = 1E-3;
+            //Params_df_0[1] = 1E-3;
+            //Params_df_0[2] = 1E-3;
+            //Params_dnu_0[0] = 0.05;
+            //Params_dnu_0[1] = 0.05;
+            //Params_dnu_0[2] = 0.05;
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
@@ -509,7 +509,7 @@ namespace MovingImitator
             Params_OdoFrequency = ParamStart.Modeling_Params_OdoFrequency;
             Params_df_s = ParamStart.Modeling_Params_df_s; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
             Params_dnu_s = ParamStart.Modeling_Params_dnu_s; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма                
-            
+
 
 
             //----------------------------------------------------------------------------------------
@@ -817,7 +817,7 @@ namespace MovingImitator
                 if (
                     (odometer_left_ValueTrue % ParamStart.Imitator_GPS_IsReadyDistance < SINSstate.Vz[1] * SINSstate.timeStep + 0.01 && odometer_left_ValueTrue > 1.0)
                     ||
-                    flag_GPS_ControlPoint == 1 
+                    flag_GPS_ControlPoint == 1
                     )
                 {
                     SINSstate.GPS_Data.gps_Latitude.isReady = 1;
