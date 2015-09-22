@@ -460,7 +460,6 @@ namespace MovingImitator
             SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
             SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
             SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
-            SINSstate.stdNu_Oz1 = Convert.ToDouble(dataArray[35]);
 
 
             ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = Convert.ToDouble(dataArray[3]);
@@ -690,6 +689,13 @@ namespace MovingImitator
                 + " Pitch= " + (SINSstate.Pitch + Params_OdoKappa1).ToString()
                 + " nu_z0[1]= " + Params_dnu_0[0]
                 + " GPS_PositionError= " + ParamStart.Imitator_GPS_PositionError
+
+                + " df_0(z1)= " + Params_df_0[0]
+                + " df_0(z2)= " + Params_df_0[1]
+                + " df_0(z3)= " + Params_df_0[2]
+                + " nu_0(z1)= " + Params_dnu_0[0]
+                + " nu_0(z2)= " + Params_dnu_0[1]
+                + " nu_0(z3)= " + Params_dnu_0[2]
                 );
 
 

@@ -339,23 +339,29 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_iMx_r3_dV3)
                 {
-                    //KalmanVars.Matrix_A[iMx_r12_odo * iMx + 0] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_e;
-                    //KalmanVars.Matrix_A[iMx_r12_odo * iMx + 5] += -SINSstate_OdoMod.Vx_0[2];
-                    //KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 2] = -SINSstate_OdoMod.Omega_x[1];
+                    if (SINSstate.existRelationHoriz_VS_Vertical)
+                    {
+                        KalmanVars.Matrix_A[iMx_r12_odo * iMx + 0] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_e;
+                        KalmanVars.Matrix_A[iMx_r12_odo * iMx + 5] += -SINSstate_OdoMod.Vx_0[2];
+                        KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 2] = -SINSstate_OdoMod.Omega_x[1];
 
-                    //KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 1] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_n;
-                    //KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 4] += SINSstate_OdoMod.Vx_0[2];
-                    //KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 2] = SINSstate_OdoMod.Omega_x[0];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 1] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_n;
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 4] += SINSstate_OdoMod.Vx_0[2];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 2] = SINSstate_OdoMod.Omega_x[0];
+                    }
                 }
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 0] = -SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 1] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate_OdoMod.Vx_0[1];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate_OdoMod.Vx_0[0];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 0] = SINSstate_OdoMod.Omega_x[1];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 1] = -SINSstate_OdoMod.Omega_x[0];
+                    if (SINSstate.existRelationHoriz_VS_Vertical)
+                    {
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 0] = -SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 1] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate_OdoMod.Vx_0[1];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate_OdoMod.Vx_0[0];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 0] = SINSstate_OdoMod.Omega_x[1];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 1] = -SINSstate_OdoMod.Omega_x[0];
+                    }
                 }
             }
             /*-----------СЛАБОСВЗАННЫЙ ВАРИАНТ----------------*/
@@ -371,19 +377,25 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_iMx_r3_dV3)
                 {
-                    //KalmanVars.Matrix_A[iMx_r12_odo * iMx + 5] += -SINSstate_OdoMod.Vx_0[2];
-                    //KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 0] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_e;
-                    //KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 2] = -SINSstate_OdoMod.Omega_x[1];
+                    if (SINSstate.existRelationHoriz_VS_Vertical)
+                    {
+                        KalmanVars.Matrix_A[iMx_r12_odo * iMx + 5] += -SINSstate_OdoMod.Vx_0[2];
+                        KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 0] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_e;
+                        KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_r12_odo + 2] = -SINSstate_OdoMod.Omega_x[1];
 
-                    //KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 4] += SINSstate_OdoMod.Vx_0[2];
-                    //KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 1] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_n;
-                    //KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 2] = SINSstate_OdoMod.Omega_x[0];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 4] += SINSstate_OdoMod.Vx_0[2];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 1] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_n;
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_r12_odo + 2] = SINSstate_OdoMod.Omega_x[0];
+                    }
                 }
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate_OdoMod.Vx_0[1];
-                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate_OdoMod.Vx_0[0];
+                    if (SINSstate.existRelationHoriz_VS_Vertical)
+                    {
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate_OdoMod.Vx_0[1];
+                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate_OdoMod.Vx_0[0];
+                    }
                 }
             }
 
@@ -459,7 +471,7 @@ namespace Common_Namespace
                 KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 1) * iMq + tmpCounter + 1] = KalmanVars.Noise_Pos * sqrt_freq;
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
-                    KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 2) * iMq + tmpCounter + 2] = KalmanVars.Noise_Pos * sqrt_freq;
+                    KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 2) * iMq + tmpCounter + 2] = KalmanVars.Noise_Pos * sqrt_freq / 100.0;
             }
 
             //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, iMx, iMq);

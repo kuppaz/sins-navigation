@@ -26,9 +26,13 @@ namespace Common_Namespace
         public static void StartSINS_Parameters(SINS_State SINSstate, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars, ParamToStart ParamStart, Proc_Help ProcHelp)
         {
 
+            SINSstate.decrementVerticalNoise = 1.0;
+
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.OdoLimitMeasuresNum = 1;
+
+                SINSstate.decrementVerticalNoise = 1.0;
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -219,11 +223,13 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
+                SINSstate.decrementVerticalNoise = 1.0;
+
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // Брать модельные значения, а не задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-4; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-6; //3E-6- optim
+                ParamStart.Experiment_Noise_Vel = 3E-3; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 3E-5; //3E-6- optim
                 ParamStart.Experiment_stdR = 0.5;
                 ParamStart.Experiment_stdOdoR = 0.5; // метров
                 ParamStart.Experiment_stdV = 0.1;

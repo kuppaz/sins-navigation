@@ -27,7 +27,7 @@ namespace SINSProcessingModes
         public static int NumberOfIterationForOneForSmoothing = 500000;
 
 
-        public static void SINS_Corrected_Processing(int l, bool NowSmoothing, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod)
+        public static void SINS_Corrected_Processing(int l, bool NowSmoothing, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod, StreamWriter GRTV_output)
         {
             int t = 0;
 
@@ -212,7 +212,15 @@ namespace SINSProcessingModes
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
 
+
+                            //SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
+                            //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
+                            //SINSprocessing.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
+
                 KalmanProcs.KalmanForecast(KalmanVars);
+
+                            //SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
+                            //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
 
 
 
@@ -348,7 +356,7 @@ namespace SINSProcessingModes
                 //--- OUTPUT в файлы ---//
                 if (i != (SINSstate.LastCountForRead - 1) && SINSstate.Global_file != "Saratov_run_2014_07_23")
                     ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
-                        Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
+                        Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output);
                 else if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     //--- Раз в секунду вывод ---//
@@ -357,7 +365,7 @@ namespace SINSProcessingModes
                         SINSstate.FreqOutput = 1;
                         SINSstate.CountPrev = SINSstate.Count;
                         ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
-                            Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd);
+                            Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output);
                     }
                 }
 

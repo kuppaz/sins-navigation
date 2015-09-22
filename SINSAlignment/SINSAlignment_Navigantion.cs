@@ -9,7 +9,7 @@ namespace SINSAlignment
 {
     public class SINSAlignment_Navigantion
     {
-        public static int SINS_Alignment_Navigation(Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, StreamReader myFile, Kalman_Vars KalmanVars)
+        public static int SINS_Alignment_Navigation(Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, StreamReader myFile, Kalman_Vars KalmanVars, StreamWriter GRTV_output)
         {
             int i = 0, t = 0;
 
@@ -31,7 +31,7 @@ namespace SINSAlignment
             //int temp_AlgnCnt = ProcHelp.AlgnCnt;
             //ProcHelp.AlgnCnt = Convert.ToInt32(200.0 / SINSstate.Freq);
 
-            i = Alignment.RougthAlignment(ProcHelp, SINSstate, myFile, KalmanVars, SINSstate_OdoMod);
+            i = Alignment.RougthAlignment(ProcHelp, SINSstate, myFile, KalmanVars, SINSstate_OdoMod, GRTV_output);
 
             //ProcHelp.AlgnCnt = temp_AlgnCnt;
             SINSstate.flag_Alignment = true;

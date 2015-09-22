@@ -173,6 +173,12 @@ namespace Common_Namespace
                 SINSstate.GPS_Data.gps_Ve.Value = Convert.ToDouble(dataArray2[15]);
                 SINSstate.GPS_Data.gps_Ve.isReady = Convert.ToInt32(dataArray2[16]);
 
+                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+                {
+                    SINSstate.GPS_Data.gps_Vn.Value_prev = SINSstate.GPS_Data.gps_Vn.Value;
+                    SINSstate.GPS_Data.gps_Ve.Value_prev = SINSstate.GPS_Data.gps_Ve.Value;
+                }
+
                 SINSstate.FLG_Stop = Convert.ToInt32(dataArray2[17]);
 
                 SINSstate.OdometerData.odometer_left.Value = Convert.ToDouble(dataArray2[18]);
@@ -183,6 +189,8 @@ namespace Common_Namespace
 
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {
+                    SINSstate.OdometerData.odometer_left.Value_prev = SINSstate.OdometerData.odometer_left.Value;
+
                     SINSstate.OdoLimitMeasuresNum_Count++;
                     if (SINSstate.OdoLimitMeasuresNum_Count < SINSstate.OdoLimitMeasuresNum)
                     {
@@ -203,6 +211,64 @@ namespace Common_Namespace
 
                 if (SINSstate.Global_file.ToLower().Contains("imitator") && dataArray2.Length >= 22)
                     SINSstate.HeadingImitator = Convert.ToDouble(dataArray2[22]);
+
+
+                // --- Сохраняем оригинальные считанные значение, если проставлен флаг вывода в GRTV ---//
+                if (SINSstate.flag_GRTV_output)
+                {
+                    for (int y = 0; y < 3; y++)
+                    {
+                        SINSstate.F_z_orig[y] = SINSstate.F_z[y] / 9.81;
+                        SINSstate.W_z_orig[y] = SINSstate.W_z[y];
+                    }
+
+                    SINSstate.OdometerData.odometer_left.Value_orig = Convert.ToDouble(dataArray2[18]);
+                    SINSstate.OdometerData.odometer_left.isReady_orig = Convert.ToInt32(dataArray2[19]);
+                    if (SINSstate.OdometerData.odometer_left.isReady_orig != 1)
+                    {
+                        SINSstate.OdometerData.odometer_left.isReady_orig = 0;
+                        SINSstate.OdometerData.odometer_left.Value_orig = SINSstate.OdometerData.odometer_left.Value_prev;
+                    }
+
+                    SINSstate.GPS_Data.gps_Vn.Value_orig = Convert.ToDouble(dataArray2[13]);
+                    SINSstate.GPS_Data.gps_Vn.isReady_orig = Convert.ToInt32(dataArray2[14]);
+                    if (SINSstate.GPS_Data.gps_Vn.isReady_orig != 1)
+                    {
+                        SINSstate.GPS_Data.gps_Vn.isReady_orig = 0;
+                        SINSstate.GPS_Data.gps_Vn.Value_orig = SINSstate.GPS_Data.gps_Vn.Value_prev;
+                    }
+                    SINSstate.GPS_Data.gps_Ve.Value_orig = Convert.ToDouble(dataArray2[15]);
+                    SINSstate.GPS_Data.gps_Ve.isReady_orig = Convert.ToInt32(dataArray2[16]);
+                    if (SINSstate.GPS_Data.gps_Ve.isReady_orig != 1)
+                    {
+                        SINSstate.GPS_Data.gps_Ve.isReady_orig = 0;
+                        SINSstate.GPS_Data.gps_Ve.Value_orig = SINSstate.GPS_Data.gps_Ve.Value_prev;
+                    }
+
+
+
+                    SINSstate.GPS_Data.gps_Latitude.Value_orig = Convert.ToDouble(dataArray2[7]);
+                    SINSstate.GPS_Data.gps_Longitude.Value_orig = Convert.ToDouble(dataArray2[9]);
+                    SINSstate.GPS_Data.gps_Altitude.Value_orig = Convert.ToDouble(dataArray2[11]);
+
+                    if (SINSstate.GPS_Data.gps_Latitude.isReady != 1)
+                    {
+                        SINSstate.GPS_Data.gps_Latitude.Value_orig = SINSstate.GPS_Data.gps_Latitude_prev.Value;
+                        SINSstate.GPS_Data.gps_Longitude.Value_orig = SINSstate.GPS_Data.gps_Longitude_prev.Value;
+                        SINSstate.GPS_Data.gps_Altitude.Value_orig = SINSstate.GPS_Data.gps_Altitude_prev.Value;
+                    }
+
+                    SINSstate.GPS_Data.gps_Latitude.isReady_orig = Convert.ToInt32(dataArray2[8]);
+                    SINSstate.GPS_Data.gps_Longitude.isReady_orig = Convert.ToInt32(dataArray2[10]);
+                    SINSstate.GPS_Data.gps_Altitude.isReady_orig = Convert.ToInt32(dataArray2[12]);
+
+                    if (SINSstate.GPS_Data.gps_Latitude.isReady_orig != 1)
+                        SINSstate.GPS_Data.gps_Latitude.isReady_orig = 0;
+                    if (SINSstate.GPS_Data.gps_Longitude.isReady_orig != 1)
+                        SINSstate.GPS_Data.gps_Longitude.isReady_orig = 0;
+                    if (SINSstate.GPS_Data.gps_Altitude.isReady_orig != 1)
+                        SINSstate.GPS_Data.gps_Altitude.isReady_orig = 0;
+                }
 
             }
 
@@ -274,7 +340,8 @@ namespace Common_Namespace
 
 
         public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
-                StreamWriter Nav_FeedbackSolution, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer, StreamWriter Nav_Smoothed, StreamWriter KMLFileOut, StreamWriter KMLFileOutSmoothed)
+                StreamWriter Nav_FeedbackSolution, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer, StreamWriter Nav_Smoothed, StreamWriter KMLFileOut, StreamWriter KMLFileOutSmoothed,
+                StreamWriter GRTV_output)
         {
             double Lat = 0.0, Long = 0.0;
             double[] Vx_0 = new double[3];
@@ -296,6 +363,61 @@ namespace Common_Namespace
                                  Math.Pow((Long - ProcHelp.LongSNS * SimpleData.ToRadian) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
             ProcHelp.distance_from_start = Math.Sqrt(Math.Pow((Lat - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(Lat, SINSstate.Altitude), 2) +
                                  Math.Pow((Long - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
+
+
+
+            // --- Вывод в файл данных, необходимых для формирования GRTV бинарного фалйа --- //
+            if (SINSstate.flag_GRTV_output == true && SINSstate.NowSmoothing == false)
+            {
+                if (i == start_i)
+                {
+                    StreamWriter GRTV_init_output = new StreamWriter(SimpleData.PathOutputString + "S_GRTV_init_output.txt");
+
+                    GRTV_init_output.WriteLine(
+                        "fSamplingInterval " + SINSstate.timeStep + "\n"
+                        + "nInstallationModel 0\n"                               // 0 – продольная ось прибора совпадает с продольной осью объекта
+                        + "flLatitudeID " + SINSstate.Latitude_Start + " 1\n"
+                        + "flLongitudeID " + SINSstate.Longitude_Start + " 1\n"
+                        + "flHeightID " + SINSstate.Altitude_Start + " 1\n"
+                        + "flTrueHeadID 0.0 0\n"                                   //начальная долгота, заданная с пульта [рад]
+                        + "flAzimuthMisalignment 0.0 0\n"                          // Угол азимутального рассогласования
+                        + "flElevation 0.0 0"                                    //начальный угол возвышения ИНС [рад]
+                        );
+
+                    GRTV_init_output.Close();
+                }
+
+
+                int modeGRTV = 16;
+                if (i < ProcHelp.AlgnCnt) modeGRTV = 8;
+
+                GRTV_output.WriteLine(
+                    SINSstate.Count
+                    + " " + modeGRTV + " "  
+                    + " " + SINSstate.F_z_orig[1] + " " + SINSstate.F_z_orig[2] + " " + SINSstate.F_z_orig[0]
+                    + " " + SINSstate.W_z_orig[1] + " " + SINSstate.W_z_orig[2] + " " + SINSstate.W_z_orig[0]
+
+                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
+                    + " " + SINSstate.Vx_0[1] + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[2]
+
+                    + " " + SINSstate.Heading + " " + SINSstate.Pitch + " " + SINSstate.Roll
+                    + " " + SINSstate.Latitude + " 1 " + SINSstate.Longitude + " 1 " + SINSstate.Altitude + " 1"
+                    + " " + SINSstate.Vx_0[1] + " 1 " + SINSstate.Vx_0[0] + " 1 " + SINSstate.Vx_0[2] + " 1"
+
+                    + " " + SINSstate.OdometerData.odometer_left.Value_orig + " " + SINSstate.OdometerData.odometer_left.isReady_orig
+
+                    //метка времени - отмечает момент времени формирования пакета СНС-данных
+                    + " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Latitude.Value_orig + " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Longitude.Value_orig + " " + SINSstate.GPS_Data.gps_Longitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Altitude.Value_orig + " " + SINSstate.GPS_Data.gps_Altitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Vn.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Ve.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
+                    + " " + " 0 0" //Скорость GPS вертикальная
+                    );
+            }
+
+
 
 
             if (i % SINSstate.FreqOutput == 0 && SINSstate.NowSmoothing == false)

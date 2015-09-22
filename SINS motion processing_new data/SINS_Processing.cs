@@ -36,6 +36,8 @@ namespace SINS_motion_processing_new_data
 
         string GlobalPrefixTelemetric = "";
 
+        public static StreamWriter GRTV_output = new StreamWriter(SimpleData.PathOutputString + "S_GRTV_output.txt");
+
 
         public SINS_Processing()
         {
@@ -163,9 +165,9 @@ namespace SINS_motion_processing_new_data
                 SINSstate2 = SINS_State.DeepCopy(SINSstate);
 
                 if (SINSstate.flag_UsingNavAlignment == true && ProcHelp.AlgnCnt != 0)
-                    l = SINSAlignment_Navigantion.SINS_Alignment_Navigation(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
+                    l = SINSAlignment_Navigantion.SINS_Alignment_Navigation(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars, GRTV_output);
                 else if (SINSstate.flag_UsingClasAlignment == true && ProcHelp.AlgnCnt != 0)
-                    l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars);
+                    l = SINSAlignment_Classical.SINS_Alignment_Classical(ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, myFile, KalmanVars, GRTV_output);
 
 
                 //--- stdF и stdNu значения, определяющие классы точности датчиков. На основе них формируется стартовые ковариации инструментальных погрешностей инерц.датчиков, а также угловых ошибок ---
@@ -202,6 +204,13 @@ namespace SINS_motion_processing_new_data
                         KalmanVars.Noise_Angl[j] = ParamStart.Experiment_Noise_Angl;
 
                     }
+                }
+
+                //---Для экспериментальных данных SINSstate.stdF_Oz будут равны SINSstate.stdF, т.к. далее используются в нач.ков. матрице
+                for (int j = 0; j < 3; j++)
+                {
+                    SINSstate.stdF_Oz[j] = SINSstate.stdF[j];
+                    SINSstate.stdNu_Oz[j] = SINSstate.stdNu;
                 }
 
                 SINSstate.stdR = ParamStart.Experiment_stdR;
@@ -242,13 +251,13 @@ namespace SINS_motion_processing_new_data
                 SINSstate2 = SINS_State.DeepCopy(SINSstate);
                 ////------БИНС + ОДОМЕТР------
                 if (OnlyIntegrating.Checked == false && SINSstate.flag_OnlyAlignment == false || SINSstate.flag_Odometr_SINS_case == true)
-                    SINS_Corrected.SINS_Corrected_Processing(l, false, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);
+                    SINS_Corrected.SINS_Corrected_Processing(l, false, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, GRTV_output);
                 //------Автономное решение-----
                 else if (SINSstate.flag_OnlyAlignment == false)
                     SINS_Autonomous.SINS_Autonomous_Processing(l, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);
 
                 if (SINSstate.flag_Smoothing)
-                    SINS_Corrected.SINS_Corrected_Processing(l, true, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);
+                    SINS_Corrected.SINS_Corrected_Processing(l, true, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, GRTV_output);
             }
 
 
@@ -256,7 +265,9 @@ namespace SINS_motion_processing_new_data
             Console.Write(" Processing time: " + (end - start).ToString());
             Console.Write(" "); Console.Write(" ");
 
-            myFile.Close(); this.Close();
+            GRTV_output.Close();
+            myFile.Close();
+            this.Close();
         }
 
         //---------------------------------------------------------------------------------------
@@ -284,10 +295,18 @@ namespace SINS_motion_processing_new_data
             if (SINSstate.odo_min_increment < 0.0001)
                 SINSstate.odo_min_increment = 0.01;
 
+            //---Здесь SINSstate.stdF и SINSstate.stNu считываются в проекции на географию и используются только для определения начальной ошибки по углам
             SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
             SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
             SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
-            SINSstate.stdNu_Oz1 = Convert.ToDouble(dataArray[35]);
+
+            SINSstate.stdF_Oz[0] = Convert.ToDouble(dataArray[39]) * 9.81;
+            SINSstate.stdF_Oz[1] = Convert.ToDouble(dataArray[41]) * 9.81;
+            SINSstate.stdF_Oz[2] = Convert.ToDouble(dataArray[43]) * 9.81;
+            SINSstate.stdNu_Oz[0] = Convert.ToDouble(dataArray[45]);
+            SINSstate.stdNu_Oz[1] = Convert.ToDouble(dataArray[47]);
+            SINSstate.stdNu_Oz[2] = Convert.ToDouble(dataArray[49]);
+
             for (int j = 0; j < 3; j++)
             {
                 if (ParamStart.Imitator_NoiseModelFlag == true)
@@ -504,6 +523,8 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_UsingOdoVelocity = this.flag_UsingOdoVelocity.Checked;
             SINSstate.flag_onlyZeroSideVelocity = this.flag_onlyZeroSideVelocity.Checked;
             SINSstate.flag_UsingOdoPosition = this.flag_UsingOdoPosition.Checked;
+
+            SINSstate.flag_GRTV_output = this.flag_GRTV_output.Checked;
         }
 
         public void SelectDataIn()
@@ -709,17 +730,21 @@ namespace SINS_motion_processing_new_data
                 CheckedTrueDataIn();
                 this.Imitator_Data.Enabled = true;
 
-                this.AccuracyClass_NoErr.Enabled = true;
-                this.AccuracyClass_0_0grph.Enabled = true;
-                this.AccuracyClass_Custom.Enabled = true;
+                this.AccuracyClass_NoErr.Enabled = false;
+                this.AccuracyClass_0_0grph.Enabled = false;
+                this.AccuracyClass_Custom.Enabled = false;
+                this.AccuracyClass_0_02grph.Enabled = false;
+                this.AccuracyClass_0_2_grph.Enabled = false;
+                this.AccuracyClass_2_0_grph.Enabled = false;
             }
             else
             {
                 CheckedFalseDataIn();
 
-                this.AccuracyClass_NoErr.Enabled = false;
-                this.AccuracyClass_0_0grph.Enabled = false;
-                this.AccuracyClass_Custom.Enabled = false;
+                this.AccuracyClass_0_0grph.Enabled = true;
+                this.AccuracyClass_0_02grph.Enabled = true;
+                this.AccuracyClass_0_2_grph.Enabled = true;
+                this.AccuracyClass_2_0_grph.Enabled = true;
             }
 
             this.Imitator_Telemetric.Enabled = true;

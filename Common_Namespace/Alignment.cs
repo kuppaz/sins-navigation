@@ -8,7 +8,7 @@ namespace Common_Namespace
 {
     public class Alignment : SimpleOperations
     {
-        public static int RougthAlignment(Proc_Help ProcHelp, SINS_State SINSstate, StreamReader myFile, Kalman_Vars KalmanVars, SINS_State SINSstate_OdoMod)
+        public static int RougthAlignment(Proc_Help ProcHelp, SINS_State SINSstate, StreamReader myFile, Kalman_Vars KalmanVars, SINS_State SINSstate_OdoMod, StreamWriter GRTV_output)
         {
             int k = 0, i = 0;
             double[] f_avg = new double[3]; double[] w_avg = new double[3]; double[] w_avg_x = new double[3]; double[] U_s = new double[3];
@@ -154,6 +154,32 @@ namespace Common_Namespace
                     Alignment_avg_rougthMovingAVG.WriteLine(SINSstate.Time.ToString() + " " + MovingAverageAccGyro[0] + " " + MovingAverageAccGyro[1] + " " + MovingAverageAccGyro[2] + " " + MovingAverageAccGyro[3] + " " + MovingAverageAccGyro[4]
                         + " " + MovingAverageAccGyro[5]);
                 }
+
+
+                GRTV_output.WriteLine(
+                    SINSstate.Count
+                    + " " + "4" + " "
+                    + " " + SINSstate.F_z_orig[1] + " " + SINSstate.F_z_orig[2] + " " + SINSstate.F_z_orig[0]
+                    + " " + SINSstate.W_z_orig[1] + " " + SINSstate.W_z_orig[2] + " " + SINSstate.W_z_orig[0]
+
+                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
+                    + " " + SINSstate.Vx_0[1] + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[2]
+
+                    + " " + SINSstate.Heading + " " + SINSstate.Pitch + " " + SINSstate.Roll
+                    + " " + SINSstate.Latitude + " 1 " + SINSstate.Longitude + " 1 " + SINSstate.Altitude + " 1"
+                    + " " + SINSstate.Vx_0[1] + " 1 " + SINSstate.Vx_0[0] + " 1 " + SINSstate.Vx_0[2] + " 1"
+
+                    + " " + SINSstate.OdometerData.odometer_left.Value_orig + " " + SINSstate.OdometerData.odometer_left.isReady_orig
+
+                    //метка времени - отмечает момент времени формирования пакета СНС-данных
+                    + " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Latitude.Value_orig + " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Longitude.Value_orig + " " + SINSstate.GPS_Data.gps_Longitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Altitude.Value_orig + " " + SINSstate.GPS_Data.gps_Altitude.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Vn.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
+                    + " " + SINSstate.GPS_Data.gps_Ve.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
+                    + " " + " 0 0" //Скорость GPS вертикальная
+                    );
             }
 
 

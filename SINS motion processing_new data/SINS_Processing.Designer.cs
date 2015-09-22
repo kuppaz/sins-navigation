@@ -107,6 +107,7 @@
             this.AccuracyClass_Custom = new System.Windows.Forms.CheckBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1011,11 +1012,22 @@
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Matrix Noise Dimension";
             // 
+            // flag_GRTV_output
+            // 
+            this.flag_GRTV_output.AutoSize = true;
+            this.flag_GRTV_output.Location = new System.Drawing.Point(768, 418);
+            this.flag_GRTV_output.Name = "flag_GRTV_output";
+            this.flag_GRTV_output.Size = new System.Drawing.Size(109, 17);
+            this.flag_GRTV_output.TabIndex = 83;
+            this.flag_GRTV_output.Text = "Output gor GRTV";
+            this.flag_GRTV_output.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.flag_GRTV_output);
             this.Controls.Add(this.groupBox17);
             this.Controls.Add(this.groupBox16);
             this.Controls.Add(this.groupBox14);
@@ -1061,6 +1073,7 @@
             this.groupBox17.ResumeLayout(false);
             this.groupBox17.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1145,6 +1158,7 @@
         private System.Windows.Forms.CheckBox flag_VupOdo_till_VupSINS;
         private System.Windows.Forms.CheckBox AccuracyClass_Custom;
         private System.Windows.Forms.CheckBox flag_onlyZeroSideVelocity;
+        private System.Windows.Forms.CheckBox flag_GRTV_output;
     }
 }
 

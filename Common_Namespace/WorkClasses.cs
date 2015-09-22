@@ -15,7 +15,10 @@ namespace Common_Namespace
     public class DataWithIsReady
     {
         public double Value;
+        public double Value_orig;
+        public double Value_prev;
         public int isReady;
+        public int isReady_orig;
     }
 
     [Serializable()]
@@ -58,6 +61,8 @@ namespace Common_Namespace
     {
         public string StartErrorString;
         public string Global_file = "";
+
+        public bool existRelationHoriz_VS_Vertical = true;
 
         public int FreqOutput, LastCountForRead;
         public bool DoHaveControlPoints = false;
@@ -102,10 +107,10 @@ namespace Common_Namespace
         public odometer_data OdometerData = new odometer_data();
 
         public double F_z2_localAvg;
-        public double[] F_z = new double[3]
+        public double[] F_z = new double[3], F_z_orig = new double[3]
                       , F_x = new double[3]
                       , F_z_prev = new double[3]
-                      , W_z = new double[3]
+                      , W_z = new double[3], W_z_orig = new double[3]
                       , W_x = new double[3]
                       , W_z_prev = new double[3]
                       ;
@@ -162,8 +167,8 @@ namespace Common_Namespace
                       ;
 
         //---Начальные  сигма для матриц S---
-        public double[] stdF = new double[3];
-        public double stdR, stdOdoR, stdV, stdAlpha1, stdAlpha2, stdBeta3, stdNu, stdNu_Oz1, stdScale, stdKappa1, stdKappa3;
+        public double[] stdF = new double[3], stdF_Oz = new double[3], stdNu_Oz = new double[3];
+        public double stdR, stdOdoR, stdV, stdAlpha1, stdAlpha2, stdBeta3, stdNu, stdScale, stdKappa1, stdKappa3;
 
         //---Ошибки вектора состояния системы---
         public double DeltaLatitude, DeltaLongitude, DeltaV_1, DeltaV_2, DeltaV_3, DeltaHeading, DeltaRoll, DeltaPitch, DeltaAltitude;
@@ -206,6 +211,7 @@ namespace Common_Namespace
         public bool flag_AccuracyClass_0_0grph;
         public double Noise_GPS_PositionError;
         public bool flag_VupOdo_till_VupSINS;
+        public double decrementVerticalNoise;
 
         public static SINS_State DeepCopy(SINS_State other)
         {
@@ -218,6 +224,8 @@ namespace Common_Namespace
             }
         }
 
+
+        public bool flag_GRTV_output { get; set; }
     }
 
 
