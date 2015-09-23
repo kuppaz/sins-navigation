@@ -214,7 +214,7 @@ namespace SINS_motion_processing_new_data
                 }
 
                 SINSstate.stdR = ParamStart.Experiment_stdR;
-                SINSstate.stdOdoR = ParamStart.Experiment_stdOdoR = 1.0; // метров
+                SINSstate.stdOdoR = ParamStart.Experiment_stdOdoR; // = 1.0; // метров
                 SINSstate.stdV = ParamStart.Experiment_stdV;
                 SINSstate.stdAlpha1 = -SINSstate.stdF[1] / 9.81; //радиан
                 SINSstate.stdAlpha2 = SINSstate.stdF[0] / 9.81; //радиан

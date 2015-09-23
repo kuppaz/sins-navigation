@@ -30,8 +30,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) * 10.0;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Max(Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) * 10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) *10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Max(Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) *10.0;
 
             KalmanVars.cnt_measures += 2;
 
@@ -77,7 +77,6 @@ namespace Common_Namespace
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 2] = -1.0;
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
                     KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) / 20.0;
-                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.05;
 
                     //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     //{
@@ -353,7 +352,7 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
-                    if (SINSstate.existRelationHoriz_VS_Vertical)
+                    //if (SINSstate.existRelationHoriz_VS_Vertical)
                     {
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 0] = -SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 1] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
@@ -391,7 +390,7 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
-                    if (SINSstate.existRelationHoriz_VS_Vertical)
+                    //if (SINSstate.existRelationHoriz_VS_Vertical)
                     {
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate_OdoMod.Vx_0[1];
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate_OdoMod.Vx_0[0];
@@ -420,11 +419,11 @@ namespace Common_Namespace
             }
 
 
-            //if (SINSstate.Count % 1000 == 0)
-            //{
-            //    SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
-            //    SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
-            //}
+            if (SINSstate.Count % 5000 == 0)
+            {
+                SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx, "Matrix_A");
+                SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx, "CovarianceMatrixS_m");
+            }
         }
 
 
@@ -471,7 +470,7 @@ namespace Common_Namespace
                 KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 1) * iMq + tmpCounter + 1] = KalmanVars.Noise_Pos * sqrt_freq;
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
-                    KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 2) * iMq + tmpCounter + 2] = KalmanVars.Noise_Pos * sqrt_freq / 100.0;
+                    KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 2) * iMq + tmpCounter + 2] = KalmanVars.Noise_Pos * sqrt_freq / SINSstate.decrementVerticalNoise;
             }
 
             //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, iMx, iMq);

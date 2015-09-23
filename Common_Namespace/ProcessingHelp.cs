@@ -420,52 +420,52 @@ namespace Common_Namespace
 
 
 
-            if (i % SINSstate.FreqOutput == 0 && SINSstate.NowSmoothing == false)
-                Speed_Angles.WriteLine(SINSstate.Time + " " + SINSstate.CourseHeading + " " + SINSstate.Heading + " " + SINSstate.CoursePitch
-                    + " " + SINSstate.beta_c + " " + SINSstate.alpha_c + " " + SINSstate.gamma_c
-                    + " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1] + " " + Vx_0[0] + " " + Vx_0[1]
-                    + " " + KalmanVars.Matrix_H[4] + " " + KalmanVars.Matrix_H[5] + " " + KalmanVars.Matrix_H[6]);
+            //if (i % SINSstate.FreqOutput == 0 && SINSstate.NowSmoothing == false)
+            //    Speed_Angles.WriteLine(SINSstate.Time + " " + SINSstate.CourseHeading + " " + SINSstate.Heading + " " + SINSstate.CoursePitch
+            //        + " " + SINSstate.beta_c + " " + SINSstate.alpha_c + " " + SINSstate.gamma_c
+            //        + " " + SINSstate.OdoSpeed_x0[0] + " " + SINSstate.OdoSpeed_x0[1] + " " + Vx_0[0] + " " + Vx_0[1]
+            //        + " " + KalmanVars.Matrix_H[4] + " " + KalmanVars.Matrix_H[5] + " " + KalmanVars.Matrix_H[6]);
 
             //--- Вывод всяких СКО ---
-            if (i % SINSstate.FreqOutput == 0 || i == start_i)
-            {
-                string str = (SINSstate.Time + SINSstate.Time_Alignment).ToString(), str_hat = "";
+            //if (i % SINSstate.FreqOutput == 0 || i == start_i)
+            //{
+            //    string str = (SINSstate.Time + SINSstate.Time_Alignment).ToString(), str_hat = "";
 
-                if (i == start_i)
-                {
-                    str_hat += "time sigm_dr1 sigm_dr2 ";
-                    if (SINSstate.flag_iMx_r3_dV3)
-                        str_hat += "std_dr3 ";
-                    if (SINSstate.flag_Odometr_SINS_case)
-                        str_hat += "std_odo_dr1 std_odo_dr2 ";
-                    if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_Using_iMx_r_odo_3 == true)
-                        str_hat += "std_odo_dr3 ";
-                    if (SINSstate.flag_iMx_kappa_13_ds)
-                        str_hat += "stdKappa1 stdKappa3 stdScale ";
+            //    if (i == start_i)
+            //    {
+            //        str_hat += "time sigm_dr1 sigm_dr2 ";
+            //        if (SINSstate.flag_iMx_r3_dV3)
+            //            str_hat += "std_dr3 ";
+            //        if (SINSstate.flag_Odometr_SINS_case)
+            //            str_hat += "std_odo_dr1 std_odo_dr2 ";
+            //        if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_Using_iMx_r_odo_3 == true)
+            //            str_hat += "std_odo_dr3 ";
+            //        if (SINSstate.flag_iMx_kappa_13_ds)
+            //            str_hat += "stdKappa1 stdKappa3 stdScale ";
 
-                    str_hat += "std_dV1 std_dV2 stdAlpha1 stdAlpha2 stdBeta3 stdNu1 stdNu2 stdNu3 std_df1 std_df2 std_df3";
-                    STD_data.WriteLine(str_hat);
-                }
+            //        str_hat += "std_dV1 std_dV2 stdAlpha1 stdAlpha2 stdBeta3 stdNu1 stdNu2 stdNu3 std_df1 std_df2 std_df3";
+            //        STD_data.WriteLine(str_hat);
+            //    }
 
-                if (SINSstate.flag_iMx_r3_dV3)
-                    str = str + " " + KalmanProcs.Sigmf_Disp(0, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(1, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r3_dV3 + 0, KalmanVars);
-                else str = str + " " + KalmanProcs.Sigmf_Disp(0, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(1, KalmanVars);
+            //    if (SINSstate.flag_iMx_r3_dV3)
+            //        str = str + " " + KalmanProcs.Sigmf_Disp(0, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(1, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r3_dV3 + 0, KalmanVars);
+            //    else str = str + " " + KalmanProcs.Sigmf_Disp(0, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(1, KalmanVars);
 
-                if (SINSstate.flag_Odometr_SINS_case == true)
-                    str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r12_odo, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r12_odo + 1, KalmanVars);
-                if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_Using_iMx_r_odo_3 == true)
-                    str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r12_odo + 2, KalmanVars);
+            //    if (SINSstate.flag_Odometr_SINS_case == true)
+            //        str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r12_odo, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r12_odo + 1, KalmanVars);
+            //    if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_Using_iMx_r_odo_3 == true)
+            //        str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_r12_odo + 2, KalmanVars);
 
-                str = str + " " + KalmanProcs.Sigmf_Disp(2, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(3, KalmanVars);
-                str = str + " " + KalmanProcs.Sigmf_Disp(4, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(5, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(6, KalmanVars);
-                str = str + " " + KalmanProcs.Sigmf_Disp(7, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(8, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(9, KalmanVars);
-                str = str + " " + KalmanProcs.Sigmf_Disp(10, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(11, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(12, KalmanVars);
+            //    str = str + " " + KalmanProcs.Sigmf_Disp(2, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(3, KalmanVars);
+            //    str = str + " " + KalmanProcs.Sigmf_Disp(4, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(5, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(6, KalmanVars);
+            //    str = str + " " + KalmanProcs.Sigmf_Disp(7, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(8, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(9, KalmanVars);
+            //    str = str + " " + KalmanProcs.Sigmf_Disp(10, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(11, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(12, KalmanVars);
 
-                if (SINSstate.flag_iMx_kappa_13_ds)
-                    str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_odo_model + 0, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_odo_model + 1, KalmanVars);// +" " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_odo_model + 2, KalmanVars);
+            //    if (SINSstate.flag_iMx_kappa_13_ds)
+            //        str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_odo_model + 0, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_odo_model + 1, KalmanVars);// +" " + KalmanProcs.Sigmf_Disp(SINSstate.iMx_odo_model + 2, KalmanVars);
 
-                STD_data.WriteLine(str);
-            }
+            //    STD_data.WriteLine(str);
+            //}
 
 
             /*----------------------------------OUTPUT DinamicOdometer------------------------------------------------------*/
