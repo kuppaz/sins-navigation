@@ -30,8 +30,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) *10.0;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Max(Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) *10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) * 10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Max(Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) * 10.0;
 
             KalmanVars.cnt_measures += 2;
 
@@ -76,7 +76,7 @@ namespace Common_Namespace
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r3_dV3] = 1.0;
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 2] = -1.0;
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
-                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) / 20.0;
+                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) / 0.5;
 
                     //if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     //{
@@ -352,15 +352,16 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
-                    //if (SINSstate.existRelationHoriz_VS_Vertical)
+                    if (SINSstate.existRelationHoriz_VS_Vertical)
                     {
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 0] = -SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e;
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 1] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
-                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate_OdoMod.Vx_0[1];
-                        KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate_OdoMod.Vx_0[0];
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 0] = SINSstate_OdoMod.Omega_x[1];
                         KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + iMx_r12_odo + 1] = -SINSstate_OdoMod.Omega_x[0];
                     }
+
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 4] = -SINSstate_OdoMod.Vx_0[1];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 2) * iMx + 5] = SINSstate_OdoMod.Vx_0[0];
                 }
             }
             /*-----------СЛАБОСВЗАННЫЙ ВАРИАНТ----------------*/

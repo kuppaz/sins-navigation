@@ -213,18 +213,17 @@ namespace SINSProcessingModes
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
 
 
-                            //SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-                            //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
-                            //SINSprocessing.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx);
+                if (!SINSstate.existRelationHoriz_VS_Vertical)
+                    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
 
                 KalmanProcs.KalmanForecast(KalmanVars);
 
-                            //SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-                            //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
+                if (!SINSstate.existRelationHoriz_VS_Vertical)
+                    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
+                            
+                //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
 
-
-
-
+                
                 SINSstate.flag_UsingCorrection = false;
 
                 //---------------Формирование флага остановки------------//
