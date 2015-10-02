@@ -10,7 +10,7 @@ namespace SINSProcessingModes
     public class SINS_Autonomous
     {
 
-        public static void SINS_Autonomous_Processing(int l, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod)
+        public static void SINS_Autonomous_Processing(int l, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate2, Kalman_Vars KalmanVars, Proc_Help ProcHelp, SINS_State SINSstate_OdoMod, StreamWriter GRTV_output)
         {
             int t = 0;
 
@@ -31,7 +31,7 @@ namespace SINSProcessingModes
 
             StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Debaging//Speed_Angles.txt");
             StreamWriter DinamicOdometer = new StreamWriter(SimpleData.PathOutputString + "DinamicOdometer.txt");
-            StreamWriter GRTV_output = new StreamWriter(SimpleData.PathOutputString + "S_GRTV_output.txt");
+            StreamWriter Cicle_Debag_Solution = new StreamWriter(SimpleData.PathOutputString + "Debaging//Solution_.txt");
 
             Nav_Errors.WriteLine("dLat  dLong  dV_x1  dV_x2  dV_x3  dHeading  dRoll  dPitch");
             Nav_Autonomous.WriteLine("Time OdoCnt OdoV Latitude Longitude Altitude LatSNS-Lat LngSNS-Lng LatSNS LongSNS LatSNSrad LongSNSrad SpeedSNS V_x1  V_x2  V_x3 Yaw  Roll  Pitch PosError PosError_Start Azimth");
@@ -117,7 +117,7 @@ namespace SINSProcessingModes
                         + ",  Vx_1=" + Math.Round(SINSstate.Vx_0[0], 2) + ",  Vx_2=" + Math.Round(SINSstate.Vx_0[1], 3)
                         );
 
-                ProcessingHelp.OutPutInfo(i, i, ProcHelp, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut, GRTV_output);
+                ProcessingHelp.OutPutInfo(i, i, ProcHelp, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut, GRTV_output, Cicle_Debag_Solution);
 
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {

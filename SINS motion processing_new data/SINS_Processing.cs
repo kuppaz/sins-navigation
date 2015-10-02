@@ -54,19 +54,42 @@ namespace SINS_motion_processing_new_data
 
         public void Main_Block_Click_new_Click(object sender, EventArgs e)
         {
+            this.Single_Navigation_Processing(false, 0.0, 0.0);
+
+            GRTV_output.Close();
+            this.Close();
+        }
+
+        private void NoiseParamsScanning_Click(object sender, EventArgs e)
+        {
+            for (double Cicle_Noise_Velocity = 3E-8; Cicle_Noise_Velocity <= 3E-2; Cicle_Noise_Velocity = Cicle_Noise_Velocity * 10.0)
+            {
+                for (double Cicle_Noise_Angular = 3E-9; Cicle_Noise_Angular <= 3E-3; Cicle_Noise_Angular = Cicle_Noise_Angular * 10.0)
+                {
+                    this.Single_Navigation_Processing(true, Cicle_Noise_Velocity, Cicle_Noise_Angular);
+                }
+            }
+
+            GRTV_output.Close();
+            this.Close();
+        }
+
+
+        public void Single_Navigation_Processing(bool NoiseParamScanning, double Cicle_Noise_Velocity, double Cicle_Noise_Angular)
+        {
             int l = 0;
 
             //------------------------------------------------------------------------
             //------------------------------------------------------------------------
 
             //---для имитатора---
-            ParamStart.Imitator_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-            ParamStart.Imitator_Noise_Vel = 3E-3;
-            ParamStart.Imitator_Noise_Angl = 3E-5;
+            ParamStart.Imitator_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+            ParamStart.Imitator_Noise_Vel = 3E-4;
+            ParamStart.Imitator_Noise_Angl = 3E-6;
 
             ParamStart.Imitator_Noise_OdoScale = 0.000000001;
             ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
-            ParamStart.Imitator_Noise_Pos = 0.01;
+            ParamStart.Imitator_Noise_Pos = 0.1;
             ParamStart.Imitator_Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
             ParamStart.Imitator_Noise_Accel = 0.000000002;
 
@@ -239,6 +262,17 @@ namespace SINS_motion_processing_new_data
                 SINSprocessing.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
 
 
+            //--- Если запустили циклический подбор параметров шумов ---//
+            if (NoiseParamScanning)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    KalmanVars.Noise_Vel[j] = Cicle_Noise_Velocity;
+                    KalmanVars.Noise_Angl[j] = Cicle_Noise_Angular;
+                }
+            }
+
+
 
             //---Переопределяем размерности векторов и матриц после выставки---
             this.DefineDimentionOfErrorVector();
@@ -254,7 +288,7 @@ namespace SINS_motion_processing_new_data
                     SINS_Corrected.SINS_Corrected_Processing(l, false, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, GRTV_output);
                 //------Автономное решение-----
                 else if (SINSstate.flag_OnlyAlignment == false)
-                    SINS_Autonomous.SINS_Autonomous_Processing(l, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod);
+                    SINS_Autonomous.SINS_Autonomous_Processing(l, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, GRTV_output);
 
                 if (SINSstate.flag_Smoothing)
                     SINS_Corrected.SINS_Corrected_Processing(l, true, myFile, SINSstate, SINSstate2, KalmanVars, ProcHelp, SINSstate_OdoMod, GRTV_output);
@@ -265,9 +299,7 @@ namespace SINS_motion_processing_new_data
             Console.Write(" Processing time: " + (end - start).ToString());
             Console.Write(" "); Console.Write(" ");
 
-            GRTV_output.Close();
             myFile.Close();
-            this.Close();
         }
 
         //---------------------------------------------------------------------------------------
@@ -1153,6 +1185,8 @@ namespace SINS_motion_processing_new_data
         {
 
         }
+
+        
 
     }
 }

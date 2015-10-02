@@ -341,7 +341,8 @@ namespace Common_Namespace
 
         public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
                 StreamWriter Nav_FeedbackSolution, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer, StreamWriter Nav_Smoothed, StreamWriter KMLFileOut, StreamWriter KMLFileOutSmoothed,
-                StreamWriter GRTV_output)
+                StreamWriter GRTV_output,
+                StreamWriter Cicle_Debag_Solution)
         {
             double Lat = 0.0, Long = 0.0;
             double[] Vx_0 = new double[3];
@@ -560,6 +561,12 @@ namespace Common_Namespace
                                         + " " + Math.Round((SINSstate.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8);
                     ;
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);
+
+                    ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
+                                        + " " + SINSstate.Altitude
+                                        + " " + ProcHelp.distance
+                    ;
+                    Cicle_Debag_Solution.WriteLine(ProcHelp.datastring);
                 }
             }
 

@@ -38,7 +38,6 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
-                KalmanVars.Noise_Pos = 0.75;
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.000000002;
             }

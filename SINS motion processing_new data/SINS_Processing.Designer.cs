@@ -108,6 +108,7 @@
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
+            this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1022,11 +1023,22 @@
             this.flag_GRTV_output.Text = "Output gor GRTV";
             this.flag_GRTV_output.UseVisualStyleBackColor = true;
             // 
+            // NoiseParamsScanning
+            // 
+            this.NoiseParamsScanning.Location = new System.Drawing.Point(929, 290);
+            this.NoiseParamsScanning.Name = "NoiseParamsScanning";
+            this.NoiseParamsScanning.Size = new System.Drawing.Size(83, 47);
+            this.NoiseParamsScanning.TabIndex = 84;
+            this.NoiseParamsScanning.Text = "Noise Params Scunning Start";
+            this.NoiseParamsScanning.UseVisualStyleBackColor = true;
+            this.NoiseParamsScanning.Click += new System.EventHandler(this.NoiseParamsScanning_Click);
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.NoiseParamsScanning);
             this.Controls.Add(this.flag_GRTV_output);
             this.Controls.Add(this.groupBox17);
             this.Controls.Add(this.groupBox16);
@@ -1159,6 +1171,7 @@
         private System.Windows.Forms.CheckBox AccuracyClass_Custom;
         private System.Windows.Forms.CheckBox flag_onlyZeroSideVelocity;
         private System.Windows.Forms.CheckBox flag_GRTV_output;
+        private System.Windows.Forms.Button NoiseParamsScanning;
     }
 }
 
