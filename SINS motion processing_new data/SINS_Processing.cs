@@ -32,6 +32,7 @@ namespace SINS_motion_processing_new_data
         Proc_Help ProcHelp;
 
         int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0;
+        int noiseParam_LastCountForRead = 0, noiseParam_StartCountForRead = 0;
         bool iMx_r3_dV3, iMx_kappa_13_ds;
 
         string GlobalPrefixTelemetric = "";
@@ -60,19 +61,131 @@ namespace SINS_motion_processing_new_data
             this.Close();
         }
 
+
+
+
         private void NoiseParamsScanning_Click(object sender, EventArgs e)
         {
-            for (double Cicle_Noise_Velocity = 3E-8; Cicle_Noise_Velocity <= 3E-2; Cicle_Noise_Velocity = Cicle_Noise_Velocity * 10.0)
+            double NoiseVel_start = 1E-8, 
+                   NoiseVel_end = 1E-2, 
+                   NoiseVel_multpl = 5.0;
+
+            double NoiseAngl_start = 1E-9, 
+                   NoiseAngl_end = 1E-3, 
+                   NoiseAngl_multpl = 5.0;
+
+            for (double Cicle_Noise_Velocity = NoiseVel_start; Cicle_Noise_Velocity <= NoiseVel_end; Cicle_Noise_Velocity = Cicle_Noise_Velocity * NoiseVel_multpl)
             {
-                for (double Cicle_Noise_Angular = 3E-9; Cicle_Noise_Angular <= 3E-3; Cicle_Noise_Angular = Cicle_Noise_Angular * 10.0)
+                for (double Cicle_Noise_Angular = NoiseAngl_start; Cicle_Noise_Angular <= NoiseAngl_end; Cicle_Noise_Angular = Cicle_Noise_Angular * NoiseAngl_multpl)
                 {
                     this.Single_Navigation_Processing(true, Cicle_Noise_Velocity, Cicle_Noise_Angular);
                 }
             }
 
+
+            int j = 0;
+            string datastring = "";
+            string[] dataArray;
+
+            for (double Cicle_Noise_Velocity = NoiseVel_start; Cicle_Noise_Velocity <= NoiseVel_end; Cicle_Noise_Velocity = Cicle_Noise_Velocity * NoiseVel_multpl)
+            {
+                for (double Cicle_Noise_Angular = NoiseAngl_start; Cicle_Noise_Angular <= NoiseAngl_end; Cicle_Noise_Angular = Cicle_Noise_Angular * NoiseAngl_multpl)
+                {
+                    j++;
+                    StreamReader Cicle_Debag_Solution = new StreamReader(SimpleData.PathOutputString + "Debaging//Solution_"
+                        + Cicle_Noise_Angular.ToString("E2") + "_" + Cicle_Noise_Velocity.ToString("E2") + ".txt");
+
+                    if (j == 1)
+                    {
+                        for (; ; )
+                        {
+                            string tmpstr = Cicle_Debag_Solution.ReadLine();
+                            if (Cicle_Debag_Solution.EndOfStream) break;
+                            noiseParam_LastCountForRead++;
+                        }
+                        Cicle_Debag_Solution.Close();
+                        Cicle_Debag_Solution = new StreamReader(SimpleData.PathOutputString + "Debaging//Solution_"
+                            + Cicle_Noise_Angular.ToString("E2") + "_" + Cicle_Noise_Velocity.ToString("E2") + ".txt");
+
+                        FileStream fs = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
+                        fs.Close();
+                        FileStream fs2 = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
+                        fs2.Close();
+                    }
+
+                    StreamWriter NoiseParam_CicleScanning_HorizError = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.txt");
+                    StreamWriter NoiseParam_CicleScanning_Height = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.txt");
+
+                    StreamReader NoiseParam_CicleScanning_HorizError_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
+                    StreamReader NoiseParam_CicleScanning_Height_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
+
+
+                    for (int i = 0; i <= this.noiseParam_LastCountForRead; i++)
+                    {
+                        datastring = Cicle_Debag_Solution.ReadLine();
+                        dataArray = datastring.Split(' ');
+
+
+                        string str = "";
+                        if (j == 1)
+                        {
+                            if (i == 0)
+                                NoiseParam_CicleScanning_HorizError.WriteLine("Time " + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                            str = dataArray[0] + " " + dataArray[2];
+                        }
+                        else
+                        {
+                            if (i == 0)
+                                NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine()
+                                    + " " + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                            str = NoiseParam_CicleScanning_HorizError_Read.ReadLine() + " " + dataArray[2];
+                        }                      
+                        NoiseParam_CicleScanning_HorizError.WriteLine(str);
+
+
+
+                        str = "";
+                        if (j == 1)
+                        {
+                            if (i == 0)
+                                NoiseParam_CicleScanning_Height.WriteLine("Time " + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                            str = dataArray[0] + " " + dataArray[1];
+                        }
+                        else
+                        {
+                            if (i == 0)
+                                NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + " " 
+                                    + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                            str = NoiseParam_CicleScanning_Height_Read.ReadLine() + " " + dataArray[1];
+                        }
+                        NoiseParam_CicleScanning_Height.WriteLine(str);
+
+                    }
+
+                    NoiseParam_CicleScanning_HorizError.Close();
+                    NoiseParam_CicleScanning_HorizError_Read.Close();
+                    NoiseParam_CicleScanning_Height.Close();
+                    NoiseParam_CicleScanning_Height_Read.Close();
+
+                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
+                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
+                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.txt", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
+                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.txt", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
+
+
+                    Cicle_Debag_Solution.Close();
+                    File.Delete(SimpleData.PathOutputString + "Debaging//Solution_"
+                        + Cicle_Noise_Angular.ToString("E2") + "_" + Cicle_Noise_Velocity.ToString("E2") + ".txt");
+                }
+            }
+
+
             GRTV_output.Close();
             this.Close();
         }
+
+
+
 
 
         public void Single_Navigation_Processing(bool NoiseParamScanning, double Cicle_Noise_Velocity, double Cicle_Noise_Angular)
