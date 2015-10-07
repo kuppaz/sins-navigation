@@ -217,6 +217,9 @@ namespace SINSProcessingModes
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
 
 
+
+
+
                 if (!SINSstate.existRelationHoriz_VS_Vertical)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
 
@@ -224,6 +227,9 @@ namespace SINSProcessingModes
 
                 if (!SINSstate.existRelationHoriz_VS_Vertical)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
+
+
+
                             
                 //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
 

@@ -67,12 +67,12 @@ namespace SINS_motion_processing_new_data
         private void NoiseParamsScanning_Click(object sender, EventArgs e)
         {
             double NoiseVel_start = 1E-8, 
-                   NoiseVel_end = 1E-2, 
-                   NoiseVel_multpl = 5.0;
+                   NoiseVel_end = 1E-3, 
+                   NoiseVel_multpl = 10.0;
 
             double NoiseAngl_start = 1E-9, 
-                   NoiseAngl_end = 1E-3, 
-                   NoiseAngl_multpl = 5.0;
+                   NoiseAngl_end = 1E-4,
+                   NoiseAngl_multpl = 10.0;
 
             for (double Cicle_Noise_Velocity = NoiseVel_start; Cicle_Noise_Velocity <= NoiseVel_end; Cicle_Noise_Velocity = Cicle_Noise_Velocity * NoiseVel_multpl)
             {
@@ -107,18 +107,23 @@ namespace SINS_motion_processing_new_data
                         Cicle_Debag_Solution = new StreamReader(SimpleData.PathOutputString + "Debaging//Solution_"
                             + Cicle_Noise_Angular.ToString("E2") + "_" + Cicle_Noise_Velocity.ToString("E2") + ".txt");
 
-                        FileStream fs = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
+                        FileStream fs = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
                         fs.Close();
-                        FileStream fs2 = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
+                        FileStream fs2 = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
                         fs2.Close();
                     }
 
-                    StreamWriter NoiseParam_CicleScanning_HorizError = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.txt");
-                    StreamWriter NoiseParam_CicleScanning_Height = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.txt");
+                    StreamWriter NoiseParam_CicleScanning_HorizError = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.csv");
+                    StreamWriter NoiseParam_CicleScanning_Height = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.csv");
 
-                    StreamReader NoiseParam_CicleScanning_HorizError_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
-                    StreamReader NoiseParam_CicleScanning_Height_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
+                    StreamReader NoiseParam_CicleScanning_HorizError_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
+                    StreamReader NoiseParam_CicleScanning_Height_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
 
+
+                    double[] minDataArray = new double[10];
+                    double[] maxDataArray = new double[10];
+                    for (int y = 0; y < minDataArray.Length; y++)
+                        minDataArray[y] = 1000000.0;
 
                     for (int i = 0; i <= this.noiseParam_LastCountForRead; i++)
                     {
@@ -130,36 +135,63 @@ namespace SINS_motion_processing_new_data
                         if (j == 1)
                         {
                             if (i == 0)
-                                NoiseParam_CicleScanning_HorizError.WriteLine("Time " + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
-                            str = dataArray[0] + " " + dataArray[2];
+                                NoiseParam_CicleScanning_HorizError.WriteLine("Time;" + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                            str = dataArray[0] + ";" + dataArray[2];
                         }
                         else
                         {
                             if (i == 0)
                                 NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine()
-                                    + " " + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
-                            str = NoiseParam_CicleScanning_HorizError_Read.ReadLine() + " " + dataArray[2];
-                        }                      
+                                    + ";" + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                            str = NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + dataArray[2];
+                        }
+                        if (Convert.ToDouble(dataArray[2]) < minDataArray[2])
+                            minDataArray[2] = Convert.ToDouble(dataArray[2]);
+                        if (Convert.ToDouble(dataArray[2]) > maxDataArray[2])
+                            maxDataArray[2] = Convert.ToDouble(dataArray[2]);
                         NoiseParam_CicleScanning_HorizError.WriteLine(str);
-
 
 
                         str = "";
                         if (j == 1)
                         {
                             if (i == 0)
-                                NoiseParam_CicleScanning_Height.WriteLine("Time " + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
-                            str = dataArray[0] + " " + dataArray[1];
+                                NoiseParam_CicleScanning_Height.WriteLine("Time;" + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                            str = dataArray[0] + ";" + dataArray[1];
                         }
                         else
                         {
                             if (i == 0)
-                                NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + " " 
+                                NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" 
                                     + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
-                            str = NoiseParam_CicleScanning_Height_Read.ReadLine() + " " + dataArray[1];
+                            str = NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + dataArray[1];
                         }
+                        if (Convert.ToDouble(dataArray[1]) < minDataArray[1])
+                            minDataArray[1] = Convert.ToDouble(dataArray[1]);
+                        if (Convert.ToDouble(dataArray[1]) > maxDataArray[1])
+                            maxDataArray[1] = Convert.ToDouble(dataArray[1]);
                         NoiseParam_CicleScanning_Height.WriteLine(str);
+                    }
 
+                    if (j == 1)
+                    {
+                        NoiseParam_CicleScanning_Height.WriteLine("Min;" + minDataArray[1]);
+                        NoiseParam_CicleScanning_Height.WriteLine("Max;" + maxDataArray[1]);
+                        NoiseParam_CicleScanning_Height.WriteLine("Diff;" + (maxDataArray[1] - minDataArray[1]));
+
+                        NoiseParam_CicleScanning_HorizError.WriteLine("Min;" + minDataArray[2]);
+                        NoiseParam_CicleScanning_HorizError.WriteLine("Max;" + maxDataArray[2]);
+                        NoiseParam_CicleScanning_HorizError.WriteLine("Diff;" + (maxDataArray[2] - minDataArray[2]));
+                    }
+                    else
+                    {
+                        NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + minDataArray[1]);
+                        NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + maxDataArray[1]);
+                        NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + (maxDataArray[1] - minDataArray[1]));
+
+                        NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + minDataArray[2]);
+                        NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + maxDataArray[2]);
+                        NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + (maxDataArray[2] - minDataArray[2]));
                     }
 
                     NoiseParam_CicleScanning_HorizError.Close();
@@ -167,10 +199,10 @@ namespace SINS_motion_processing_new_data
                     NoiseParam_CicleScanning_Height.Close();
                     NoiseParam_CicleScanning_Height_Read.Close();
 
-                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
-                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
-                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.txt", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.txt");
-                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.txt", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.txt");
+                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
+                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
+                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.csv", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
+                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.csv", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
 
 
                     Cicle_Debag_Solution.Close();
@@ -183,6 +215,10 @@ namespace SINS_motion_processing_new_data
             GRTV_output.Close();
             this.Close();
         }
+
+
+
+
 
 
 

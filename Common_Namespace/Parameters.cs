@@ -238,9 +238,16 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-4; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-8; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
+
+                //NotChecked
+                //--- Подбор по высоте: 1.00E-003_1.00E-005; vel 3.9Е-3, angl 3.9E-4, vel 7.8Е-4, angl 6.3E-7
+                //--- Подбор по гориз ошибке: 1.00E-005_1.00E-007; vel 1.6E-4, angl 1.3E-7
+                //Checked
+                //--- Подбор по высоте:  все гавно
+                //--- Подбор по гориз ошибке: 1.00E-003_1.00E-004 vel 4.0E-3, angl 6.3E-7
 
                 KalmanVars.Noise_Pos = 0.5;
                 // -------------------------------------------//
@@ -252,10 +259,10 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoScale = 0.0001;
                 KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
 
-                ParamStart.Experiment_stdR = 0.5;
-                ParamStart.Experiment_stdOdoR = 0.5; // метров
-                ParamStart.Experiment_stdV = 0.1;
-                ParamStart.Experiment_stdScale = 0.01;
+                ParamStart.Experiment_stdR = 0.05;
+                ParamStart.Experiment_stdOdoR = 0.05; // метров
+                ParamStart.Experiment_stdV = 0.01;
+                ParamStart.Experiment_stdScale = 0.005;
                 ParamStart.Experiment_stdKappa1 = 5.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
