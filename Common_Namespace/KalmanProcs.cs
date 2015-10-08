@@ -159,6 +159,7 @@ namespace Common_Namespace
                 fixed (double* _xm = KalmanVars.ErrorConditionVector_m, _xp = KalmanVars.ErrorConditionVector_p, _sm = KalmanVars.CovarianceMatrixS_m, _sp = KalmanVars.CovarianceMatrixS_p, _f = KalmanVars.TransitionMatrixF, _sq = KalmanVars.CovarianceMatrixNoise)
                 {
                     dgq0b(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx, SimpleData.iMq);
+                    //dg0b(_xp, _sp, _f,_xm, _sm, SimpleData.iMx);
                 }
             }
             SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
@@ -583,7 +584,7 @@ namespace Common_Namespace
                     kq = k * mq;
 
                     for (i = 0; i < m; i++)
-                        w[i] = 0.0;
+                        _w[i] = 0.0;
 
                     for (i = 0; i < m; i++)
                     {
@@ -637,6 +638,123 @@ namespace Common_Namespace
                 *sm = Math.Sqrt(c);
             }
         }
+
+
+
+        /*
+        *
+        *_________________________________________________________________
+        *
+        *                 **********
+        *                 *  dg0b  *
+        *                 **********
+        *
+        *   dg0b(xp,sp,f,xm,sm,m,w) - подпрограмма   реализующая  алгоритм
+        *                             фильтра  Калмана для этапа прогноза.
+        *                             (Оценка     плюс      ковариационные
+        *                             соотношения).
+        *                             Основу    вычислительного  алгоритма
+        *                             составляет процедура ортогонализации
+        *                             Грамма-Шмидта.
+        *
+        *   ВНИМАНИЕ!!!
+        *   ВНИМАНИЕ!!!   В модели задачи шум системы  q=B*u  отсутствует.
+        *   ВНИМАНИЕ!!!
+        *
+        *   Входные параметры:
+        *
+        *                m  - размерность системы (вектора состояния);_
+        *                xp - идентификатор оценки вектора состояния  Х(+)
+        *                     (m x 1) до прогноза;
+        *                sp - идентификатор  значения  квадратного корн
+        *                     S(+) (m x m) до  прогноза, хранящийся в форме вектора;
+        *                f  - идентификатор переходной матрицы Ф(m x m),
+        *                     хранящийся в форме вектора.
+        *
+        *   Выходные параметры:
+        *                                              _
+        *                  xm - идентификатор  оценки  Х(-) (m x 1)  после
+        *                       прогноза;
+        *                  sm - идентификатор значения  квадратного  корн
+        *                       S(-)  (m x m) после  прогноза, хранящийся в форме вектора.
+        *
+        *   Служебные переменные:
+        *
+        *                  w  - одномерный (m x 1) массив.
+        *
+        *   ВНИМАНИЕ!!!
+        *   ВНИМАНИЕ!!!   Для  массивов   sm   и   sp   значимыми являютс
+        *   ВНИМАНИЕ!!!   только их верхнетреугольные области.
+        *   ВНИМАНИЕ!!!
+        *
+        */
+        //unsafe static void dgq0b(double* xp, double* sp, double* f, double* sq, double* xm, double* sm, int m, int mq)
+        unsafe static void dg0b(double* xp, double* sp, double* f, double* xm, double* sm, int m)
+        {
+            int i, j, k, ij, im, jm, m1;
+            double c, y, y1, dy;
+            double[] w = new double[100];
+
+            fixed (double* _w = w)
+            {
+                for (i = 0; i < m; i++) _w[i] = 0.0;
+                m1 = m + 1;
+                for (i = 0; i < m; i++)
+                {
+                    c = 0.0;
+                    im = i * m;
+                    for (j = 0; j < m; j++)
+                    {
+                        y = 0.0;
+                        jm = j * m;
+                        for (k = 0; k <= i; k++) y += *(sp + k * m + i) * *(f + jm + k);
+                        ij = im + j;
+                        c += *(f + ij) * *(xp + j);
+                        *(sm + ij) = y;
+                    }
+                    *(xm + i) = c;
+                }
+                for (k = m - 1; k > 0; k--)
+                {
+                    y = 0.0;
+                    for (i = 0; i < m; i++) _w[i] = 0.0;
+                    for (i = 0; i < m; i++)
+                    {
+                        y1 = *(sm + i * m + k);
+                        y += y1 * y1;
+                    }
+                    y = Math.Sqrt(y);
+                    dy = 1.0 / y;
+                    for (j = 0; j < k; j++)
+                    {
+                        y1 = 0.0;
+                        for (i = 0; i < m; i++)
+                        {
+                            im = i * m;
+                            y1 += *(sm + im + j) * *(sm + im + k);
+                        }
+                        y1 *= dy;
+                        *(_w + j) = y1;
+                        c = y1 * dy;
+                        for (i = 0; i < m; i++)
+                        {
+                            im = i * m;
+                            *(sm + im + j) -= (*(sm + im + k)) * c;
+                        }
+                    }
+                    for (i = 0; i < k; i++) *(sm + i * m + k) = *(_w + i);
+                    *(sm + m1 * k) = y;
+                }
+                c = 0.0;
+                for (i = 0; i < m; i++)
+                {
+                    y = *(sm + i * m);
+                    c += y * y;
+                }
+                *sm = Math.Sqrt(c);
+            }
+        }
+
 
 
 
@@ -885,13 +1003,13 @@ namespace Common_Namespace
         /*                                */
         unsafe static void dgq0b_nb(double* xp, double* sp, double* f, double* sq, double* xm, double* sm, int m, int mq)
         {
-            int i,j,k,ij,im,jq,kq,m1;
-            double c,y,y1,dy;
+            int i, j, k, ij, im, jq, kq, m1;
+            double c, y, y1, dy;
             //double *w = new double [m];
             double[] w = new double[m];
             //double sqn[Mx*Mx];
-            for(i=0;i < m;i++)  w[i] = 0.0;
-            m1=m+1;
+            for (i = 0; i < m; i++) w[i] = 0.0;
+            m1 = m + 1;
             fixed (double* _w = w)
             {
                 for (i = 0; i < m; i++)
@@ -913,7 +1031,7 @@ namespace Common_Namespace
                 {
                     y = 0.0;
                     kq = k * mq;
-                    for (i = 0; i < m; i++) w[i] = 0.0;
+                    for (i = 0; i < m; i++) _w[i] = 0.0;
                     for (i = 0; i < m; i++)
                     {
                         y1 = *(sm + i * m + k);
@@ -962,7 +1080,7 @@ namespace Common_Namespace
                 }
                 *sm = Math.Sqrt(c);
             }
-        //delete [] w;
+            //delete [] w;
         }
 
         /*
