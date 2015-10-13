@@ -302,7 +302,7 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
@@ -337,6 +337,10 @@ namespace Common_Namespace
                 ApplyMatrixStartCondition(SINSstate);
                 ApplyMatrixStartCondition(SINSstate_OdoMod);
 
+                //flElevation=-1.126
+                SINSstate.alpha_x = 0.0 * SimpleData.ToRadian;
+                SINSstate.alpha_y = 0.0 * SimpleData.ToRadian;
+                SINSstate.alpha_z = 0.0 * SimpleData.ToRadian;
             }
 
 

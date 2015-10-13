@@ -131,7 +131,7 @@ namespace Common_Namespace
 
 
                 //Юстировочные углы
-                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23")
+                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
                 {
                     double[] fz = new double[3], Wz = new double[3];
 

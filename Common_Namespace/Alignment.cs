@@ -282,6 +282,10 @@ namespace Common_Namespace
             {
                 SINSstate.Heading = 15.28 * SimpleData.ToRadian;
             }
+            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
+            {
+                SINSstate.Heading = 141.45 * SimpleData.ToRadian;
+            }
 
 
 
