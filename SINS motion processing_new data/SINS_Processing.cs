@@ -316,6 +316,8 @@ namespace SINS_motion_processing_new_data
 
             if (SINSstate.Global_file == "Azimut_514_08Nov2013_11_15") ProcHelp.AlgnCnt = 95000;
 
+            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд") ProcHelp.AlgnCnt = 37000;
+
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
                 ProcHelp.AlgnCnt = 27320;
@@ -774,6 +776,12 @@ namespace SINS_motion_processing_new_data
                 SINSstate.Global_file = "Azimut_514_08Nov2013_11_15";
             }
 
+            if (GRTVout_GCEF_format_030715.Checked == true)
+            {
+                myFile = new StreamReader(SimpleData.PathInputString + "GRTVout_GCEF_format (030715выезд).txt");
+                SINSstate.Global_file = "GRTVout_GCEF_format_030715выезд";
+            }
+
 
 
             if (topo_saratov.Checked == true)
@@ -835,12 +843,14 @@ namespace SINS_motion_processing_new_data
             this.Azimut_15_08_2012.Enabled = false; this.Azimut_24_08_2012.Enabled = false; this.Azimut_29_08_2012.Enabled = false;
             this.ktn004_15_03_2012.Enabled = false; this.Imitator_Data.Enabled = false; this.Azimuth_minsk_race_4_3to6to2.Enabled = false;
             this.topo_saratov.Enabled = false; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = false; this.Azimut_514_08Nov2013_11_15.Enabled = false;
+            this.GRTVout_GCEF_format_030715.Enabled = false;
         }
         public void FreeInData()
         {
             this.Azimut_15_08_2012.Enabled = true; this.Azimut_24_08_2012.Enabled = true; this.Azimut_29_08_2012.Enabled = true;
             this.ktn004_15_03_2012.Enabled = true; this.Imitator_Data.Enabled = true; this.Azimuth_minsk_race_4_3to6to2.Enabled = true;
             this.topo_saratov.Enabled = true; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = true; this.Azimut_514_08Nov2013_11_15.Enabled = true;
+            this.GRTVout_GCEF_format_030715.Enabled = true;
         }
 
         public void LockParamsOfStart()
@@ -1026,6 +1036,15 @@ namespace SINS_motion_processing_new_data
             {
                 CheckedTrueDataIn();
                 this.Azimut_514_08Nov2013_11_15.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+        private void GRTVout_GCEF_format_030715_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GRTVout_GCEF_format_030715.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.GRTVout_GCEF_format_030715.Enabled = true;
             }
             else CheckedFalseDataIn();
         }
@@ -1334,6 +1353,8 @@ namespace SINS_motion_processing_new_data
         {
 
         }
+
+
 
         
 

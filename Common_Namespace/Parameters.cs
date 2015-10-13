@@ -285,6 +285,61 @@ namespace Common_Namespace
             }
 
 
+            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
+            {
+
+                SINSstate.timeStep = SINSstate.Freq = 0.020480;
+                SINSstate.OdoLimitMeasuresNum = 10;
+
+                SINSstate.odo_min_increment = 0.1;
+
+                KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
+                KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
+                KalmanVars.OdoNoise_STOP = 0.5;
+
+                SINSstate.decrementVerticalNoise = 1.0;
+                SINSstate.existRelationHoriz_VS_Vertical = true;
+
+                //=== 
+                //---Здесь нужно брать класс точности 2.0
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                //===
+
+                KalmanVars.Noise_Pos = 0.5;
+                // -------------------------------------------//
+
+
+
+                KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_Accel = 0.0000002;
+                KalmanVars.Noise_OdoScale = 0.0001;
+                KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
+
+                ParamStart.Experiment_stdR = 0.05;
+                ParamStart.Experiment_stdOdoR = 0.05; // метров
+                ParamStart.Experiment_stdV = 0.01;
+                ParamStart.Experiment_stdScale = 0.005;
+                ParamStart.Experiment_stdKappa1 = 5.0; //минут
+                ParamStart.Experiment_stdKappa3 = 5.0; //минут
+                ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
+
+
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.264756 * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.999337 * SimpleData.ToRadian;
+                ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 10.0;
+
+                ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
+                ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
+
+
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
+
+            }
+
+
 
 
 

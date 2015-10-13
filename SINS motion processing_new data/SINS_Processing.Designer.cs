@@ -109,6 +109,7 @@
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
+            this.GRTVout_GCEF_format_030715 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1033,11 +1034,23 @@
             this.NoiseParamsScanning.UseVisualStyleBackColor = true;
             this.NoiseParamsScanning.Click += new System.EventHandler(this.NoiseParamsScanning_Click);
             // 
+            // GRTVout_GCEF_format_030715
+            // 
+            this.GRTVout_GCEF_format_030715.AutoSize = true;
+            this.GRTVout_GCEF_format_030715.Location = new System.Drawing.Point(232, 23);
+            this.GRTVout_GCEF_format_030715.Name = "GRTVout_GCEF_format_030715";
+            this.GRTVout_GCEF_format_030715.Size = new System.Drawing.Size(127, 17);
+            this.GRTVout_GCEF_format_030715.TabIndex = 85;
+            this.GRTVout_GCEF_format_030715.Text = "GRTV 030715выезд";
+            this.GRTVout_GCEF_format_030715.UseVisualStyleBackColor = true;
+            this.GRTVout_GCEF_format_030715.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_030715_CheckedChanged);
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.GRTVout_GCEF_format_030715);
             this.Controls.Add(this.NoiseParamsScanning);
             this.Controls.Add(this.flag_GRTV_output);
             this.Controls.Add(this.groupBox17);
@@ -1172,6 +1185,7 @@
         private System.Windows.Forms.CheckBox flag_onlyZeroSideVelocity;
         private System.Windows.Forms.CheckBox flag_GRTV_output;
         private System.Windows.Forms.Button NoiseParamsScanning;
+        private System.Windows.Forms.CheckBox GRTVout_GCEF_format_030715;
     }
 }
 
