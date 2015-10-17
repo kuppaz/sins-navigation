@@ -66,13 +66,13 @@ namespace SINS_motion_processing_new_data
 
         private void NoiseParamsScanning_Click(object sender, EventArgs e)
         {
-            double NoiseVel_start = 1E-8, 
-                   NoiseVel_end = 1E-3, 
-                   NoiseVel_multpl = 10.0;
+            double NoiseVel_start = 1E-4, 
+                   NoiseVel_end = 1E-1, 
+                   NoiseVel_multpl = 5.0;
 
-            double NoiseAngl_start = 1E-9, 
-                   NoiseAngl_end = 1E-4,
-                   NoiseAngl_multpl = 10.0;
+            double NoiseAngl_start = 1E-4, 
+                   NoiseAngl_end = 1E-1,
+                   NoiseAngl_multpl = 5.0;
 
             for (double Cicle_Noise_Velocity = NoiseVel_start; Cicle_Noise_Velocity <= NoiseVel_end; Cicle_Noise_Velocity = Cicle_Noise_Velocity * NoiseVel_multpl)
             {
@@ -316,7 +316,11 @@ namespace SINS_motion_processing_new_data
 
             if (SINSstate.Global_file == "Azimut_514_08Nov2013_11_15") ProcHelp.AlgnCnt = 95000;
 
-            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд") ProcHelp.AlgnCnt = 37000;
+            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
+            {
+                //ProcHelp.AlgnCnt = 37000;
+                ProcHelp.AlgnCnt = 4300;
+            }
 
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {

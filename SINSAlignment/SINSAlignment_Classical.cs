@@ -118,12 +118,12 @@ namespace SINSAlignment
                 SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
                 SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
 
-
-
-
-                Alignment_Errors.Close(); Alignment_Corrected_State.Close(); Alignment_SINSstate.Close(); Alignment_StateErrorsVector.Close();
                 /*----------------------------------------------------------------------------------------*/
             }
+
+
+            Alignment_Errors.Close(); Alignment_Corrected_State.Close(); Alignment_SINSstate.Close(); Alignment_StateErrorsVector.Close();
+            Alignment_STD_Data.Close();
 
             ProcHelp.initCount = false;
             SINSstate.flag_Alignment = false;

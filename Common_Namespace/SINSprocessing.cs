@@ -69,8 +69,14 @@ namespace Common_Namespace
             SINSstate.DeltaLatitude = ErrorVector[1] / SINSstate.R_n;
             SINSstate.DeltaLongitude = ErrorVector[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
 
-            SINSstate.DeltaV_1 = ErrorVector[2] + SINSstate.Vx_0[1] * ErrorVector[6] + SINSstate.Vx_0[1] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
-            SINSstate.DeltaV_2 = ErrorVector[3] - SINSstate.Vx_0[0] * ErrorVector[6] - SINSstate.Vx_0[0] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude);
+            SINSstate.DeltaV_1 = ErrorVector[2]
+                 //+ SINSstate.Vx_0[1] * ErrorVector[6] + SINSstate.Vx_0[1] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude)
+                ;
+            SINSstate.DeltaV_2 = ErrorVector[3]
+                //- SINSstate.Vx_0[0] * ErrorVector[6] - SINSstate.Vx_0[0] * SINSstate.DeltaLongitude * Math.Sin(SINSstate.Latitude)
+                ;
+
+
             //--- В случае обратных связей не должно быть списывания углов бетта
             if (!SINSstate.flag_FeedbackExist)
             {

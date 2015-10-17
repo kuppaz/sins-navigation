@@ -136,7 +136,7 @@ namespace MovingImitator
 
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 1.5 * 3600.0)
+            while (CurTimeWithAlign < 2.0 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -234,8 +234,8 @@ namespace MovingImitator
                 //-----------СКОРОСТЬ---------------//
                 double constantV, leftTimeMoving, rightTimeMoving, accelerationDuration;
                 constantV = 40.0 / 3.6;
-                leftTimeMoving = 0.0;
-                rightTimeMoving = 2.7 * 3600.0;
+                leftTimeMoving = 0.2;
+                rightTimeMoving = 1.8 * 3600.0;
                 accelerationDuration = 50.0;
 
                 if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
@@ -391,10 +391,10 @@ namespace MovingImitator
             ParamStart.Imitator_GPS_IsReadyDistance = 100000.0;
             ParamStart.Imitator_GPS_IsReady_Target[0] = 3000.0;
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
-            ParamStart.Modeling_Params_OdoKappa1 = -0 * SimpleData.ToRadian;
-            ParamStart.Modeling_Params_OdoKappa3 = -0 * SimpleData.ToRadian;
+            ParamStart.Modeling_Params_OdoKappa1 = -0.5 * SimpleData.ToRadian;
+            ParamStart.Modeling_Params_OdoKappa3 = -1.0 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoIncrement = 20.0; // в сантиметрах // Маленький лучше не ставить.
-            ParamStart.Modeling_Params_OdoScaleErr = 1.0;
+            ParamStart.Modeling_Params_OdoScaleErr = 1.01;
             ParamStart.Modeling_Params_OdoFrequency = 5;
             ParamStart.Modeling_Params_df_s = 2000000000000.0; //(rnd_1.NextDouble() - 0.5) / Params_df_s //100.0 - норма
             ParamStart.Modeling_Params_dnu_s = 2000000000000.0; //(rnd_5.NextDouble() - 0.5) / Params_dnu_s //10000.0 - норма
@@ -404,17 +404,17 @@ namespace MovingImitator
                 ParamStart.Modeling_Params_OdoIncrement = 1.0;
 
 
-            for (int j = 0; j < 3; j++)
-            {
-                Params_df_0[j] = 0.0; //далее умножается G
-                Params_dnu_0[j] = 0.0; //град/час
-            }
-
             //for (int j = 0; j < 3; j++)
             //{
-            //    Params_df_0[j] = 1E-5; //далее умножается G
-            //    Params_dnu_0[j] = 0.02; //град/час
+            //    Params_df_0[j] = 0.0; //далее умножается G
+            //    Params_dnu_0[j] = 0.0; //град/час
             //}
+
+            for (int j = 0; j < 3; j++)
+            {
+                Params_df_0[j] = 1E-5; //далее умножается G
+                Params_dnu_0[j] = 0.02; //град/час
+            }
 
             //for (int j = 0; j < 3; j++)
             //{

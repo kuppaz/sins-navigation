@@ -284,7 +284,17 @@ namespace Common_Namespace
             }
             if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
             {
-                SINSstate.Heading = 141.45 * SimpleData.ToRadian;
+                //SINSstate.Heading = -141.45 * SimpleData.ToRadian; //-134.0102
+
+                //SINSstate.Heading = -117.2561 * SimpleData.ToRadian;
+                //SINSstate.Roll = 2.9201 * SimpleData.ToRadian;
+                //SINSstate.Pitch = -0.84457 * SimpleData.ToRadian;
+
+                for (int j = 0; j < 3; j++)
+                {
+                    KalmanVars.Noise_Vel[j] = KalmanVars.Noise_Vel[j] / Math.Sqrt(Math.Abs(SINSstate.Freq));
+                    KalmanVars.Noise_Angl[j] = KalmanVars.Noise_Angl[j] / Math.Sqrt(Math.Abs(SINSstate.Freq));
+                }
             }
 
 

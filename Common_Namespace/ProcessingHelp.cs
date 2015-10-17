@@ -131,7 +131,7 @@ namespace Common_Namespace
 
 
                 //Юстировочные углы
-                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23" || SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
+                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     double[] fz = new double[3], Wz = new double[3];
 
@@ -146,6 +146,18 @@ namespace Common_Namespace
                     SimpleOperations.CopyArray(SINSstate.F_z, fz);
                     SimpleOperations.CopyArray(SINSstate.W_z, Wz);
                 }
+                if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
+                {
+                    double[] fz = new double[3], Wz = new double[3];
+
+                    SimpleOperations.CopyArray(Wz, Matrix.Multiply(SimpleOperations.A_xs(SINSstate.alpha_x, SINSstate.alpha_y, SINSstate.alpha_z), SINSstate.W_z));
+                    SimpleOperations.CopyArray(fz, Matrix.Multiply(SimpleOperations.A_xs(SINSstate.alpha_x, SINSstate.alpha_y, SINSstate.alpha_z), SINSstate.F_z));
+
+                    SimpleOperations.CopyArray(SINSstate.F_z, fz);
+                    SimpleOperations.CopyArray(SINSstate.W_z, Wz);
+                }
+
+
 
                 //---Запоминаем координаты предыдущей контрольной точки
                 if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
@@ -380,7 +392,7 @@ namespace Common_Namespace
                         + "flLatitudeID " + SINSstate.Latitude_Start + " 1\n"
                         + "flLongitudeID " + SINSstate.Longitude_Start + " 1\n"
                         + "flHeightID " + SINSstate.Altitude_Start + " 1\n"
-                        + "flTrueHeadID 0.0 0\n"                                   //начальная долгота, заданная с пульта [рад]
+                        + "flTrueHeadID " + SINSstate.Heading + " 1\n"     //начальная долгота, заданная с пульта [рад]
                         + "flAzimuthMisalignment 0.0 0\n"                          // Угол азимутального рассогласования
                         + "flElevation 0.0 0"                                    //начальный угол возвышения ИНС [рад]
                         );
@@ -408,12 +420,17 @@ namespace Common_Namespace
                     + " " + SINSstate.OdometerData.odometer_left.Value_orig + " " + SINSstate.OdometerData.odometer_left.isReady_orig
 
                     //метка времени - отмечает момент времени формирования пакета СНС-данных
-                    + " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
-                    + " " + SINSstate.GPS_Data.gps_Latitude.Value_orig + " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
-                    + " " + SINSstate.GPS_Data.gps_Longitude.Value_orig + " " + SINSstate.GPS_Data.gps_Longitude.isReady_orig
-                    + " " + SINSstate.GPS_Data.gps_Altitude.Value_orig + " " + SINSstate.GPS_Data.gps_Altitude.isReady_orig
-                    + " " + SINSstate.GPS_Data.gps_Vn.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
-                    + " " + SINSstate.GPS_Data.gps_Ve.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
+
+                    //+ " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
+                    //+ " " + SINSstate.GPS_Data.gps_Latitude.Value_orig + " " + SINSstate.GPS_Data.gps_Latitude.isReady_orig
+                    //+ " " + SINSstate.GPS_Data.gps_Longitude.Value_orig + " " + SINSstate.GPS_Data.gps_Longitude.isReady_orig
+                    //+ " " + SINSstate.GPS_Data.gps_Altitude.Value_orig + " " + SINSstate.GPS_Data.gps_Altitude.isReady_orig
+                    //+ " " + SINSstate.GPS_Data.gps_Vn.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
+                    //+ " " + SINSstate.GPS_Data.gps_Ve.Value_orig + " " + SINSstate.GPS_Data.gps_Vn.isReady_orig
+
+                    + " 0" + " 0" + " 0" + " 0" + " 0"+ " 0" + " 0" + " 0" + " 0" + " 0" + " 0"
+
+
                     + " " + " 0 0" //Скорость GPS вертикальная
                     );
             }
@@ -598,12 +615,29 @@ namespace Common_Namespace
                 if (!SINSstate.flag_Smoothing)
                 {
                     if (SINSstate.flag_FeedbackExist == false)
-                        ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + (SINSstate.DeltaLatitude * SimpleData.ToDegree) + " " + (SINSstate.DeltaLongitude * SimpleData.ToDegree) + " " + SINSstate.DeltaV_1 + " " + SINSstate.DeltaV_2 + " "
-                            + SINSstate.DeltaV_3 + " " + SINSstate.DeltaHeading + " " + SINSstate.DeltaRoll + " " + SINSstate.DeltaPitch;
+                        ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
+                            + " " + SINSstate.DeltaLatitude * SimpleOperations.RadiusN(Lat, SINSstate.Altitude)
+                            + " " + SINSstate.DeltaLongitude * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat)
+                            + " " + SINSstate.DeltaAltitude
+                            + " " + SINSstate.DeltaV_1 
+                            + " " + SINSstate.DeltaV_2 
+                            + " " + SINSstate.DeltaV_3
+                            + " " + SINSstate.DeltaHeading * SimpleData.ToDegree
+                            + " " + SINSstate.DeltaRoll * SimpleData.ToDegree
+                            + " " + SINSstate.DeltaPitch * SimpleData.ToDegree
+                            ;
                     else
-                        ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Cumulative_StateErrorVector[0] + " " + SINSstate.Cumulative_StateErrorVector[1] + " " + SINSstate.Cumulative_StateErrorVector[2]
-                            + " " + SINSstate.Cumulative_StateErrorVector[3] + " " + SINSstate.Cumulative_StateErrorVector[4] + " " + SINSstate.Cumulative_StateErrorVector[5]
-                            + " " + SINSstate.Cumulative_StateErrorVector[6] * SimpleData.ToDegree + " " + SINSstate.Cumulative_StateErrorVector[7] * SimpleData.ToDegree + " " + SINSstate.Cumulative_StateErrorVector[8] * SimpleData.ToDegree;
+                        ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
+                            + " " + SINSstate.Cumulative_StateErrorVector[0] * SimpleOperations.RadiusN(Lat, SINSstate.Altitude)
+                            + " " + SINSstate.Cumulative_StateErrorVector[1] * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat)
+                            + " " + SINSstate.Cumulative_StateErrorVector[2]
+                            + " " + SINSstate.Cumulative_StateErrorVector[3] 
+                            + " " + SINSstate.Cumulative_StateErrorVector[4] 
+                            + " " + SINSstate.Cumulative_StateErrorVector[5]
+                            + " " + SINSstate.Cumulative_StateErrorVector[6] * SimpleData.ToDegree 
+                            + " " + SINSstate.Cumulative_StateErrorVector[7] * SimpleData.ToDegree 
+                            + " " + SINSstate.Cumulative_StateErrorVector[8] * SimpleData.ToDegree
+                            ;
                     Nav_Errors.WriteLine(ProcHelp.datastring);
                 }
 

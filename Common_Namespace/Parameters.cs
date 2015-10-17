@@ -289,7 +289,7 @@ namespace Common_Namespace
             {
 
                 SINSstate.timeStep = SINSstate.Freq = 0.020480;
-                SINSstate.OdoLimitMeasuresNum = 10;
+                SINSstate.OdoLimitMeasuresNum = 5;
 
                 SINSstate.odo_min_increment = 0.1;
 
@@ -303,8 +303,8 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Vel = 5.00E-001; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-003; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 KalmanVars.Noise_Pos = 0.5;
@@ -339,7 +339,7 @@ namespace Common_Namespace
 
                 //flElevation=-1.126
                 SINSstate.alpha_x = 0.0 * SimpleData.ToRadian;
-                SINSstate.alpha_y = 0.0 * SimpleData.ToRadian;
+                SINSstate.alpha_y = 1.126 * SimpleData.ToRadian;
                 SINSstate.alpha_z = 0.0 * SimpleData.ToRadian;
             }
 
