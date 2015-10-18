@@ -174,9 +174,9 @@ namespace Common_Namespace
                 // ----------------------------------------------------------//
                 // ------------------ВЕКТОР УПРАВЛЕНИЯ-----------------------//
                 //KalmanVars.Vertical_ErrorConditionVector_m[0] += (
-                //    SINSstate.Omega_x[1] * KalmanVars.ErrorConditionVector_p[0] 
+                //    SINSstate.Omega_x[1] * KalmanVars.ErrorConditionVector_p[0]
                 //    - SINSstate.Omega_x[0] * KalmanVars.ErrorConditionVector_p[1]
-                //    + SINSstate.Vx_0[0] * KalmanVars.ErrorConditionVector_p[5] 
+                //    + SINSstate.Vx_0[0] * KalmanVars.ErrorConditionVector_p[5]
                 //    - SINSstate.Vx_0[1] * KalmanVars.ErrorConditionVector_p[4]
                 //    ) * SINSstate.timeStep
                 //    ;
@@ -196,7 +196,7 @@ namespace Common_Namespace
                 //    ;
 
                 //// --- Только модифицированный вариант
-                //KalmanVars.Vertical_ErrorConditionVector_m[3] += (
+                //KalmanVars.Vertical_ErrorConditionVector_m[SINSstate.Vertical_rOdo3] += (
                 //    (-SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e) * KalmanVars.ErrorConditionVector_p[0]
                 //    + (-SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n) * KalmanVars.ErrorConditionVector_p[1]
                 //    + (SINSstate_OdoMod.Omega_x[1]) * KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo + 0]

@@ -721,8 +721,8 @@ namespace Common_Namespace
                 if (SINSstate.Vertical_f0_3 > 0)
                 {
                     KalmanVars.Vertical_Matrix_A[1 * iMxV + SINSstate.Vertical_f0_3] = 1.0;
-                    if (SINSstate.Vertical_f0_12 > 0)
-                        KalmanVars.Vertical_Matrix_A[1 * iMxV + SINSstate.Vertical_f0_3] = SINSstate.A_x0s[2, 2];
+                    //if (SINSstate.Vertical_f0_12 > 0)
+                    //    KalmanVars.Vertical_Matrix_A[1 * iMxV + SINSstate.Vertical_f0_3] = SINSstate.A_x0s[2, 2];
                 }
             }
 

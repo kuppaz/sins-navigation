@@ -229,7 +229,7 @@ namespace Common_Namespace
         public bool flag_GRTV_output { get; set; }
 
 
-        public int Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3;
+        public int Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3, Vertical_rOdo3;
         public double[] Vertical_Cumulative_KalmanErrorVector = new double[SimpleData.iMx_Vertical];
     }
 

@@ -34,7 +34,7 @@ namespace SINS_motion_processing_new_data
         Kalman_Vars KalmanVars;
         Proc_Help ProcHelp;
 
-        int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0, Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3;
+        int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0, Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3, Vertical_rOdo3;
         int noiseParam_LastCountForRead = 0, noiseParam_StartCountForRead = 0;
         bool iMx_r3_dV3, iMx_kappa_13_ds;
 
@@ -653,8 +653,28 @@ namespace SINS_motion_processing_new_data
             {
                 SimpleData.iMx_Vertical = 2;
 
-                if (this.Odometr_SINS_case.Checked)
+                // --- Добавляем ньютонометры ---
+                if (true)
+                {
+                    if (false)
+                    {
+                        Vertical_f0_12 = SimpleData.iMx_Vertical;
+                        SimpleData.iMx_Vertical += 2;
+                    }
+                    // --- Добавляем вертикальный 0 ньютонометра ---
+                    Vertical_f0_3 = SimpleData.iMx_Vertical;
                     SimpleData.iMx_Vertical++;
+                }
+
+
+                // --- Вертикальный одометрический канал
+                if (this.Odometr_SINS_case.Checked)
+                {
+                    Vertical_rOdo3 = SimpleData.iMx_Vertical;
+                    SimpleData.iMx_Vertical++;
+                }
+
+
 
                 SimpleData.iMq_Vertical = 1;
 
@@ -670,20 +690,6 @@ namespace SINS_motion_processing_new_data
                         Vertical_nu0 = SimpleData.iMx_Vertical;
                         SimpleData.iMx_Vertical += 3;
                     }
-                }
-
-
-                // --- Добавляем ньютонометры ---
-                if (true)
-                {
-                    if (true)
-                    {
-                        Vertical_f0_12 = SimpleData.iMx_Vertical;
-                        SimpleData.iMx_Vertical += 2;
-                    }
-                    // --- Добавляем вертикальный 0 ньютонометра ---
-                    Vertical_f0_3 = SimpleData.iMx_Vertical;
-                    SimpleData.iMx_Vertical++;
                 }
 
 
@@ -786,6 +792,7 @@ namespace SINS_motion_processing_new_data
                 SINSstate.Vertical_nu0 = Vertical_nu0;
                 SINSstate.Vertical_f0_12 = Vertical_f0_12;
                 SINSstate.Vertical_f0_3 = Vertical_f0_3;
+                SINSstate.Vertical_rOdo3 = Vertical_rOdo3;
             }
         }
 
