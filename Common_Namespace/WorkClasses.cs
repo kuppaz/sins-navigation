@@ -212,6 +212,7 @@ namespace Common_Namespace
         public double Noise_GPS_PositionError;
         public bool flag_VupOdo_till_VupSINS;
         public double decrementVerticalNoise;
+        public bool flag_SeparateHorizVSVertical;
 
         public static SINS_State DeepCopy(SINS_State other)
         {
@@ -226,6 +227,10 @@ namespace Common_Namespace
 
 
         public bool flag_GRTV_output { get; set; }
+
+
+        public int Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3;
+        public double[] Vertical_Cumulative_KalmanErrorVector = new double[SimpleData.iMx_Vertical];
     }
 
 
@@ -324,6 +329,24 @@ namespace Common_Namespace
             public double[,] F_z = new double[60, 3];
             public double[,] W_z = new double[60, 3];
         }
+
+
+        // --------------------------------------------------//
+        public int Vertical_cnt_measures;
+
+        public double[] Vertical_CovarianceMatrixS_m = new double[SimpleData.iMx_Vertical * SimpleData.iMx_Vertical];
+        public double[] Vertical_CovarianceMatrixS_p = new double[SimpleData.iMx_Vertical * SimpleData.iMx_Vertical];
+        public double[] Vertical_TransitionMatrixF = new double[SimpleData.iMx_Vertical * SimpleData.iMx_Vertical];
+        public double[] Vertical_CovarianceMatrixNoise = new double[SimpleData.iMx_Vertical * SimpleData.iMq_Vertical];
+        public double[] Vertical_ErrorConditionVector_m = new double[SimpleData.iMx_Vertical];
+        public double[] Vertical_ErrorConditionVector_p = new double[SimpleData.iMx_Vertical];
+
+        public double[] Vertical_Matrix_A = new double[SimpleData.iMx_Vertical * SimpleData.iMx_Vertical];
+        public double[] Vertical_Matrix_H = new double[SimpleData.iMx_Vertical * SimpleData.iMz];
+
+        public double[] Vertical_Measure = new double[SimpleData.iMz];
+        public double[] Vertical_Noize_Z = new double[SimpleData.iMz];
+
     }
 
     public class Kalman_Align

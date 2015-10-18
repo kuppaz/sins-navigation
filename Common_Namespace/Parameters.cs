@@ -302,7 +302,7 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 5.00E-001; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 1.00E-003; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===

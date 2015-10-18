@@ -53,12 +53,12 @@ namespace SINSAlignment
 
                     Alignment_Navigation.MatrixNoise_ReDef(SINSstate, KalmanVars);   //изменить все эти функции
                     Alignment_Navigation.Make_A_easy(SINSstate2, KalmanVars);
-                    KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars);
-                    KalmanProcs.KalmanForecast(KalmanVars);
+                    KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
+                    KalmanProcs.KalmanForecast(KalmanVars, SINSstate);
 
                     Alignment_Navigation.Make_H(KalmanVars, SINSstate);
 
-                    KalmanProcs.KalmanCorrection(KalmanVars);
+                    KalmanProcs.KalmanCorrection(KalmanVars, SINSstate, SINSstate);
 
                     Alignment_Navigation.CalcStateErrors(KalmanVars.ErrorConditionVector_p, SINSstate);
                     Alignment_Navigation.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate2);

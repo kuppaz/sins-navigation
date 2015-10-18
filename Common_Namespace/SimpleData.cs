@@ -21,6 +21,8 @@ namespace Common_Namespace
         public static int iMz;
         public static int iMq;
 
+        public static int iMx_Vertical, iMq_Vertical;
+
         public static int iMz_Align = 7, iMx_Align = 9, iMq_Align = 3;
 
         public static double A = 6378137.0; // a - большая полуось

@@ -24,6 +24,9 @@ namespace SINS_motion_processing_new_data
         int iMz = SimpleData.iMz = 15;
         int iMxSmthd = SimpleData.iMxSmthd = 9;
 
+        int iMx_Vertical = SimpleData.iMx_Vertical = 25;
+        int iMq_Vertical = SimpleData.iMq_Vertical = SimpleData.iMx_Vertical;
+
         StreamReader myFile;
 
         ParamToStart ParamStart = new ParamToStart();
@@ -31,7 +34,7 @@ namespace SINS_motion_processing_new_data
         Kalman_Vars KalmanVars;
         Proc_Help ProcHelp;
 
-        int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0;
+        int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0, Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3;
         int noiseParam_LastCountForRead = 0, noiseParam_StartCountForRead = 0;
         bool iMx_r3_dV3, iMx_kappa_13_ds;
 
@@ -403,11 +406,11 @@ namespace SINS_motion_processing_new_data
             }
 
 
+
             if (SINSstate.Global_file.ToLower().Contains("imitator"))
                 SINSstate.Noise_GPS_PositionError = ParamStart.Imitator_GPS_PositionError;
             else
                 SINSstate.Noise_GPS_PositionError = ParamStart.Experiment_GPS_PositionError;
-
 
 
             //---Инициализация начальной матрицы ковариации---
@@ -643,6 +646,65 @@ namespace SINS_motion_processing_new_data
                 iMxSmthd = SimpleData.iMxSmthd = 4;
             if (this.iMSmthd_Is_7.Checked)
                 iMxSmthd = SimpleData.iMxSmthd = 7;
+
+
+            // ------------------------------------------//
+            if (this.SeparateHorizVSVertical.Checked)
+            {
+                SimpleData.iMx_Vertical = 2;
+
+                if (this.Odometr_SINS_case.Checked)
+                    SimpleData.iMx_Vertical++;
+
+                SimpleData.iMq_Vertical = 1;
+
+                // --- Добавляем углы ориентации---
+                if (true)
+                {
+                    Vertical_alphaBeta = SimpleData.iMx_Vertical;
+                    SimpleData.iMx_Vertical += 3;
+                    SimpleData.iMq_Vertical += 3;
+
+                    if (true)
+                    {
+                        Vertical_nu0 = SimpleData.iMx_Vertical;
+                        SimpleData.iMx_Vertical += 3;
+                    }
+                }
+
+
+                // --- Добавляем ньютонометры ---
+                if (true)
+                {
+                    if (true)
+                    {
+                        Vertical_f0_12 = SimpleData.iMx_Vertical;
+                        SimpleData.iMx_Vertical += 2;
+                    }
+                    // --- Добавляем вертикальный 0 ньютонометра ---
+                    Vertical_f0_3 = SimpleData.iMx_Vertical;
+                    SimpleData.iMx_Vertical++;
+                }
+
+
+                // --- Если включаем ошибки одометра в вектор
+                if (true)
+                {
+                    Vertical_kappa1 = SimpleData.iMx_Vertical;
+                    SimpleData.iMx_Vertical += 1;
+
+                    if (true)
+                    {
+                        Vertical_kappa3Scale = SimpleData.iMx_Vertical;
+                        SimpleData.iMx_Vertical += 2;
+                    }
+                }
+
+                //if (iMqDeltaR.Checked)
+                //    SimpleData.iMq_Vertical++;
+                //if (iMqDeltaRodo.Checked)
+                //    SimpleData.iMq_Vertical++;
+            }
         }
 
         public void DefineClassElementAndFlags()
@@ -712,6 +774,19 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_UsingOdoPosition = this.flag_UsingOdoPosition.Checked;
 
             SINSstate.flag_GRTV_output = this.flag_GRTV_output.Checked;
+
+            SINSstate.flag_SeparateHorizVSVertical = this.SeparateHorizVSVertical.Checked;
+
+            // ------------------------------------------//
+            if (this.SeparateHorizVSVertical.Checked)
+            {
+                SINSstate.Vertical_kappa1 = Vertical_kappa1;
+                SINSstate.Vertical_kappa3Scale = Vertical_kappa3Scale;
+                SINSstate.Vertical_alphaBeta = Vertical_alphaBeta;
+                SINSstate.Vertical_nu0 = Vertical_nu0;
+                SINSstate.Vertical_f0_12 = Vertical_f0_12;
+                SINSstate.Vertical_f0_3 = Vertical_f0_3;
+            }
         }
 
         public void SelectDataIn()

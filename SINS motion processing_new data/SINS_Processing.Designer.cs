@@ -110,6 +110,7 @@
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.GRTVout_GCEF_format_030715 = new System.Windows.Forms.CheckBox();
+            this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1045,11 +1046,23 @@
             this.GRTVout_GCEF_format_030715.UseVisualStyleBackColor = true;
             this.GRTVout_GCEF_format_030715.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_030715_CheckedChanged);
             // 
+            // SeparateHorizVSVertical
+            // 
+            this.SeparateHorizVSVertical.AutoSize = true;
+            this.SeparateHorizVSVertical.Location = new System.Drawing.Point(818, 23);
+            this.SeparateHorizVSVertical.Name = "SeparateHorizVSVertical";
+            this.SeparateHorizVSVertical.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.SeparateHorizVSVertical.Size = new System.Drawing.Size(127, 17);
+            this.SeparateHorizVSVertical.TabIndex = 86;
+            this.SeparateHorizVSVertical.Text = "Раздельный Vertical";
+            this.SeparateHorizVSVertical.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.SeparateHorizVSVertical);
             this.Controls.Add(this.GRTVout_GCEF_format_030715);
             this.Controls.Add(this.NoiseParamsScanning);
             this.Controls.Add(this.flag_GRTV_output);
@@ -1186,6 +1199,7 @@
         private System.Windows.Forms.CheckBox flag_GRTV_output;
         private System.Windows.Forms.Button NoiseParamsScanning;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_030715;
+        private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
     }
 }
 

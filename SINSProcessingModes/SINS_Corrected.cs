@@ -9,7 +9,7 @@ namespace SINSProcessingModes
 {
     public class SINS_Corrected
     {
-        public static StreamWriter Nav_FeedbackSolution, Nav_EstimateSolution, Nav_Errors, Nav_Autonomous, Nav_StateErrorsVector, ForHelp;
+        public static StreamWriter Nav_FeedbackSolution, Nav_EstimateSolution, Nav_Errors, Nav_Autonomous, Nav_StateErrorsVector, Nav_Vertical_StateErrorsVector, ForHelp;
         public static StreamWriter Nav_Smoothed, ForHelpSmoothed;
 
         public static StreamWriter ForHelp_2 = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_2.txt");
@@ -65,6 +65,8 @@ namespace SINSProcessingModes
             StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
             Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnFeedBack.txt");
             Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate.txt");
+
+            Nav_Vertical_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_ErrVect_Vertical.txt");
 
             Cicle_Debag_Solution = new StreamWriter(SimpleData.PathOutputString + "Debaging//Solution_"
                 + KalmanVars.Noise_Angl[0].ToString("E2") + "_" + KalmanVars.Noise_Vel[0].ToString("E2") + ".txt");
@@ -126,62 +128,16 @@ namespace SINSProcessingModes
                 }
 
 
-
-
                 //---------------------------------------------------------------------//
 
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
-
                 SINSstate.OdoTimeStepCount++;
-
-
-
-                //----------------------------------------------------------------------------------------------------------------------------
-                //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------
-                bool flag_InertialOdometer = false;
-                {
-                    SINSstate.F_z2_localAvg += SINSstate.F_z[1];
-                    if (SINSstate.OdometerData.odometer_left.isReady == 1)
-                    {
-                        SINSstate.InertialOdometer_Count++;
-                        double dT = SINSstate.timeStep * SINSstate.OdoTimeStepCount;
-
-                        double Pitch = SINSstate.Pitch;
-                        if (SINSstate.flag_FeedbackExist)
-                            Pitch = SINSstate2.Pitch;
-
-                        SINSstate.InertialOdometer_temp += (SINSstate.F_z2_localAvg / SINSstate.OdoTimeStepCount - SINSstate.g * Math.Sin(Pitch)) * dT * dT;
-                        SINSstate.InertialOdometer_tempDelta += (SINSstate.Cumulative_KalmanErrorVector[10 + 1] - SINSstate.g * Math.Cos(Pitch) * SINSstate.DeltaPitch) * dT * dT;
-
-                        SINSstate.InertialOdometer_Increment = SINSstate.InertialOdometer_temp;
-                        //--- А здесь + или - ??? Правильно наверно минус, но опыт показывает иное
-                        if (SINSstate.flag_FeedbackExist)
-                            SINSstate.InertialOdometer_Increment -= SINSstate.InertialOdometer_tempDelta;
-
-                        SINSstate.InertialOdometer_V = SINSstate.InertialOdometer_Increment / dT;
-
-                        if (flag_InertialOdometer)
-                        {
-                            KalmanVars.OdoNoise_V = 5.0;
-                            SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerLeftPrev + SINSstate.InertialOdometer_Increment;
-                        }
-
-                        SINSstate.F_z2_localAvg = 0.0;
-                    }
-
-                    //if (i == 200000)
-                    //    break;
-                }
-                //SINSstate.OdometerData.odometer_left.Value = SINSstate.OdometerData.odometer_left.Value / 1.005;
-                //-------------------------------------------ИНЕРЦИАЛЬНЫЙ ОДОМЕТР---------------------------------------------------------
-                //------------------------------------------------------------------------------------------------------------------------
-
-
-
 
 
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
+
+
 
                 //---------------- Формируем вектора измерений одометра ---------------//
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
@@ -206,16 +162,9 @@ namespace SINSProcessingModes
 
 
                 //-------------------------- MAIN STEPS ------------------------------//
-                KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars);
-                if (SINSstate.flag_FeedbackExist && flag_InertialOdometer)
-                {
-                    SINSstate2.flag_FeedbackExist = false;
-                    SimpleOperations.CopyArray(SINSstate2.F_z, SINSstate.F_z); SimpleOperations.CopyArray(SINSstate2.W_z, SINSstate.W_z);
-                    SINSprocessing.StateIntegration_AT(SINSstate2, KalmanVars, SINSstate2, SINSstate_OdoMod);
-                }
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
-
+                KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
 
 
 
@@ -223,12 +172,10 @@ namespace SINSProcessingModes
                 if (!SINSstate.existRelationHoriz_VS_Vertical)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
 
-                KalmanProcs.KalmanForecast(KalmanVars);
+                KalmanProcs.KalmanForecast(KalmanVars, SINSstate);
 
                 if (!SINSstate.existRelationHoriz_VS_Vertical)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-
-
 
                             
                 //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
@@ -251,8 +198,10 @@ namespace SINSProcessingModes
                 //----------------------------ЭТАП КОРРЕКЦИИ start---------------------------------------------------------------------//
                 //--- Счетчик cnt_measures заполняется по ходу, характеризует количество измерений, которые будут поданы на коррекцию ---//
                 KalmanVars.cnt_measures = 0;
+                KalmanVars.Vertical_cnt_measures = 0;
 
                 SimpleOperations.NullingOfArray(KalmanVars.Matrix_H);
+                SimpleOperations.NullingOfArray(KalmanVars.Vertical_Matrix_H);
 
                 if (SINSstate.flag_using_Checkpotints == true)
                     CheckPointProcessing(SINSstate, SINSstate_OdoMod, KalmanVars);
@@ -298,7 +247,7 @@ namespace SINSProcessingModes
                     if (SINSstate.flag_ZUPT == true)
                         CorrectionModel.Make_H_KNS(KalmanVars, SINSstate, SINSstate_OdoMod);
 
-                    KalmanProcs.KalmanCorrection(KalmanVars);
+                    KalmanProcs.KalmanCorrection(KalmanVars, SINSstate, SINSstate_OdoMod);
                     ProcHelp.corrected = 1;
                 }
                 /*----------------------------------------------------------------------------------------*/
@@ -320,11 +269,11 @@ namespace SINSProcessingModes
                 //--- Расчет корректирующего вектора состояния ---//
                 if (SINSstate.flag_UsingCorrection == true)
                 {
-                    SINSprocessing.CalcStateErrors(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate_OdoMod);
+                    SINSprocessing.CalcStateErrors(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate_OdoMod, KalmanVars);
                     if (SINSstate.flag_EstimateExist == true)
-                        SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate2, SINSstate_OdoMod);
+                        SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate2, SINSstate_OdoMod, KalmanVars);
                     if (SINSstate.flag_FeedbackExist == true)
-                        SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate, SINSstate_OdoMod);
+                        SINSprocessing.StateCorrection(KalmanVars.ErrorConditionVector_p, SINSstate, SINSstate, SINSstate_OdoMod, KalmanVars);
                 }
 
                 //----------------------------ЭТАП КОРРЕКЦИИ END---------------------------------//
@@ -364,8 +313,8 @@ namespace SINSProcessingModes
                 /*------------------------------------OUTPUT-------------------------------------------------*/
                 //--- OUTPUT в файлы ---//
                 if (i != (SINSstate.LastCountForRead - 1) && SINSstate.Global_file != "Saratov_run_2014_07_23")
-                    ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
-                        Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution);
+                    ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, 
+                        Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution, Nav_Vertical_StateErrorsVector);
                 else if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     //--- Раз в секунду вывод ---//
@@ -373,8 +322,8 @@ namespace SINSProcessingModes
                     {
                         SINSstate.FreqOutput = 1;
                         SINSstate.CountPrev = SINSstate.Count;
-                        ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous,
-                            Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution);
+                        ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, 
+                            Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution, Nav_Vertical_StateErrorsVector);
                     }
                 }
 
