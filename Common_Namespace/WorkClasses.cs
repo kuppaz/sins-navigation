@@ -72,7 +72,6 @@ namespace Common_Namespace
 
         //---размерность вектора ошибок---
         public bool flag_iMx_r3_dV3 = false, flag_iMx_kappa_13_ds = false, flag_Odometr_SINS_case = false;
-        public int iMx_r3_dV3 = 0, iMx_r12_odo = 0, iMx_odo_model = 0;
 
         //---мод запуска программы---
         public bool flag_Alignment = false, flag_Autonomous_Solution = false, flag_FeedbackExist = false, flag_EstimateExist = false;
@@ -231,6 +230,9 @@ namespace Common_Namespace
 
         public int Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3, Vertical_rOdo3;
         public double[] Vertical_Cumulative_KalmanErrorVector = new double[SimpleData.iMx_Vertical];
+
+        public int value_iMx_dV_12, value_iMx_alphaBeta, value_iMx_Nu0, value_iMx_f0_12, value_iMx_f0_3, value_iMx_dr3, value_iMx_dV3, value_iMx_r_odo_3,
+            value_iMx_r_odo_12, value_iMx_kappa_13_ds;
     }
 
 

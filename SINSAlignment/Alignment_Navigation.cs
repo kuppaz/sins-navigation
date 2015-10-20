@@ -285,7 +285,7 @@ namespace SINSAlignment
 
         public static void MatrixNoise_ReDef(SINS_State SINSstate, Kalman_Vars KalmanVars)
         {
-            int iMx = SimpleData.iMx, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.iMx_r3_dV3;
+            int iMx = SimpleData.iMx, iMq = SimpleData.iMq, iMx_r3_dV3 = SINSstate.value_iMx_dr3;
 
             //ПЕРЕДЕЛАТЬ
 

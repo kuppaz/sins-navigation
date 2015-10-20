@@ -34,6 +34,7 @@ namespace SINS_motion_processing_new_data
         Kalman_Vars KalmanVars;
         Proc_Help ProcHelp;
 
+        int value_iMx_dV_12, value_iMx_alphaBeta, value_iMx_Nu0, value_iMx_f0_12, value_iMx_f0_3, value_iMx_dr3, value_iMx_dV3, value_iMx_r_odo_3;
         int value_iMx_r3_dV3 = 0, value_iMx_r_odo_12 = 0, value_iMx_kappa_13_ds = 0, Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3, Vertical_rOdo3;
         int noiseParam_LastCountForRead = 0, noiseParam_StartCountForRead = 0;
         bool iMx_r3_dV3, iMx_kappa_13_ds;
@@ -419,7 +420,7 @@ namespace SINS_motion_processing_new_data
             else
                 SINSprocessing.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
 
-
+            
             //--- Если запустили циклический подбор параметров шумов ---//
             if (NoiseParamScanning)
             {
@@ -585,26 +586,71 @@ namespace SINS_motion_processing_new_data
             iMx_r3_dV3 = iMx_r_3_dV_3.Checked;
             iMx_kappa_13_ds = iMx_kappa_1_3_ds.Checked;
 
+            iMx = SimpleData.iMx = 0;
+
+            // ---------- dR ----------//
+            iMx = SimpleData.iMx += 2;
+
+            // ---------- dR_3 ----------//
             if (iMx_r3_dV3)
             {
-                value_iMx_r3_dV3 = iMx;
+                value_iMx_dr3 = SimpleData.iMx;
+                iMx = SimpleData.iMx += 1;
+            }
+
+            // ---------- dR_ODO_12 ----------//
+            if (this.Odometr_SINS_case.Checked)
+            {
+                value_iMx_r_odo_12 = SimpleData.iMx;
                 iMx = SimpleData.iMx += 2;
             }
 
+            // ---------- dR_ODO_3 ----------//
+            if (this.Odometr_SINS_case.Checked)
+            {
+                if (this.iMx_r_odo_3.Checked)
+                {
+                    value_iMx_r_odo_3 = SimpleData.iMx;
+                    iMx = SimpleData.iMx += 1;
+                }
+            }
+
+            // ---------- dV_12 ----------//
+            value_iMx_dV_12 = SimpleData.iMx;
+            iMx = SimpleData.iMx += 2;
+
+            // ---------- dV_3 ----------//
+            if (iMx_r3_dV3)
+            {
+                value_iMx_dV3 = SimpleData.iMx;
+                iMx = SimpleData.iMx += 1;
+            }
+
+            // ---------- alphaBeta ----------//
+            value_iMx_alphaBeta = SimpleData.iMx;
+            iMx = SimpleData.iMx += 3;
+
+            // ---------- Nu0 ----------//
+            value_iMx_Nu0 = SimpleData.iMx;
+            iMx = SimpleData.iMx += 3;
+
+            // ---------- f0_12 ----------//
+            value_iMx_f0_12 = SimpleData.iMx;
+            iMx = SimpleData.iMx += 2;
+
+            // ---------- f0_3 ----------//
+            value_iMx_f0_3 = SimpleData.iMx;
+            iMx = SimpleData.iMx += 1;
+
+
+
+            // ---------- kappa_13_ds ----------//
             if (iMx_kappa_13_ds)
             {
-                value_iMx_kappa_13_ds = iMx;
+                value_iMx_kappa_13_ds = SimpleData.iMx;
                 iMx = SimpleData.iMx += 3;
             }
 
-            if (this.Odometr_SINS_case.Checked)
-            {
-                value_iMx_r_odo_12 = iMx;
-                iMx = SimpleData.iMx += 2;
-
-                if (this.iMx_r_odo_3.Checked)
-                    iMx = SimpleData.iMx += 1;
-            }
 
             //----------------------------Вектор шумов---------------------------
             iMq = SimpleData.iMq = 0;
@@ -634,10 +680,12 @@ namespace SINS_motion_processing_new_data
             if (this.Odometr_SINS_case.Checked)
             {
                 if (iMqDeltaRodo.Checked)
+                {
                     iMq = SimpleData.iMq += 2;
 
-                if (this.iMx_r_odo_3.Checked)
-                    iMq = SimpleData.iMq += 1;
+                    if (this.iMx_r_odo_3.Checked)
+                        iMq = SimpleData.iMq += 1;
+                }
             }
 
             if (this.iMSmthd_Is_2.Checked)
@@ -648,24 +696,13 @@ namespace SINS_motion_processing_new_data
                 iMxSmthd = SimpleData.iMxSmthd = 7;
 
 
+
+
             // ------------------------------------------//
             if (this.SeparateHorizVSVertical.Checked)
             {
                 SimpleData.iMx_Vertical = 2;
-
-                // --- Добавляем ньютонометры ---
-                if (true)
-                {
-                    if (false)
-                    {
-                        Vertical_f0_12 = SimpleData.iMx_Vertical;
-                        SimpleData.iMx_Vertical += 2;
-                    }
-                    // --- Добавляем вертикальный 0 ньютонометра ---
-                    Vertical_f0_3 = SimpleData.iMx_Vertical;
-                    SimpleData.iMx_Vertical++;
-                }
-
+                SimpleData.iMq_Vertical = 1;
 
                 // --- Вертикальный одометрический канал
                 if (this.Odometr_SINS_case.Checked)
@@ -674,9 +711,18 @@ namespace SINS_motion_processing_new_data
                     SimpleData.iMx_Vertical++;
                 }
 
-
-
-                SimpleData.iMq_Vertical = 1;
+                // --- Добавляем ньютонометры ---
+                if (true)
+                {
+                    if (true)
+                    {
+                        Vertical_f0_12 = SimpleData.iMx_Vertical;
+                        SimpleData.iMx_Vertical += 2;
+                    }
+                    // --- Добавляем вертикальный 0 ньютонометра ---
+                    Vertical_f0_3 = SimpleData.iMx_Vertical;
+                    SimpleData.iMx_Vertical++;
+                }
 
                 // --- Добавляем углы ориентации---
                 if (true)
@@ -732,14 +778,17 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_iMqDeltaRodo = iMqDeltaRodo.Checked;
             SINSstate.flag_Imitator_Telemetric = Imitator_Telemetric.Checked;
 
-            if (SINSstate.flag_iMx_r3_dV3)
-                SINSstate.iMx_r3_dV3 = value_iMx_r3_dV3;
 
-            if (this.Odometr_SINS_case.Checked)
-                SINSstate.iMx_r12_odo = value_iMx_r_odo_12;
-
-            if (SINSstate.flag_iMx_kappa_13_ds)
-                SINSstate.iMx_odo_model = value_iMx_kappa_13_ds;
+            SINSstate.value_iMx_dV_12 = value_iMx_dV_12;
+            SINSstate.value_iMx_alphaBeta = value_iMx_alphaBeta;
+            SINSstate.value_iMx_Nu0 = value_iMx_Nu0;
+            SINSstate.value_iMx_f0_12 = value_iMx_f0_12;
+            SINSstate.value_iMx_f0_3 = value_iMx_f0_3;
+            SINSstate.value_iMx_dr3 = value_iMx_dr3;
+            SINSstate.value_iMx_dV3 = value_iMx_dV3;
+            SINSstate.value_iMx_r_odo_3 = value_iMx_r_odo_3;
+            SINSstate.value_iMx_r_odo_12 = value_iMx_r_odo_12;
+            SINSstate.value_iMx_kappa_13_ds = value_iMx_kappa_13_ds;
 
 
             //---флаги---

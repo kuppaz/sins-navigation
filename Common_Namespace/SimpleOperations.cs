@@ -353,8 +353,8 @@ namespace Common_Namespace
             if (SimpleData.iMxSmthd == 4)
             {
                 MatrixResult = new Matrix(2, SimpleData.iMx);
-                MatrixResult[0, SINSstate.iMx_r3_dV3 + 0] = 1.0;
-                MatrixResult[1, SINSstate.iMx_r3_dV3 + 1] = 1.0;
+                MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
+                MatrixResult[1, SINSstate.value_iMx_dV3 + 0] = 1.0;
                 MatrixResult[1, 4] = -SINSstate.Vx_0[1];
                 MatrixResult[1, 5] = SINSstate.Vx_0[0];
                 MatrixResult[1, 0] = -SINSstate.Vx_0[0] / SINSstate.R_e;
@@ -363,7 +363,7 @@ namespace Common_Namespace
             else
             {
                 MatrixResult = new Matrix(1, SimpleData.iMx);
-                MatrixResult[0, SINSstate.iMx_r3_dV3 + 0] = 1.0;
+                MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
             }
             return MatrixResult;
         }
