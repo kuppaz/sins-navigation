@@ -136,7 +136,7 @@ namespace MovingImitator
 
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 1.0 * 3600.0)
+            while (CurTimeWithAlign < 3.0 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -235,7 +235,7 @@ namespace MovingImitator
                 double constantV, leftTimeMoving, rightTimeMoving, accelerationDuration;
                 constantV = 40.0 / 3.6;
                 leftTimeMoving = 0.2;
-                rightTimeMoving = 1.8 * 3600.0;
+                rightTimeMoving = 2.8 * 3600.0;
                 accelerationDuration = 50.0;
 
                 if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
@@ -388,8 +388,8 @@ namespace MovingImitator
             ParamStart.Imitator_addNoisSample_ACCS = true;
 
 
-            ParamStart.Imitator_GPS_IsReadyDistance = 100000.0;
-            ParamStart.Imitator_GPS_IsReady_Target[0] = 3000.0;
+            ParamStart.Imitator_GPS_IsReadyDistance = 3000.0;
+            //ParamStart.Imitator_GPS_IsReady_Target[0] = 3000.0;
             ParamStart.Imitator_GPS_PositionError = 1.0; // в метрах
             ParamStart.Modeling_Params_OdoKappa1 = -0.5 * SimpleData.ToRadian;
             ParamStart.Modeling_Params_OdoKappa3 = -1.0 * SimpleData.ToRadian;
@@ -410,11 +410,11 @@ namespace MovingImitator
             //    Params_dnu_0[j] = 0.0; //град/час
             //}
 
-            for (int j = 0; j < 3; j++)
-            {
-                Params_df_0[j] = 1E-5; //далее умножается G
-                Params_dnu_0[j] = 0.02; //град/час
-            }
+            //for (int j = 0; j < 3; j++)
+            //{
+            //    Params_df_0[j] = 1E-5; //далее умножается G
+            //    Params_dnu_0[j] = 0.02; //град/час
+            //}
 
             //for (int j = 0; j < 3; j++)
             //{
@@ -422,11 +422,11 @@ namespace MovingImitator
             //    Params_dnu_0[j] = 0.2; //град/час
             //}
 
-            //for (int j = 0; j < 3; j++)
-            //{
-            //    Params_df_0[j] = 1E-3; //далее умножается G
-            //    Params_dnu_0[j] = 2.0; //град/час
-            //}
+            for (int j = 0; j < 3; j++)
+            {
+                Params_df_0[j] = 1E-3; //далее умножается G
+                Params_dnu_0[j] = 2.0; //град/час
+            }
 
             //Params_df_0[0] = 1E-3;
             //Params_df_0[1] = 1E-3;

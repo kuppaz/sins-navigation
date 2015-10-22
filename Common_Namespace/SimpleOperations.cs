@@ -323,26 +323,26 @@ namespace Common_Namespace
             {
                 MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
                 MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-                MatrixResult[2, 2] = 1.0;
-                MatrixResult[2, 6] = SINSstate.Vx_0[1];
-                MatrixResult[3, 3] = 1.0;
-                MatrixResult[3, 6] = -SINSstate.Vx_0[0];
+                MatrixResult[2, SINSstate.value_iMx_dV_12 + 0] = 1.0;
+                MatrixResult[2, SINSstate.value_iMx_alphaBeta + 2] = SINSstate.Vx_0[1];
+                MatrixResult[3, SINSstate.value_iMx_dV_12 + 1] = 1.0;
+                MatrixResult[3, SINSstate.value_iMx_alphaBeta + 2] = -SINSstate.Vx_0[0];
             }
             else if (SimpleData.iMxSmthd == 7)
             {
                 MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
                 MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-                MatrixResult[2, 2] = 1.0;
-                MatrixResult[2, 6] = SINSstate.Vx_0[1];
-                MatrixResult[3, 3] = 1.0;
-                MatrixResult[3, 6] = -SINSstate.Vx_0[0];
-                MatrixResult[4, 4] = -Math.Cos(SINSstate.Heading);
-                MatrixResult[4, 5] = Math.Sin(SINSstate.Heading);
-                MatrixResult[5, 4] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-                MatrixResult[5, 5] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-                MatrixResult[6, 4] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-                MatrixResult[6, 5] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-                MatrixResult[6, 6] = 1.0;
+                MatrixResult[2, SINSstate.value_iMx_dV_12 + 0] = 1.0;
+                MatrixResult[2, SINSstate.value_iMx_alphaBeta + 2] = SINSstate.Vx_0[1];
+                MatrixResult[3, SINSstate.value_iMx_dV_12 + 1] = 1.0;
+                MatrixResult[3, SINSstate.value_iMx_alphaBeta + 2] = -SINSstate.Vx_0[0];
+                MatrixResult[4, SINSstate.value_iMx_alphaBeta + 0] = -Math.Cos(SINSstate.Heading);
+                MatrixResult[4, SINSstate.value_iMx_alphaBeta + 1] = Math.Sin(SINSstate.Heading);
+                MatrixResult[5, SINSstate.value_iMx_alphaBeta + 0] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+                MatrixResult[5, SINSstate.value_iMx_alphaBeta + 1] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+                MatrixResult[6, SINSstate.value_iMx_alphaBeta + 0] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+                MatrixResult[6, SINSstate.value_iMx_alphaBeta + 1] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+                MatrixResult[6, SINSstate.value_iMx_alphaBeta + 2] = 1.0;
                 MatrixResult[6, 0] = 1.0 / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
             }
             return MatrixResult;
@@ -355,8 +355,8 @@ namespace Common_Namespace
                 MatrixResult = new Matrix(2, SimpleData.iMx);
                 MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
                 MatrixResult[1, SINSstate.value_iMx_dV3 + 0] = 1.0;
-                MatrixResult[1, 4] = -SINSstate.Vx_0[1];
-                MatrixResult[1, 5] = SINSstate.Vx_0[0];
+                MatrixResult[1, SINSstate.value_iMx_alphaBeta + 0] = -SINSstate.Vx_0[1];
+                MatrixResult[1, SINSstate.value_iMx_alphaBeta + 1] = SINSstate.Vx_0[0];
                 MatrixResult[1, 0] = -SINSstate.Vx_0[0] / SINSstate.R_e;
                 MatrixResult[1, 1] = -SINSstate.Vx_0[1] / SINSstate.R_n;
             }
