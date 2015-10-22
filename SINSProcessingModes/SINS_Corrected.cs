@@ -33,6 +33,7 @@ namespace SINSProcessingModes
             int t = 0;
 
             SINS_State SINSstate_Smooth = new SINS_State();
+            KalmanVars.NumberOfIterationForOneForSmoothing = NumberOfIterationForOneForSmoothing;
             SINSstate.NumberOfFilesForSmoothing = Math.Floor(SINSstate.LastCountForRead / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1;
 
 
@@ -290,10 +291,11 @@ namespace SINSProcessingModes
                     //--- В X сглаживаются координаты, поэтому будет это X^+ или X^- зависит от места вызова функции в коде ---//
                     if (i == start_i || Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 != Math.Floor((i - 1) / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1)
                     {
-                        int int_file_back = Convert.ToInt32(Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing))) + 1;
+                        // --- дробление исходных данных на куски
+                        int int_file_back = Convert.ToInt32(Math.Floor(i / Convert.ToDouble(KalmanVars.NumberOfIterationForOneForSmoothing))) + 1;
                         string str_dir_file = SimpleData.PathOutputString + "For Smoothing temp files//";
 
-                        if (Math.Floor(i / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1 != 1)
+                        if (Math.Floor(i / Convert.ToDouble(KalmanVars.NumberOfIterationForOneForSmoothing)) + 1 != 1)
                         {
                             Smthing_Backward.Close();
                             Smthing_X.Close();
@@ -303,6 +305,7 @@ namespace SINSProcessingModes
                         Smthing_X = new StreamWriter(str_dir_file + "Backward_X_" + int_file_back.ToString() + ".txt");
                         Smthing_P = new StreamWriter(str_dir_file + "Backward_P_" + int_file_back.ToString() + ".txt");
                     }
+
                     SINSprocessing.FuncSmoothing_Forward(SINSstate, SINSstate_Smooth, SINSstate_OdoMod, KalmanVars, ProcHelp, Smthing_X, Smthing_P, Smthing_Backward);
                 }
                 if (SINSstate.flag_Smoothing && SINSstate.NowSmoothing)

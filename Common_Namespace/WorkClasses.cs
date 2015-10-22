@@ -348,6 +348,7 @@ namespace Common_Namespace
 
         public double[] Vertical_Measure = new double[SimpleData.iMz];
         public double[] Vertical_Noize_Z = new double[SimpleData.iMz];
+        public int NumberOfIterationForOneForSmoothing;
 
     }
 

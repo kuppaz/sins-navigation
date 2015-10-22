@@ -310,61 +310,59 @@ namespace Common_Namespace
         }
 
 
-        public static Matrix C_convultion_iMx(SINS_State SINSstate)
+        public static Matrix C_convultion_HorizontalCoordinate(SINS_State SINSstate)
         {
-            Matrix MatrixResult = new Matrix(SimpleData.iMxSmthd, SimpleData.iMx);
+            Matrix MatrixResult = new Matrix(2, SimpleData.iMx);
 
-            if (SimpleData.iMxSmthd == 2)
-            {
-                MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
-                MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-            }
-            if (SimpleData.iMxSmthd == 4)
-            {
-                MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
-                MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-                MatrixResult[2, SINSstate.value_iMx_dV_12 + 0] = 1.0;
-                MatrixResult[2, SINSstate.value_iMx_alphaBeta + 2] = SINSstate.Vx_0[1];
-                MatrixResult[3, SINSstate.value_iMx_dV_12 + 1] = 1.0;
-                MatrixResult[3, SINSstate.value_iMx_alphaBeta + 2] = -SINSstate.Vx_0[0];
-            }
-            else if (SimpleData.iMxSmthd == 7)
-            {
-                MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
-                MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-                MatrixResult[2, SINSstate.value_iMx_dV_12 + 0] = 1.0;
-                MatrixResult[2, SINSstate.value_iMx_alphaBeta + 2] = SINSstate.Vx_0[1];
-                MatrixResult[3, SINSstate.value_iMx_dV_12 + 1] = 1.0;
-                MatrixResult[3, SINSstate.value_iMx_alphaBeta + 2] = -SINSstate.Vx_0[0];
-                MatrixResult[4, SINSstate.value_iMx_alphaBeta + 0] = -Math.Cos(SINSstate.Heading);
-                MatrixResult[4, SINSstate.value_iMx_alphaBeta + 1] = Math.Sin(SINSstate.Heading);
-                MatrixResult[5, SINSstate.value_iMx_alphaBeta + 0] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-                MatrixResult[5, SINSstate.value_iMx_alphaBeta + 1] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
-                MatrixResult[6, SINSstate.value_iMx_alphaBeta + 0] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-                MatrixResult[6, SINSstate.value_iMx_alphaBeta + 1] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-                MatrixResult[6, SINSstate.value_iMx_alphaBeta + 2] = 1.0;
-                MatrixResult[6, 0] = 1.0 / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
-            }
+            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+
             return MatrixResult;
         }
-        public static Matrix C_convultion_iMx_r3(SINS_State SINSstate)
+        public static Matrix C_convultion_HorizontalVelocity(SINS_State SINSstate)
         {
-            Matrix MatrixResult;
-            if (SimpleData.iMxSmthd == 4)
-            {
-                MatrixResult = new Matrix(2, SimpleData.iMx);
-                MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
-                MatrixResult[1, SINSstate.value_iMx_dV3 + 0] = 1.0;
-                MatrixResult[1, SINSstate.value_iMx_alphaBeta + 0] = -SINSstate.Vx_0[1];
-                MatrixResult[1, SINSstate.value_iMx_alphaBeta + 1] = SINSstate.Vx_0[0];
-                MatrixResult[1, 0] = -SINSstate.Vx_0[0] / SINSstate.R_e;
-                MatrixResult[1, 1] = -SINSstate.Vx_0[1] / SINSstate.R_n;
-            }
-            else
-            {
-                MatrixResult = new Matrix(1, SimpleData.iMx);
-                MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
-            }
+            Matrix MatrixResult = new Matrix(2, SimpleData.iMx);
+
+            MatrixResult[0, SINSstate.value_iMx_dV_12 + 0] = 1.0;
+            MatrixResult[0, SINSstate.value_iMx_alphaBeta + 2] = SINSstate.Vx_0[1];
+            MatrixResult[1, SINSstate.value_iMx_dV_12 + 1] = 1.0;
+            MatrixResult[1, SINSstate.value_iMx_alphaBeta + 2] = -SINSstate.Vx_0[0];
+
+            return MatrixResult;
+        }
+        public static Matrix C_convultion_Angles(SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(3, SimpleData.iMx);
+
+            MatrixResult[0, SINSstate.value_iMx_alphaBeta + 0] = -Math.Cos(SINSstate.Heading);
+            MatrixResult[0, SINSstate.value_iMx_alphaBeta + 1] = Math.Sin(SINSstate.Heading);
+            MatrixResult[1, SINSstate.value_iMx_alphaBeta + 0] = -Math.Sin(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+            MatrixResult[1, SINSstate.value_iMx_alphaBeta + 1] = -Math.Cos(SINSstate.Heading) / Math.Cos(SINSstate.Pitch);
+            MatrixResult[2, SINSstate.value_iMx_alphaBeta + 0] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+            MatrixResult[2, SINSstate.value_iMx_alphaBeta + 1] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
+            MatrixResult[2, SINSstate.value_iMx_alphaBeta + 2] = 1.0;
+            MatrixResult[2, 0] = 1.0 / SINSstate.R_e * Math.Tan(SINSstate.Latitude);
+
+            return MatrixResult;
+        }
+        public static Matrix C_convultion_VerticalCoordinate(SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(1, SimpleData.iMx);
+
+            MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
+
+            return MatrixResult;
+        }
+        public static Matrix C_convultion_VerticalVelocity(SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(1, SimpleData.iMx); ;
+
+            MatrixResult[0, SINSstate.value_iMx_dV3 + 0] = 1.0;
+            MatrixResult[0, SINSstate.value_iMx_alphaBeta + 0] = -SINSstate.Vx_0[1];
+            MatrixResult[0, SINSstate.value_iMx_alphaBeta + 1] = SINSstate.Vx_0[0];
+            MatrixResult[0, 0] = -SINSstate.Vx_0[0] / SINSstate.R_e;
+            MatrixResult[0, 1] = -SINSstate.Vx_0[1] / SINSstate.R_n;
+
             return MatrixResult;
         }
 
@@ -448,7 +446,7 @@ namespace Common_Namespace
 
         public static void CopyArray(double[] p, double[] p_2)
         {
-            for (int ii = 0; ii < p.Length; ii++)
+            for (int ii = 0; ii < Math.Min(p.Length, p_2.Length); ii++)
                 p[ii] = p_2[ii];
         }
         public static void CopyArray(double[,] p, int i, double[] p_2)
