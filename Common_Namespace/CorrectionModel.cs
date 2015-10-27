@@ -124,18 +124,18 @@ namespace Common_Namespace
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + (iMx_dV_12 + 0)] = 1.0;
             KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + (iMx_dV_12 + 1)] = 1.0;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_V;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_V;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_V * 1.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_V * 1.0;
 
 
             if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
             {
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 2];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 1] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_x0[0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 1] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_x0[1];
             }
             KalmanVars.cnt_measures += 2;
 
@@ -146,11 +146,11 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
                 {
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 2];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 0];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_x0[2];
                 }
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_V;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_V * 1.0;
 
                 KalmanVars.cnt_measures += 1;
             }
@@ -189,8 +189,8 @@ namespace Common_Namespace
 
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = Vz[2];
 
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 2] = SINSstate.A_sx0[2, 0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 3] = SINSstate.A_sx0[2, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + (iMx_dV_12 + 0)] = SINSstate.A_sx0[2, 0];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + (iMx_dV_12 + 1)] = SINSstate.A_sx0[2, 1];
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dV3] = SINSstate.A_sx0[2, 2];
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.01;
 

@@ -153,9 +153,9 @@ namespace SINSProcessingModes
                     if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
                     {
                         SimpleOperations.CopyArray(SINSstate.OdoSpeed_s,
-                            (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdoSpeed_s);
+                            (Matrix.UnitMatrix(3) + Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdoSpeed_s);
                         SimpleOperations.CopyArray(SINSstate.OdometerVector,
-                            (Matrix.UnitMatrix(3) - Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdometerVector);
+                            (Matrix.UnitMatrix(3) + Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdometerVector);
                     }
                 }
                 //---------------------------------------------------------------------//
@@ -168,25 +168,19 @@ namespace SINSProcessingModes
                 KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
 
 
-                //SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx, "Matrix_A");
-                //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, SimpleData.iMx, SimpleData.iMq, "CovarianceMatrixNoise");
-                //SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx, "CovarianceMatrixS_m");
+                if (SINSstate.Count % 5000 == 0)
+                {
+                    SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx, "Matrix_A");
+                    SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, SimpleData.iMx, SimpleData.iMq, "CovarianceMatrixNoise");
+                    SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx, "CovarianceMatrixS_m");
+                }
 
-
-                //if (!SINSstate.existRelationHoriz_VS_Vertical)
-                //    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
 
                 KalmanProcs.KalmanForecast(KalmanVars, SINSstate);
 
-                //if (!SINSstate.existRelationHoriz_VS_Vertical)
-                //    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-
-                            
-                //SINSprocessing.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx);
-
+                
                 
                 SINSstate.flag_UsingCorrection = false;
-
                 //---------------Формирование флага остановки------------//
                 SINSstate.flag_ZUPT = false;
                 if (SINSstate.FLG_Stop == 1 && SINSstate.flag_NotUse_ZUPT == false)

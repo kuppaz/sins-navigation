@@ -320,11 +320,9 @@ namespace SINS_motion_processing_new_data
 
             if (SINSstate.Global_file == "Azimut_514_08Nov2013_11_15") ProcHelp.AlgnCnt = 95000;
 
-            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
-            {
-                //ProcHelp.AlgnCnt = 37000;
-                ProcHelp.AlgnCnt = 4300;
-            }
+            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд") ProcHelp.AlgnCnt = 4300;
+            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)") ProcHelp.AlgnCnt = 5000;
+            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)") ProcHelp.AlgnCnt = 7500;
 
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
@@ -487,13 +485,13 @@ namespace SINS_motion_processing_new_data
                 SINSstate.odo_min_increment = 0.01;
 
             //---Здесь SINSstate.stdF и SINSstate.stNu считываются в проекции на географию и используются только для определения начальной ошибки по углам
-            SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
-            SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
+            SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) *9.81;
+            SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) *9.81;
             SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
 
-            SINSstate.stdF_Oz[0] = Convert.ToDouble(dataArray[39]) * 9.81;
-            SINSstate.stdF_Oz[1] = Convert.ToDouble(dataArray[41]) * 9.81;
-            SINSstate.stdF_Oz[2] = Convert.ToDouble(dataArray[43]) * 9.81;
+            SINSstate.stdF_Oz[0] = Convert.ToDouble(dataArray[39]) *9.81;
+            SINSstate.stdF_Oz[1] = Convert.ToDouble(dataArray[41]) *9.81;
+            SINSstate.stdF_Oz[2] = Convert.ToDouble(dataArray[43]) *9.81;
             SINSstate.stdNu_Oz[0] = Convert.ToDouble(dataArray[45]);
             SINSstate.stdNu_Oz[1] = Convert.ToDouble(dataArray[47]);
             SINSstate.stdNu_Oz[2] = Convert.ToDouble(dataArray[49]);
@@ -510,7 +508,6 @@ namespace SINS_motion_processing_new_data
                     KalmanVars.Noise_Vel[j] = 1.0 / 3.0 / Convert.ToDouble(dataArray[13]);
                     KalmanVars.Noise_Angl[j] = 1.0 / 3.0 / Convert.ToDouble(dataArray[17]);
                 }
-
             }
 
             KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / Convert.ToDouble(dataArray[27]);
@@ -533,9 +530,15 @@ namespace SINS_motion_processing_new_data
             ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
 
             //Углы найденные подбором минимизацией максимальной ошибки по позиции.
-            SINSstate.Heading = Convert.ToDouble(dataArray[29]) + SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude));
-            SINSstate.Pitch = Convert.ToDouble(dataArray[33]) + (SINSstate.stdF[1] / 9.81 * Math.Cos(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Sin(SINSstate.Heading));
-            SINSstate.Roll = Convert.ToDouble(dataArray[31]) + (-(-SINSstate.stdF[1] / 9.81 * Math.Sin(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch));
+            double Heading_tmpDevide = 1.0;
+
+            double Heading_addError = SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude)),
+                Pitch_addError = (SINSstate.stdF[1] / 9.81 * Math.Cos(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Sin(SINSstate.Heading)),
+                Roll_addError = -(-SINSstate.stdF[1] / 9.81 * Math.Sin(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch)
+                ;
+            SINSstate.Heading = Convert.ToDouble(dataArray[29]) + Heading_addError / Heading_tmpDevide;
+            SINSstate.Pitch = Convert.ToDouble(dataArray[33]) + Pitch_addError / Heading_tmpDevide;
+            SINSstate.Roll = Convert.ToDouble(dataArray[31]) + Roll_addError / Heading_tmpDevide;
 
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             SINSstate.A_x0s = SINSstate.A_sx0.Transpose();
@@ -564,9 +567,9 @@ namespace SINS_motion_processing_new_data
             SINSstate.stdR = ParamStart.Imitator_stdR; // метров
             SINSstate.stdOdoR = ParamStart.Imitator_stdOdoR; // метров
             SINSstate.stdV = ParamStart.Imitator_stdV; // м/с
-            SINSstate.stdAlpha1 = -SINSstate.stdF[1] / 9.81; //радиан
-            SINSstate.stdAlpha2 = SINSstate.stdF[0] / 9.81; //радиан
-            SINSstate.stdBeta3 = SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude)); //радиан
+            SINSstate.stdAlpha1 = -SINSstate.stdF[1] / 9.81 / Heading_tmpDevide; //радиан
+            SINSstate.stdAlpha2 = SINSstate.stdF[0] / 9.81 / Heading_tmpDevide; //радиан
+            SINSstate.stdBeta3 = SINSstate.stdNu * SimpleData.ToRadian / 3600.0 / (SimpleData.U * Math.Cos(SINSstate.Latitude)) / Heading_tmpDevide; //радиан
             SINSstate.stdScale = ParamStart.Imitator_stdScale; //коэффициент в долях
             SINSstate.stdKappa1 = ParamStart.Imitator_stdKappa1; //минут
             SINSstate.stdKappa3 = ParamStart.Imitator_stdKappa3; //минут
@@ -916,6 +919,16 @@ namespace SINS_motion_processing_new_data
                 myFile = new StreamReader(SimpleData.PathInputString + "GRTVout_GCEF_format (030715выезд).txt");
                 SINSstate.Global_file = "GRTVout_GCEF_format_030715выезд";
             }
+            if (GRTVout_GCEF_format_070715_zavod.Checked == true)
+            {
+                myFile = new StreamReader(SimpleData.PathInputString + "GRTVout_GCEF_format (070715выезд завод).txt");
+                SINSstate.Global_file = "GRTVout_GCEF_format (070715выезд завод)";
+            }
+            if (GRTVout_GCEF_format_070715_kulikova.Checked == true)
+            {
+                myFile = new StreamReader(SimpleData.PathInputString + "GRTVout_GCEF_format (070715выезд куликовка).txt");
+                SINSstate.Global_file = "GRTVout_GCEF_format (070715выезд куликовка)";
+            }
 
 
 
@@ -979,6 +992,8 @@ namespace SINS_motion_processing_new_data
             this.ktn004_15_03_2012.Enabled = false; this.Imitator_Data.Enabled = false; this.Azimuth_minsk_race_4_3to6to2.Enabled = false;
             this.topo_saratov.Enabled = false; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = false; this.Azimut_514_08Nov2013_11_15.Enabled = false;
             this.GRTVout_GCEF_format_030715.Enabled = false;
+            this.GRTVout_GCEF_format_070715_zavod.Enabled = false;
+            this.GRTVout_GCEF_format_070715_kulikova.Enabled = false;
         }
         public void FreeInData()
         {
@@ -986,6 +1001,8 @@ namespace SINS_motion_processing_new_data
             this.ktn004_15_03_2012.Enabled = true; this.Imitator_Data.Enabled = true; this.Azimuth_minsk_race_4_3to6to2.Enabled = true;
             this.topo_saratov.Enabled = true; this.AZIMUT_T_12_32_16_09_13_TLM_2z.Enabled = true; this.Azimut_514_08Nov2013_11_15.Enabled = true;
             this.GRTVout_GCEF_format_030715.Enabled = true;
+            this.GRTVout_GCEF_format_070715_zavod.Enabled = true;
+            this.GRTVout_GCEF_format_070715_kulikova.Enabled = true;
         }
 
         public void LockParamsOfStart()
@@ -1180,6 +1197,25 @@ namespace SINS_motion_processing_new_data
             {
                 CheckedTrueDataIn();
                 this.GRTVout_GCEF_format_030715.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+        private void GRTVout_GCEF_format_070715_zavod_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GRTVout_GCEF_format_070715_zavod.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.GRTVout_GCEF_format_070715_zavod.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+
+        private void GRTVout_GCEF_format_070715_kulikova_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GRTVout_GCEF_format_070715_kulikova.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.GRTVout_GCEF_format_070715_kulikova.Enabled = true;
             }
             else CheckedFalseDataIn();
         }
@@ -1488,6 +1524,9 @@ namespace SINS_motion_processing_new_data
         {
 
         }
+
+
+        
 
 
 

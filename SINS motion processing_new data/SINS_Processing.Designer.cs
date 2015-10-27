@@ -111,6 +111,8 @@
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.GRTVout_GCEF_format_030715 = new System.Windows.Forms.CheckBox();
             this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
+            this.GRTVout_GCEF_format_070715_zavod = new System.Windows.Forms.CheckBox();
+            this.GRTVout_GCEF_format_070715_kulikova = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1057,11 +1059,35 @@
             this.SeparateHorizVSVertical.Text = "Раздельный Vertical";
             this.SeparateHorizVSVertical.UseVisualStyleBackColor = true;
             // 
+            // GRTVout_GCEF_format_070715_zavod
+            // 
+            this.GRTVout_GCEF_format_070715_zavod.AutoSize = true;
+            this.GRTVout_GCEF_format_070715_zavod.Location = new System.Drawing.Point(232, 37);
+            this.GRTVout_GCEF_format_070715_zavod.Name = "GRTVout_GCEF_format_070715_zavod";
+            this.GRTVout_GCEF_format_070715_zavod.Size = new System.Drawing.Size(163, 17);
+            this.GRTVout_GCEF_format_070715_zavod.TabIndex = 87;
+            this.GRTVout_GCEF_format_070715_zavod.Text = "GRTV 070715 выезд завод";
+            this.GRTVout_GCEF_format_070715_zavod.UseVisualStyleBackColor = true;
+            this.GRTVout_GCEF_format_070715_zavod.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_zavod_CheckedChanged);
+            // 
+            // GRTVout_GCEF_format_070715_kulikova
+            // 
+            this.GRTVout_GCEF_format_070715_kulikova.AutoSize = true;
+            this.GRTVout_GCEF_format_070715_kulikova.Location = new System.Drawing.Point(232, 53);
+            this.GRTVout_GCEF_format_070715_kulikova.Name = "GRTVout_GCEF_format_070715_kulikova";
+            this.GRTVout_GCEF_format_070715_kulikova.Size = new System.Drawing.Size(145, 17);
+            this.GRTVout_GCEF_format_070715_kulikova.TabIndex = 88;
+            this.GRTVout_GCEF_format_070715_kulikova.Text = "GRTV 070715 куликова";
+            this.GRTVout_GCEF_format_070715_kulikova.UseVisualStyleBackColor = true;
+            this.GRTVout_GCEF_format_070715_kulikova.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_kulikova_CheckedChanged);
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.GRTVout_GCEF_format_070715_kulikova);
+            this.Controls.Add(this.GRTVout_GCEF_format_070715_zavod);
             this.Controls.Add(this.SeparateHorizVSVertical);
             this.Controls.Add(this.GRTVout_GCEF_format_030715);
             this.Controls.Add(this.NoiseParamsScanning);
@@ -1200,6 +1226,8 @@
         private System.Windows.Forms.Button NoiseParamsScanning;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_030715;
         private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
+        private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_zavod;
+        private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_kulikova;
     }
 }
 

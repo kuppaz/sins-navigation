@@ -136,7 +136,7 @@ namespace MovingImitator
 
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 3.0 * 3600.0)
+            while (CurTimeWithAlign < 1.0 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -410,11 +410,13 @@ namespace MovingImitator
             //    Params_dnu_0[j] = 0.0; //град/час
             //}
 
-            //for (int j = 0; j < 3; j++)
-            //{
-            //    Params_df_0[j] = 1E-5; //далее умножается G
-            //    Params_dnu_0[j] = 0.02; //град/час
-            //}
+            for (int j = 0; j < 3; j++)
+            {
+                Params_df_0[0] = 1E-5; //далее умножается G
+                Params_df_0[1] = -2E-5;
+                Params_df_0[2] = 1.5E-5;
+                Params_dnu_0[j] = 0.02; //град/час
+            }
 
             //for (int j = 0; j < 3; j++)
             //{
@@ -422,11 +424,13 @@ namespace MovingImitator
             //    Params_dnu_0[j] = 0.2; //град/час
             //}
 
-            for (int j = 0; j < 3; j++)
-            {
-                Params_df_0[j] = 1E-3; //далее умножается G
-                Params_dnu_0[j] = 2.0; //град/час
-            }
+            //for (int j = 0; j < 3; j++)
+            //{
+            //    Params_df_0[0] = 1E-3; //далее умножается G
+            //    Params_df_0[1] = -2E-3;
+            //    Params_df_0[2] = 1.5E-3;
+            //    Params_dnu_0[j] = 2.0; //град/час
+            //}
 
             //Params_df_0[0] = 1E-3;
             //Params_df_0[1] = 1E-3;
