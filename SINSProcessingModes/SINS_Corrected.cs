@@ -303,7 +303,7 @@ namespace SINSProcessingModes
                     SINSprocessing.FuncSmoothing_Forward(SINSstate, SINSstate_Smooth, SINSstate_OdoMod, KalmanVars, ProcHelp, Smthing_X, Smthing_P, Smthing_Backward);
                 }
                 if (SINSstate.flag_Smoothing && SINSstate.NowSmoothing)
-                    SINSprocessing.FuncSmoothing_BackwardAndSmooth(SINSstate, SINSstate_Smooth, KalmanVars, ProcHelp, Back_Input_X, Back_Input_P, ForHelpSmoothed);
+                    SINSprocessing.FuncSmoothing_BackwardAndSmooth(SINSstate, SINSstate_Smooth, SINSstate_OdoMod, KalmanVars, ProcHelp, Back_Input_X, Back_Input_P, ForHelpSmoothed);
 
                 //===============================================Сглаживание END===========================================================
 

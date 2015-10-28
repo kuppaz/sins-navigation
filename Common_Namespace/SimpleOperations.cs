@@ -312,12 +312,27 @@ namespace Common_Namespace
 
         public static Matrix C_convultion_HorizontalCoordinate(SINS_State SINSstate)
         {
-            Matrix MatrixResult = new Matrix(2, SimpleData.iMx);
+            if (SINSstate.flag_iMSmthd_Is_2_plus_Odo == false)
+            {
+                Matrix MatrixResult = new Matrix(2, SimpleData.iMx);
 
-            MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
-            MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+                MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+                MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
 
-            return MatrixResult;
+                return MatrixResult;
+            }
+            else
+            {
+                Matrix MatrixResult = new Matrix(4, SimpleData.iMx);
+
+                MatrixResult[0, 1] = 1.0 / SINSstate.R_n;
+                MatrixResult[1, 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+
+                MatrixResult[2, SINSstate.value_iMx_r_odo_12 + 1] = 1.0 / SINSstate.R_n;
+                MatrixResult[3, SINSstate.value_iMx_r_odo_12 + 0] = 1.0 / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
+
+                return MatrixResult;
+            }
         }
         public static Matrix C_convultion_HorizontalVelocity(SINS_State SINSstate)
         {

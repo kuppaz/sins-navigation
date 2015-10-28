@@ -809,7 +809,10 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_Using_iMx_r_odo_3 = this.iMx_r_odo_3.Checked;
             SINSstate.flag_UseOnlyStops = this.Use_Only_Stops.Checked;
             SINSstate.flag_OnlyAlignment = this.OnlyAlignment.Checked;
+
             SINSstate.flag_Smoothing = this.flag_Smoothing.Checked;
+            SINSstate.flag_iMSmthd_Is_2_plus_Odo = this.iMSmthd_Is_2_plus_Odo.Checked;
+
             SINSstate.flag_NotUse_ZUPT = this.flag_not_use_zupt.Checked;
             SINSstate.flag_using_slippage = this.flag_using_slippage.Checked;
             SINSstate.flag_using_Checkpotints = this.flag_using_Checkpotints.Checked;

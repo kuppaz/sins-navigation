@@ -113,6 +113,7 @@
             this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
             this.GRTVout_GCEF_format_070715_zavod = new System.Windows.Forms.CheckBox();
             this.GRTVout_GCEF_format_070715_kulikova = new System.Windows.Forms.CheckBox();
+            this.iMSmthd_Is_2_plus_Odo = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -935,7 +936,7 @@
             // iMSmthd_Is_7
             // 
             this.iMSmthd_Is_7.AutoSize = true;
-            this.iMSmthd_Is_7.Location = new System.Drawing.Point(35, 78);
+            this.iMSmthd_Is_7.Location = new System.Drawing.Point(35, 90);
             this.iMSmthd_Is_7.Name = "iMSmthd_Is_7";
             this.iMSmthd_Is_7.Size = new System.Drawing.Size(85, 17);
             this.iMSmthd_Is_7.TabIndex = 73;
@@ -945,7 +946,7 @@
             // iMSmthd_Is_4
             // 
             this.iMSmthd_Is_4.AutoSize = true;
-            this.iMSmthd_Is_4.Location = new System.Drawing.Point(35, 58);
+            this.iMSmthd_Is_4.Location = new System.Drawing.Point(35, 70);
             this.iMSmthd_Is_4.Name = "iMSmthd_Is_4";
             this.iMSmthd_Is_4.Size = new System.Drawing.Size(85, 17);
             this.iMSmthd_Is_4.TabIndex = 75;
@@ -990,13 +991,14 @@
             // 
             // groupBox16
             // 
+            this.groupBox16.Controls.Add(this.iMSmthd_Is_2_plus_Odo);
             this.groupBox16.Controls.Add(this.flag_Smoothing);
             this.groupBox16.Controls.Add(this.iMSmthd_Is_2);
             this.groupBox16.Controls.Add(this.iMSmthd_Is_4);
             this.groupBox16.Controls.Add(this.iMSmthd_Is_7);
             this.groupBox16.Location = new System.Drawing.Point(750, 301);
             this.groupBox16.Name = "groupBox16";
-            this.groupBox16.Size = new System.Drawing.Size(155, 100);
+            this.groupBox16.Size = new System.Drawing.Size(155, 111);
             this.groupBox16.TabIndex = 81;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "Smoothing Params";
@@ -1080,6 +1082,16 @@
             this.GRTVout_GCEF_format_070715_kulikova.Text = "GRTV 070715 куликова";
             this.GRTVout_GCEF_format_070715_kulikova.UseVisualStyleBackColor = true;
             this.GRTVout_GCEF_format_070715_kulikova.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_kulikova_CheckedChanged);
+            // 
+            // iMSmthd_Is_2_plus_Odo
+            // 
+            this.iMSmthd_Is_2_plus_Odo.AutoSize = true;
+            this.iMSmthd_Is_2_plus_Odo.Location = new System.Drawing.Point(47, 54);
+            this.iMSmthd_Is_2_plus_Odo.Name = "iMSmthd_Is_2_plus_Odo";
+            this.iMSmthd_Is_2_plus_Odo.Size = new System.Drawing.Size(50, 17);
+            this.iMSmthd_Is_2_plus_Odo.TabIndex = 89;
+            this.iMSmthd_Is_2_plus_Odo.Text = "+odo";
+            this.iMSmthd_Is_2_plus_Odo.UseVisualStyleBackColor = true;
             // 
             // SINS_Processing
             // 
@@ -1228,6 +1240,7 @@
         private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_zavod;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_kulikova;
+        private System.Windows.Forms.CheckBox iMSmthd_Is_2_plus_Odo;
     }
 }
 

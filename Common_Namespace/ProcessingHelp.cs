@@ -234,8 +234,14 @@ namespace Common_Namespace
                     {
                         if (flg_extract_complex_solution)
                         {
-                            SINSstate.GPS_Data.gps_Latitude.Value = Convert.ToDouble(dataArray2[25]);
-                            SINSstate.GPS_Data.gps_Longitude.Value = Convert.ToDouble(dataArray2[26]);
+                            double amendmentLatitude = 0
+                                , amendmentLongitude = 0;
+
+                            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)") { amendmentLatitude = 0.0004055550323; amendmentLongitude = -0.0014799999225; }
+                            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)") { amendmentLatitude = 0.0004033333445; amendmentLongitude = -0.0015534449943; }
+
+                            SINSstate.GPS_Data.gps_Latitude.Value = Convert.ToDouble(dataArray2[25]) + amendmentLatitude * SimpleData.ToRadian;
+                            SINSstate.GPS_Data.gps_Longitude.Value = Convert.ToDouble(dataArray2[26]) + amendmentLongitude * SimpleData.ToRadian;
                             SINSstate.GPS_Data.gps_Altitude.Value = Convert.ToDouble(dataArray2[27]);
                         }
                     }
