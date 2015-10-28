@@ -362,8 +362,8 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 5.00E-001; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-003; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 KalmanVars.Noise_Pos = 0.5;
@@ -385,8 +385,8 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
 
 
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.268697 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.997861 * SimpleData.ToRadian;
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.26555 * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.998705555 * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 159.8;
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
@@ -421,11 +421,11 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 5.00E-001; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-003; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
-                KalmanVars.Noise_Pos = 0.5;
+                KalmanVars.Noise_Pos = 1.0;
                 // -------------------------------------------//
 
 
@@ -444,7 +444,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
 
 
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.759906555 * SimpleData.ToRadian;
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.759920555 * SimpleData.ToRadian;
                 ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.0243833333 * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 187;
 

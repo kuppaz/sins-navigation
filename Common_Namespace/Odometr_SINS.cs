@@ -125,7 +125,7 @@ namespace Common_Namespace
 
             KalmanVars.cnt_measures += 2;
 
-            if (SINSstate.flag_iMx_r3_dV3)
+            if (SINSstate.flag_iMx_r3_dV3 && Altitude_CP != 0.0)
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dr3] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
@@ -146,7 +146,7 @@ namespace Common_Namespace
 
             KalmanVars.cnt_measures += 2;
 
-            if (SINSstate.flag_Using_iMx_r_odo_3)
+            if (SINSstate.flag_Using_iMx_r_odo_3 && Altitude_CP != 0.0)
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + SINSstate.value_iMx_r_odo_3] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate_OdoMod.Altitude - Altitude_CP;
