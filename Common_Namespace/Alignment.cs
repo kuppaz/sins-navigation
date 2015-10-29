@@ -290,12 +290,7 @@ namespace Common_Namespace
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
             {
                 SINSstate.Heading = -78.61045 * SimpleData.ToRadian;
-
-                //for (int j = 0; j < 3; j++)
-                //{
-                //    kalmanvars.noise_vel[j] = kalmanvars.noise_vel[j] / math.sqrt(math.abs(sinsstate.freq));
-                //    kalmanvars.noise_angl[j] = kalmanvars.noise_angl[j] / math.sqrt(math.abs(sinsstate.freq));
-                //}
+                //SINSstate.Heading -= 0.0663 * SimpleData.ToRadian;
             }
             if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
             {

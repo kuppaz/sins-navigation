@@ -74,22 +74,6 @@ namespace Common_Namespace
                 }
             }
 
-
-
-
-            // ----------------------------------------------------------//
-            // ----------------------------------------------------------//
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
-                KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 0] = 1.0;
-                KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = -1.0;
-
-                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
-                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
-
-                KalmanVars.Vertical_cnt_measures += 1;
-            }
         }
 
 
@@ -209,24 +193,6 @@ namespace Common_Namespace
             //    SINSstate.flag_using_GoCalibrInCP = false;
             //}
 
-
-
-            // ----------------------------------------------------------//
-            // ----------------------------------------------------------//
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
-                KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 0] = 1.0;
-                KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 1) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = 1.0;
-
-                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
-                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 1)] = SINSstate_OdoMod.Altitude - Altitude_CP;
-
-                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
-                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 1)] = SINSstate.Noise_GPS_PositionError;
-
-                KalmanVars.Vertical_cnt_measures += 2;
-            }
         }
 
 
@@ -412,10 +378,10 @@ namespace Common_Namespace
                         KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + 1] = -SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n;
                         KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_r12_odo + 0] = SINSstate_OdoMod.Omega_x[1];
                         KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_r12_odo + 1] = -SINSstate_OdoMod.Omega_x[0];
-                    }
 
-                    KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + (iMx_alphaBeta + 0)] = -SINSstate_OdoMod.Vx_0[1];
-                    KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + (iMx_alphaBeta + 1)] = SINSstate_OdoMod.Vx_0[0];
+                        KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + (iMx_alphaBeta + 0)] = -SINSstate_OdoMod.Vx_0[1];
+                        KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + (iMx_alphaBeta + 1)] = SINSstate_OdoMod.Vx_0[0];
+                    }
                 }
             }
             /*-----------СЛАБОСВЗАННЫЙ ВАРИАНТ----------------*/
@@ -445,7 +411,7 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
-                    //if (SINSstate.existRelationHoriz_VS_Vertical)
+                    if (SINSstate.existRelationHoriz_VS_Vertical)
                     {
                         KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + (iMx_alphaBeta + 0)] = -SINSstate_OdoMod.Vx_0[1];
                         KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + (iMx_alphaBeta + 1)] = SINSstate_OdoMod.Vx_0[0];
@@ -457,47 +423,25 @@ namespace Common_Namespace
 
             if (SINSstate.flag_iMx_kappa_13_ds)
             {
-                KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_odo_model + 0] = SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[0, 2] - SINSstate_OdoMod.OdoSpeed_s[2] * SINSstate_OdoMod.A_x0s[0, 1];
+                if (SINSstate.existRelationHoriz_VS_Vertical || !SINSstate.flag_iMx_r3_dV3)
+                    KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_odo_model + 0] = SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[0, 2] - SINSstate_OdoMod.OdoSpeed_s[2] * SINSstate_OdoMod.A_x0s[0, 1];
                 KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_odo_model + 1] = -SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[0, 0] + SINSstate_OdoMod.OdoSpeed_s[0] * SINSstate_OdoMod.A_x0s[0, 1];
                 KalmanVars.Matrix_A[iMx_r12_odo * iMx + iMx_odo_model + 2] = SINSstate_OdoMod.OdoSpeed_x0[0];
 
-                KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_odo_model + 0] = SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[1, 2] - SINSstate_OdoMod.OdoSpeed_s[2] * SINSstate_OdoMod.A_x0s[1, 1];
+                if (SINSstate.existRelationHoriz_VS_Vertical || !SINSstate.flag_iMx_r3_dV3)
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_odo_model + 0] = SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[1, 2] - SINSstate_OdoMod.OdoSpeed_s[2] * SINSstate_OdoMod.A_x0s[1, 1];
                 KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_odo_model + 1] = -SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[1, 0] + SINSstate_OdoMod.OdoSpeed_s[0] * SINSstate_OdoMod.A_x0s[1, 1];
                 KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + iMx_odo_model + 2] = SINSstate_OdoMod.OdoSpeed_x0[1];
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                 {
                     KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 0] = SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[2, 2] - SINSstate_OdoMod.OdoSpeed_s[2] * SINSstate_OdoMod.A_x0s[2, 1];
-                    KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 1] = -SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[2, 0] + SINSstate_OdoMod.OdoSpeed_s[0] * SINSstate_OdoMod.A_x0s[2, 1];
+                    if (SINSstate.existRelationHoriz_VS_Vertical || !SINSstate.flag_iMx_r3_dV3)
+                        KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 1] = -SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[2, 0] + SINSstate_OdoMod.OdoSpeed_s[0] * SINSstate_OdoMod.A_x0s[2, 1];
                     KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 2] = SINSstate_OdoMod.OdoSpeed_x0[2];
                 }
             }
 
-
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
-                // --- Если не вводим ошибки одометра, то для dr odo 3 везде нули
-                //KalmanVars.Vertical_Matrix_A[3 * SimpleData.iMx_Vertical + 3] = 1.0;
-
-                if (SINSstate.Vertical_kappa1 > 0)
-                {
-                    KalmanVars.Vertical_Matrix_A[SINSstate.Vertical_rOdo3 * SimpleData.iMx_Vertical + SINSstate.Vertical_kappa1 + 0] = SINSstate_OdoMod.A_x0s[2, 2] * SimpleOperations.AbsoluteVectorValue(SINSstate_OdoMod.OdoSpeed_x0);
-
-                    if (SINSstate.Vertical_kappa3Scale > 0)
-                    {
-                        KalmanVars.Vertical_Matrix_A[SINSstate.Vertical_rOdo3 * SimpleData.iMx_Vertical + SINSstate.Vertical_kappa3Scale + 0] = -SINSstate_OdoMod.A_x0s[2, 0] * SimpleOperations.AbsoluteVectorValue(SINSstate_OdoMod.OdoSpeed_x0);
-                        KalmanVars.Vertical_Matrix_A[SINSstate.Vertical_rOdo3 * SimpleData.iMx_Vertical + SINSstate.Vertical_kappa3Scale + 1] = SINSstate_OdoMod.A_x0s[2, 1] * SimpleOperations.AbsoluteVectorValue(SINSstate_OdoMod.OdoSpeed_x0);
-                    }
-                }
-
-                if (SINSstate.Vertical_alphaBeta > 0)
-                {
-                    KalmanVars.Vertical_Matrix_A[SINSstate.Vertical_rOdo3 * SimpleData.iMx_Vertical + SINSstate.Vertical_alphaBeta + 0] = -SINSstate_OdoMod.Vx_0[1];
-                    KalmanVars.Vertical_Matrix_A[SINSstate.Vertical_rOdo3 * SimpleData.iMx_Vertical + SINSstate.Vertical_alphaBeta + 1] = SINSstate_OdoMod.Vx_0[0];
-                }
-            }
-            // ----------------------------------------------------------//
         }
 
 
@@ -529,32 +473,6 @@ namespace Common_Namespace
 
             SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx, "CovarianceMatrixS_m");
 
-
-
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
-                KalmanVars.Vertical_CovarianceMatrixS_m[SINSstate.Vertical_rOdo3 * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3]
-                    = KalmanVars.Vertical_CovarianceMatrixS_p[SINSstate.Vertical_rOdo3 * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = SINSstate.stdOdoR;
-
-                if (SINSstate.Vertical_kappa1 > 0)
-                {
-                    KalmanVars.Vertical_CovarianceMatrixS_m[SINSstate.Vertical_kappa1 * SimpleData.iMx_Vertical + SINSstate.Vertical_kappa1]
-                        = KalmanVars.Vertical_CovarianceMatrixS_p[SINSstate.Vertical_kappa1 * SimpleData.iMx_Vertical + SINSstate.Vertical_kappa1] 
-                        = SINSstate.stdKappa1 * SimpleData.ToRadian_min;
-
-                    if (SINSstate.Vertical_kappa3Scale > 0)
-                    {
-                        KalmanVars.Vertical_CovarianceMatrixS_m[(SINSstate.Vertical_kappa3Scale + 0) * SimpleData.iMx_Vertical + (SINSstate.Vertical_kappa3Scale + 0)]
-                            = KalmanVars.Vertical_CovarianceMatrixS_p[(SINSstate.Vertical_kappa3Scale + 0) * SimpleData.iMx_Vertical + (SINSstate.Vertical_kappa3Scale + 0)]
-                            = SINSstate.stdKappa3 * SimpleData.ToRadian_min;
-                        KalmanVars.Vertical_CovarianceMatrixS_m[(SINSstate.Vertical_kappa3Scale + 1) * SimpleData.iMx_Vertical + (SINSstate.Vertical_kappa3Scale + 1)]
-                            = KalmanVars.Vertical_CovarianceMatrixS_p[(SINSstate.Vertical_kappa3Scale + 1) * SimpleData.iMx_Vertical + (SINSstate.Vertical_kappa3Scale + 1)]
-                            = SINSstate.stdScale;
-                    }
-                }
-            }
-
         }
 
 
@@ -582,13 +500,6 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
                     KalmanVars.CovarianceMatrixNoise[(SINSstate.value_iMx_r_odo_3 + 0) * iMq + tmpCounter + 2] = KalmanVars.Noise_Pos * sqrt_freq / SINSstate.decrementVerticalNoise;
-            }
-
-
-            // --- Считаем, что по вертикали у нас шумы только по скорости ---
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
             }
 
         }

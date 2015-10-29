@@ -106,14 +106,13 @@
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.AccuracyClass_Custom = new System.Windows.Forms.CheckBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.iMSmthd_Is_2_plus_Odo = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.GRTVout_GCEF_format_030715 = new System.Windows.Forms.CheckBox();
-            this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
             this.GRTVout_GCEF_format_070715_zavod = new System.Windows.Forms.CheckBox();
             this.GRTVout_GCEF_format_070715_kulikova = new System.Windows.Forms.CheckBox();
-            this.iMSmthd_Is_2_plus_Odo = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1003,6 +1002,16 @@
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "Smoothing Params";
             // 
+            // iMSmthd_Is_2_plus_Odo
+            // 
+            this.iMSmthd_Is_2_plus_Odo.AutoSize = true;
+            this.iMSmthd_Is_2_plus_Odo.Location = new System.Drawing.Point(47, 54);
+            this.iMSmthd_Is_2_plus_Odo.Name = "iMSmthd_Is_2_plus_Odo";
+            this.iMSmthd_Is_2_plus_Odo.Size = new System.Drawing.Size(50, 17);
+            this.iMSmthd_Is_2_plus_Odo.TabIndex = 89;
+            this.iMSmthd_Is_2_plus_Odo.Text = "+odo";
+            this.iMSmthd_Is_2_plus_Odo.UseVisualStyleBackColor = true;
+            // 
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.iMqVarkappa13);
@@ -1050,17 +1059,6 @@
             this.GRTVout_GCEF_format_030715.UseVisualStyleBackColor = true;
             this.GRTVout_GCEF_format_030715.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_030715_CheckedChanged);
             // 
-            // SeparateHorizVSVertical
-            // 
-            this.SeparateHorizVSVertical.AutoSize = true;
-            this.SeparateHorizVSVertical.Location = new System.Drawing.Point(818, 23);
-            this.SeparateHorizVSVertical.Name = "SeparateHorizVSVertical";
-            this.SeparateHorizVSVertical.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.SeparateHorizVSVertical.Size = new System.Drawing.Size(127, 17);
-            this.SeparateHorizVSVertical.TabIndex = 86;
-            this.SeparateHorizVSVertical.Text = "Раздельный Vertical";
-            this.SeparateHorizVSVertical.UseVisualStyleBackColor = true;
-            // 
             // GRTVout_GCEF_format_070715_zavod
             // 
             this.GRTVout_GCEF_format_070715_zavod.AutoSize = true;
@@ -1083,16 +1081,6 @@
             this.GRTVout_GCEF_format_070715_kulikova.UseVisualStyleBackColor = true;
             this.GRTVout_GCEF_format_070715_kulikova.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_kulikova_CheckedChanged);
             // 
-            // iMSmthd_Is_2_plus_Odo
-            // 
-            this.iMSmthd_Is_2_plus_Odo.AutoSize = true;
-            this.iMSmthd_Is_2_plus_Odo.Location = new System.Drawing.Point(47, 54);
-            this.iMSmthd_Is_2_plus_Odo.Name = "iMSmthd_Is_2_plus_Odo";
-            this.iMSmthd_Is_2_plus_Odo.Size = new System.Drawing.Size(50, 17);
-            this.iMSmthd_Is_2_plus_Odo.TabIndex = 89;
-            this.iMSmthd_Is_2_plus_Odo.Text = "+odo";
-            this.iMSmthd_Is_2_plus_Odo.UseVisualStyleBackColor = true;
-            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1100,7 +1088,6 @@
             this.ClientSize = new System.Drawing.Size(1023, 459);
             this.Controls.Add(this.GRTVout_GCEF_format_070715_kulikova);
             this.Controls.Add(this.GRTVout_GCEF_format_070715_zavod);
-            this.Controls.Add(this.SeparateHorizVSVertical);
             this.Controls.Add(this.GRTVout_GCEF_format_030715);
             this.Controls.Add(this.NoiseParamsScanning);
             this.Controls.Add(this.flag_GRTV_output);
@@ -1237,7 +1224,6 @@
         private System.Windows.Forms.CheckBox flag_GRTV_output;
         private System.Windows.Forms.Button NoiseParamsScanning;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_030715;
-        private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_zavod;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_kulikova;
         private System.Windows.Forms.CheckBox iMSmthd_Is_2_plus_Odo;

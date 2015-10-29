@@ -33,7 +33,7 @@ namespace Common_Namespace
                 SINSstate.OdoLimitMeasuresNum = 1;
 
                 SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -416,7 +416,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -433,13 +433,13 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
                 ParamStart.Experiment_stdScale = 0.005;
-                ParamStart.Experiment_stdKappa1 = 5.0; //минут
+                ParamStart.Experiment_stdKappa1 = 1.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
 
@@ -628,12 +628,12 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
 
-                ParamStart.Experiment_NoiseModelFlag = false; // Брать модельные значения, а не задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-3; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-5; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 3E-2; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 3E-4; //3E-6- optim
                 ParamStart.Experiment_stdR = 0.10;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 0.01;

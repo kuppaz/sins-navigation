@@ -211,7 +211,6 @@ namespace Common_Namespace
         public double Noise_GPS_PositionError;
         public bool flag_VupOdo_till_VupSINS;
         public double decrementVerticalNoise;
-        public bool flag_SeparateHorizVSVertical;
 
         public static SINS_State DeepCopy(SINS_State other)
         {

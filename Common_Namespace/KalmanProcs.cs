@@ -48,19 +48,6 @@ namespace Common_Namespace
                     func(timeStep, _a, _f, SimpleData.iMx);
                 }
             }
-
-
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
-                unsafe
-                {
-                    fixed (double* _a = KalmanVars.Vertical_Matrix_A, _f = KalmanVars.Vertical_TransitionMatrixF)
-                    {
-                        func(timeStep, _a, _f, SimpleData.iMx_Vertical);
-                    }
-                }
-            }
         }
         public static void Make_F_NB(double timeStep, Kalman_Vars KalmanVars)
         {
@@ -164,86 +151,6 @@ namespace Common_Namespace
                 }
             }
 
-
-
-            // ----------------------------------------------------------//
-            // ----------------------------------------------------------//
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
-                // ----------------------------------------------------------//
-                // ------------------ВЕКТОР УПРАВЛЕНИЯ-----------------------//
-                //KalmanVars.Vertical_ErrorConditionVector_m[0] += (
-                //    SINSstate.Omega_x[1] * KalmanVars.ErrorConditionVector_p[0]
-                //    - SINSstate.Omega_x[0] * KalmanVars.ErrorConditionVector_p[1]
-                //    + SINSstate.Vx_0[0] * KalmanVars.ErrorConditionVector_p[5]
-                //    - SINSstate.Vx_0[1] * KalmanVars.ErrorConditionVector_p[4]
-                //    ) * SINSstate.timeStep
-                //    ;
-
-                //KalmanVars.Vertical_ErrorConditionVector_m[1] += (
-                //    (SINSstate.Omega_x[1] + 2 * SINSstate.u_x[1]) * KalmanVars.ErrorConditionVector_p[2]
-                //    + (-SINSstate.Omega_x[0] - 2 * SINSstate.u_x[0]) * KalmanVars.ErrorConditionVector_p[3]
-                //    + (-SINSstate.u_x[2] * SINSstate.Vx_0[0]) * KalmanVars.ErrorConditionVector_p[4]
-                //    + (-SINSstate.u_x[2] * SINSstate.Vx_0[1]) * KalmanVars.ErrorConditionVector_p[5]
-                //    + (SINSstate.u_x[0] * SINSstate.Vx_0[0] + SINSstate.u_x[1] * SINSstate.Vx_0[1]) * KalmanVars.ErrorConditionVector_p[6]
-                //    + (-SINSstate.Vx_0[0] * SINSstate.A_x0s[1, 0] + SINSstate.Vx_0[1] * SINSstate.A_x0s[0, 0]) * KalmanVars.ErrorConditionVector_p[7]
-                //    + (-SINSstate.Vx_0[0] * SINSstate.A_x0s[1, 1] + SINSstate.Vx_0[1] * SINSstate.A_x0s[0, 1]) * KalmanVars.ErrorConditionVector_p[8]
-                //    + (-SINSstate.Vx_0[0] * SINSstate.A_x0s[1, 2] + SINSstate.Vx_0[1] * SINSstate.A_x0s[0, 2]) * KalmanVars.ErrorConditionVector_p[9]
-                //    + (SINSstate.A_x0s[2, 0]) * KalmanVars.ErrorConditionVector_p[10]
-                //    + (SINSstate.A_x0s[2, 1]) * KalmanVars.ErrorConditionVector_p[11]
-                //    ) * SINSstate.timeStep
-                //    ;
-
-                //// --- Только модифицированный вариант
-                //KalmanVars.Vertical_ErrorConditionVector_m[SINSstate.Vertical_rOdo3] += (
-                //    (-SINSstate_OdoMod.Vx_0[0] / SINSstate_OdoMod.R_e) * KalmanVars.ErrorConditionVector_p[0]
-                //    + (-SINSstate_OdoMod.Vx_0[1] / SINSstate_OdoMod.R_n) * KalmanVars.ErrorConditionVector_p[1]
-                //    + (SINSstate_OdoMod.Omega_x[1]) * KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo + 0]
-                //    + (-SINSstate_OdoMod.Omega_x[0]) * KalmanVars.ErrorConditionVector_p[SINSstate.iMx_r12_odo + 1]
-                //    + (-SINSstate_OdoMod.Vx_0[1]) * KalmanVars.ErrorConditionVector_p[4]
-                //    + (SINSstate_OdoMod.Vx_0[0]) * KalmanVars.ErrorConditionVector_p[5]
-                //    ) * SINSstate.timeStep
-                //    ;
-                // ----------------------------------------------------------//
-                // ----------------------------------------------------------//
-
-                for (int i = 0; i < SimpleData.iMx; i++)
-                {
-                    KalmanVars.KalmanFactor[i] = 0.0;
-                    KalmanVars.StringOfMeasure[i] = 0.0;
-                }
-
-                unsafe
-                {
-                    fixed (double* _xm = KalmanVars.Vertical_ErrorConditionVector_m, _xp = KalmanVars.Vertical_ErrorConditionVector_p, _sm = KalmanVars.Vertical_CovarianceMatrixS_m,
-                        _sp = KalmanVars.Vertical_CovarianceMatrixS_p, _kf = KalmanVars.KalmanFactor)
-                    {
-                        for (int t = 0; t < KalmanVars.Vertical_cnt_measures; t++)
-                        {
-                            for (int i = 0; i < SimpleData.iMx_Vertical; i++)
-                                KalmanVars.StringOfMeasure[i] = KalmanVars.Vertical_Matrix_H[t * SimpleData.iMx_Vertical + i];
-
-                            fixed (double* _h = KalmanVars.StringOfMeasure)
-                            {
-                                //Коррекция по измерениям
-                                f0b(KalmanVars.Vertical_Measure[t], _xm, _sm, _h, KalmanVars.Vertical_Noize_Z[t] * KalmanVars.Vertical_Noize_Z[t], _xp, _sp, _kf, SimpleData.iMx_Vertical);
-
-                                if (t < KalmanVars.Vertical_cnt_measures - 1)
-                                {
-                                    for (int i = 0; i < SimpleData.iMx_Vertical; i++)
-                                    {
-                                        _xm[i] = _xp[i];
-                                        for (int j = 0; j < SimpleData.iMx_Vertical; j++)
-                                            _sm[i * SimpleData.iMx_Vertical + j] = _sp[i * SimpleData.iMx_Vertical + j];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
         }
 
 
@@ -262,22 +169,6 @@ namespace Common_Namespace
             SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
             SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
 
-
-
-            // ----------------------------------------------------------//
-            if (SINSstate.flag_SeparateHorizVSVertical == true)
-            {
-                unsafe
-                {
-                    fixed (double* _xm = KalmanVars.Vertical_ErrorConditionVector_m, _xp = KalmanVars.Vertical_ErrorConditionVector_p, _sm = KalmanVars.Vertical_CovarianceMatrixS_m,
-                        _sp = KalmanVars.Vertical_CovarianceMatrixS_p, _f = KalmanVars.Vertical_TransitionMatrixF, _sq = KalmanVars.Vertical_CovarianceMatrixNoise)
-                    {
-                        dgq0b(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx_Vertical, SimpleData.iMq_Vertical);
-                    }
-                }
-                SimpleOperations.CopyArray(KalmanVars.Vertical_CovarianceMatrixS_p, KalmanVars.Vertical_CovarianceMatrixS_m);
-                SimpleOperations.CopyArray(KalmanVars.Vertical_ErrorConditionVector_p, KalmanVars.Vertical_ErrorConditionVector_m);
-            }
         }
 
 
