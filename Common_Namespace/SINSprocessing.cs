@@ -642,6 +642,8 @@ namespace Common_Namespace
             double[] fz = new double[3], Wz = new double[3], u = new double[3], tempV = new double[3], Wz_avg = new double[3];
             double[] Vx_0 = new double[3], Vx_0_prev = new double[3];
 
+            SINSstate.startDt[0] = DateTime.Now;
+
             Matrix AT_z_xi = new Matrix(3, 3); Matrix B_x_eta = new Matrix(3, 3);
             Matrix dAT = new Matrix(3, 3); Matrix D_x_z = new Matrix(3, 3);
             Matrix W_x_xi = new Matrix(3, 3); Matrix C_eta_xi = new Matrix(3, 3);
@@ -709,6 +711,13 @@ namespace Common_Namespace
                 }
             }
 
+
+            // --- //
+            SINSstate.endDt[0] = DateTime.Now;
+            SINSstate.startDt[1] = DateTime.Now;
+            // --- //
+
+
             W_z_abs = Math.Sqrt(Wz[0] * Wz[0] + Wz[1] * Wz[1] + Wz[2] * Wz[2]);
             dlt = Math.Sin(W_z_abs * SINSstate.timeStep) / W_z_abs;
             dlt2 = (1.0 - Math.Cos(W_z_abs * SINSstate.timeStep)) / (W_z_abs * W_z_abs);
@@ -734,6 +743,11 @@ namespace Common_Namespace
             //--------------------------------------------------------------------------------------
 
 
+            // --- //
+            SINSstate.endDt[1] = DateTime.Now;
+            SINSstate.startDt[2] = DateTime.Now;
+            // --- //
+
 
             //---------------------------------ИНТЕГРИРОВАНИЕ СКОРОСТЕЙ----------------------------
             CopyArray(SINSstate.F_x, D_x_z * fz);
@@ -747,9 +761,6 @@ namespace Common_Namespace
 
             //--------------------------------------------------------------------------------------
 
-
-            if (Vx_0[1] > 1.0 || Vx_0[0] > 1.0)
-                Vx_0[1] = Vx_0[1];
 
             //--- Интегрируем вертикальную скорость ---//
             if (SINSstate.flag_iMx_r3_dV3 && (SINSstate.flag_UsingAltitudeCorrection || SINSstate.flag_Using_SNS))
@@ -765,6 +776,12 @@ namespace Common_Namespace
             {
                 Vx_0[2] = SINSstate_OdoMod.Vx_0[2];
             }
+
+
+            // --- //
+            SINSstate.endDt[2] = DateTime.Now;
+            SINSstate.startDt[3] = DateTime.Now;
+            // --- //
 
 
             //---------ИНТЕГРИРОВАНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z--------------
@@ -810,6 +827,12 @@ namespace Common_Namespace
             CopyMatrix(SINSstate.A_nx0, B_x_eta.Transpose());
 
 
+            // --- //
+            SINSstate.endDt[3] = DateTime.Now;
+            SINSstate.startDt[4] = DateTime.Now;
+            // --- //
+
+
 
             //---ОПРЕДЕЛЕНИЕ ГЕОГРАФИЧЕСКИХ КООРДИНАТ---
             SINSstate.Longitude = Math.Atan2(SINSstate.A_x0n[2, 1], SINSstate.A_x0n[2, 0]);
@@ -839,6 +862,10 @@ namespace Common_Namespace
 
 
 
+            // --- //
+            SINSstate.endDt[4] = DateTime.Now;
+            SINSstate.startDt[5] = DateTime.Now;
+            // --- //
 
 
             //--------------------------------------------------------------------------------------
@@ -866,6 +893,12 @@ namespace Common_Namespace
                 SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.A_x0s * SINSstate.OdoSpeed_s);
             else
                 SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.OdoSpeed_x0);
+
+
+            // --- //
+            SINSstate.endDt[5] = DateTime.Now;
+            SINSstate.startDt[6] = DateTime.Now;
+            // --- //
 
 
             //---------ВЫЧИСЛЕНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z для одометрического счисления--------------
@@ -907,6 +940,10 @@ namespace Common_Namespace
             SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
             SINSstate_OdoMod.R_n = RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
             //--------------------------------------------------------------------------------------
+
+            // --- //
+            SINSstate.endDt[6] = DateTime.Now;
+            // --- //
         }
 
 

@@ -165,6 +165,11 @@ namespace Common_Namespace
                       , Vc = new double[3]
                       ;
 
+        public DateTime[] comulativeTime = new DateTime[50]
+                , startDt = new DateTime[50]
+                , endDt = new DateTime[50]
+                ;
+
         //---Начальные  сигма для матриц S---
         public double[] stdF = new double[3], stdF_Oz = new double[3], stdNu_Oz = new double[3];
         public double stdR, stdOdoR, stdV, stdAlpha1, stdAlpha2, stdBeta3, stdNu, stdScale, stdKappa1, stdKappa3;

@@ -96,6 +96,11 @@ namespace SINSProcessingModes
             SINSstate.NowSmoothing = NowSmoothing;
             if (SINSstate.NowSmoothing) start_i = SINSstate.LastCountForRead - 1;
 
+            DateTime[] comulativeTime = new DateTime[10]
+                , startDt = new DateTime[10]
+                , endDt = new DateTime[10]
+                ;
+
             //=========================================================================//
             //=========================================================================//
             for (int i = start_i; i <= SINSstate.LastCountForRead; i++)
@@ -158,12 +163,19 @@ namespace SINSProcessingModes
                 }
                 //---------------------------------------------------------------------//
 
-
+                startDt[0] = DateTime.Now;
 
                 //-------------------------- MAIN STEPS ------------------------------//
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
+
+                endDt[0] = DateTime.Now;
+                startDt[1] = DateTime.Now;
+
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
                 KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
+
+                endDt[1] = DateTime.Now;
+                startDt[2] = DateTime.Now;
 
 
                 if (SINSstate.Count % 5000 == 0)
@@ -182,6 +194,8 @@ namespace SINSProcessingModes
 
                 if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
+
+                endDt[2] = DateTime.Now;
 
                 
                 
@@ -211,6 +225,7 @@ namespace SINSProcessingModes
 
                 if (SINSstate.flag_Using_SNS == true && SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                     SINSstate.flag_UsingCorrection = true;
+
 
                 //---------------------------------------------------------------------//
                 ProcHelp.corrected = 0;
@@ -269,6 +284,7 @@ namespace SINSProcessingModes
                                         SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value) / (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerData.odometer_left_prev.Value));
                 }
 
+
                 //--- Расчет корректирующего вектора состояния ---//
                 if (SINSstate.flag_UsingCorrection == true)
                 {
@@ -282,6 +298,7 @@ namespace SINSProcessingModes
                 //----------------------------ЭТАП КОРРЕКЦИИ END---------------------------------//
 
 
+                startDt[3] = DateTime.Now;
 
 
                 //=================================================Сглаживание============================================================
@@ -313,6 +330,7 @@ namespace SINSProcessingModes
                 //===============================================Сглаживание END===========================================================
 
 
+                endDt[3] = DateTime.Now;
 
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/
@@ -346,9 +364,37 @@ namespace SINSProcessingModes
 
                 //--- Переопределение значений данных одометра ---
                 SINSprocessing.Redifinition_OdoCounts(SINSstate, SINSstate2, SINSstate_OdoMod);
+
+
+                for (int j = 0; j < comulativeTime.Length; j++)
+                    comulativeTime[j] += endDt[j] - startDt[j];
+                for (int j = 0; j < SINSstate.comulativeTime.Length; j++)
+                    SINSstate.comulativeTime[j] += SINSstate.endDt[j] - SINSstate.startDt[j];
             }
             /*----------------------------------------END---------------------------------------------*/
             /*----------------------------------------------------------------------------------------*/
+
+
+
+
+            string strDtComulative = "";
+            for (int j = 0; j < comulativeTime.Length; j++)
+                if (comulativeTime[j] > Convert.ToDateTime("0001-01-01T00:00:01"))
+                    strDtComulative += "comulativeTime_" + j + ": " + comulativeTime[j].ToString() + " \n";
+            Console.WriteLine(strDtComulative);
+
+            string path_strDtComulative = "Debaging//_strDtComulative.txt";
+            if (!NowSmoothing) path_strDtComulative = "Debaging//_strDtComulative_back.txt";
+            StreamWriter File_strDtComulative = new StreamWriter(SimpleData.PathOutputString + path_strDtComulative);
+            File_strDtComulative.WriteLine(strDtComulative);
+
+            strDtComulative = "";
+            for (int j = 0; j < SINSstate.comulativeTime.Length; j++)
+                if (SINSstate.comulativeTime[j] > Convert.ToDateTime("0001-01-01T00:00:01"))
+                    strDtComulative += "SINSstate.comulativeTime_" + j + ": " + SINSstate.comulativeTime[j].ToString() + " \n";
+            Console.WriteLine(strDtComulative);
+
+
 
 
             if (SINSstate.flag_Smoothing)
