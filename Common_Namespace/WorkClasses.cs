@@ -64,6 +64,8 @@ namespace Common_Namespace
 
         public bool existRelationHoriz_VS_Vertical = true;
 
+        public bool MyOwnKalman_Korrection = false;
+
         public int FreqOutput, LastCountForRead;
         public bool DoHaveControlPoints = false;
 

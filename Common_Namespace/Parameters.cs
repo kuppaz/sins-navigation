@@ -27,6 +27,7 @@ namespace Common_Namespace
         {
 
             SINSstate.decrementVerticalNoise = 1.0;
+            SINSstate.MyOwnKalman_Korrection = false;
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
@@ -233,7 +234,10 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
+
+                // -- С MyOwnKalman_Korrection=true при чекнутых шумах dR только в горизонте получается конечная ошибка  метра!!
+                SINSstate.MyOwnKalman_Korrection = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -417,6 +421,8 @@ namespace Common_Namespace
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+
+                SINSstate.MyOwnKalman_Korrection = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0

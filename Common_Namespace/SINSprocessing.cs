@@ -642,7 +642,7 @@ namespace Common_Namespace
             double[] fz = new double[3], Wz = new double[3], u = new double[3], tempV = new double[3], Wz_avg = new double[3];
             double[] Vx_0 = new double[3], Vx_0_prev = new double[3];
 
-            SINSstate.startDt[0] = DateTime.Now;
+            int datetimeCounter = 0;
 
             Matrix AT_z_xi = new Matrix(3, 3); Matrix B_x_eta = new Matrix(3, 3);
             Matrix dAT = new Matrix(3, 3); Matrix D_x_z = new Matrix(3, 3);
@@ -713,8 +713,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[0] = DateTime.Now;
-            SINSstate.startDt[1] = DateTime.Now;
+            SINSstate.startDt[datetimeCounter] = DateTime.Now;
             // --- //
 
 
@@ -736,6 +735,10 @@ namespace Common_Namespace
                     AT_z_xi[i, j] = AT_z_xi[i, j] / tempV[i];
             }
 
+            // --- //
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            // --- //
+
             CopyMatrix(SINSstate.AT, AT_z_xi);
 
             CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
@@ -744,8 +747,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[1] = DateTime.Now;
-            SINSstate.startDt[2] = DateTime.Now;
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -779,8 +781,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[2] = DateTime.Now;
-            SINSstate.startDt[3] = DateTime.Now;
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -805,6 +806,12 @@ namespace Common_Namespace
             Hat1 = Matrix.SkewSymmetricMatrix(SINSstate.Omega_x);
             Hat2 = Matrix.SkewSymmetricMatrixSquare(SINSstate.Omega_x);
 
+
+            // --- //
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            // --- //
+
+
             CopyMatrix(dMatrix, E + Hat1 * dlt + Hat2 * dlt2);
             CopyMatrix(B_x_eta, dMatrix * B_x_eta);
 
@@ -815,6 +822,11 @@ namespace Common_Namespace
                 for (int j = 0; j < 3; j++)
                     B_x_eta[i, j] = B_x_eta[i, j] / tempV[i];
             }
+
+
+            // --- //
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            // --- //
 
 
             CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
@@ -828,8 +840,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[3] = DateTime.Now;
-            SINSstate.startDt[4] = DateTime.Now;
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -863,8 +874,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[4] = DateTime.Now;
-            SINSstate.startDt[5] = DateTime.Now;
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -896,8 +906,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[5] = DateTime.Now;
-            SINSstate.startDt[6] = DateTime.Now;
+            SINSstate.endDt[datetimeCounter] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -940,10 +949,6 @@ namespace Common_Namespace
             SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
             SINSstate_OdoMod.R_n = RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
             //--------------------------------------------------------------------------------------
-
-            // --- //
-            SINSstate.endDt[6] = DateTime.Now;
-            // --- //
         }
 
 

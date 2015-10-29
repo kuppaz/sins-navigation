@@ -386,13 +386,16 @@ namespace SINSProcessingModes
             string path_strDtComulative = "Debaging//_strDtComulative.txt";
             if (!NowSmoothing) path_strDtComulative = "Debaging//_strDtComulative_back.txt";
             StreamWriter File_strDtComulative = new StreamWriter(SimpleData.PathOutputString + path_strDtComulative);
-            File_strDtComulative.WriteLine(strDtComulative);
+            File_strDtComulative.WriteLine(strDtComulative + "\n \n");
 
             strDtComulative = "";
             for (int j = 0; j < SINSstate.comulativeTime.Length; j++)
                 if (SINSstate.comulativeTime[j] > Convert.ToDateTime("0001-01-01T00:00:01"))
                     strDtComulative += "SINSstate.comulativeTime_" + j + ": " + SINSstate.comulativeTime[j].ToString() + " \n";
             Console.WriteLine(strDtComulative);
+            File_strDtComulative.WriteLine(strDtComulative);
+
+            File_strDtComulative.Close();
 
 
 

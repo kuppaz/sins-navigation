@@ -646,7 +646,9 @@ namespace Common_Namespace
             }
 
 
-            if (SINSstate.NowSmoothing == true && i % SINSstate.FreqOutput == 0)
+            if (SINSstate.NowSmoothing == true
+                && i % SINSstate.FreqOutput == 0
+                )
             {
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                     //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
@@ -657,8 +659,8 @@ namespace Common_Namespace
                                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_Smooth.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude)), 2)
                                         + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
                                         + " " + Math.Round(SINSstate_Smooth.Vx_0[0], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[1], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[2], 3)
-                                        + " " + Math.Round((SINSstate_Smooth.Heading * SimpleData.ToDegree), 8)
-                                        + " " + Math.Round((SINSstate_Smooth.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate_Smooth.Pitch * SimpleData.ToDegree), 8)
+                                        + " " + Math.Round((SINSstate_Smooth.Heading * SimpleData.ToDegree), 9)
+                                        + " " + Math.Round((SINSstate_Smooth.Roll * SimpleData.ToDegree), 9) + " " + Math.Round((SINSstate_Smooth.Pitch * SimpleData.ToDegree), 9)
                                         ;
 
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
