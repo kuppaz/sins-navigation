@@ -325,6 +325,9 @@ namespace Common_Namespace
 
         public double kappa1_est, kappa3_est;
 
+        public double[] pdResidual = new double[SimpleData.iMz],
+            pdSigmaApriori = new double[SimpleData.iMz];
+
         public class BufferArray
         {
             public int[] Count = new int[60];

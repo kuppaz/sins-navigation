@@ -115,6 +115,53 @@ namespace Common_Namespace
             return (Math.Sqrt(y));
         }
 
+        /*           sigmba               */
+        /*              T      2          */
+        /* sigmba =  ||s * a ||           */
+        unsafe static double sigmba(double* a, double* s, int m)
+        {
+            int i, j;
+            double c, y;
+            c = 0.0;
+            for (i = 0; i < m; i++)
+            {
+                y = 0.0;
+                for (j = 0; j <= i; j++) y += *(s + j * m + i) * *(a + j);
+                c += (y * y);
+            }
+            return (c);
+        }
+
+        public static void Check_Measurement(SINS_State SINSstate, Kalman_Vars KalmanVars)
+        {
+            for (int i = 0; i < SimpleData.iMx; i++)
+                KalmanVars.StringOfMeasure[i] = 0.0;
+
+            for (int i = 0; i < SimpleData.iMz; i++)
+            {
+                KalmanVars.pdResidual[i] = 0.0;
+                KalmanVars.pdSigmaApriori[i] = 0.0;
+            }
+
+            for (int i = 0; i < KalmanVars.cnt_measures; i++)
+            {
+                KalmanVars.pdResidual[i] = KalmanVars.Measure[i];
+                for (int j = 0; j < SimpleData.iMx; j++)
+                {
+                    KalmanVars.StringOfMeasure[j] = KalmanVars.Matrix_H[i * SimpleData.iMx + j];
+                    KalmanVars.pdResidual[i] -= KalmanVars.StringOfMeasure[j];
+                }
+
+                unsafe
+                {
+                    fixed (double* StringOfMeasure = KalmanVars.StringOfMeasure, CovarianceMatrixS_m = KalmanVars.CovarianceMatrixS_m)
+                    {
+                        KalmanVars.pdSigmaApriori[i] = Math.Sqrt(sigmba(StringOfMeasure, CovarianceMatrixS_m, SimpleData.iMx)) + KalmanVars.Noize_Z[i] * KalmanVars.Noize_Z[i];
+                    }
+                }
+            }
+        }
+
         public static void KalmanCorrection(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
             for (int i = 0; i < SimpleData.iMx; i++)

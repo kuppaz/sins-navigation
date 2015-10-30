@@ -392,7 +392,8 @@ namespace Common_Namespace
         public static void OutPutInfo(int i, int start_i, Proc_Help ProcHelp, SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod, SINS_State SINSstate_Smooth, Kalman_Vars KalmanVars, StreamWriter Nav_EstimateSolution, StreamWriter Nav_Autonomous,
                 StreamWriter Nav_FeedbackSolution, StreamWriter Nav_StateErrorsVector, StreamWriter Nav_Errors, StreamWriter STD_data, StreamWriter Speed_Angles, StreamWriter DinamicOdometer, StreamWriter Nav_Smoothed, StreamWriter KMLFileOut, StreamWriter KMLFileOutSmoothed,
                 StreamWriter GRTV_output,
-                StreamWriter Cicle_Debag_Solution
+                StreamWriter Cicle_Debag_Solution,
+                StreamWriter Check_Measurement
             )
         {
             double Lat = 0.0, Long = 0.0;
@@ -700,6 +701,21 @@ namespace Common_Namespace
                             ;
                     Nav_Errors.WriteLine(ProcHelp.datastring);
                 }
+
+
+
+
+
+                /*----------------------------------OUTPUT Check_Measurement------------------------------------------------------*/
+                if (SINSstate.flag_FeedbackExist == false)
+                {
+                    Check_Measurement.WriteLine(SINSstate.Count
+                        + " " + KalmanVars.pdResidual[0] + " " + KalmanVars.pdResidual[1] + " " + KalmanVars.pdResidual[2]
+                        + " " + KalmanVars.pdResidual[3] + " " + KalmanVars.pdResidual[4] + " " + KalmanVars.pdResidual[5]
+                        + " " + KalmanVars.pdSigmaApriori[0] + " " + KalmanVars.pdSigmaApriori[1] + " " + KalmanVars.pdSigmaApriori[2]
+                        + " " + KalmanVars.pdSigmaApriori[3] + " " + KalmanVars.pdSigmaApriori[4] + " " + KalmanVars.pdSigmaApriori[5]);
+                }
+                
 
 
 
