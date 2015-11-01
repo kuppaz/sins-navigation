@@ -328,7 +328,7 @@ namespace SINSProcessingModes
                         Smthing_P = new StreamWriter(str_dir_file + "Backward_P_" + int_file_back.ToString() + ".txt");
                     }
 
-                    SINSprocessing.FuncSmoothing_Forward(SINSstate, SINSstate_Smooth, SINSstate_OdoMod, KalmanVars, ProcHelp, Smthing_X, Smthing_P, Smthing_Backward);
+                    SINSprocessing.FuncSmoothing_Forward(i, SINSstate, SINSstate_Smooth, SINSstate_OdoMod, KalmanVars, ProcHelp, Smthing_X, Smthing_P, Smthing_Backward);
                 }
                 if (SINSstate.flag_Smoothing && SINSstate.NowSmoothing)
                     SINSprocessing.FuncSmoothing_BackwardAndSmooth(SINSstate, SINSstate_Smooth, SINSstate_OdoMod, KalmanVars, ProcHelp, Back_Input_X, Back_Input_P, ForHelpSmoothed);

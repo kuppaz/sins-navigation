@@ -713,7 +713,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.startDt[datetimeCounter] = DateTime.Now;
+            //SINSstate.startDt[datetimeCounter] = DateTime.Now;
             // --- //
 
 
@@ -736,7 +736,7 @@ namespace Common_Namespace
             }
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
             CopyMatrix(SINSstate.AT, AT_z_xi);
@@ -747,7 +747,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -781,7 +781,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -808,7 +808,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -825,7 +825,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -840,7 +840,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -874,7 +874,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -906,7 +906,7 @@ namespace Common_Namespace
 
 
             // --- //
-            SINSstate.endDt[datetimeCounter] = DateTime.Now; datetimeCounter++;
+            //SINSstate.endDt[datetimeCounter] = DateTime.Now; datetimeCounter++;
             // --- //
 
 
@@ -1424,9 +1424,11 @@ namespace Common_Namespace
 
 
 
-        public static void FuncSmoothing_Forward(SINS_State SINSstate, SINS_State SINSstate_Smooth, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars, Proc_Help ProcHelp
+        public static void FuncSmoothing_Forward(int i, SINS_State SINSstate, SINS_State SINSstate_Smooth, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars, Proc_Help ProcHelp
             , StreamWriter Smthing_X, StreamWriter Smthing_P, StreamWriter Smthing_Backward)
         {
+            int EachN_CountOutput = 100;
+
             //------------------------------------------------------------------
             // --- Расчет параметров на прямом прогоне и их вывод в файлы для обратного
             string str_P = "";
@@ -1538,8 +1540,18 @@ namespace Common_Namespace
                 }
             }
 
-            Smthing_P.WriteLine(str_P);
+
+            if (i % EachN_CountOutput == 0)
+            {
+                SINSstate.SmoothingOutput_str_P += str_P;
+                Smthing_P.WriteLine(SINSstate.SmoothingOutput_str_P);
+                SINSstate.SmoothingOutput_str_P = "";
+            }
+            else
+                SINSstate.SmoothingOutput_str_P += str_P + "\n";
             //-----------------------
+
+
 
             string str_X = "";
             if (SimpleData.iMxSmthd >= 2)
@@ -1563,7 +1575,14 @@ namespace Common_Namespace
                     str_X = str_X + " " + SINSstate.Vx_0[2];
             }
 
-            Smthing_X.WriteLine(str_X);
+            if (i % EachN_CountOutput == 0)
+            {
+                SINSstate.SmoothingOutput_str_X += str_X;
+                Smthing_X.WriteLine(SINSstate.SmoothingOutput_str_X);
+                SINSstate.SmoothingOutput_str_X = "";
+            }
+            else
+                SINSstate.SmoothingOutput_str_X += str_X + "\n";
             //-----------------------
 
 
@@ -1571,7 +1590,15 @@ namespace Common_Namespace
             // --- Важный момент - на обратном проходу нужно использовать именно те координаты одометрического счисления, которые были расчитаны на прямом прогоне
             string StringForBack = "";
             StringForBack = ProcHelp.datastring + " " + SINSstate_OdoMod.Latitude.ToString() + " " + SINSstate_OdoMod.Longitude.ToString();
-            Smthing_Backward.WriteLine(StringForBack);
+
+            if (i % EachN_CountOutput == 0)
+            {
+                SINSstate.SmoothingOutput_strForBack += StringForBack;
+                Smthing_Backward.WriteLine(SINSstate.SmoothingOutput_strForBack);
+                SINSstate.SmoothingOutput_strForBack = "";
+            }
+            else
+                SINSstate.SmoothingOutput_strForBack += StringForBack + "\n";
         }
 
 

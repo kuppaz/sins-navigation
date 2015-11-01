@@ -64,7 +64,7 @@ namespace Common_Namespace
 
         public bool existRelationHoriz_VS_Vertical = true;
 
-        public bool MyOwnKalman_Korrection = false;
+        public bool MyOwnKalman_Korrection = false, MyOwnKalman_Forecast = false;
 
         public int FreqOutput, LastCountForRead;
         public bool DoHaveControlPoints = false;
@@ -218,6 +218,8 @@ namespace Common_Namespace
         public double Noise_GPS_PositionError;
         public bool flag_VupOdo_till_VupSINS;
         public double decrementVerticalNoise;
+
+        public string SmoothingOutput_str_X, SmoothingOutput_str_P = "", SmoothingOutput_strForBack = "";
 
         public static SINS_State DeepCopy(SINS_State other)
         {

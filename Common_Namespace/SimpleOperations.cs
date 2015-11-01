@@ -395,6 +395,21 @@ namespace Common_Namespace
             }
             return MatrixResult;
         }
+        public static Matrix ArrayToMatrix(double[] array, int Rows, int Cols)
+        {
+            Matrix MatrixResult = new Matrix(Rows, Cols);
+
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Cols; j++)
+                {
+                    MatrixResult[i, j] = array[i * Cols + j];
+                }
+            }
+            return MatrixResult;
+        }
+
+
         public static double[] MatrixToArray(Matrix matrix)
         {
             double[] array = new double[matrix.Cols*matrix.Rows];
@@ -476,8 +491,8 @@ namespace Common_Namespace
         }
         public static void CopyMatrix(Matrix p, Matrix p_2)
         {
-            for (int ii = 0; ii < 3; ii++)
-                for (int jj = 0; jj < 3; jj++)
+            for (int ii = 0; ii < p.Rows; ii++)
+                for (int jj = 0; jj < p.Cols; jj++)
                     p[ii,jj] = p_2[ii,jj];
         }
 

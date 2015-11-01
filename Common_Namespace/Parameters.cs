@@ -28,6 +28,7 @@ namespace Common_Namespace
 
             SINSstate.decrementVerticalNoise = 1.0;
             SINSstate.MyOwnKalman_Korrection = false;
+            SINSstate.MyOwnKalman_Forecast = false;
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
@@ -59,7 +60,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = 0.2;
                 KalmanVars.OdoNoise_STOP = 0.005;       //!!!
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
 
                 KalmanVars.Noise_Pos = 0.75;
@@ -94,7 +95,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment ;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
 
                 //=== С параметрами ниже решение OdoSINS лучше SINSOdo (акцент на 3E-5 и 3E-7)
@@ -142,7 +143,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -185,7 +186,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.01;
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -240,6 +241,7 @@ namespace Common_Namespace
 
                 // -- С MyOwnKalman_Korrection=true при чекнутых шумах dR только в горизонте получается конечная ошибка  метра!!
                 SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -304,7 +306,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -363,7 +365,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -424,7 +426,8 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Korrection = false;
+                SINSstate.MyOwnKalman_Forecast = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -493,7 +496,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -545,7 +548,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.01;
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -598,7 +601,7 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.01;
 
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -638,6 +641,7 @@ namespace Common_Namespace
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
+                SINSstate.MyOwnKalman_Korrection = false;
 
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-2; //3E-4- optim

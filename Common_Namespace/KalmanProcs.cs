@@ -272,17 +272,81 @@ namespace Common_Namespace
 
         public static void KalmanForecast(Kalman_Vars KalmanVars, SINS_State SINSstate)
         {
-            unsafe
+            if (!SINSstate.MyOwnKalman_Forecast)
             {
-                fixed (double* _xm = KalmanVars.ErrorConditionVector_m, _xp = KalmanVars.ErrorConditionVector_p, _sm = KalmanVars.CovarianceMatrixS_m, _sp = KalmanVars.CovarianceMatrixS_p, 
-                    _f = KalmanVars.TransitionMatrixF, _sq = KalmanVars.CovarianceMatrixNoise)
+                unsafe
                 {
-                    dgq0b(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx, SimpleData.iMq);
-                    //dg0b(_xp, _sp, _f,_xm, _sm, SimpleData.iMx);
+                    fixed (double* _xm = KalmanVars.ErrorConditionVector_m, _xp = KalmanVars.ErrorConditionVector_p, _sm = KalmanVars.CovarianceMatrixS_m, _sp = KalmanVars.CovarianceMatrixS_p,
+                        _f = KalmanVars.TransitionMatrixF, _sq = KalmanVars.CovarianceMatrixNoise)
+                    {
+                        dgq0b(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx, SimpleData.iMq);
+                        //dg0b(_xp, _sp, _f,_xm, _sm, SimpleData.iMx);
+                    }
                 }
+                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
+                SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
             }
-            SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
-            SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
+            else
+            {
+                int datetimeCounter = 0;
+                // --- //
+                SINSstate.startDt[datetimeCounter] = DateTime.Now;
+                // --- //
+
+                Matrix tmpMatrix = new Matrix(SimpleData.iMx, SimpleData.iMx),
+                    tmpMatrix_2 = new Matrix(SimpleData.iMx, SimpleData.iMx),
+                    tmpMatrix_3 = new Matrix(SimpleData.iMx, SimpleData.iMq);
+
+                SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_m, SimpleOperations.ArrayToMatrix(KalmanVars.TransitionMatrixF) * KalmanVars.ErrorConditionVector_p);
+
+                //конец 0
+                SINSstate.endDt[datetimeCounter] = DateTime.Now;
+                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
+                datetimeCounter++;
+
+                SimpleOperations.CopyMatrix(tmpMatrix, SimpleOperations.ArrayToMatrix(KalmanVars.TransitionMatrixF) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p));
+
+                //конец 1
+                SINSstate.endDt[datetimeCounter] = DateTime.Now;
+                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
+                datetimeCounter++;
+
+                SimpleOperations.CopyMatrix(tmpMatrix_3, SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixNoise, SimpleData.iMx, SimpleData.iMq));
+
+                //конец 2
+                SINSstate.endDt[datetimeCounter] = DateTime.Now;
+                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
+                datetimeCounter++;
+
+                SimpleOperations.CopyMatrix(tmpMatrix_2, tmpMatrix * tmpMatrix.Transpose());
+
+                //конец 3
+                SINSstate.endDt[datetimeCounter] = DateTime.Now;
+                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
+                datetimeCounter++;
+
+                SimpleOperations.CopyMatrix(tmpMatrix, tmpMatrix_2 + tmpMatrix_3 * tmpMatrix_3.Transpose());
+
+                //конец 4
+                SINSstate.endDt[datetimeCounter] = DateTime.Now;
+                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
+                datetimeCounter++;
+
+                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_m, rsb_rsb(SimpleOperations.MatrixToArray(tmpMatrix), SimpleData.iMx));
+
+                //конец 5
+                SINSstate.endDt[datetimeCounter] = DateTime.Now; 
+                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; 
+                datetimeCounter++;
+
+                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
+                SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
+
+                // --- //
+                //конец 6
+                SINSstate.endDt[datetimeCounter] = DateTime.Now; datetimeCounter++;
+                // --- //
+            }
 
         }
 
