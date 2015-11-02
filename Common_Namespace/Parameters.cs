@@ -367,6 +367,9 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
+                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Forecast = false;
+
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
@@ -374,7 +377,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
-                KalmanVars.Noise_Pos = 0.5;
+                KalmanVars.Noise_Pos = 1.0;
                 // -------------------------------------------//
 
 
@@ -382,13 +385,13 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
                 ParamStart.Experiment_stdScale = 0.005;
-                ParamStart.Experiment_stdKappa1 = 5.0; //минут
+                ParamStart.Experiment_stdKappa1 = 1.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
 
@@ -396,6 +399,12 @@ namespace Common_Namespace
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.26555 * SimpleData.ToRadian;
                 ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.998705555 * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 159.8;
+
+                //--- Координаты Кроссовского ---//
+                //ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.26703 * SimpleData.ToRadian;
+                //ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.9983 * SimpleData.ToRadian;
+                //ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 159.8;
+
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
                 ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
@@ -426,8 +435,8 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = false;
-                SINSstate.MyOwnKalman_Forecast = true;
+                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -455,9 +464,15 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
 
 
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.75999166666 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.02436111111 * SimpleData.ToRadian;
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.75999166666 * SimpleData.ToRadian; //56.76146
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.02436111111 * SimpleData.ToRadian; //58.02398
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 187;
+
+                //--- Координаты Кроссовского ---//
+                //ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.76146 * SimpleData.ToRadian;
+                //ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.02398 * SimpleData.ToRadian;
+                //ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 187;
+
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
                 ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;

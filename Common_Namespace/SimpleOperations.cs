@@ -496,6 +496,23 @@ namespace Common_Namespace
                     p[ii,jj] = p_2[ii,jj];
         }
 
+
+
+
+        public static Matrix MultiplyUpperMatrix(Matrix mLeft, Matrix mRight)
+        {
+            Matrix mOut = new Matrix(mLeft.Rows, mRight.Cols);
+
+            for (int i = 0; i < mOut.Rows; i++)
+                for (int j = i; j < mOut.Cols; j++)
+                    for (int k = j; k < mLeft.Cols; k++)
+                        mOut[i, j] += mLeft[i, k] * mRight[k, j];
+            return mOut;
+        }
+
+
+
+
         public static void MakeMatrixFromVector(Matrix Matrix_out, double[] Vector_in, int dim)
         {
             for (int i = 0; i < dim; i++)

@@ -319,6 +319,7 @@ namespace Common_Namespace
                 datetimeCounter++;
 
                 SimpleOperations.CopyMatrix(tmpMatrix_2, tmpMatrix * tmpMatrix.Transpose());
+                //SimpleOperations.CopyMatrix(tmpMatrix_2, SimpleOperations.MultiplyUpperMatrix(tmpMatrix, tmpMatrix.Transpose()));
 
                 //конец 3
                 SINSstate.endDt[datetimeCounter] = DateTime.Now;
@@ -326,6 +327,7 @@ namespace Common_Namespace
                 datetimeCounter++;
 
                 SimpleOperations.CopyMatrix(tmpMatrix, tmpMatrix_2 + tmpMatrix_3 * tmpMatrix_3.Transpose());
+                //SimpleOperations.CopyMatrix(tmpMatrix, tmpMatrix_2 + SimpleOperations.MultiplyUpperMatrix(tmpMatrix_3, tmpMatrix_3.Transpose()));
 
                 //конец 4
                 SINSstate.endDt[datetimeCounter] = DateTime.Now;
