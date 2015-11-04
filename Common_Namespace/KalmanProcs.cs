@@ -307,7 +307,6 @@ namespace Common_Namespace
 
                 SimpleOperations.CopyMatrix(tmpMatrix, 
                     SimpleOperations.MultiplyRightUpperMatrix(SimpleOperations.ArrayToMatrix(KalmanVars.TransitionMatrixF), SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p))
-                    //SimpleOperations.ArrayToMatrix(KalmanVars.TransitionMatrixF) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
                     );
 
                 SimpleOperations.PrintMatrixToFile(SimpleOperations.MatrixToArray(tmpMatrix), SimpleData.iMx, SimpleData.iMx, "tmpMatrix");
@@ -318,10 +317,6 @@ namespace Common_Namespace
 
                 //SimpleOperations.CopyMatrix(tmpMatrix_2, tmpMatrix * tmpMatrix.Transpose());
                 SimpleOperations.CopyMatrix(tmpMatrix_2, SimpleOperations.MultiplyUpperMatrix(tmpMatrix, tmpMatrix.Transpose()));
-
-                SINSstate.endDt[datetimeCounter] = DateTime.Now;
-                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
-                datetimeCounter++;
 
                 SimpleOperations.CopyMatrix(tmpMatrix, tmpMatrix_2 + SimpleOperations.ArrayToDiagonalMatrix(diagonal_sqared_CovarianceMatrixNoise));
 
