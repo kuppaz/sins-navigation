@@ -395,6 +395,17 @@ namespace Common_Namespace
             }
             return MatrixResult;
         }
+        public static Matrix ArrayToDiagonalMatrix(double[] array)
+        {
+            Matrix MatrixResult = new Matrix(array.Length, array.Length);
+            for (int i = 0; i < array.Length; i++)
+            {
+                MatrixResult[i, i] = array[i];
+            }
+            return MatrixResult;
+        }
+
+
         public static Matrix ArrayToMatrix(double[] array, int Rows, int Cols)
         {
             Matrix MatrixResult = new Matrix(Rows, Cols);
@@ -507,6 +518,27 @@ namespace Common_Namespace
                 for (int j = i; j < mOut.Cols; j++)
                     for (int k = j; k < mLeft.Cols; k++)
                         mOut[i, j] += mLeft[i, k] * mRight[k, j];
+            return mOut;
+        }
+        public static Matrix MultiplyRightUpperMatrix(Matrix mLeft, Matrix mRight)
+        {
+            Matrix mOut = new Matrix(mLeft.Rows, mRight.Cols);
+
+            for (int i = 0; i < mOut.Rows; i++)
+                for (int j = 0; j < mOut.Cols; j++)
+                    for (int k = 0; k <= j; k++)
+                        mOut[i, j] += mLeft[i, k] * mRight[k, j];
+            return mOut;
+        }
+
+        public static Matrix MultiplyVectorForMatrix(double[] mLeft, double[] mRight)
+        {
+            Matrix mOut = new Matrix(mLeft.Length, mRight.Length);
+
+            for (int i = 0; i < mOut.Rows; i++)
+                for (int j = 0; j < mOut.Cols; j++)
+                    mOut[i, j] = mLeft[i] * mRight[j];
+
             return mOut;
         }
 

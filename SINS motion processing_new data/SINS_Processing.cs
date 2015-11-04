@@ -692,6 +692,12 @@ namespace SINS_motion_processing_new_data
                 }
             }
 
+            // ---------------------------//
+            iMq = SimpleData.iMq = SimpleData.iMx;
+            // ---------------------------//
+
+
+            //----------------------------Индексы для сглаживания---------------------------
             if (this.iMSmthd_Is_2.Checked)
                 iMxSmthd = SimpleData.iMxSmthd = 2;
             if (this.iMSmthd_Is_4.Checked)

@@ -436,7 +436,7 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
+                SINSstate.MyOwnKalman_Forecast = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0

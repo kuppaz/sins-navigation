@@ -495,11 +495,11 @@ namespace Common_Namespace
             double sqrt_freq = Math.Sqrt(SINSstate.Freq);
             if (SINSstate.flag_iMqDeltaRodo)
             {
-                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 0) * iMq + tmpCounter + 0] = KalmanVars.Noise_Pos * sqrt_freq;
-                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 1) * iMq + tmpCounter + 1] = KalmanVars.Noise_Pos * sqrt_freq;
+                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 0) * iMq + iMx_r12_odo + 0] = KalmanVars.Noise_Pos * sqrt_freq;
+                KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 1) * iMq + iMx_r12_odo + 1] = KalmanVars.Noise_Pos * sqrt_freq;
 
                 if (SINSstate.flag_Using_iMx_r_odo_3)
-                    KalmanVars.CovarianceMatrixNoise[(SINSstate.value_iMx_r_odo_3 + 0) * iMq + tmpCounter + 2] = KalmanVars.Noise_Pos * sqrt_freq / SINSstate.decrementVerticalNoise;
+                    KalmanVars.CovarianceMatrixNoise[(iMx_r_odo_3 + 0) * iMq + iMx_r_odo_3 + 0] = KalmanVars.Noise_Pos * sqrt_freq / SINSstate.decrementVerticalNoise;
             }
 
         }
