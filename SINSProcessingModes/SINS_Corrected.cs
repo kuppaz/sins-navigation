@@ -462,14 +462,31 @@ namespace SINSProcessingModes
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
             {
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 405.70) < 0.01)
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 327.73) < 0.01)
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.014055555 * SimpleData.ToRadian, 56.752708333333 * SimpleData.ToRadian, 0.0);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.019997222 * SimpleData.ToRadian, 56.763272222 * SimpleData.ToRadian, 0.0);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.014055555 * SimpleData.ToRadian, 56.752708333333 * SimpleData.ToRadian, 0.0);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.019997222 * SimpleData.ToRadian, 56.763272222 * SimpleData.ToRadian, 0.0);
                     SINSstate.flag_UsingCorrection = true;
                 }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 364.61) < 0.01)
+                {
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.0145555555 * SimpleData.ToRadian, 56.760155555 * SimpleData.ToRadian, 0.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.0145555555 * SimpleData.ToRadian, 56.760155555 * SimpleData.ToRadian, 0.0);
+                    SINSstate.flag_UsingCorrection = true;
+                }
+                //// --- Следующую точку лучше не использовать, либо ее переделать ---
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 405.70) < 0.01)
+                //{
+                //    if (SINSstate.flag_Odometr_SINS_case == true)
+                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.014055555 * SimpleData.ToRadian, 56.752708333333 * SimpleData.ToRadian, 0.0);
+                //    else
+                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 58.014055555 * SimpleData.ToRadian, 56.752708333333 * SimpleData.ToRadian, 0.0);
+                //    SINSstate.flag_UsingCorrection = true;
+                //}
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 865.42) < 0.01)
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
