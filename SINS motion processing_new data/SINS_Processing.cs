@@ -510,7 +510,8 @@ namespace SINS_motion_processing_new_data
                 }
             }
 
-            KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / Convert.ToDouble(dataArray[27]);
+            double tmpFaktor = 2.0;
+            KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / Convert.ToDouble(dataArray[27]) / tmpFaktor;
             KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
             KalmanVars.OdoNoise_STOP = 0.01;
 
