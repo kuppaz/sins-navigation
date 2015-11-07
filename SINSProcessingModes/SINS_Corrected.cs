@@ -89,7 +89,7 @@ namespace SINSProcessingModes
             Nav_Errors.WriteLine("Time dLat  dLong dAltitude  dV_x1  dV_x2  dV_x3  dHeading_Grad  dRoll_Grad  dPitch_Grad");
             Nav_Smoothed.WriteLine("time  count LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch ");
             DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3");
-            Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS difHeadingSINStoODO difToTrueHeading");
+            Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError AltError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS difHeadingSINStoODO difToTrueHeading");
             Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_abs");
 
 
@@ -562,7 +562,7 @@ namespace SINSProcessingModes
 
             if (SINSstate.Global_file == "Azimut_15.08.2012" || SINSstate.Global_file == "Azimut_24.08.2012" || SINSstate.Global_file == "Azimut_29.08.2012")
             {
-                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1)
+                if (SINSstate.GPS_Data.gps_Latitude.isReady == 1 && SINSstate.GPS_CounterOfPoints % 5 == 0)
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
                         Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);

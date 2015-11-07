@@ -49,42 +49,6 @@ namespace Common_Namespace
 
 
 
-
-            if (SINSstate.Global_file == "Azimut_14.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            {
-                SINSstate.timeStep = SINSstate.Freq = 0.02048;
-                SINSstate.OdoLimitMeasuresNum = 10;
-
-                //KalmanVars.OdoNoise = 1.0 / SINSstate.Odo_Limit_Measures;
-                KalmanVars.OdoNoise_V = 1.0;
-                KalmanVars.OdoNoise_Dist = 0.2;
-                KalmanVars.OdoNoise_STOP = 0.005;       //!!!
-
-                SINSstate.existRelationHoriz_VS_Vertical = false;
-
-
-                KalmanVars.Noise_Pos = 0.75;
-                KalmanVars.Noise_Accel = 0.0000002;
-                KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
-
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.264 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.0 * SimpleData.ToRadian;
-                ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 92.37074;
-
-                ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
-                ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
-
-                //Углы найденные подбором минимизацией максимальной ошибки по позиции.
-                SINSstate.Heading = -115.791349 * SimpleData.ToRadian;
-                SINSstate.Roll = 0.6767 * SimpleData.ToRadian;
-                SINSstate.Pitch = -0.3837195 * SimpleData.ToRadian;
-
-                ApplyMatrixStartCondition(SINSstate);
-                ApplyMatrixStartCondition(SINSstate_OdoMod);
-            }
-
             if (SINSstate.Global_file == "Azimut_15.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
@@ -117,8 +81,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.2681502 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.9990499 * SimpleData.ToRadian;
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = (56.2681502 - 0.00151686666666666666666666666667) * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = (57.9990499 + 3.7787777777777777777777777777778e-4) * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 175.076;
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
@@ -240,7 +204,7 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 // -- С MyOwnKalman_Korrection=true при чекнутых шумах dR только в горизонте получается конечная ошибка  метра!!
-                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Korrection = false;
                 SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
@@ -276,8 +240,8 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
 
 
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 0.7520087;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 0.9824307;
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 0.7520087 - 3.1372635679012345679012345679012e-5;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 0.9824307 + 2.8596974074074074074074074074074e-6;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 91.48914;
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;

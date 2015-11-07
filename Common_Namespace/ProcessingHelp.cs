@@ -258,6 +258,25 @@ namespace Common_Namespace
                     }
                 }
 
+                //--- Поправки для пересчета в Кроссовского ---//
+                if (SINSstate.Global_file == "ktn004_15.03.2012")
+                {
+                    double amendmentLatitude = 2.8596974074074074074074074074074e-6
+                        , amendmentLongitude = - 3.1372635679012345679012345679012e-5;
+
+                    SINSstate.GPS_Data.gps_Latitude.Value += amendmentLatitude;
+                    SINSstate.GPS_Data.gps_Longitude.Value += amendmentLongitude;
+                }
+                //--- Поправки для пересчета в Кроссовского ---//
+                if (SINSstate.Global_file == "Azimut_15.08.2012")
+                {
+                    double amendmentLatitude = 3.7787777777777777777777777777778e-4 * SimpleData.ToRadian
+                        , amendmentLongitude = -0.00151686666666666666666666666667 * SimpleData.ToRadian;
+
+                    SINSstate.GPS_Data.gps_Latitude.Value += amendmentLatitude;
+                    SINSstate.GPS_Data.gps_Longitude.Value += amendmentLongitude;
+                }
+
 
 
 
@@ -629,7 +648,8 @@ namespace Common_Namespace
                                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
                                         //+ " " + ProcHelp.corrected 
-                                        + " " + ProcHelp.distance 
+                                        + " " + ProcHelp.distance
+                                        + " " + (SINSstate.Altitude - ProcHelp.AltSNS)
                                         + " " + ProcHelp.distance_from_start
                                         + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2)
