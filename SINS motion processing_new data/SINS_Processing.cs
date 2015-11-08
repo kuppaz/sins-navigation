@@ -43,6 +43,18 @@ namespace SINS_motion_processing_new_data
 
         public static StreamWriter GRTV_output = new StreamWriter(SimpleData.PathOutputString + "S_GRTV_output.txt");
 
+        private bool NoiseParamScanning = false,
+                     StartParamScanning = false;
+        private double Cicle_Noise_Velocity = 0, Cicle_Noise_Angular = 0;
+
+        private double global_flag_AccuracyClass = 0;
+        private int global_existRelationHoriz_VS_Vertical = 0
+                , global_NoiseModelFlag = 0
+                , global_MyOwnKalman_Korrection = 0
+                , global_MyOwnKalman_Forecast = 0
+                , global_CoordinateNoiseExist = 0 ;
+
+
 
         public SINS_Processing()
         {
@@ -59,11 +71,105 @@ namespace SINS_motion_processing_new_data
 
         public void Main_Block_Click_new_Click(object sender, EventArgs e)
         {
-            this.Single_Navigation_Processing(false, 0.0, 0.0);
+            this.Single_Navigation_Processing();
 
             GRTV_output.Close();
             this.Close();
         }
+
+
+
+        private int global_indx = 0;
+        private double[] global_kappa1_grad = new double[50000]
+                       , global_kappa3_grad = new double[50000]
+                       , global_scale = new double[50000]
+                       , global_HorizontalError = new double[50000]
+                       , global_VerticalError = new double[50000]
+                       , global_V_Up = new double[50000]
+                       ;
+        private void CycleStartParamChoosing_Click(object sender, EventArgs e)
+        {
+
+            this.global_existRelationHoriz_VS_Vertical = 0;
+            this.global_NoiseModelFlag = 0;
+            this.global_MyOwnKalman_Korrection = 0;
+            this.global_MyOwnKalman_Forecast = 0;
+            this.global_CoordinateNoiseExist = 0;
+
+            this.global_flag_AccuracyClass = 0;
+
+            StreamWriter Cycle_Start_Configurations = new StreamWriter(SimpleData.PathOutputString + "CycleParamScanning//Cycle_Start_Configurations.txt");
+
+            string str = "Count VertRelation NoiseModeling MyCorrection MyForecast CoordNoise Class ";
+            str += "HorizontalError_AVG HorizontalError_MAX HorizontalError_END ";
+            str += "VerticalError_AVG VerticalError_MAX VerticalError_END ";
+            str += "V_Up_AVG V_Up_SPREAD V_Up_END ";
+            str += "kappa1_grad_AVG kappa1_grad_SPREAD kappa1_grad_END ";
+            str += "kappa3_grad_AVG kappa3_grad_SPREAD kappa3_grad_END ";
+            str += "scale_AVG scale_SPREAD scale_END ";
+            Cycle_Start_Configurations.WriteLine(str);
+
+            int i = 0;
+            for (this.global_existRelationHoriz_VS_Vertical = 0; this.global_existRelationHoriz_VS_Vertical <= 1; this.global_existRelationHoriz_VS_Vertical++)
+            {
+                for (this.global_NoiseModelFlag = 0; this.global_NoiseModelFlag <= 1; this.global_NoiseModelFlag++)
+                {
+                    for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 1; this.global_MyOwnKalman_Korrection++)
+                    {
+                        for (this.global_MyOwnKalman_Forecast = 0; this.global_MyOwnKalman_Forecast <= 1; this.global_MyOwnKalman_Forecast++)
+                        {
+                            for (this.global_CoordinateNoiseExist = 0; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
+                            {
+                                for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass = this.global_flag_AccuracyClass * 10.0)
+                                {
+                                    // === === === === === === === === ===//
+                                    this.StartParamScanning = true;
+                                    this.Single_Navigation_Processing();
+                                    // === === === === === === === === ===//
+
+                                    i++;
+
+                                    double[] array_kappa1_grad = new double[this.global_indx - 1]
+                                       , array_kappa3_grad = new double[this.global_indx - 1]
+                                       , array_scale = new double[this.global_indx - 1]
+                                       , array_HorizontalError = new double[this.global_indx - 1]
+                                       , array_VerticalError = new double[this.global_indx - 1]
+                                       , array_V_Up = new double[this.global_indx - 1]
+                                       ;
+
+                                    SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
+                                    SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
+                                    SimpleOperations.CopyArray(array_scale, this.global_scale);
+                                    SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
+                                    SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
+                                    SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
+
+                                    Cycle_Start_Configurations.WriteLine(i
+                                        + " VertRelation=" + global_existRelationHoriz_VS_Vertical
+                                        + " NoiseModeling=" + global_NoiseModelFlag
+                                        + " MyCorrection=" + global_MyOwnKalman_Korrection
+                                        + " MyForecast=" + global_MyOwnKalman_Forecast
+                                        + " CoordNoise=" + global_CoordinateNoiseExist
+                                        + " Class=" + global_flag_AccuracyClass
+
+                                        + " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                        + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
+                                        + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
+                                        + " " + Math.Round(array_kappa1_grad.Average(), 3) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 3) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 3)
+                                        + " " + Math.Round(array_kappa3_grad.Average(), 3) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 3) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 3)
+                                        + " " + Math.Round(array_scale.Average(), 3) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 3) + " " + Math.Round(array_scale[this.global_indx - 2], 3)
+                                        );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Cycle_Start_Configurations.Close();
+            this.Close();
+        }
+
 
 
 
@@ -78,11 +184,12 @@ namespace SINS_motion_processing_new_data
                    NoiseAngl_end = 1E-1,
                    NoiseAngl_multpl = 5.0;
 
-            for (double Cicle_Noise_Velocity = NoiseVel_start; Cicle_Noise_Velocity <= NoiseVel_end; Cicle_Noise_Velocity = Cicle_Noise_Velocity * NoiseVel_multpl)
+            for (this.Cicle_Noise_Velocity = NoiseVel_start; this.Cicle_Noise_Velocity <= NoiseVel_end; this.Cicle_Noise_Velocity = this.Cicle_Noise_Velocity * NoiseVel_multpl)
             {
-                for (double Cicle_Noise_Angular = NoiseAngl_start; Cicle_Noise_Angular <= NoiseAngl_end; Cicle_Noise_Angular = Cicle_Noise_Angular * NoiseAngl_multpl)
+                for (this.Cicle_Noise_Angular = NoiseAngl_start; this.Cicle_Noise_Angular <= NoiseAngl_end; this.Cicle_Noise_Angular = this.Cicle_Noise_Angular * NoiseAngl_multpl)
                 {
-                    this.Single_Navigation_Processing(true, Cicle_Noise_Velocity, Cicle_Noise_Angular);
+                    this.NoiseParamScanning = true;
+                    this.Single_Navigation_Processing();
                 }
             }
 
@@ -91,13 +198,13 @@ namespace SINS_motion_processing_new_data
             string datastring = "";
             string[] dataArray;
 
-            for (double Cicle_Noise_Velocity = NoiseVel_start; Cicle_Noise_Velocity <= NoiseVel_end; Cicle_Noise_Velocity = Cicle_Noise_Velocity * NoiseVel_multpl)
+            for (this.Cicle_Noise_Velocity = NoiseVel_start; this.Cicle_Noise_Velocity <= NoiseVel_end; this.Cicle_Noise_Velocity = this.Cicle_Noise_Velocity * NoiseVel_multpl)
             {
-                for (double Cicle_Noise_Angular = NoiseAngl_start; Cicle_Noise_Angular <= NoiseAngl_end; Cicle_Noise_Angular = Cicle_Noise_Angular * NoiseAngl_multpl)
+                for (this.Cicle_Noise_Angular = NoiseAngl_start; this.Cicle_Noise_Angular <= NoiseAngl_end; this.Cicle_Noise_Angular = this.Cicle_Noise_Angular * NoiseAngl_multpl)
                 {
                     j++;
                     StreamReader Cicle_Debag_Solution = new StreamReader(SimpleData.PathOutputString + "Debaging//Solution_"
-                        + Cicle_Noise_Angular.ToString("E2") + "_" + Cicle_Noise_Velocity.ToString("E2") + ".txt");
+                        + this.Cicle_Noise_Angular.ToString("E2") + "_" + this.Cicle_Noise_Velocity.ToString("E2") + ".txt");
 
                     if (j == 1)
                     {
@@ -109,7 +216,7 @@ namespace SINS_motion_processing_new_data
                         }
                         Cicle_Debag_Solution.Close();
                         Cicle_Debag_Solution = new StreamReader(SimpleData.PathOutputString + "Debaging//Solution_"
-                            + Cicle_Noise_Angular.ToString("E2") + "_" + Cicle_Noise_Velocity.ToString("E2") + ".txt");
+                            + this.Cicle_Noise_Angular.ToString("E2") + "_" + this.Cicle_Noise_Velocity.ToString("E2") + ".txt");
 
                         FileStream fs = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
                         fs.Close();
@@ -139,14 +246,14 @@ namespace SINS_motion_processing_new_data
                         if (j == 1)
                         {
                             if (i == 0)
-                                NoiseParam_CicleScanning_HorizError.WriteLine("Time;" + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                                NoiseParam_CicleScanning_HorizError.WriteLine("Time;" + this.Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
                             str = dataArray[0] + ";" + dataArray[2];
                         }
                         else
                         {
                             if (i == 0)
                                 NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine()
-                                    + ";" + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                                    + ";" + this.Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
                             str = NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + dataArray[2];
                         }
                         if (Convert.ToDouble(dataArray[2]) < minDataArray[2])
@@ -160,14 +267,14 @@ namespace SINS_motion_processing_new_data
                         if (j == 1)
                         {
                             if (i == 0)
-                                NoiseParam_CicleScanning_Height.WriteLine("Time;" + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                                NoiseParam_CicleScanning_Height.WriteLine("Time;" + this.Cicle_Noise_Velocity.ToString("E2") + "_" + this.Cicle_Noise_Angular.ToString("E2"));
                             str = dataArray[0] + ";" + dataArray[1];
                         }
                         else
                         {
                             if (i == 0)
-                                NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" 
-                                    + Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
+                                NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";"
+                                    + this.Cicle_Noise_Velocity.ToString("E2") + "_" + this.Cicle_Noise_Angular.ToString("E2"));
                             str = NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + dataArray[1];
                         }
                         if (Convert.ToDouble(dataArray[1]) < minDataArray[1])
@@ -211,7 +318,7 @@ namespace SINS_motion_processing_new_data
 
                     Cicle_Debag_Solution.Close();
                     File.Delete(SimpleData.PathOutputString + "Debaging//Solution_"
-                        + Cicle_Noise_Angular.ToString("E2") + "_" + Cicle_Noise_Velocity.ToString("E2") + ".txt");
+                        + this.Cicle_Noise_Angular.ToString("E2") + "_" + this.Cicle_Noise_Velocity.ToString("E2") + ".txt");
                 }
             }
 
@@ -228,7 +335,7 @@ namespace SINS_motion_processing_new_data
 
 
 
-        public void Single_Navigation_Processing(bool NoiseParamScanning, double Cicle_Noise_Velocity, double Cicle_Noise_Angular)
+        public void Single_Navigation_Processing()
         {
             int l = 0;
 
@@ -292,6 +399,76 @@ namespace SINS_motion_processing_new_data
 
             //---Инициализация начальных условий при отсутствии выставки---//
             Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);
+
+
+
+            // === Перебор вариантов стартовых настроек (без подбора шумов) === //
+            if (this.StartParamScanning)
+            {
+                SINSstate.global_paramsCycleScanning_Path = "CycleParamScanning//";
+                SINSstate.global_paramsCycleScanning = 
+                    "[UpRel=" + this.global_existRelationHoriz_VS_Vertical
+                    + ";dQMd=" + this.global_NoiseModelFlag
+                    + ";Cor=" + this.global_MyOwnKalman_Korrection
+                    + ";Fut=" + this.global_MyOwnKalman_Forecast
+                    + ";RdQ=" + this.global_CoordinateNoiseExist
+                    + ";cls=" + this.global_flag_AccuracyClass
+                    + "]_"
+                    ;
+
+                if (global_existRelationHoriz_VS_Vertical == 0) SINSstate.existRelationHoriz_VS_Vertical = false;
+                else SINSstate.existRelationHoriz_VS_Vertical = true;
+                if (global_MyOwnKalman_Korrection == 0) SINSstate.MyOwnKalman_Korrection = false;
+                else SINSstate.MyOwnKalman_Korrection = true;
+                if (global_MyOwnKalman_Forecast == 0) SINSstate.MyOwnKalman_Forecast = false;
+                else SINSstate.MyOwnKalman_Forecast = true;
+                if (global_NoiseModelFlag == 0)
+                {
+                    ParamStart.Experiment_NoiseModelFlag = false;
+                    ParamStart.Imitator_NoiseModelFlag = false;
+                }
+                else
+                {
+                    ParamStart.Experiment_NoiseModelFlag = true; 
+                    ParamStart.Imitator_NoiseModelFlag = true;
+                }
+                if (global_CoordinateNoiseExist == 0)
+                {
+                    this.iMqDeltaR.Checked = false;
+                    this.iMqDeltaRodo.Checked = false;
+                    SINSstate.flag_iMqDeltaR = false;
+                    SINSstate.flag_iMqDeltaRodo = false;
+                }
+                else
+                {
+                    this.iMqDeltaR.Checked = true;
+                    this.iMqDeltaRodo.Checked = true;
+                    SINSstate.flag_iMqDeltaR = true;
+                    SINSstate.flag_iMqDeltaRodo = true;
+                }
+
+                // --- Уровень начальных ковариаций ---//
+                if (this.global_flag_AccuracyClass == 0.02)
+                {
+                    SINSstate.flag_AccuracyClass_0_02grph = true;
+                    SINSstate.flag_AccuracyClass_0_2_grph = false;
+                    SINSstate.flag_AccuracyClass_2_0_grph = false;
+                }
+                if (this.global_flag_AccuracyClass == 0.2)
+                {
+                    SINSstate.flag_AccuracyClass_0_02grph = false;
+                    SINSstate.flag_AccuracyClass_0_2_grph = true;
+                    SINSstate.flag_AccuracyClass_2_0_grph = false;
+                }
+                if (this.global_flag_AccuracyClass == 2.0)
+                {
+                    SINSstate.flag_AccuracyClass_0_02grph = false;
+                    SINSstate.flag_AccuracyClass_0_2_grph = false;
+                    SINSstate.flag_AccuracyClass_2_0_grph = true;
+                }
+            }
+            // === === === === === === === === === === === === === === === === //
+
 
 
 
@@ -420,12 +597,12 @@ namespace SINS_motion_processing_new_data
 
             
             //--- Если запустили циклический подбор параметров шумов ---//
-            if (NoiseParamScanning)
+            if (this.NoiseParamScanning)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    KalmanVars.Noise_Vel[j] = Cicle_Noise_Velocity;
-                    KalmanVars.Noise_Angl[j] = Cicle_Noise_Angular;
+                    KalmanVars.Noise_Vel[j] = this.Cicle_Noise_Velocity;
+                    KalmanVars.Noise_Angl[j] = this.Cicle_Noise_Angular;
                 }
             }
 
@@ -455,6 +632,17 @@ namespace SINS_motion_processing_new_data
             DateTime end = DateTime.Now;
             Console.Write(" Processing time: " + (end - start).ToString());
             Console.Write(" "); Console.Write(" ");
+
+            if (this.StartParamScanning)
+            {
+                this.global_indx = SINSstate.global_indx;
+                SimpleOperations.CopyArray(this.global_kappa1_grad, SINSstate.global_kappa1_grad);
+                SimpleOperations.CopyArray(this.global_kappa3_grad, SINSstate.global_kappa3_grad);
+                SimpleOperations.CopyArray(this.global_scale, SINSstate.global_scale);
+                SimpleOperations.CopyArray(this.global_HorizontalError, SINSstate.global_HorizontalError);
+                SimpleOperations.CopyArray(this.global_VerticalError, SINSstate.global_VerticalError);
+                SimpleOperations.CopyArray(this.global_V_Up, SINSstate.global_V_Up);
+            }
 
             myFile.Close();
         }
@@ -1460,6 +1648,8 @@ namespace SINS_motion_processing_new_data
         {
 
         }
+
+        
 
 
         

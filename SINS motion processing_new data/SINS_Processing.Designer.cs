@@ -58,6 +58,9 @@
             this.flag_not_use_zupt = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.GRTVout_GCEF_format_070715_zavod = new System.Windows.Forms.CheckBox();
+            this.GRTVout_GCEF_format_070715_kulikova = new System.Windows.Forms.CheckBox();
+            this.Azimut_514_08Nov2013_11_15 = new System.Windows.Forms.CheckBox();
             this.Azimuth_minsk_race_4_3to6to2 = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
@@ -81,7 +84,6 @@
             this.SaratAlignStart = new System.Windows.Forms.CheckBox();
             this.SaratENDStart = new System.Windows.Forms.CheckBox();
             this.AZIMUT_T_12_32_16_09_13_TLM_2z = new System.Windows.Forms.CheckBox();
-            this.Azimut_514_08Nov2013_11_15 = new System.Windows.Forms.CheckBox();
             this.Odometr_SINS_case = new System.Windows.Forms.CheckBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.ModifWeakConnect = new System.Windows.Forms.CheckBox();
@@ -111,8 +113,7 @@
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.GRTVout_GCEF_format_030715 = new System.Windows.Forms.CheckBox();
-            this.GRTVout_GCEF_format_070715_zavod = new System.Windows.Forms.CheckBox();
-            this.GRTVout_GCEF_format_070715_kulikova = new System.Windows.Forms.CheckBox();
+            this.CycleStartParamChoosing = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -247,7 +248,7 @@
             // Azimut_15_08_2012
             // 
             this.Azimut_15_08_2012.AutoSize = true;
-            this.Azimut_15_08_2012.Location = new System.Drawing.Point(19, 21);
+            this.Azimut_15_08_2012.Location = new System.Drawing.Point(13, 19);
             this.Azimut_15_08_2012.Name = "Azimut_15_08_2012";
             this.Azimut_15_08_2012.Size = new System.Drawing.Size(117, 17);
             this.Azimut_15_08_2012.TabIndex = 17;
@@ -258,7 +259,7 @@
             // Azimut_29_08_2012
             // 
             this.Azimut_29_08_2012.AutoSize = true;
-            this.Azimut_29_08_2012.Location = new System.Drawing.Point(19, 54);
+            this.Azimut_29_08_2012.Location = new System.Drawing.Point(232, 51);
             this.Azimut_29_08_2012.Name = "Azimut_29_08_2012";
             this.Azimut_29_08_2012.Size = new System.Drawing.Size(117, 17);
             this.Azimut_29_08_2012.TabIndex = 19;
@@ -269,7 +270,7 @@
             // Azimut_24_08_2012
             // 
             this.Azimut_24_08_2012.AutoSize = true;
-            this.Azimut_24_08_2012.Location = new System.Drawing.Point(19, 38);
+            this.Azimut_24_08_2012.Location = new System.Drawing.Point(232, 37);
             this.Azimut_24_08_2012.Name = "Azimut_24_08_2012";
             this.Azimut_24_08_2012.Size = new System.Drawing.Size(117, 17);
             this.Azimut_24_08_2012.TabIndex = 18;
@@ -448,10 +449,10 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.Azimuth_minsk_race_4_3to6to2);
             this.groupBox5.Controls.Add(this.Azimut_15_08_2012);
-            this.groupBox5.Controls.Add(this.Azimut_24_08_2012);
-            this.groupBox5.Controls.Add(this.Azimut_29_08_2012);
+            this.groupBox5.Controls.Add(this.GRTVout_GCEF_format_070715_zavod);
+            this.groupBox5.Controls.Add(this.GRTVout_GCEF_format_070715_kulikova);
+            this.groupBox5.Controls.Add(this.Azimut_514_08Nov2013_11_15);
             this.groupBox5.Location = new System.Drawing.Point(19, 41);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(171, 91);
@@ -459,10 +460,43 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Азимут, Кама";
             // 
+            // GRTVout_GCEF_format_070715_zavod
+            // 
+            this.GRTVout_GCEF_format_070715_zavod.AutoSize = true;
+            this.GRTVout_GCEF_format_070715_zavod.Location = new System.Drawing.Point(12, 72);
+            this.GRTVout_GCEF_format_070715_zavod.Name = "GRTVout_GCEF_format_070715_zavod";
+            this.GRTVout_GCEF_format_070715_zavod.Size = new System.Drawing.Size(163, 17);
+            this.GRTVout_GCEF_format_070715_zavod.TabIndex = 87;
+            this.GRTVout_GCEF_format_070715_zavod.Text = "GRTV 070715 выезд завод";
+            this.GRTVout_GCEF_format_070715_zavod.UseVisualStyleBackColor = true;
+            this.GRTVout_GCEF_format_070715_zavod.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_zavod_CheckedChanged);
+            // 
+            // GRTVout_GCEF_format_070715_kulikova
+            // 
+            this.GRTVout_GCEF_format_070715_kulikova.AutoSize = true;
+            this.GRTVout_GCEF_format_070715_kulikova.Location = new System.Drawing.Point(12, 55);
+            this.GRTVout_GCEF_format_070715_kulikova.Name = "GRTVout_GCEF_format_070715_kulikova";
+            this.GRTVout_GCEF_format_070715_kulikova.Size = new System.Drawing.Size(145, 17);
+            this.GRTVout_GCEF_format_070715_kulikova.TabIndex = 88;
+            this.GRTVout_GCEF_format_070715_kulikova.Text = "GRTV 070715 куликова";
+            this.GRTVout_GCEF_format_070715_kulikova.UseVisualStyleBackColor = true;
+            this.GRTVout_GCEF_format_070715_kulikova.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_kulikova_CheckedChanged);
+            // 
+            // Azimut_514_08Nov2013_11_15
+            // 
+            this.Azimut_514_08Nov2013_11_15.AutoSize = true;
+            this.Azimut_514_08Nov2013_11_15.Location = new System.Drawing.Point(13, 37);
+            this.Azimut_514_08Nov2013_11_15.Name = "Azimut_514_08Nov2013_11_15";
+            this.Azimut_514_08Nov2013_11_15.Size = new System.Drawing.Size(179, 17);
+            this.Azimut_514_08Nov2013_11_15.TabIndex = 57;
+            this.Azimut_514_08Nov2013_11_15.Text = "Azimut_514_08Nov2013_11_15";
+            this.Azimut_514_08Nov2013_11_15.UseVisualStyleBackColor = true;
+            this.Azimut_514_08Nov2013_11_15.CheckedChanged += new System.EventHandler(this.Azimut_514_08Nov2013_11_15_CheckedChanged);
+            // 
             // Azimuth_minsk_race_4_3to6to2
             // 
             this.Azimuth_minsk_race_4_3to6to2.AutoSize = true;
-            this.Azimuth_minsk_race_4_3to6to2.Location = new System.Drawing.Point(19, 70);
+            this.Azimuth_minsk_race_4_3to6to2.Location = new System.Drawing.Point(22, 332);
             this.Azimuth_minsk_race_4_3to6to2.Name = "Azimuth_minsk_race_4_3to6to2";
             this.Azimuth_minsk_race_4_3to6to2.Size = new System.Drawing.Size(138, 17);
             this.Azimuth_minsk_race_4_3to6to2.TabIndex = 46;
@@ -612,11 +646,11 @@
             // 
             // groupBox11
             // 
+            this.groupBox11.Controls.Add(this.Azimuth_minsk_race_4_3to6to2);
             this.groupBox11.Controls.Add(this.groupBox15);
             this.groupBox11.Controls.Add(this.AZIMUT_T_12_32_16_09_13_TLM_2z);
             this.groupBox11.Controls.Add(this.Output_Freq);
             this.groupBox11.Controls.Add(this.label1);
-            this.groupBox11.Controls.Add(this.Azimut_514_08Nov2013_11_15);
             this.groupBox11.Controls.Add(this.groupBox5);
             this.groupBox11.Controls.Add(this.groupBox6);
             this.groupBox11.Location = new System.Drawing.Point(12, 12);
@@ -715,25 +749,17 @@
             // 
             // AZIMUT_T_12_32_16_09_13_TLM_2z
             // 
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.AccessibleDescription = "";
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.AutoSize = true;
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Location = new System.Drawing.Point(22, 316);
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Name = "AZIMUT_T_12_32_16_09_13_TLM_2z";
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Size = new System.Drawing.Size(182, 17);
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.TabIndex = 54;
+            this.AZIMUT_T_12_32_16_09_13_TLM_2z.Tag = "";
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.Text = "AZIMUT_T_2013_10_18_12_55";
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.UseVisualStyleBackColor = true;
             this.AZIMUT_T_12_32_16_09_13_TLM_2z.CheckedChanged += new System.EventHandler(this.AZIMUT_T_12_32_16_09_13_TLM_2z_CheckedChanged);
-            // 
-            // Azimut_514_08Nov2013_11_15
-            // 
-            this.Azimut_514_08Nov2013_11_15.AutoSize = true;
-            this.Azimut_514_08Nov2013_11_15.Location = new System.Drawing.Point(22, 334);
-            this.Azimut_514_08Nov2013_11_15.Name = "Azimut_514_08Nov2013_11_15";
-            this.Azimut_514_08Nov2013_11_15.Size = new System.Drawing.Size(179, 17);
-            this.Azimut_514_08Nov2013_11_15.TabIndex = 57;
-            this.Azimut_514_08Nov2013_11_15.Text = "Azimut_514_08Nov2013_11_15";
-            this.Azimut_514_08Nov2013_11_15.UseVisualStyleBackColor = true;
-            this.Azimut_514_08Nov2013_11_15.CheckedChanged += new System.EventHandler(this.Azimut_514_08Nov2013_11_15_CheckedChanged);
             // 
             // Odometr_SINS_case
             // 
@@ -1059,35 +1085,24 @@
             this.GRTVout_GCEF_format_030715.UseVisualStyleBackColor = true;
             this.GRTVout_GCEF_format_030715.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_030715_CheckedChanged);
             // 
-            // GRTVout_GCEF_format_070715_zavod
+            // CycleStartParamChoosing
             // 
-            this.GRTVout_GCEF_format_070715_zavod.AutoSize = true;
-            this.GRTVout_GCEF_format_070715_zavod.Location = new System.Drawing.Point(232, 37);
-            this.GRTVout_GCEF_format_070715_zavod.Name = "GRTVout_GCEF_format_070715_zavod";
-            this.GRTVout_GCEF_format_070715_zavod.Size = new System.Drawing.Size(163, 17);
-            this.GRTVout_GCEF_format_070715_zavod.TabIndex = 87;
-            this.GRTVout_GCEF_format_070715_zavod.Text = "GRTV 070715 выезд завод";
-            this.GRTVout_GCEF_format_070715_zavod.UseVisualStyleBackColor = true;
-            this.GRTVout_GCEF_format_070715_zavod.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_zavod_CheckedChanged);
-            // 
-            // GRTVout_GCEF_format_070715_kulikova
-            // 
-            this.GRTVout_GCEF_format_070715_kulikova.AutoSize = true;
-            this.GRTVout_GCEF_format_070715_kulikova.Location = new System.Drawing.Point(232, 53);
-            this.GRTVout_GCEF_format_070715_kulikova.Name = "GRTVout_GCEF_format_070715_kulikova";
-            this.GRTVout_GCEF_format_070715_kulikova.Size = new System.Drawing.Size(145, 17);
-            this.GRTVout_GCEF_format_070715_kulikova.TabIndex = 88;
-            this.GRTVout_GCEF_format_070715_kulikova.Text = "GRTV 070715 куликова";
-            this.GRTVout_GCEF_format_070715_kulikova.UseVisualStyleBackColor = true;
-            this.GRTVout_GCEF_format_070715_kulikova.CheckedChanged += new System.EventHandler(this.GRTVout_GCEF_format_070715_kulikova_CheckedChanged);
+            this.CycleStartParamChoosing.Location = new System.Drawing.Point(929, 347);
+            this.CycleStartParamChoosing.Name = "CycleStartParamChoosing";
+            this.CycleStartParamChoosing.Size = new System.Drawing.Size(83, 47);
+            this.CycleStartParamChoosing.TabIndex = 86;
+            this.CycleStartParamChoosing.Text = "Cycle Start Param";
+            this.CycleStartParamChoosing.UseVisualStyleBackColor = true;
+            this.CycleStartParamChoosing.Click += new System.EventHandler(this.CycleStartParamChoosing_Click);
             // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
-            this.Controls.Add(this.GRTVout_GCEF_format_070715_kulikova);
-            this.Controls.Add(this.GRTVout_GCEF_format_070715_zavod);
+            this.Controls.Add(this.CycleStartParamChoosing);
+            this.Controls.Add(this.Azimut_29_08_2012);
+            this.Controls.Add(this.Azimut_24_08_2012);
             this.Controls.Add(this.GRTVout_GCEF_format_030715);
             this.Controls.Add(this.NoiseParamsScanning);
             this.Controls.Add(this.flag_GRTV_output);
@@ -1227,6 +1242,7 @@
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_zavod;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_kulikova;
         private System.Windows.Forms.CheckBox iMSmthd_Is_2_plus_Odo;
+        private System.Windows.Forms.Button CycleStartParamChoosing;
     }
 }
 

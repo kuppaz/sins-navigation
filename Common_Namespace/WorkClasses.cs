@@ -242,6 +242,18 @@ namespace Common_Namespace
         public int value_iMx_dV_12, value_iMx_alphaBeta, value_iMx_Nu0, value_iMx_f0_12, value_iMx_f0_3, value_iMx_dr3, value_iMx_dV3, value_iMx_r_odo_3,
             value_iMx_r_odo_12, value_iMx_kappa_13_ds;
         public bool flag_iMSmthd_Is_2_plus_Odo;
+
+
+
+        public string global_paramsCycleScanning, global_paramsCycleScanning_Path;
+        public int global_indx = 0;
+        public double[] global_kappa1_grad = new double[50000]
+                       , global_kappa3_grad = new double[50000]
+                       , global_scale = new double[50000]
+                       , global_HorizontalError = new double[50000]
+                       , global_VerticalError = new double[50000]
+                       , global_V_Up = new double[50000]
+                       ;
     }
 
 

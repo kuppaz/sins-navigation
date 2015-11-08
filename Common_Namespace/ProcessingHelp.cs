@@ -639,30 +639,54 @@ namespace Common_Namespace
                 /*----------------------------------OUTPUT FEEDBACK------------------------------------------------------*/
                 else if (i % SINSstate.FreqOutput == 0)
                 {
-                    ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
-                                        + " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
-                                        + " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
+                    int iMx_odo_model = SINSstate.value_iMx_kappa_13_ds, iMx_alphaBeta = SINSstate.value_iMx_alphaBeta;
+
+                    ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count;
+                    if (SINSstate.global_paramsCycleScanning == "")
+                        ProcHelp.datastring += " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s);
+
+                    ProcHelp.datastring += " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2) + " " + SINSstate.Altitude
                                         + " " + ((SINSstate.Latitude) * SimpleData.ToDegree) + " " + ((SINSstate.Longitude) * SimpleData.ToDegree)
                                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
                                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
-                                        //+ " " + ProcHelp.corrected 
                                         + " " + ProcHelp.distance
                                         + " " + (SINSstate.Altitude - ProcHelp.AltSNS)
                                         + " " + ProcHelp.distance_from_start
-                                        + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 2)
+                                        ;
+                    if (SINSstate.global_paramsCycleScanning == "")
+                    {
+                        ProcHelp.datastring += " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2)
                                         + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
                                         + " " + Math.Round((SINSstate.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8);
-                    ;
+                    }
+                    else
+                    {
+                        ProcHelp.datastring += " " + SINSstate.Cumulative_KalmanErrorVector[(iMx_alphaBeta + 2)] * SimpleData.ToDegree
+                                               + " " + SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model] * SimpleData.ToDegree
+                                               + " " + SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model + 1] * SimpleData.ToDegree
+                                               + " " + SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model + 2] ;
+                    }
+                    
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);
 
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
                                         + " " + SINSstate.Altitude
-                                        + " " + ProcHelp.distance
-                    ;
+                                        + " " + ProcHelp.distance ;
+
                     Cicle_Debag_Solution.WriteLine(ProcHelp.datastring);
+
+
+                    // --- Сохраняем значения для передачи в цикл по подбору стартовых настроек ---//
+                    SINSstate.global_kappa1_grad[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model] * SimpleData.ToDegree;
+                    SINSstate.global_kappa3_grad[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model + 1] * SimpleData.ToDegree;
+                    SINSstate.global_scale[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model + 2];
+                    SINSstate.global_HorizontalError[SINSstate.global_indx] = ProcHelp.distance;
+                    SINSstate.global_VerticalError[SINSstate.global_indx] = Math.Abs(SINSstate.Altitude - ProcHelp.AltSNS);
+                    SINSstate.global_V_Up[SINSstate.global_indx] = SINSstate.Vx_0[2];
+                    SINSstate.global_indx++;
                 }
             }
 
@@ -842,14 +866,14 @@ namespace Common_Namespace
 
 
 
-        public static void FillKMLOutputFile(StreamWriter KMLFileOut, string Part, string Mode)
+        public static void FillKMLOutputFile(SINS_State SINSstate, StreamWriter KMLFileOut, string Part, string Mode)
         {
             if (Part == "Start")
             {
                 KMLFileOut.WriteLine("<?xml version='1.0' encoding='UTF-8'?>                                                 ");
                 KMLFileOut.WriteLine("<kml xmlns='http://earth.google.com/kml/2.2'>                                          ");
                 KMLFileOut.WriteLine("<Document>                                                                             ");
-                KMLFileOut.WriteLine("<name>NavLab Nikitin Markers</name>                                                    ");
+                KMLFileOut.WriteLine("<name>" + SINSstate.global_paramsCycleScanning + "NavLab Nikitin Markers</name>");
                 KMLFileOut.WriteLine("<visibility>1</visibility>                                                             ");
                 KMLFileOut.WriteLine("<open>1</open>                                                                         ");
                 KMLFileOut.WriteLine("<Style id='MarkerIcon'>                                                                ");

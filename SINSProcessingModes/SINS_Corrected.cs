@@ -42,8 +42,8 @@ namespace SINSProcessingModes
             string str_name_forvard_back = "";
             if (!NowSmoothing)
             {
-                KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Forward.kml");
-                ProcessingHelp.FillKMLOutputFile(KMLFileOut, "Start", "Forward");
+                KMLFileOut = new StreamWriter(SimpleData.PathOutputString + SINSstate.global_paramsCycleScanning_Path + "KMLFiles//" + SINSstate.global_paramsCycleScanning + "KMLFileOut_Forward" + ".kml");
+                ProcessingHelp.FillKMLOutputFile(SINSstate, KMLFileOut, "Start", "Forward");
             }
             else
             {
@@ -56,18 +56,18 @@ namespace SINSProcessingModes
                 Back_Input_File_read = new StreamReader(SimpleData.PathOutputString + "For Smoothing temp files//Backward_full.txt");
 
                 KMLFileOut = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Back.kml");
-                ProcessingHelp.FillKMLOutputFile(KMLFileOut, "Start", "Backward");
+                ProcessingHelp.FillKMLOutputFile(SINSstate, KMLFileOut, "Start", "Backward");
             }
 
             Nav_Smoothed = new StreamWriter(SimpleData.PathOutputString + "S_smoothed_SlnFeedBack.txt");
             KMLFileOutSmthd = new StreamWriter(SimpleData.PathOutputString + "KMLFiles//KMLFileOut_Smoothed.kml");
-            Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_Errors.txt");
+            Nav_Errors = new StreamWriter(SimpleData.PathOutputString + "S_Errors" + ".txt");
             ForHelp = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp" + str_name_forvard_back + ".txt");
             Nav_Autonomous = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_Autonomous.txt");
             Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_ErrVect.txt");
             StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
-            Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnFeedBack.txt");
-            Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate.txt");
+            Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + SINSstate.global_paramsCycleScanning_Path + SINSstate.global_paramsCycleScanning + "S" + str_name_forvard_back + "_SlnFeedBack" + ".txt");
+            Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate" + ".txt");
 
             Cicle_Debag_Solution = new StreamWriter(SimpleData.PathOutputString + "Debaging//Solution_"
                 + KalmanVars.Noise_Angl[0].ToString("E2") + "_" + KalmanVars.Noise_Vel[0].ToString("E2") + ".txt");
@@ -84,13 +84,17 @@ namespace SINSProcessingModes
                 str = str + " kappa1_grad kappa3_grad Scale";
             Nav_StateErrorsVector.WriteLine(str);
 
-            ProcessingHelp.FillKMLOutputFile(KMLFileOutSmthd, "Start", "Smoothing");
+            ProcessingHelp.FillKMLOutputFile(SINSstate, KMLFileOutSmthd, "Start", "Smoothing");
 
             Nav_Errors.WriteLine("Time dLat  dLong dAltitude  dV_x1  dV_x2  dV_x3  dHeading_Grad  dRoll_Grad  dPitch_Grad");
             Nav_Smoothed.WriteLine("time  count LatRelStart  LongRelStart Altitude Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3  Yaw  Roll  Pitch ");
             DinamicOdometer.WriteLine("Time Count OdoTimeStepCount AbsOdoSpeed_x0 LatRelStart LongRelStart Altitude Altitude_Corr LatRelStartCor-ed LongRelStartCor-ed Latitude  Longitude LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS  V_x1  V_x2  V_x3");
-            Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError AltError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS difHeadingSINStoODO difToTrueHeading");
             Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_abs");
+
+            if (SINSstate.global_paramsCycleScanning == "")
+                Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError AltError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS difHeadingSINStoODO difToTrueHeading");
+            else
+                Nav_FeedbackSolution.WriteLine("time OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError AltError PositErrStart Beta3_grad kappa1_grad kappa3_grad Scale");
 
 
 
@@ -429,8 +433,8 @@ namespace SINSProcessingModes
                 ForHelp.WriteLine("Оценки дрейфов в начале: nu_z1 = " + SINSstate.AlignAlgebraDrifts[0] + ", nu_z2 = " + SINSstate.AlignAlgebraDrifts[1] + ", nu_z3 = " + SINSstate.AlignAlgebraDrifts[2]);
             }
 
-            ProcessingHelp.FillKMLOutputFile(KMLFileOut, "End", "");
-            ProcessingHelp.FillKMLOutputFile(KMLFileOutSmthd, "End", "");
+            ProcessingHelp.FillKMLOutputFile(SINSstate, KMLFileOut, "End", "");
+            ProcessingHelp.FillKMLOutputFile(SINSstate, KMLFileOutSmthd, "End", "");
 
             Nav_StateErrorsVector.Close();
             Nav_FeedbackSolution.Close();
