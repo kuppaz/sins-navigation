@@ -397,10 +397,10 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.existRelationHoriz_VS_Vertical = true;
 
-                SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
+                SINSstate.MyOwnKalman_Korrection = false;
+                SINSstate.MyOwnKalman_Forecast = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0

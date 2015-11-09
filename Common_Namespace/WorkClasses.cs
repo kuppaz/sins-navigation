@@ -245,7 +245,7 @@ namespace Common_Namespace
 
 
 
-        public string global_paramsCycleScanning, global_paramsCycleScanning_Path;
+        public string global_paramsCycleScanning = "", global_paramsCycleScanning_Path = "";
         public int global_indx = 0;
         public double[] global_kappa1_grad = new double[50000]
                        , global_kappa3_grad = new double[50000]

@@ -249,9 +249,9 @@ namespace Common_Namespace
 
                     if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
                     {
-                        double correction_OdoScale = 0.0025;
-                        SINSstate.OdometerData.odometer_left.Value /= (1.0 + correction_OdoScale);
-                        SINSstate.OdometerData.odometer_right.Value /= (1.0 + correction_OdoScale);
+                        //double correction_OdoScale = 0.0025;
+                        //SINSstate.OdometerData.odometer_left.Value /= (1.0 + correction_OdoScale);
+                        //SINSstate.OdometerData.odometer_right.Value /= (1.0 + correction_OdoScale);
 
                         //SINSstate.alpha_x = -0.01613 * SimpleData.ToRadian;
                         //SINSstate.alpha_z = -0.00114 * SimpleData.ToRadian; 
