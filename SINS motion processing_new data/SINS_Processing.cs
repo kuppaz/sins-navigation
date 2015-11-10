@@ -89,7 +89,6 @@ namespace SINS_motion_processing_new_data
                        ;
         private void CycleStartParamChoosing_Click(object sender, EventArgs e)
         {
-
             this.global_existRelationHoriz_VS_Vertical = 0;
             this.global_NoiseModelFlag = 0;
             this.global_MyOwnKalman_Korrection = 0;
@@ -97,6 +96,10 @@ namespace SINS_motion_processing_new_data
             this.global_CoordinateNoiseExist = 0;
 
             this.global_flag_AccuracyClass = 0;
+
+            double NoiseVel_start = 1E-3,
+                   NoiseVel_end = 1E-5,
+                   NoiseVel_multpl = 10.0;
 
             StreamWriter Cycle_Start_Configurations = new StreamWriter(SimpleData.PathOutputString + "CycleParamScanning//[] Cycle_Start_Configurations.txt");
 
@@ -114,51 +117,59 @@ namespace SINS_motion_processing_new_data
             {
                 for (this.global_NoiseModelFlag = 0; this.global_NoiseModelFlag <= 1; this.global_NoiseModelFlag++)
                 {
-                    for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 1; this.global_MyOwnKalman_Korrection++)
+                    for (this.Cicle_Noise_Velocity = NoiseVel_start; this.Cicle_Noise_Velocity <= NoiseVel_end; this.Cicle_Noise_Velocity = this.Cicle_Noise_Velocity * NoiseVel_multpl)
                     {
-                        for (this.global_MyOwnKalman_Forecast = 0; this.global_MyOwnKalman_Forecast <= 1; this.global_MyOwnKalman_Forecast++)
+                        this.Cicle_Noise_Angular = this.Cicle_Noise_Velocity / 100.0;
+                        if (this.global_NoiseModelFlag == 0)
+                            this.Cicle_Noise_Velocity = NoiseVel_end;
+                        //======================
+
+                        for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 1; this.global_MyOwnKalman_Korrection++)
                         {
-                            for (this.global_CoordinateNoiseExist = 0; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
+                            for (this.global_MyOwnKalman_Forecast = 0; this.global_MyOwnKalman_Forecast <= 1; this.global_MyOwnKalman_Forecast++)
                             {
-                                for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass = this.global_flag_AccuracyClass * 10.0)
+                                for (this.global_CoordinateNoiseExist = 0; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
                                 {
-                                    // === === === === === === === === ===//
-                                    this.StartParamScanning = true;
-                                    this.Single_Navigation_Processing();
-                                    // === === === === === === === === ===//
+                                    for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass = this.global_flag_AccuracyClass * 10.0)
+                                    {
+                                        // === === === === === === === === ===//
+                                        this.StartParamScanning = true;
+                                        this.Single_Navigation_Processing();
+                                        // === === === === === === === === ===//
 
-                                    i++;
+                                        i++;
 
-                                    double[] array_kappa1_grad = new double[this.global_indx - 1]
-                                       , array_kappa3_grad = new double[this.global_indx - 1]
-                                       , array_scale = new double[this.global_indx - 1]
-                                       , array_HorizontalError = new double[this.global_indx - 1]
-                                       , array_VerticalError = new double[this.global_indx - 1]
-                                       , array_V_Up = new double[this.global_indx - 1]
-                                       ;
+                                        double[] array_kappa1_grad = new double[this.global_indx - 1]
+                                           , array_kappa3_grad = new double[this.global_indx - 1]
+                                           , array_scale = new double[this.global_indx - 1]
+                                           , array_HorizontalError = new double[this.global_indx - 1]
+                                           , array_VerticalError = new double[this.global_indx - 1]
+                                           , array_V_Up = new double[this.global_indx - 1]
+                                           ;
 
-                                    SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
-                                    SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
-                                    SimpleOperations.CopyArray(array_scale, this.global_scale);
-                                    SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
-                                    SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
-                                    SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
+                                        SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
+                                        SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
+                                        SimpleOperations.CopyArray(array_scale, this.global_scale);
+                                        SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
+                                        SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
+                                        SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
 
-                                    Cycle_Start_Configurations.WriteLine(i
-                                        + " VertRel=" + global_existRelationHoriz_VS_Vertical
-                                        + " NoisModl=" + global_NoiseModelFlag
-                                        + " MyCorr=" + global_MyOwnKalman_Korrection
-                                        + " MyFut=" + global_MyOwnKalman_Forecast
-                                        + " CoordNois=" + global_CoordinateNoiseExist
-                                        + " Class=" + global_flag_AccuracyClass
+                                        Cycle_Start_Configurations.WriteLine(i
+                                            + " VertRel=" + global_existRelationHoriz_VS_Vertical
+                                            + " NoisModl=" + global_NoiseModelFlag
+                                            + " MyCorr=" + global_MyOwnKalman_Korrection
+                                            + " MyFut=" + global_MyOwnKalman_Forecast
+                                            + " CoordNois=" + global_CoordinateNoiseExist
+                                            + " Class=" + global_flag_AccuracyClass
 
-                                        + " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
-                                        + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
-                                        + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
-                                        + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
-                                        + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
-                                        + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
-                                        );
+                                            + " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                            + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
+                                            + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
+                                            + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
+                                            + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
+                                            + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
+                                            );
+                                    }
                                 }
                             }
                         }
@@ -413,8 +424,13 @@ namespace SINS_motion_processing_new_data
                     + ";Fut=" + this.global_MyOwnKalman_Forecast
                     + ";RdQ=" + this.global_CoordinateNoiseExist
                     + ";cls=" + this.global_flag_AccuracyClass
-                    + "]_"
                     ;
+                if (global_NoiseModelFlag == 0)
+                    SINSstate.global_paramsCycleScanning += ";Noise=NO";
+                else
+                    SINSstate.global_paramsCycleScanning += ";Noise=" + this.Cicle_Noise_Angular;
+
+                SINSstate.global_paramsCycleScanning += "]_";
 
                 if (global_existRelationHoriz_VS_Vertical == 0) SINSstate.existRelationHoriz_VS_Vertical = false;
                 else SINSstate.existRelationHoriz_VS_Vertical = true;
@@ -429,8 +445,13 @@ namespace SINS_motion_processing_new_data
                 }
                 else
                 {
-                    ParamStart.Experiment_NoiseModelFlag = true; 
+                    ParamStart.Experiment_NoiseModelFlag = true;
                     ParamStart.Imitator_NoiseModelFlag = true;
+
+                    ParamStart.Experiment_Noise_Vel = this.Cicle_Noise_Velocity;
+                    ParamStart.Experiment_Noise_Angl = this.Cicle_Noise_Angular;
+                    ParamStart.Imitator_Noise_Vel = this.Cicle_Noise_Velocity;
+                    ParamStart.Imitator_Noise_Angl = this.Cicle_Noise_Angular;
                 }
                 if (global_CoordinateNoiseExist == 0)
                 {

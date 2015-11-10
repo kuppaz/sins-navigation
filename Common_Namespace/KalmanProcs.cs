@@ -202,57 +202,53 @@ namespace Common_Namespace
             }
             else
             {
-                double[] f;
+                double d_k = 0.0, b_k = 0.0, c_k = 0.0;
+                double[] f, e, S_k_m, S_k_p;
                 Matrix CovarianceMatrixS_p = new Matrix(SimpleData.iMx, SimpleData.iMx), 
                     CovarianceMatrixS_m = new Matrix(SimpleData.iMx, SimpleData.iMx);
 
                 for (int t = 0; t < KalmanVars.cnt_measures; t++)
                 {
-                    f = new double[SimpleData.iMx];
+                    d_k = KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t];
 
+                    e = new double[SimpleData.iMx];
+                    S_k_m = new double[SimpleData.iMx];
+                    f = new double[SimpleData.iMx];
+                    S_k_p = new double[SimpleData.iMx];
+
+                    SimpleOperations.MakeMatrixFromVector(CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_p, SimpleData.iMx);
                     SimpleOperations.MakeMatrixFromVector(CovarianceMatrixS_m, KalmanVars.CovarianceMatrixS_m, SimpleData.iMx);
 
                     for (int i = 0; i < SimpleData.iMx; i++)
                         KalmanVars.StringOfMeasure[i] = KalmanVars.Matrix_H[t * SimpleData.iMx + i];
 
-                    double[] Sm_f = new double[SimpleData.iMx];
-                    double[] E_ffalpha = new double[SimpleData.iMx * SimpleData.iMx],
-                        tmpArray = new double[SimpleData.iMx * SimpleData.iMx],
-                        tmpArray2 = new double[SimpleData.iMx * SimpleData.iMx];
-
                     SimpleOperations.CopyArray(f, CovarianceMatrixS_m.Transpose() * KalmanVars.StringOfMeasure);
 
-                    double alpha = KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t];
-                    for (int j = 0; j < SimpleData.iMx; j++)
-                        alpha += f[j] * f[j];
-
-                    // --- Матрица E - ff/alpha ---
                     for (int i = 0; i < SimpleData.iMx; i++)
                     {
-                        E_ffalpha[i * SimpleData.iMx + i] = 1.0;
+                        b_k = Math.Sqrt(d_k / (d_k + f[i] * f[i]));
+                        c_k = f[i] / (Math.Sqrt(d_k * (d_k + f[i] * f[i])));
+                        d_k = d_k + f[i] * f[i];
+
                         for (int j = 0; j < SimpleData.iMx; j++)
-                            E_ffalpha[i * SimpleData.iMx + j] -= f[i] * f[j] / alpha;
+                            S_k_m[j] = KalmanVars.CovarianceMatrixS_m[j * SimpleData.iMx + i];
+
+                        for (int j = 0; j < SimpleData.iMx; j++)
+                        {
+                            S_k_p[j] = S_k_m[j] * b_k - e[j] * c_k;
+                            KalmanVars.CovarianceMatrixS_p[j * SimpleData.iMx + i] = S_k_p[j];
+                        }
+
+                        for (int j = 0; j < SimpleData.iMx; j++)
+                            e[j] = e[j] + S_k_m[j] * f[i];
                     }
-                    // --- Корень из (E - ff/alpha) ---
-                    SimpleOperations.CopyArray(tmpArray, rsb_rsb(E_ffalpha, SimpleData.iMx));
 
-                    // --- Получаем S+= S- * sqrt(E - ff/alpha) ---
-                    for (int i = 0; i < SimpleData.iMx; i++)
-                        for (int j = 0; j < SimpleData.iMx; j++)
-                            for (int k = 0; k < SimpleData.iMx; k++)
-                                tmpArray2[i * SimpleData.iMx + j] += KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + k] * tmpArray[k * SimpleData.iMx + j];
-                    SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, tmpArray2);
-
-                    SimpleOperations.CopyArray(Sm_f, CovarianceMatrixS_m * f);
-
-                    // --- //
                     double h_x_ = 0.0;
                     for (int j = 0; j < SimpleData.iMx; j++)
                         h_x_ += KalmanVars.StringOfMeasure[j] * KalmanVars.ErrorConditionVector_m[j];
 
                     for (int j = 0; j < SimpleData.iMx; j++)
-                        KalmanVars.ErrorConditionVector_p[j] = KalmanVars.ErrorConditionVector_m[j] + Sm_f[j] * (KalmanVars.Measure[t] - h_x_) / alpha;
-
+                        KalmanVars.ErrorConditionVector_p[j] = KalmanVars.ErrorConditionVector_m[j] + (KalmanVars.Measure[t] - h_x_) * e[j] / d_k;
 
 
                     if (t < KalmanVars.cnt_measures - 1)
@@ -262,6 +258,70 @@ namespace Common_Namespace
                     }
                 }
             }
+            //else
+            //{
+            //    double[] f;
+            //    Matrix CovarianceMatrixS_p = new Matrix(SimpleData.iMx, SimpleData.iMx), 
+            //        CovarianceMatrixS_m = new Matrix(SimpleData.iMx, SimpleData.iMx);
+
+            //    for (int t = 0; t < KalmanVars.cnt_measures; t++)
+            //    {
+            //        f = new double[SimpleData.iMx];
+
+            //        SimpleOperations.MakeMatrixFromVector(CovarianceMatrixS_m, KalmanVars.CovarianceMatrixS_m, SimpleData.iMx);
+
+            //        for (int i = 0; i < SimpleData.iMx; i++)
+            //            KalmanVars.StringOfMeasure[i] = KalmanVars.Matrix_H[t * SimpleData.iMx + i];
+
+            //        double[] Sm_f = new double[SimpleData.iMx];
+            //        double[] E_ffalpha = new double[SimpleData.iMx * SimpleData.iMx],
+            //            tmpArray = new double[SimpleData.iMx * SimpleData.iMx],
+            //            tmpArray2 = new double[SimpleData.iMx * SimpleData.iMx];
+
+            //        SimpleOperations.CopyArray(f, CovarianceMatrixS_m.Transpose() * KalmanVars.StringOfMeasure);
+
+            //        double alpha = KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t];
+            //        for (int j = 0; j < SimpleData.iMx; j++)
+            //            alpha += f[j] * f[j];
+
+            //        // --- Матрица E - ff/alpha ---
+            //        for (int i = 0; i < SimpleData.iMx; i++)
+            //        {
+            //            E_ffalpha[i * SimpleData.iMx + i] = 1.0;
+            //            for (int j = 0; j < SimpleData.iMx; j++)
+            //                E_ffalpha[i * SimpleData.iMx + j] -= f[i] * f[j] / alpha;
+            //        }
+            //        // --- Корень из (E - ff/alpha) ---
+            //        // -------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------
+            //        SimpleOperations.CopyArray(tmpArray, rsb_rsb(E_ffalpha, SimpleData.iMx));
+            //        // -------!!!!!!!ТУТ НУЖНО ПО ЧЕСТНОМУ СЧИТАТЬ КОРЕНЬ!!!!!!!!!!!!!!----------
+            //        // -------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------
+
+            //        // --- Получаем S+= S- * sqrt(E - ff/alpha) ---
+            //        for (int i = 0; i < SimpleData.iMx; i++)
+            //            for (int j = 0; j < SimpleData.iMx; j++)
+            //                for (int k = 0; k < SimpleData.iMx; k++)
+            //                    tmpArray2[i * SimpleData.iMx + j] += KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + k] * tmpArray[k * SimpleData.iMx + j];
+            //        SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, tmpArray2);
+
+            //        SimpleOperations.CopyArray(Sm_f, CovarianceMatrixS_m * f);
+
+            //        // --- //
+            //        double h_x_ = 0.0;
+            //        for (int j = 0; j < SimpleData.iMx; j++)
+            //            h_x_ += KalmanVars.StringOfMeasure[j] * KalmanVars.ErrorConditionVector_m[j];
+
+            //        for (int j = 0; j < SimpleData.iMx; j++)
+            //            KalmanVars.ErrorConditionVector_p[j] = KalmanVars.ErrorConditionVector_m[j] + Sm_f[j] * (KalmanVars.Measure[t] - h_x_) / alpha;
+
+
+            //        if (t < KalmanVars.cnt_measures - 1)
+            //        {
+            //            SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_m, KalmanVars.ErrorConditionVector_p);
+            //            SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_m, KalmanVars.CovarianceMatrixS_p);
+            //        }
+            //    }
+            //}
 
         }
 
