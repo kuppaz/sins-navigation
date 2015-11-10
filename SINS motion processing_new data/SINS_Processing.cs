@@ -145,11 +145,11 @@ namespace SINS_motion_processing_new_data
                                     SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
 
                                     Cycle_Start_Configurations.WriteLine(i
-                                        + " VertRelation=" + global_existRelationHoriz_VS_Vertical
-                                        + " NoiseModeling=" + global_NoiseModelFlag
-                                        + " MyCorrection=" + global_MyOwnKalman_Korrection
-                                        + " MyForecast=" + global_MyOwnKalman_Forecast
-                                        + " CoordNoise=" + global_CoordinateNoiseExist
+                                        + " VertRel=" + global_existRelationHoriz_VS_Vertical
+                                        + " NoisModl=" + global_NoiseModelFlag
+                                        + " MyCorr=" + global_MyOwnKalman_Korrection
+                                        + " MyFut=" + global_MyOwnKalman_Forecast
+                                        + " CoordNois=" + global_CoordinateNoiseExist
                                         + " Class=" + global_flag_AccuracyClass
 
                                         + " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)

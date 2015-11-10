@@ -38,6 +38,11 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Forecast = false;
+
+                // === best configurations === //
+                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02
+                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -165,8 +170,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
-
-
                 KalmanVars.Noise_Pos = 0.75;
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
@@ -214,12 +217,8 @@ namespace Common_Namespace
                 ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
-                //NotChecked
-                //--- Подбор по высоте: 1.00E-003_1.00E-005; vel 3.9Е-3, angl 3.9E-4, vel 7.8Е-4, angl 6.3E-7
-                //--- Подбор по гориз ошибке: 1.00E-005_1.00E-007; vel 1.6E-4, angl 1.3E-7
-                //Checked
-                //--- Подбор по высоте:  все гавно
-                //--- Подбор по гориз ошибке: 1.00E-003_1.00E-004 vel 4.0E-3, angl 6.3E-7
+                // === best configurations === //
+                //
 
                 KalmanVars.Noise_Pos = 0.5;
                 // -------------------------------------------//
@@ -397,10 +396,10 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = true;
+                SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = false;
-                SINSstate.MyOwnKalman_Forecast = true;
+                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -408,6 +407,10 @@ namespace Common_Namespace
                 ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
+
+                // === best configurations === //
+                //VertRel=1	NoisModl=0	MyCorr=0	MyFut=1	CoordNois=0	Class=0.02
+                //VertRel=0	NoisModl=0	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02
 
                 KalmanVars.Noise_Pos = 1.0;
                 // -------------------------------------------//
