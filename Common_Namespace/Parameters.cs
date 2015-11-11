@@ -38,11 +38,11 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
+                SINSstate.MyOwnKalman_Forecast = true;
 
                 // === best configurations === //
                 //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02
-                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02
+                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02                                                                                                                                                                                      
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -207,18 +207,18 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 // -- С MyOwnKalman_Korrection=true при чекнутых шумах dR только в горизонте получается конечная ошибка  метра!!
-                SINSstate.MyOwnKalman_Korrection = false;
+                SINSstate.MyOwnKalman_Korrection = true;
                 SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 // === best configurations === //
-                //
+                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02	Noise=1E-05
 
                 KalmanVars.Noise_Pos = 0.5;
                 // -------------------------------------------//

@@ -343,6 +343,20 @@ namespace Common_Namespace
                 SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
                 SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
             }
+            if (true)
+            {
+                unsafe
+                {
+                    fixed (double* _xm = KalmanVars.ErrorConditionVector_m, _xp = KalmanVars.ErrorConditionVector_p, _sm = KalmanVars.CovarianceMatrixS_m, _sp = KalmanVars.CovarianceMatrixS_p,
+                        _f = KalmanVars.TransitionMatrixF, _sq = KalmanVars.CovarianceMatrixNoise)
+                    {
+                        dgq0b_my(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx, SimpleData.iMq);
+                        //dg0b(_xp, _sp, _f,_xm, _sm, SimpleData.iMx);
+                    }
+                }
+                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
+                SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
+            }
             else
             {
                 int datetimeCounter = 0;
@@ -365,7 +379,7 @@ namespace Common_Namespace
 
                 SINSstate.startDt[datetimeCounter] = DateTime.Now;
 
-                SimpleOperations.CopyMatrix(tmpMatrix, 
+                SimpleOperations.CopyMatrix(tmpMatrix,
                     SimpleOperations.MultiplyRightUpperMatrix(SimpleOperations.ArrayToMatrix(KalmanVars.TransitionMatrixF), SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p))
                     );
 
@@ -778,7 +792,7 @@ namespace Common_Namespace
 */
         unsafe static void dgq0b(double* xp, double* sp, double* f, double* sq, double* xm, double* sm, int m, int mq)
         {
-            int i, j, k, ij, im, jq, kq, m1;
+            int i, j, k;
             double c, y, y1, dy;
             double[] w = new double[m];
             for (i = 0; i < m; i++)
@@ -786,28 +800,23 @@ namespace Common_Namespace
 
             fixed (double* _w = w)
             {
-                m1 = m + 1;
                 for (i = 0; i < m; i++)
                 {
                     c = 0.0;
-                    im = i * m;
                     for (j = 0; j < m; j++)
                     {
                         y = 0.0;
-                        jq = j * m;
                         for (k = 0; k <= i; k++)
-                            y += *(sp + k * m + i) * *(f + jq + k);
-                        ij = im + j;
-                        c += *(f + ij) * *(xp + j);
-                        *(sm + ij) = y;
+                            y += *(sp + k * m + i) * *(f + j * m + k);
+
+                        c += *(f + i * m + j) * *(xp + j);
+                        *(sm + i * m + j) = y;
                     }
                     *(xm + i) = c;
                 }
                 for (k = m - 1; k > 0; k--)
                 {
                     y = 0.0;
-                    kq = k * mq;
-
                     for (i = 0; i < m; i++)
                         _w[i] = 0.0;
 
@@ -818,36 +827,34 @@ namespace Common_Namespace
                     }
                     for (i = 0; i < mq; i++)
                     {
-                        y1 = *(sq + kq + i);
+                        y1 = *(sq + k * mq + i);
                         y += y1 * y1;
                     }
+
                     y = Math.Sqrt(y);
                     dy = 1.0 / y;
                     for (j = 0; j < k; j++)
                     {
                         y1 = 0.0;
-                        jq = j * mq;
                         for (i = 0; i < m; i++)
-                        {
-                            im = i * m;
-                            y1 += *(sm + im + j) * *(sm + im + k);
-                        }
+                            y1 += *(sm + i * m + j) * *(sm + i * m + k);
                         for (i = 0; i < mq; i++)
-                            y1 += *(sq + jq + i) * *(sq + kq + i);
+                            y1 += *(sq + j * mq + i) * *(sq + k * mq + i);
+
                         y1 *= dy;
                         *(_w + j) = y1;
+
                         c = y1 * dy;
                         for (i = 0; i < m; i++)
-                        {
-                            im = i * m;
-                            *(sm + im + j) -= (*(sm + im + k)) * c;
-                        }
+                            *(sm + i * m + j) -= (*(sm + i * m + k)) * c;
                         for (i = 0; i < mq; i++)
-                            *(sq + jq + i) -= (*(sq + kq + i)) * c;
+                            *(sq + j * mq + i) -= (*(sq + k * mq + i)) * c;
                     }
+
                     for (i = 0; i < k; i++)
                         *(sm + i * m + k) = *(_w + i);
-                    *(sm + m1 * k) = y;
+
+                    *(sm + m * k + k) = y;
                 }
                 c = 0.0;
                 for (i = 0; i < m; i++)
@@ -861,6 +868,87 @@ namespace Common_Namespace
                     c += y * y;
                 }
                 *sm = Math.Sqrt(c);
+            }
+        }
+
+        unsafe static void dgq0b_my(double* xp, double* sp, double* f, double* sq, double* xm, double* sm, int m, int mq)
+        {
+            int i, j, k;
+            double c, y, y1, dy;
+            double[] w = new double[m];
+            for (i = 0; i < m; i++)
+                w[i] = 0.0;
+
+            fixed (double* _w = w)
+            {
+                for (i = 0; i < m; i++)
+                {
+                    c = 0.0;
+                    for (j = 0; j < m; j++)
+                    {
+                        y = 0.0;
+                        for (k = 0; k <= i; k++)
+                            y += *(sp + k * m + i) * *(f + j * m + k);
+
+                        c += *(f + i * m + j) * *(xp + j);
+                        *(sm + i * m + j) = y;
+                    }
+                    *(xm + i) = c;
+                }
+                for (k = m - 1; k > 0; k--)
+                {
+                    y = 0.0;
+                    for (i = 0; i < m; i++)
+                        _w[i] = 0.0;
+
+                    for (i = 0; i < m; i++)
+                    {
+                        y1 = *(sm + i * m + k);
+                        y += y1 * y1;
+                    }
+                    for (i = 0; i < mq; i++)
+                    {
+                        y1 = *(sq + k * mq + i);
+                        y += y1 * y1;
+                    }
+
+                    y = Math.Sqrt(y);
+                    dy = 1.0 / y;
+                    for (j = 0; j < k; j++)
+                    {
+                        y1 = 0.0;
+                        for (i = 0; i < m; i++)
+                            y1 += *(sm + i * m + j) * *(sm + i * m + k);
+                        for (i = 0; i < mq; i++)
+                            y1 += *(sq + j * mq + i) * *(sq + k * mq + i);
+
+                        y1 *= dy;
+                        *(_w + j) = y1;
+
+                        c = y1 * dy;
+                        for (i = 0; i < m; i++)
+                            *(sm + i * m + j) -= (*(sm + i * m + k)) * c;
+                        for (i = 0; i < mq; i++)
+                            *(sq + j * mq + i) -= (*(sq + k * mq + i)) * c;
+                    }
+
+                    for (i = 0; i < k; i++)
+                        *(sm + i * m + k) = *(_w + i);
+
+                    *(sm + m * k + k) = y;
+                }
+                //c = 0.0;
+                //for (i = 0; i < m; i++)
+                //{
+                //    y = *(sm + i * m);
+                //    c += y * y;
+                //}
+                //for (i = 0; i < mq; i++)
+                //{
+                //    y = *(sq + i);
+                //    c += y * y;
+                //}
+                //*sm = Math.Sqrt(c);
             }
         }
 

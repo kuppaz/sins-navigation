@@ -97,13 +97,13 @@ namespace SINS_motion_processing_new_data
 
             this.global_flag_AccuracyClass = 0;
 
-            double NoiseVel_start = 1E-3,
-                   NoiseVel_end = 1E-5,
+            double NoiseVel_start = 1E-5,
+                   NoiseVel_end = 1E-3,
                    NoiseVel_multpl = 10.0;
 
             StreamWriter Cycle_Start_Configurations = new StreamWriter(SimpleData.PathOutputString + "CycleParamScanning//[] Cycle_Start_Configurations.txt");
 
-            string str = "Count VertRel NoisModl MyCorr MyFut CoordNois Class ";
+            string str = "Count VertRel NoisModl MyCorr MyFut CoordNois Class Noise ";
             str += "HorErr_AVG HorErr_MAX HorErr_END ";
             str += "VertErr_AVG VertErr_MAX VertErr_END ";
             str += "V_Up_AVG V_Up_SPRD V_Up_END ";
@@ -154,21 +154,28 @@ namespace SINS_motion_processing_new_data
                                         SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
                                         SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
 
-                                        Cycle_Start_Configurations.WriteLine(i
-                                            + " VertRel=" + global_existRelationHoriz_VS_Vertical
+                                        string str_out = "";
+                                        str_out += i + " VertRel=" + global_existRelationHoriz_VS_Vertical
                                             + " NoisModl=" + global_NoiseModelFlag
                                             + " MyCorr=" + global_MyOwnKalman_Korrection
                                             + " MyFut=" + global_MyOwnKalman_Forecast
                                             + " CoordNois=" + global_CoordinateNoiseExist
                                             + " Class=" + global_flag_AccuracyClass
+                                            ;
+                                        if (global_NoiseModelFlag == 0)
+                                            str_out += " Noise=NO";
+                                        else
+                                            str_out += " Noise=" + this.Cicle_Noise_Angular;
 
-                                            + " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                        str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
                                             + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
                                             + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
                                             + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
                                             + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
                                             + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
-                                            );
+                                            ;
+
+                                        Cycle_Start_Configurations.WriteLine(str_out);
                                     }
                                 }
                             }
@@ -418,11 +425,16 @@ namespace SINS_motion_processing_new_data
             {
                 SINSstate.global_paramsCycleScanning_Path = "CycleParamScanning//";
                 SINSstate.global_paramsCycleScanning = 
-                    "[UpRel=" + this.global_existRelationHoriz_VS_Vertical
-                    + ";dQMd=" + this.global_NoiseModelFlag
-                    + ";Cor=" + this.global_MyOwnKalman_Korrection
-                    + ";Fut=" + this.global_MyOwnKalman_Forecast
-                    + ";RdQ=" + this.global_CoordinateNoiseExist
+                    //"[UpRel=" 
+                    + this.global_existRelationHoriz_VS_Vertical
+                    //+ ";dQMd=" 
+                    + this.global_NoiseModelFlag
+                    //+ ";Cor=" 
+                    + this.global_MyOwnKalman_Korrection
+                    //+ ";Fut=" 
+                    + this.global_MyOwnKalman_Forecast
+                    //+ ";RdQ=" 
+                    + this.global_CoordinateNoiseExist
                     + ";cls=" + this.global_flag_AccuracyClass
                     ;
                 if (global_NoiseModelFlag == 0)
@@ -430,7 +442,7 @@ namespace SINS_motion_processing_new_data
                 else
                     SINSstate.global_paramsCycleScanning += ";Noise=" + this.Cicle_Noise_Angular;
 
-                SINSstate.global_paramsCycleScanning += "]_";
+                SINSstate.global_paramsCycleScanning += "_";
 
                 if (global_existRelationHoriz_VS_Vertical == 0) SINSstate.existRelationHoriz_VS_Vertical = false;
                 else SINSstate.existRelationHoriz_VS_Vertical = true;

@@ -360,6 +360,7 @@ namespace SINSProcessingModes
                     }
                 }
 
+                if (ProcHelp.distance == double.NaN) break;
                 //--- OUTPUT в консоль ---//
                 if (i > 10000 && i % 2000 == 0)
                     Console.WriteLine(SINSstate.Count.ToString()
