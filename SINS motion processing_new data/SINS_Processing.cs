@@ -424,18 +424,18 @@ namespace SINS_motion_processing_new_data
             if (this.StartParamScanning)
             {
                 SINSstate.global_paramsCycleScanning_Path = "CycleParamScanning//";
-                SINSstate.global_paramsCycleScanning = 
+                SINSstate.global_paramsCycleScanning =
                     //"[UpRel=" 
-                    + this.global_existRelationHoriz_VS_Vertical
+                    this.global_existRelationHoriz_VS_Vertical.ToString()
                     //+ ";dQMd=" 
-                    + this.global_NoiseModelFlag
+                    + this.global_NoiseModelFlag.ToString()
                     //+ ";Cor=" 
-                    + this.global_MyOwnKalman_Korrection
+                    + this.global_MyOwnKalman_Korrection.ToString()
                     //+ ";Fut=" 
-                    + this.global_MyOwnKalman_Forecast
+                    + this.global_MyOwnKalman_Forecast.ToString()
                     //+ ";RdQ=" 
-                    + this.global_CoordinateNoiseExist
-                    + ";cls=" + this.global_flag_AccuracyClass
+                    + this.global_CoordinateNoiseExist.ToString()
+                    + ";cls=" + this.global_flag_AccuracyClass.ToString()
                     ;
                 if (global_NoiseModelFlag == 0)
                     SINSstate.global_paramsCycleScanning += ";Noise=NO";

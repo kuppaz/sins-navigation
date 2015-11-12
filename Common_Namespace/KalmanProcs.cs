@@ -343,7 +343,7 @@ namespace Common_Namespace
                 SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
                 SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
             }
-            if (true)
+            else if (true)
             {
                 unsafe
                 {
