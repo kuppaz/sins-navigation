@@ -437,8 +437,10 @@ namespace Common_Namespace
                 {
                     KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 0] = SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[2, 2] - SINSstate_OdoMod.OdoSpeed_s[2] * SINSstate_OdoMod.A_x0s[2, 1];
                     if (SINSstate.existRelationHoriz_VS_Vertical || !SINSstate.flag_iMx_r3_dV3)
+                    {
                         KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 1] = -SINSstate_OdoMod.OdoSpeed_s[1] * SINSstate_OdoMod.A_x0s[2, 0] + SINSstate_OdoMod.OdoSpeed_s[0] * SINSstate_OdoMod.A_x0s[2, 1];
-                    KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 2] = SINSstate_OdoMod.OdoSpeed_x0[2];
+                        KalmanVars.Matrix_A[(iMx_r_odo_3) * iMx + iMx_odo_model + 2] = SINSstate_OdoMod.OdoSpeed_x0[2];
+                    }
                 }
             }
 

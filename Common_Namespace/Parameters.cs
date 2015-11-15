@@ -220,6 +220,8 @@ namespace Common_Namespace
 
                 // === best configurations === //
                 //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02	Noise=1E-05
+                //VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05
+                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-05 14.622	34.156	19.697	245.039	412.623	341.14
 
                 KalmanVars.Noise_Pos = 0.5;
                 // -------------------------------------------//

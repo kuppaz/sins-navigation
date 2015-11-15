@@ -167,13 +167,14 @@ namespace SINS_motion_processing_new_data
                                         else
                                             str_out += " Noise=" + this.Cicle_Noise_Angular;
 
-                                        str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
-                                            + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
-                                            + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
-                                            + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
-                                            + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
-                                            + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
-                                            ;
+                                        if (this.global_indx > 1)
+                                            str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                                + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
+                                                + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
+                                                + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
+                                                + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
+                                                + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
+                                                ;
 
                                         Cycle_Start_Configurations.WriteLine(str_out);
                                     }
