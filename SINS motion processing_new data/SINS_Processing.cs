@@ -84,6 +84,7 @@ namespace SINS_motion_processing_new_data
                        , global_kappa3_grad = new double[50000]
                        , global_scale = new double[50000]
                        , global_HorizontalError = new double[50000]
+                       , global_HorizontalErrorFromStart = new double[50000]
                        , global_VerticalError = new double[50000]
                        , global_V_Up = new double[50000]
                        ;
@@ -104,7 +105,7 @@ namespace SINS_motion_processing_new_data
             StreamWriter Cycle_Start_Configurations = new StreamWriter(SimpleData.PathOutputString + "CycleParamScanning//[] Cycle_Start_Configurations.txt");
 
             string str = "Count VertRel NoisModl MyCorr MyFut CoordNois Class Noise ";
-            str += "HorErr_AVG HorErr_MAX HorErr_END ";
+            str += "HorErr_AVG HorErr_MAX HorErr_END HorStartErr_END ";
             str += "VertErr_AVG VertErr_MAX VertErr_END ";
             str += "V_Up_AVG V_Up_SPRD V_Up_END ";
             str += "kap1_AVG kap1_SPRD kap1_END ";
@@ -143,6 +144,7 @@ namespace SINS_motion_processing_new_data
                                            , array_kappa3_grad = new double[this.global_indx - 1]
                                            , array_scale = new double[this.global_indx - 1]
                                            , array_HorizontalError = new double[this.global_indx - 1]
+                                           , array_HorizontalErrorFromStart = new double[this.global_indx - 1]
                                            , array_VerticalError = new double[this.global_indx - 1]
                                            , array_V_Up = new double[this.global_indx - 1]
                                            ;
@@ -151,6 +153,7 @@ namespace SINS_motion_processing_new_data
                                         SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
                                         SimpleOperations.CopyArray(array_scale, this.global_scale);
                                         SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
+                                        SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
                                         SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
                                         SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
 
@@ -169,6 +172,7 @@ namespace SINS_motion_processing_new_data
 
                                         if (this.global_indx > 1)
                                             str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                                + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
                                                 + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
                                                 + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
                                                 + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
@@ -677,6 +681,7 @@ namespace SINS_motion_processing_new_data
                 SimpleOperations.CopyArray(this.global_kappa3_grad, SINSstate.global_kappa3_grad);
                 SimpleOperations.CopyArray(this.global_scale, SINSstate.global_scale);
                 SimpleOperations.CopyArray(this.global_HorizontalError, SINSstate.global_HorizontalError);
+                SimpleOperations.CopyArray(this.global_HorizontalErrorFromStart, SINSstate.global_HorizontalErrorFromStart);
                 SimpleOperations.CopyArray(this.global_VerticalError, SINSstate.global_VerticalError);
                 SimpleOperations.CopyArray(this.global_V_Up, SINSstate.global_V_Up);
             }

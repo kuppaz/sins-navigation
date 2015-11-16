@@ -14,7 +14,7 @@ namespace MovingImitator
     public partial class Imitation : Form
     {
         //Основные постоянные величины
-        public double StartHeading = 45.0 * SimpleData.ToRadian,
+        public double StartHeading = 15.0 * SimpleData.ToRadian,
                       StartRoll = 0.0 * SimpleData.ToRadian,
                       StartPitch = 0.0 * SimpleData.ToRadian;
 
@@ -108,16 +108,16 @@ namespace MovingImitator
                             + " df_0(E)= " + Params_df_0
                             + " df_0(N)= " + Params_df_0
                             + " df_s= " + Params_df_s
-                            + " nu_0= " + Params_dnu_0 
-                            + " nu_s= " + Params_dnu_s 
-                            + " OdoKappa1= " + Params_OdoKappa1 
-                            + " OdoKappa3= " + Math.Abs(Params_OdoKappa3) 
-                            + " OdoScale= " + Params_OdoScaleErr 
+                            + " nu_0= " + Params_dnu_0
+                            + " nu_s= " + Params_dnu_s
+                            + " OdoKappa1= " + Params_OdoKappa1
+                            + " OdoKappa3= " + Math.Abs(Params_OdoKappa3)
+                            + " OdoScale= " + Params_OdoScaleErr
                             + " OdoIncrement= " + Params_OdoIncrement
-                            + " OdoFreq= " + Params_OdoFrequency 
-                            + " Heading= " + (StartHeading - Params_OdoKappa3).ToString() 
-                            + " Roll= " + StartRoll 
-                            + " Pitch= " + (StartPitch + Params_OdoKappa1).ToString() 
+                            + " OdoFreq= " + Params_OdoFrequency
+                            + " Heading= " + (StartHeading - Params_OdoKappa3).ToString()
+                            + " Roll= " + StartRoll
+                            + " Pitch= " + (StartPitch + Params_OdoKappa1).ToString()
                             + " nu_z2= 0"
                             + " GPS_PositionError= 0"
                             + " df_0(z1)= 0"
@@ -136,7 +136,7 @@ namespace MovingImitator
 
             ///////////////////////////////////////////// Рабочий цикл /////////////////////////////////////////////////
             //while (CurrentTime < 520.0)
-            while (CurTimeWithAlign < 1.0 * 3600.0)
+            while (CurTimeWithAlign < 2.0 * 3600.0)
             {
                 SINSstate.Count++;
                 CurrentTime += dT;
@@ -163,21 +163,39 @@ namespace MovingImitator
                 //else
                 //    SINSstate.Heading = StartHeading + Math.PI / 3.0 + 30.0 * SimpleData.ToRadian * Math.Sin(Math.PI / 300.0 * (CurTimeWithAlign - 100.0));
 
-                double rotateDuration, rotateStartTime;
-                rotateDuration = 20.0;
-                rotateStartTime = 1.0 * 3600.0;
-                if (CurTimeWithAlign > rotateStartTime && CurTimeWithAlign <= rotateStartTime + rotateDuration)
-                    SINSstate.Heading = StartHeading - Math.PI / 4.0 * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
+                double rotateDuration, rotateStartTime, rotateAngle, startAngle, endingAngle;
 
-                rotateDuration = 20.0;
-                rotateStartTime = 2.0 * 3600.0;
+                startAngle = 0.0;
+                rotateAngle = -3.0 / 2.0 * Math.PI;
+                rotateDuration = 120.0;
+                rotateStartTime = 0.4 * 3600.0;
+                endingAngle = startAngle + rotateAngle;
                 if (CurTimeWithAlign > rotateStartTime && CurTimeWithAlign <= rotateStartTime + rotateDuration)
-                    SINSstate.Heading = StartHeading - Math.PI / 4.0 + 3.0 * Math.PI / 4.0 * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
+                    SINSstate.Heading = StartHeading + startAngle + rotateAngle * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
 
-                //if (CurTimeWithAlign > 1300.0 && CurTimeWithAlign <= 1350.0) SINSstate.Heading = StartHeading + Math.PI / 2.0 + Math.PI / 2.0 * (CurTimeWithAlign - 1300.0) / 50.0;
-                //SINSstate.Roll = StartRoll + 5.0 * SimpleData.ToRadian * Math.Sin(0.021 * CurTimeWithAlign);
-                //SINSstate.Pitch = StartPitch + 1.1 * SimpleData.ToRadian * Math.Sin(0.025 * CurTimeWithAlign);
-                //if (CurTimeWithAlign > 200.0 && CurTimeWithAlign <= 250.0) SINSstate.Pitch = StartPitch + 0.1 * Math.Sin(Math.PI * (CurTimeWithAlign - 200.0) / 50.0);
+                startAngle = endingAngle;
+                rotateAngle = -1.0 / 2.0 * Math.PI;
+                rotateDuration = 120.0;
+                rotateStartTime = 0.8 * 3600.0;
+                endingAngle = startAngle + rotateAngle;
+                if (CurTimeWithAlign > rotateStartTime && CurTimeWithAlign <= rotateStartTime + rotateDuration)
+                    SINSstate.Heading = StartHeading + startAngle + rotateAngle * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
+
+                startAngle = endingAngle;
+                rotateAngle = -3.0 / 2.0 * Math.PI;
+                rotateDuration = 120.0;
+                rotateStartTime = 1.2 * 3600.0;
+                endingAngle = startAngle + rotateAngle;
+                if (CurTimeWithAlign > rotateStartTime && CurTimeWithAlign <= rotateStartTime + rotateDuration)
+                    SINSstate.Heading = StartHeading + startAngle + rotateAngle * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
+
+                startAngle = endingAngle;
+                rotateAngle = 2.0 * Math.PI - 105.0 * Math.PI / 180.0;
+                rotateDuration = 120.0;
+                rotateStartTime = 1.6 * 3600.0;
+                endingAngle = startAngle + rotateAngle;
+                if (CurTimeWithAlign > rotateStartTime && CurTimeWithAlign <= rotateStartTime + rotateDuration)
+                    SINSstate.Heading = StartHeading + startAngle + rotateAngle * (CurTimeWithAlign - rotateStartTime) / rotateDuration;
 
 
 
@@ -224,26 +242,47 @@ namespace MovingImitator
 
 
                 //Задание относительной линейной скорости в различных проекциях, а так же их производных
-                SINSstate.Vz[0] = 0.0;
-                SINSstate.Vz[1] = 0.0;
-                SINSstate.Vz[2] = 0.0;
-
-
-
+                //SINSstate.Vz[0] = 0.0;
+                //SINSstate.Vz[1] = 0.0;
+                //SINSstate.Vz[2] = 0.0;
 
                 //-----------СКОРОСТЬ---------------//
-                double constantV, leftTimeMoving, rightTimeMoving, accelerationDuration;
-                constantV = 40.0 / 3.6;
-                leftTimeMoving = 0.2;
-                rightTimeMoving = 2.8 * 3600.0;
-                accelerationDuration = 50.0;
+                double startV, endingV, leftTimeMoving, accelerationDuration;
 
+                startV = 0.0;
+                endingV = 40.0 / 3.6;
+                leftTimeMoving = 3 * 60;
+                accelerationDuration = 50.0;
                 if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
-                    SINSstate.Vz[1] = constantV * Math.Sin(Math.PI / 2.0 * (CurTimeWithAlign - leftTimeMoving) / accelerationDuration);
-                if (CurTimeWithAlign > leftTimeMoving + accelerationDuration && CurTimeWithAlign <= rightTimeMoving)
-                    SINSstate.Vz[1] = constantV;
-                if (CurTimeWithAlign > rightTimeMoving && CurTimeWithAlign <= rightTimeMoving + accelerationDuration)
-                    SINSstate.Vz[1] = constantV * Math.Cos(Math.PI / 2.0 * (CurTimeWithAlign - rightTimeMoving) / accelerationDuration);
+                    SINSstate.Vz[1] = startV - (startV - endingV) * (1.0 + Math.Sin(-Math.PI / 2.0 + Math.PI * (CurTimeWithAlign - leftTimeMoving) / accelerationDuration)) / 2.0;
+
+                startV = endingV;
+                endingV = 10.0 / 3.6;
+                leftTimeMoving = 0.6 * 3600.0;
+                accelerationDuration = 50.0;
+                if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
+                    SINSstate.Vz[1] = startV - (startV - endingV) * (1.0 - Math.Cos(Math.PI * (CurTimeWithAlign - leftTimeMoving) / accelerationDuration)) / 2.0;
+
+                startV = endingV;
+                endingV = 30.0 / 3.6;
+                leftTimeMoving = 1.0 * 3600.0;
+                accelerationDuration = 50.0;
+                if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
+                    SINSstate.Vz[1] = startV - (startV - endingV) * (1.0 + Math.Sin(-Math.PI / 2.0 + Math.PI * (CurTimeWithAlign - leftTimeMoving) / accelerationDuration)) / 2.0;
+
+                startV = endingV;
+                endingV = 15.0 / 3.6;
+                leftTimeMoving = 1.4 * 3600.0;
+                accelerationDuration = 50.0;
+                if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
+                    SINSstate.Vz[1] = startV - (startV - endingV) * (1.0 - Math.Cos(Math.PI * (CurTimeWithAlign - leftTimeMoving) / accelerationDuration)) / 2.0;
+
+                startV = endingV;
+                endingV = 0.0 / 3.6;
+                leftTimeMoving = 1.92 * 3600.0;
+                accelerationDuration = 50.0;
+                if (CurTimeWithAlign > leftTimeMoving && CurTimeWithAlign <= leftTimeMoving + accelerationDuration)
+                    SINSstate.Vz[1] = startV - (startV - endingV) * (1.0 - Math.Cos(Math.PI * (CurTimeWithAlign - leftTimeMoving) / accelerationDuration)) / 2.0;
                 //--------------------------//
 
 

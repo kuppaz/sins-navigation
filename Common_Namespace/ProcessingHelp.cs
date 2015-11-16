@@ -688,7 +688,8 @@ namespace Common_Namespace
                     SINSstate.global_kappa3_grad[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model + 1] * SimpleData.ToDegree;
                     SINSstate.global_scale[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_odo_model + 2];
                     SINSstate.global_HorizontalError[SINSstate.global_indx] = ProcHelp.distance;
-                    SINSstate.global_VerticalError[SINSstate.global_indx] = Math.Abs(SINSstate.Altitude - ProcHelp.AltSNS);
+                    SINSstate.global_HorizontalErrorFromStart[SINSstate.global_indx] = ProcHelp.distance_from_start;
+                    SINSstate.global_VerticalError[SINSstate.global_indx] = SINSstate.Altitude - ProcHelp.AltSNS;
                     SINSstate.global_V_Up[SINSstate.global_indx] = SINSstate.Vx_0[2];
                     SINSstate.global_indx++;
                 }

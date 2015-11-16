@@ -251,6 +251,7 @@ namespace Common_Namespace
                        , global_kappa3_grad = new double[50000]
                        , global_scale = new double[50000]
                        , global_HorizontalError = new double[50000]
+                       , global_HorizontalErrorFromStart = new double[50000]
                        , global_VerticalError = new double[50000]
                        , global_V_Up = new double[50000]
                        ;

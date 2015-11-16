@@ -362,7 +362,7 @@ namespace SINSProcessingModes
                     }
                 }
 
-                if (ProcHelp.distance == double.NaN || Double.IsNaN(ProcHelp.distance)) break;
+                if (ProcHelp.distance == double.NaN || Double.IsNaN(ProcHelp.distance) || ProcHelp.distance > 1000000.0) break;
                 //--- OUTPUT в консоль ---//
                 if (i > 10000 && i % 2000 == 0)
                     Console.WriteLine(SINSstate.Count.ToString()
