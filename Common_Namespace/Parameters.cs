@@ -37,10 +37,11 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = true;
+                SINSstate.MyOwnKalman_Korrection = false;
+                SINSstate.MyOwnKalman_Forecast = false;
 
                 // === best configurations === //
+                //(the best?) VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=0	Class=0.02	Noise=1E-06
                 //VertRel=1	NoisModl=1	MyCorr=0	MyFut=1	CoordNois=0	Class=0.02	Noise=1E-05
                 //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02
                 //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02                                                                                                                                                                                      
