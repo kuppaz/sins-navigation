@@ -224,11 +224,13 @@ namespace Common_Namespace
                 if (SINSstate.Global_file.ToLower().Contains("imitator") && dataArray2.Length >= 22)
                     SINSstate.HeadingImitator = Convert.ToDouble(dataArray2[22]);
 
-                if (SINSstate.Global_file.Contains("GRTVout_GCEF_format"))
+                if (SINSstate.Global_file.Contains("GRTV"))
                 {
                     bool flg_extract_complex_solution = false;
                     if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)") flg_extract_complex_solution = true;
                     if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)") flg_extract_complex_solution = true;
+                    if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd") flg_extract_complex_solution = true;
+                    if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd") flg_extract_complex_solution = true;
 
                     try
                     {
@@ -239,6 +241,8 @@ namespace Common_Namespace
 
                             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)") { amendmentLatitude = 0.0004055550323; amendmentLongitude = -0.0014799999225; }
                             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)") { amendmentLatitude = 0.0004033333445; amendmentLongitude = -0.0015534449943; }
+                            if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd") { amendmentLatitude = 0.000355555555; amendmentLongitude = -0.00132111112; }
+                            if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd") { amendmentLatitude = 0.000355555555; amendmentLongitude = -0.00132111112; }
 
                             SINSstate.GPS_Data.gps_Latitude.Value = Convert.ToDouble(dataArray2[25]) + amendmentLatitude * SimpleData.ToRadian;
                             SINSstate.GPS_Data.gps_Longitude.Value = Convert.ToDouble(dataArray2[26]) + amendmentLongitude * SimpleData.ToRadian;

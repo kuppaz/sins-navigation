@@ -126,7 +126,7 @@ namespace SINS_motion_processing_new_data
 
                         for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 1; this.global_MyOwnKalman_Korrection++)
                         {
-                            for (this.global_MyOwnKalman_Forecast = 0; this.global_MyOwnKalman_Forecast <= 1; this.global_MyOwnKalman_Forecast++)
+                            for (this.global_MyOwnKalman_Forecast = 0; this.global_MyOwnKalman_Forecast <= 0; this.global_MyOwnKalman_Forecast++)
                             {
                                 for (this.global_CoordinateNoiseExist = 0; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
                                 {

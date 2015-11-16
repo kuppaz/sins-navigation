@@ -137,6 +137,8 @@ namespace SINSProcessingModes
                         i = i + 2;
                 }
 
+                //if (SINSstate.Count > 70000) break;
+
 
                 //---------------------------------------------------------------------//
 
