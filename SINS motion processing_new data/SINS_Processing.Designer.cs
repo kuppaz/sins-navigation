@@ -114,6 +114,8 @@
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.GRTVout_GCEF_format_030715 = new System.Windows.Forms.CheckBox();
             this.CycleStartParamChoosing = new System.Windows.Forms.Button();
+            this.GRTV_Ekat_151029_1_zaezd = new System.Windows.Forms.CheckBox();
+            this.GRTV_Ekat_151029_2_zaezd = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1095,11 +1097,35 @@
             this.CycleStartParamChoosing.UseVisualStyleBackColor = true;
             this.CycleStartParamChoosing.Click += new System.EventHandler(this.CycleStartParamChoosing_Click);
             // 
+            // GRTV_Ekat_151029_1_zaezd
+            // 
+            this.GRTV_Ekat_151029_1_zaezd.AutoSize = true;
+            this.GRTV_Ekat_151029_1_zaezd.Location = new System.Drawing.Point(376, 23);
+            this.GRTV_Ekat_151029_1_zaezd.Name = "GRTV_Ekat_151029_1_zaezd";
+            this.GRTV_Ekat_151029_1_zaezd.Size = new System.Drawing.Size(172, 17);
+            this.GRTV_Ekat_151029_1_zaezd.TabIndex = 87;
+            this.GRTV_Ekat_151029_1_zaezd.Text = "GRTV_Ekat_151029_1_zaezd";
+            this.GRTV_Ekat_151029_1_zaezd.UseVisualStyleBackColor = true;
+            this.GRTV_Ekat_151029_1_zaezd.CheckedChanged += new System.EventHandler(this.GRTV_Ekat_151029_1_zaezd_CheckedChanged);
+            // 
+            // GRTV_Ekat_151029_2_zaezd
+            // 
+            this.GRTV_Ekat_151029_2_zaezd.AutoSize = true;
+            this.GRTV_Ekat_151029_2_zaezd.Location = new System.Drawing.Point(376, 37);
+            this.GRTV_Ekat_151029_2_zaezd.Name = "GRTV_Ekat_151029_2_zaezd";
+            this.GRTV_Ekat_151029_2_zaezd.Size = new System.Drawing.Size(172, 17);
+            this.GRTV_Ekat_151029_2_zaezd.TabIndex = 88;
+            this.GRTV_Ekat_151029_2_zaezd.Text = "GRTV_Ekat_151029_2_zaezd";
+            this.GRTV_Ekat_151029_2_zaezd.UseVisualStyleBackColor = true;
+            this.GRTV_Ekat_151029_2_zaezd.CheckedChanged += new System.EventHandler(this.GRTV_Ekat_151029_2_zaezd_CheckedChanged);
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.GRTV_Ekat_151029_2_zaezd);
+            this.Controls.Add(this.GRTV_Ekat_151029_1_zaezd);
             this.Controls.Add(this.CycleStartParamChoosing);
             this.Controls.Add(this.Azimut_29_08_2012);
             this.Controls.Add(this.Azimut_24_08_2012);
@@ -1243,6 +1269,8 @@
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_kulikova;
         private System.Windows.Forms.CheckBox iMSmthd_Is_2_plus_Odo;
         private System.Windows.Forms.Button CycleStartParamChoosing;
+        private System.Windows.Forms.CheckBox GRTV_Ekat_151029_1_zaezd;
+        private System.Windows.Forms.CheckBox GRTV_Ekat_151029_2_zaezd;
     }
 }
 

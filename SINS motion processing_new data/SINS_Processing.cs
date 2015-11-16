@@ -535,6 +535,9 @@ namespace SINS_motion_processing_new_data
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)") ProcHelp.AlgnCnt = 5000;
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)") ProcHelp.AlgnCnt = 7500;
 
+            if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd") ProcHelp.AlgnCnt = 25000;
+            if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd") ProcHelp.AlgnCnt = 14500;
+
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")
             {
                 ProcHelp.AlgnCnt = 27320;
@@ -1088,6 +1091,17 @@ namespace SINS_motion_processing_new_data
                 SINSstate.Global_file = "GRTVout_GCEF_format (070715выезд куликовка)";
             }
 
+            if (GRTV_Ekat_151029_1_zaezd.Checked == true)
+            {
+                myFile = new StreamReader(SimpleData.PathInputString + "PNPPK_Ekat//GRTV_Ekat_151029_1_zaezd.txt");
+                SINSstate.Global_file = "GRTV_Ekat_151029_1_zaezd";
+            }
+            if (GRTV_Ekat_151029_2_zaezd.Checked == true)
+            {
+                myFile = new StreamReader(SimpleData.PathInputString + "PNPPK_Ekat//GRTV_Ekat_151029_2_zaezd.txt");
+                SINSstate.Global_file = "GRTV_Ekat_151029_2_zaezd";
+            }
+
 
 
             if (topo_saratov.Checked == true)
@@ -1152,6 +1166,8 @@ namespace SINS_motion_processing_new_data
             this.GRTVout_GCEF_format_030715.Enabled = false;
             this.GRTVout_GCEF_format_070715_zavod.Enabled = false;
             this.GRTVout_GCEF_format_070715_kulikova.Enabled = false;
+            this.GRTV_Ekat_151029_1_zaezd.Enabled = false;
+            this.GRTV_Ekat_151029_2_zaezd.Enabled = false;
         }
         public void FreeInData()
         {
@@ -1161,6 +1177,8 @@ namespace SINS_motion_processing_new_data
             this.GRTVout_GCEF_format_030715.Enabled = true;
             this.GRTVout_GCEF_format_070715_zavod.Enabled = true;
             this.GRTVout_GCEF_format_070715_kulikova.Enabled = true;
+            this.GRTV_Ekat_151029_1_zaezd.Enabled = true;
+            this.GRTV_Ekat_151029_2_zaezd.Enabled = true;
         }
 
         public void LockParamsOfStart()
@@ -1378,6 +1396,24 @@ namespace SINS_motion_processing_new_data
             else CheckedFalseDataIn();
         }
 
+        private void GRTV_Ekat_151029_1_zaezd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GRTV_Ekat_151029_1_zaezd.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.GRTV_Ekat_151029_1_zaezd.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+        private void GRTV_Ekat_151029_2_zaezd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GRTV_Ekat_151029_2_zaezd.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.GRTV_Ekat_151029_2_zaezd.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
 
 
 
@@ -1682,8 +1718,7 @@ namespace SINS_motion_processing_new_data
         {
 
         }
-
-        
+       
 
 
         
