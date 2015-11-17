@@ -514,8 +514,8 @@ namespace Common_Namespace
                 ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 306.0;
 
                 //--- Координаты Кроссовского ---//
-                //ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 60.71691 * SimpleData.ToRadian;
-                //ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.06235 * SimpleData.ToRadian;
+                //ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 60.71691011111111 * SimpleData.ToRadian;
+                //ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.06235011111111 * SimpleData.ToRadian;
                 //ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 306.0;
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
@@ -539,14 +539,14 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = false;
+                SINSstate.MyOwnKalman_Korrection = true;
                 SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 // === best configurations === //

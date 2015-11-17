@@ -49,17 +49,6 @@ namespace Common_Namespace
                 }
             }
         }
-        public static void Make_F_NB(double timeStep, Kalman_Vars KalmanVars)
-        {
-            unsafe
-            {
-                fixed (double* _a = KalmanVars.Matrix_A, _f = KalmanVars.TransitionMatrixF)
-                {
-                    Make_F_nb(timeStep, _a, _f, SimpleData.iMx);
-                }
-            }
-        }
-
 
 
         public static double[] rsb_rsb(double[] pdP, int iMx)
@@ -134,14 +123,10 @@ namespace Common_Namespace
 
         public static void Check_Measurement(SINS_State SINSstate, Kalman_Vars KalmanVars)
         {
-            for (int i = 0; i < SimpleData.iMx; i++)
-                KalmanVars.StringOfMeasure[i] = 0.0;
+            SimpleOperations.NullingOfArray(KalmanVars.StringOfMeasure);
 
-            for (int i = 0; i < SimpleData.iMz; i++)
-            {
-                KalmanVars.pdResidual[i] = 0.0;
-                KalmanVars.pdSigmaApriori[i] = 0.0;
-            }
+            SimpleOperations.NullingOfArray(KalmanVars.pdResidual);
+            SimpleOperations.NullingOfArray(KalmanVars.pdSigmaApriori);
 
             for (int i = 0; i < KalmanVars.cnt_measures; i++)
             {
@@ -164,11 +149,8 @@ namespace Common_Namespace
 
         public static void KalmanCorrection(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
-            for (int i = 0; i < SimpleData.iMx; i++)
-            {
-                KalmanVars.KalmanFactor[i] = 0.0;
-                KalmanVars.StringOfMeasure[i] = 0.0;
-            }
+            SimpleOperations.NullingOfArray(KalmanVars.KalmanFactor);
+            SimpleOperations.NullingOfArray(KalmanVars.StringOfMeasure);
 
             if (!SINSstate.MyOwnKalman_Korrection)
             {
@@ -258,71 +240,6 @@ namespace Common_Namespace
                     }
                 }
             }
-            //else
-            //{
-            //    double[] f;
-            //    Matrix CovarianceMatrixS_p = new Matrix(SimpleData.iMx, SimpleData.iMx), 
-            //        CovarianceMatrixS_m = new Matrix(SimpleData.iMx, SimpleData.iMx);
-
-            //    for (int t = 0; t < KalmanVars.cnt_measures; t++)
-            //    {
-            //        f = new double[SimpleData.iMx];
-
-            //        SimpleOperations.MakeMatrixFromVector(CovarianceMatrixS_m, KalmanVars.CovarianceMatrixS_m, SimpleData.iMx);
-
-            //        for (int i = 0; i < SimpleData.iMx; i++)
-            //            KalmanVars.StringOfMeasure[i] = KalmanVars.Matrix_H[t * SimpleData.iMx + i];
-
-            //        double[] Sm_f = new double[SimpleData.iMx];
-            //        double[] E_ffalpha = new double[SimpleData.iMx * SimpleData.iMx],
-            //            tmpArray = new double[SimpleData.iMx * SimpleData.iMx],
-            //            tmpArray2 = new double[SimpleData.iMx * SimpleData.iMx];
-
-            //        SimpleOperations.CopyArray(f, CovarianceMatrixS_m.Transpose() * KalmanVars.StringOfMeasure);
-
-            //        double alpha = KalmanVars.Noize_Z[t] * KalmanVars.Noize_Z[t];
-            //        for (int j = 0; j < SimpleData.iMx; j++)
-            //            alpha += f[j] * f[j];
-
-            //        // --- Матрица E - ff/alpha ---
-            //        for (int i = 0; i < SimpleData.iMx; i++)
-            //        {
-            //            E_ffalpha[i * SimpleData.iMx + i] = 1.0;
-            //            for (int j = 0; j < SimpleData.iMx; j++)
-            //                E_ffalpha[i * SimpleData.iMx + j] -= f[i] * f[j] / alpha;
-            //        }
-            //        // --- Корень из (E - ff/alpha) ---
-            //        // -------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------
-            //        SimpleOperations.CopyArray(tmpArray, rsb_rsb(E_ffalpha, SimpleData.iMx));
-            //        // -------!!!!!!!ТУТ НУЖНО ПО ЧЕСТНОМУ СЧИТАТЬ КОРЕНЬ!!!!!!!!!!!!!!----------
-            //        // -------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!----------
-
-            //        // --- Получаем S+= S- * sqrt(E - ff/alpha) ---
-            //        for (int i = 0; i < SimpleData.iMx; i++)
-            //            for (int j = 0; j < SimpleData.iMx; j++)
-            //                for (int k = 0; k < SimpleData.iMx; k++)
-            //                    tmpArray2[i * SimpleData.iMx + j] += KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + k] * tmpArray[k * SimpleData.iMx + j];
-            //        SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, tmpArray2);
-
-            //        SimpleOperations.CopyArray(Sm_f, CovarianceMatrixS_m * f);
-
-            //        // --- //
-            //        double h_x_ = 0.0;
-            //        for (int j = 0; j < SimpleData.iMx; j++)
-            //            h_x_ += KalmanVars.StringOfMeasure[j] * KalmanVars.ErrorConditionVector_m[j];
-
-            //        for (int j = 0; j < SimpleData.iMx; j++)
-            //            KalmanVars.ErrorConditionVector_p[j] = KalmanVars.ErrorConditionVector_m[j] + Sm_f[j] * (KalmanVars.Measure[t] - h_x_) / alpha;
-
-
-            //        if (t < KalmanVars.cnt_measures - 1)
-            //        {
-            //            SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_m, KalmanVars.ErrorConditionVector_p);
-            //            SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_m, KalmanVars.CovarianceMatrixS_p);
-            //        }
-            //    }
-            //}
-
         }
 
 
@@ -337,7 +254,6 @@ namespace Common_Namespace
                         _f = KalmanVars.TransitionMatrixF, _sq = KalmanVars.CovarianceMatrixNoise)
                     {
                         dgq0b(_xp, _sp, _f, _sq, _xm, _sm, SimpleData.iMx, SimpleData.iMq);
-                        //dg0b(_xp, _sp, _f,_xm, _sm, SimpleData.iMx);
                     }
                 }
                 SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
@@ -345,45 +261,68 @@ namespace Common_Namespace
             }
             else
             {
-                int datetimeCounter = 0;
-                //конец 0
-                //SINSstate.endDt[datetimeCounter] = DateTime.Now;
-                //SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
-                //datetimeCounter++;
+                double c = 0.0;
+                double[] w = new double[SimpleData.iMx];
 
-                Matrix tmpMatrix = new Matrix(SimpleData.iMx, SimpleData.iMx),
-                    tmpMatrix_2 = new Matrix(SimpleData.iMx, SimpleData.iMx),
-                    tmpMatrix_3 = new Matrix(SimpleData.iMx, SimpleData.iMq);
-
-                SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_m, SimpleOperations.ArrayToMatrix(KalmanVars.TransitionMatrixF) * KalmanVars.ErrorConditionVector_p);
-
-                //SimpleOperations.CopyMatrix(tmpMatrix_3, SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixNoise, SimpleData.iMx, SimpleData.iMq));
-                double[] diagonal_sqared_CovarianceMatrixNoise = new double[SimpleData.iMx];
                 for (int i = 0; i < SimpleData.iMx; i++)
-                    diagonal_sqared_CovarianceMatrixNoise[i] = Math.Pow(KalmanVars.CovarianceMatrixNoise[i * SimpleData.iMx + i], 2);
+                {
+                    c = 0.0;
+                    for (int j = 0; j < SimpleData.iMx; j++)
+                    {
+                        double y = 0.0;
+                        for (int k = 0; k <= i; k++)
+                            y += KalmanVars.CovarianceMatrixS_p[k * SimpleData.iMx + i] * KalmanVars.TransitionMatrixF[j * SimpleData.iMx + k];
 
+                        c += KalmanVars.TransitionMatrixF[i * SimpleData.iMx + j] * KalmanVars.ErrorConditionVector_p[j];
+                        KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + j] = y;
+                    }
+                    KalmanVars.ErrorConditionVector_m[i] = c;
+                }
 
-                SINSstate.startDt[datetimeCounter] = DateTime.Now;
+                for (int k = SimpleData.iMx - 1; k > 0; k--)
+                {
+                    double y = 0.0, y1 = 0.0;
+                    SimpleOperations.NullingOfArray(w);
 
-                SimpleOperations.CopyMatrix(tmpMatrix,
-                    SimpleOperations.MultiplyRightUpperMatrix(SimpleOperations.ArrayToMatrix(KalmanVars.TransitionMatrixF), SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p))
-                    );
+                    for (int i = 0; i < SimpleData.iMx; i++)
+                        y += Math.Pow(KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + k], 2);
+                    for (int i = 0; i < SimpleData.iMq; i++)
+                        y += Math.Pow(KalmanVars.CovarianceMatrixNoise[k * SimpleData.iMq + i], 2);
 
-                SimpleOperations.PrintMatrixToFile(SimpleOperations.MatrixToArray(tmpMatrix), SimpleData.iMx, SimpleData.iMx, "tmpMatrix");
+                    y = Math.Sqrt(y);
+                    double dy = 1.0 / y;
+                    for (int j = 0; j < k; j++)
+                    {
+                        y1 = 0.0;
+                        for (int i = 0; i < SimpleData.iMx; i++)
+                            y1 += KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + j] * KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + k];
+                        for (int i = 0; i < SimpleData.iMq; i++)
+                            y1 += KalmanVars.CovarianceMatrixNoise[j * SimpleData.iMq + i] * KalmanVars.CovarianceMatrixNoise[k * SimpleData.iMq + i];
 
-                SINSstate.endDt[datetimeCounter] = DateTime.Now;
-                SINSstate.startDt[datetimeCounter + 1] = DateTime.Now;
-                datetimeCounter++;
+                        y1 *= dy;
+                        w[j] = y1;
 
-                //SimpleOperations.CopyMatrix(tmpMatrix_2, tmpMatrix * tmpMatrix.Transpose());
-                SimpleOperations.CopyMatrix(tmpMatrix_2, SimpleOperations.MultiplyUpperMatrix(tmpMatrix, tmpMatrix.Transpose()));
+                        c = y1 * dy;
+                        for (int i = 0; i < SimpleData.iMx; i++)
+                            KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + j] -= (KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + k]) * c;
+                        for (int i = 0; i < SimpleData.iMq; i++)
+                            KalmanVars.CovarianceMatrixNoise[j * SimpleData.iMq + i] -= (KalmanVars.CovarianceMatrixNoise[k * SimpleData.iMq + i]) * c;
+                    }
 
-                SimpleOperations.CopyMatrix(tmpMatrix, tmpMatrix_2 + SimpleOperations.ArrayToDiagonalMatrix(diagonal_sqared_CovarianceMatrixNoise));
+                    for (int i = 0; i < k; i++)
+                        KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx + k] = w[i];
 
-                SINSstate.endDt[datetimeCounter] = DateTime.Now;
+                    KalmanVars.CovarianceMatrixS_m[SimpleData.iMx * k + k] = y;
+                }
 
+                c = 0.0;
+                for (int i = 0; i < SimpleData.iMx; i++)
+                    c += Math.Pow(KalmanVars.CovarianceMatrixS_m[i * SimpleData.iMx], 2);
+                for (int i = 0; i < SimpleData.iMq; i++)
+                    c += Math.Pow(KalmanVars.CovarianceMatrixNoise[i], 2);
+                
+                KalmanVars.CovarianceMatrixS_m[0] = Math.Sqrt(c);
 
-                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_m, rsb_rsb(SimpleOperations.MatrixToArray(tmpMatrix), SimpleData.iMx));
 
                 SimpleOperations.CopyArray(KalmanVars.CovarianceMatrixS_p, KalmanVars.CovarianceMatrixS_m);
                 SimpleOperations.CopyArray(KalmanVars.ErrorConditionVector_p, KalmanVars.ErrorConditionVector_m);
@@ -655,67 +594,6 @@ namespace Common_Namespace
             }
         }
 
-
-        /*                                */
-        /*           f0b НИНЫ БОРИСОВНЫ                  */
-        /*                                */
-        unsafe static void f0b_nb(double z, double* xm, double* sm, double* h, double r, double* xp, double* sp, double* kf, int m)
-        {
-            int i, j, ji, ii, m1;
-            double y1, c, y, zm, al, al1, a;
-            m1 = m + 1;
-            y1 = *sm;
-            c = *h;
-            y = c * y1;
-            zm = c * *xm;
-            al = r + y * y;
-            *kf = y1 * y;
-            /*
-              if((r/al) < 0.0) {
-                  _setcursor(1,1,0);
-                  printf(" sqrt < 0 in f0b"); getch();
-
-              }
-              */
-            *sp = y1 * Math.Sqrt(r / al);
-            for (i = 1; i < m; i++)
-            {
-                y = *(h + i);
-                zm += y * *(xm + i);
-                ii = m1 * i;
-                y *= *(sm + ii);
-                for (j = 0; j < i; j++) y += *(sm + j * m + i) * *(h + j);
-                al1 = al + y * y;
-                /*
-             if((al*al1) < 0.0) {
-                 _setcursor(1,1,0);
-                 printf(" sqrt < 0 in f0b"); getch(); }
-                 */
-                a = 1.0 / Math.Sqrt(al * al1);
-                c = y * a;
-                a *= al;
-                al = al1;
-                for (j = 0; j < i; j++)
-                {
-                    y1 = *(kf + j);
-                    ji = j * m + i;
-                    al1 = *(sm + ji);
-                    *(sp + ji) = al1 * a - y1 * c;
-                    *(kf + j) = y1 + al1 * y;
-                }
-                y1 = *(sm + ii);
-                *(sp + ii) = y1 * a;
-                *(kf + i) = y1 * y;
-            }
-            y = 1.0 / al;
-            y1 = (z - zm) * y;
-            for (i = 0; i < m; i++)
-            {
-                a = *(kf + i);
-                *(xp + i) = *(xm + i) + a * y1;
-                *(kf + i) = a * y;
-            }
-        }
 
         /*
 *
@@ -1216,91 +1094,6 @@ namespace Common_Namespace
 
 
 
-        /*                                */
-        /*           dgq0b   НИНЫ БОРИСОВНЫ              */
-        /*                                */
-        unsafe static void dgq0b_nb(double* xp, double* sp, double* f, double* sq, double* xm, double* sm, int m, int mq)
-        {
-            int i, j, k, ij, im, jq, kq, m1;
-            double c, y, y1, dy;
-            //double *w = new double [m];
-            double[] w = new double[m];
-            //double sqn[Mx*Mx];
-            for (i = 0; i < m; i++) w[i] = 0.0;
-            m1 = m + 1;
-            fixed (double* _w = w)
-            {
-                for (i = 0; i < m; i++)
-                {
-                    c = 0.0;
-                    im = i * m;
-                    for (j = 0; j < m; j++)
-                    {
-                        y = 0.0;
-                        jq = j * m;
-                        for (k = 0; k <= i; k++) y += *(sp + k * m + i) * *(f + jq + k);
-                        ij = im + j;
-                        c += *(f + ij) * *(xp + j);
-                        *(sm + ij) = y;
-                    }
-                    *(xm + i) = c;
-                }
-                for (k = m - 1; k > 0; k--)
-                {
-                    y = 0.0;
-                    kq = k * mq;
-                    for (i = 0; i < m; i++) _w[i] = 0.0;
-                    for (i = 0; i < m; i++)
-                    {
-                        y1 = *(sm + i * m + k);
-                        y += y1 * y1;
-                    }
-                    for (i = 0; i < mq; i++)
-                    {
-                        y1 = *(sq + kq + i);
-                        y += y1 * y1;
-                    }
-                    y = Math.Sqrt(y);
-                    dy = 1.0 / y;
-                    for (j = 0; j < k; j++)
-                    {
-                        y1 = 0.0;
-                        jq = j * mq;
-                        for (i = 0; i < m; i++)
-                        {
-                            im = i * m;
-                            y1 += *(sm + im + j) * *(sm + im + k);
-                        }
-                        for (i = 0; i < mq; i++) y1 += *(sq + jq + i) * *(sq + kq + i);
-                        y1 *= dy;
-                        *(_w + j) = y1;
-                        c = y1 * dy;
-                        for (i = 0; i < m; i++)
-                        {
-                            im = i * m;
-                            *(sm + im + j) -= (*(sm + im + k)) * c;
-                        }
-                        for (i = 0; i < mq; i++) *(sq + jq + i) -= (*(sq + kq + i)) * c;
-                    }
-                    for (i = 0; i < k; i++) *(sm + i * m + k) = *(_w + i);
-                    *(sm + m1 * k) = y;
-                }
-                c = 0.0;
-                for (i = 0; i < m; i++)
-                {
-                    y = *(sm + i * m);
-                    c += y * y;
-                }
-                for (i = 0; i < mq; i++)
-                {
-                    y = *(sq + i);
-                    c += y * y;
-                }
-                *sm = Math.Sqrt(c);
-            }
-            //delete [] w;
-        }
-
         /*
         *
         *_________________________________________________________________
@@ -1352,26 +1145,6 @@ namespace Common_Namespace
                     y = dt * *(a + ij) + c * y;
                     if (i == j) y = 1.0 + y;
                     *(f + ij) = y;
-                }
-            }
-        }
-
-        unsafe static void Make_F_nb(double dDt, double* pdA, double* pdF, int iM)
-        {
-            int i, j, ij, im;
-            double dY;
-
-            for (i = 0; i < (iM * iM); i++) pdF[i] = 0.0;
-
-            for (i = 0; i < iM; i++)
-            {
-                im = i * iM;
-                for (j = 0; j < iM; j++)
-                {
-                    ij = im + j;
-                    dY = dDt * pdA[ij];
-                    if (i == j) dY += 1.0;
-                    pdF[ij] = dY;
                 }
             }
         }
