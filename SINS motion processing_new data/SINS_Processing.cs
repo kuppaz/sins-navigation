@@ -52,7 +52,7 @@ namespace SINS_motion_processing_new_data
                 , global_NoiseModelFlag = 0
                 , global_MyOwnKalman_Korrection = 0
                 , global_MyOwnKalman_Forecast = 0
-                , global_CoordinateNoiseExist = 0 ;
+                , global_CoordinateNoiseExist = 0;
 
 
 
@@ -114,7 +114,7 @@ namespace SINS_motion_processing_new_data
             Cycle_Start_Configurations.WriteLine(str);
 
             int i = 0;
-            for (this.global_existRelationHoriz_VS_Vertical = 0; this.global_existRelationHoriz_VS_Vertical <= 1; this.global_existRelationHoriz_VS_Vertical++)
+            for (this.global_existRelationHoriz_VS_Vertical = 0; this.global_existRelationHoriz_VS_Vertical <= 0; this.global_existRelationHoriz_VS_Vertical++)
             {
                 for (this.global_NoiseModelFlag = 0; this.global_NoiseModelFlag <= 1; this.global_NoiseModelFlag++)
                 {
@@ -155,6 +155,8 @@ namespace SINS_motion_processing_new_data
                                         SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
                                         SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
                                         SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
+                                        for (int r = 0; r < array_VerticalError.Length; r++)
+                                            array_VerticalError[r] = Math.Abs(array_VerticalError[r]);
                                         SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
 
                                         string str_out = "";
@@ -173,7 +175,7 @@ namespace SINS_motion_processing_new_data
                                         if (this.global_indx > 1)
                                             str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
                                                 + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
-                                                + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(array_VerticalError[this.global_indx - 2], 3)
+                                                + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(this.global_VerticalError[this.global_indx - 2], 3)
                                                 + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
                                                 + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
                                                 + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
@@ -199,11 +201,11 @@ namespace SINS_motion_processing_new_data
 
         private void NoiseParamsScanning_Click(object sender, EventArgs e)
         {
-            double NoiseVel_start = 1E-4, 
-                   NoiseVel_end = 1E-1, 
+            double NoiseVel_start = 1E-4,
+                   NoiseVel_end = 1E-1,
                    NoiseVel_multpl = 5.0;
 
-            double NoiseAngl_start = 1E-4, 
+            double NoiseAngl_start = 1E-4,
                    NoiseAngl_end = 1E-1,
                    NoiseAngl_multpl = 5.0;
 
@@ -636,7 +638,7 @@ namespace SINS_motion_processing_new_data
             else
                 SINSprocessing.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
 
-            
+
             //--- Если запустили циклический подбор параметров шумов ---//
             if (this.NoiseParamScanning)
             {
@@ -715,13 +717,13 @@ namespace SINS_motion_processing_new_data
                 SINSstate.odo_min_increment = 0.01;
 
             //---Здесь SINSstate.stdF и SINSstate.stNu считываются в проекции на географию и используются только для определения начальной ошибки по углам
-            SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) *9.81;
-            SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) *9.81;
+            SINSstate.stdF[0] = Convert.ToDouble(dataArray[9]) * 9.81;
+            SINSstate.stdF[1] = Convert.ToDouble(dataArray[11]) * 9.81;
             SINSstate.stdNu = Convert.ToDouble(dataArray[15]);
 
-            SINSstate.stdF_Oz[0] = Convert.ToDouble(dataArray[39]) *9.81;
-            SINSstate.stdF_Oz[1] = Convert.ToDouble(dataArray[41]) *9.81;
-            SINSstate.stdF_Oz[2] = Convert.ToDouble(dataArray[43]) *9.81;
+            SINSstate.stdF_Oz[0] = Convert.ToDouble(dataArray[39]) * 9.81;
+            SINSstate.stdF_Oz[1] = Convert.ToDouble(dataArray[41]) * 9.81;
+            SINSstate.stdF_Oz[2] = Convert.ToDouble(dataArray[43]) * 9.81;
             SINSstate.stdNu_Oz[0] = Convert.ToDouble(dataArray[45]);
             SINSstate.stdNu_Oz[1] = Convert.ToDouble(dataArray[47]);
             SINSstate.stdNu_Oz[2] = Convert.ToDouble(dataArray[49]);
@@ -1723,14 +1725,14 @@ namespace SINS_motion_processing_new_data
         {
 
         }
-       
-
-
-        
 
 
 
-        
+
+
+
+
+
 
     }
 }

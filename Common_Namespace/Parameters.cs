@@ -63,7 +63,7 @@ namespace Common_Namespace
                 SINSstate.odo_min_increment = 0.2;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
-                KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment ;
+                KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
@@ -408,8 +408,8 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 // === best configurations === //
@@ -479,13 +479,19 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 // === best configurations === //
-                
+                //VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05	5.817	21.384	8.651	57.554	-119.208	36.832
+                //(the best?) VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-05	4.845	15.295	3.84	59.211	-26.893
+                //VertRel=1	NoisModl=0	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=NO	3.511	12.165	6.807	61.491	-4.327	10.444
+                //VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05	5.314	24.31	5.396	55.181	125.746	303.253	-246.908
+                //(OK при OdoLimitMeasuresNum = 1) VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05	9.124	22.376	7.639	49.547	5.658	8.536	-8.187
+                //(только горизонт, OdoLimitMeasuresNum = 1) VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-06	20.608	56.353	48.16	19.782
+
                 KalmanVars.Noise_Pos = 1.0;
                 // -------------------------------------------//
 

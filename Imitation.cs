@@ -449,11 +449,16 @@ namespace MovingImitator
             //    Params_dnu_0[j] = 0.0; //град/час
             //}
 
+            //for (int j = 0; j < 3; j++)
+            //{
+            //    Params_df_0[0] = 1E-5; //далее умножается G
+            //    Params_df_0[1] = -2E-5;
+            //    Params_df_0[2] = 1.5E-5;
+            //    Params_dnu_0[j] = 0.02; //град/час
+            //}
             for (int j = 0; j < 3; j++)
             {
-                Params_df_0[0] = 1E-5; //далее умножается G
-                Params_df_0[1] = -2E-5;
-                Params_df_0[2] = 1.5E-5;
+                Params_df_0[j] = 1E-5; //далее умножается G
                 Params_dnu_0[j] = 0.02; //град/час
             }
 
