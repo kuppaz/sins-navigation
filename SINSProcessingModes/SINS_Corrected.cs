@@ -10,7 +10,7 @@ namespace SINSProcessingModes
     public class SINS_Corrected
     {
         public static StreamWriter Nav_FeedbackSolution, Nav_EstimateSolution, Nav_Errors, Nav_Autonomous, Nav_StateErrorsVector, ForHelp;
-        public static StreamWriter Nav_Smoothed, ForHelpSmoothed;
+        public static StreamWriter Nav_Smoothed, ForHelpSmoothed, Nav_Vertical_StateErrorsVector;
 
         public static StreamWriter ForHelp_2 = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_2.txt");
         public static StreamWriter SlippageLog = new StreamWriter(SimpleData.PathOutputString + "Debaging//SlippageLog.txt");
@@ -68,6 +68,8 @@ namespace SINSProcessingModes
             StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
             Nav_FeedbackSolution = new StreamWriter(SimpleData.PathOutputString + SINSstate.global_paramsCycleScanning_Path + SINSstate.global_paramsCycleScanning + "S" + str_name_forvard_back + "_SlnFeedBack" + ".txt");
             Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate" + ".txt");
+
+            Nav_Vertical_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_ErrVect_Vertical.txt");
 
             Cicle_Debag_Solution = new StreamWriter(SimpleData.PathOutputString + "Debaging//Solution_"
                 + KalmanVars.Noise_Angl[0].ToString("E2") + "_" + KalmanVars.Noise_Vel[0].ToString("E2") + ".txt");
@@ -160,6 +162,9 @@ namespace SINSProcessingModes
                     SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
                     SINSstate.OdoSpeed_s[1] = SINSstate.OdometerVector[1] / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
 
+                    if (SINSstate.flag_SeparateHorizVSVertical)
+                        SINSstate.Cumulative_KappaEst[0] = SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1];
+
                     //--- Если обратные связи, то сразу корректируем измерение одометра по честной оценке ---//
                     if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
                     {
@@ -183,7 +188,6 @@ namespace SINSProcessingModes
                 KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
 
                 endDt[1] = DateTime.Now;
-                startDt[2] = DateTime.Now;
 
 
                 if (SINSstate.Count % 5000 == 0)
@@ -194,6 +198,7 @@ namespace SINSProcessingModes
                 }
 
 
+                startDt[2] = DateTime.Now;
                 // --- Тут можно рулить перевязками вертикально и гор. каналов. Kappa_1 - если убрать, то решение по высоте может получиться хорошим ---//
                 if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
@@ -202,7 +207,6 @@ namespace SINSProcessingModes
 
                 if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-
                 endDt[2] = DateTime.Now;
 
                 
@@ -349,7 +353,7 @@ namespace SINSProcessingModes
                 //--- OUTPUT в файлы ---//
                 if (i != (SINSstate.LastCountForRead - 1) && SINSstate.Global_file != "Saratov_run_2014_07_23")
                     ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution,
-                        Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution, Check_Measurement);
+                        Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution, Check_Measurement, Nav_Vertical_StateErrorsVector);
                 else if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                 {
                     //--- Раз в секунду вывод ---//
@@ -358,7 +362,7 @@ namespace SINSProcessingModes
                         SINSstate.FreqOutput = 1;
                         SINSstate.CountPrev = SINSstate.Count;
                         ProcessingHelp.OutPutInfo(i, start_i, ProcHelp, SINSstate, SINSstate2, SINSstate_OdoMod, SINSstate_Smooth, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution,
-                            Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution, Check_Measurement);
+                            Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Nav_Smoothed, KMLFileOut, KMLFileOutSmthd, GRTV_output, Cicle_Debag_Solution, Check_Measurement, Nav_Vertical_StateErrorsVector);
                     }
                 }
 
@@ -447,6 +451,7 @@ namespace SINSProcessingModes
             Nav_Autonomous.Close();
             Speed_Angles.Close();
             Cicle_Debag_Solution.Close();
+            Nav_Vertical_StateErrorsVector.Close();
             Check_Measurement.Close();
             Nav_Errors.Close();
             Nav_Smoothed.Close();

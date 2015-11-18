@@ -64,7 +64,7 @@ namespace Common_Namespace
 
         public bool existRelationHoriz_VS_Vertical = true;
 
-        public bool MyOwnKalman_Korrection = false, MyOwnKalman_Forecast = false;
+        public bool MyOwnKalman_Korrection = false;
 
         public int FreqOutput, LastCountForRead;
         public bool DoHaveControlPoints = false;
@@ -218,6 +218,7 @@ namespace Common_Namespace
         public double Noise_GPS_PositionError;
         public bool flag_VupOdo_till_VupSINS;
         public double decrementVerticalNoise;
+        public bool flag_SeparateHorizVSVertical;
 
         public string SmoothingOutput_str_X, SmoothingOutput_str_P = "", SmoothingOutput_strForBack = "";
 
@@ -240,7 +241,7 @@ namespace Common_Namespace
         public double[] Vertical_Cumulative_KalmanErrorVector = new double[SimpleData.iMx_Vertical];
 
         public int value_iMx_dV_12, value_iMx_alphaBeta, value_iMx_Nu0, value_iMx_f0_12, value_iMx_f0_3, value_iMx_dr3, value_iMx_dV3, value_iMx_r_odo_3,
-            value_iMx_r_odo_12, value_iMx_kappa_13_ds;
+            value_iMx_r_odo_12, value_iMx_kappa_3_ds, value_iMx_kappa_1;
         public bool flag_iMSmthd_Is_2_plus_Odo;
 
 

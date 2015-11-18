@@ -116,6 +116,7 @@
             this.CycleStartParamChoosing = new System.Windows.Forms.Button();
             this.GRTV_Ekat_151029_1_zaezd = new System.Windows.Forms.CheckBox();
             this.GRTV_Ekat_151029_2_zaezd = new System.Windows.Forms.CheckBox();
+            this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1119,11 +1120,22 @@
             this.GRTV_Ekat_151029_2_zaezd.UseVisualStyleBackColor = true;
             this.GRTV_Ekat_151029_2_zaezd.CheckedChanged += new System.EventHandler(this.GRTV_Ekat_151029_2_zaezd_CheckedChanged);
             // 
+            // SeparateHorizVSVertical
+            // 
+            this.SeparateHorizVSVertical.AutoSize = true;
+            this.SeparateHorizVSVertical.Location = new System.Drawing.Point(846, 13);
+            this.SeparateHorizVSVertical.Name = "SeparateHorizVSVertical";
+            this.SeparateHorizVSVertical.Size = new System.Drawing.Size(142, 17);
+            this.SeparateHorizVSVertical.TabIndex = 89;
+            this.SeparateHorizVSVertical.Text = "SeparateHorizVSVertical";
+            this.SeparateHorizVSVertical.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.SeparateHorizVSVertical);
             this.Controls.Add(this.GRTV_Ekat_151029_2_zaezd);
             this.Controls.Add(this.GRTV_Ekat_151029_1_zaezd);
             this.Controls.Add(this.CycleStartParamChoosing);
@@ -1271,6 +1283,7 @@
         private System.Windows.Forms.Button CycleStartParamChoosing;
         private System.Windows.Forms.CheckBox GRTV_Ekat_151029_1_zaezd;
         private System.Windows.Forms.CheckBox GRTV_Ekat_151029_2_zaezd;
+        private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
     }
 }
 

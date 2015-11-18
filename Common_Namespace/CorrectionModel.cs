@@ -12,7 +12,7 @@ namespace Common_Namespace
         //--------------------------------------------------------------------------
         public static void Make_H_CONTROLPOINTS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod, double Latitude_CP, double Longitude_CP, double Altitude_CP)
         {
-            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_odo_model = SINSstate.value_iMx_kappa_13_ds,
+            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
 
             int iMx_dV_12 = SINSstate.value_iMx_dV_12,
@@ -105,7 +105,7 @@ namespace Common_Namespace
         //--------------------------------------------------------------------------
         public static void Make_H_VELOCITY(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
-            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_odo_model = SINSstate.value_iMx_kappa_13_ds,
+            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
 
             int iMx_dV_12 = SINSstate.value_iMx_dV_12,
@@ -130,12 +130,15 @@ namespace Common_Namespace
 
             if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
             {
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[0, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[0, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_x0[0];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[1, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 1] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[1, 1];
-                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_x0[1];
+                if (SINSstate.flag_SeparateHorizVSVertical == false)
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_1 + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[0, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 1] = -SINSstate.OdoSpeed_x0[0];
+
+                if (SINSstate.flag_SeparateHorizVSVertical == false)
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_kappa_1 + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_kappa_3_ds + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[1, 1];
+                KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_kappa_3_ds + 1] = -SINSstate.OdoSpeed_x0[1];
             }
             KalmanVars.cnt_measures += 2;
 
@@ -146,9 +149,10 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
                 {
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[2, 1];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[2, 1];
-                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = -SINSstate.OdoSpeed_x0[2];
+                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_1 + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[2, 1];
+                    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 1] = -SINSstate.OdoSpeed_x0[2];
                 }
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_V * 1.0;
 
@@ -160,7 +164,7 @@ namespace Common_Namespace
 
         public static void Make_H_VELOCITY_Mz13(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
-            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_odo_model = SINSstate.value_iMx_kappa_13_ds,
+            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
 
             int iMx_dV_12 = SINSstate.value_iMx_dV_12,
@@ -208,7 +212,7 @@ namespace Common_Namespace
         //--------------------------------------------------------------------------
         public static void Make_H_KNS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
-            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_odo_model = SINSstate.value_iMx_kappa_13_ds,
+            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
 
             int iMx_dV_12 = SINSstate.value_iMx_dV_12,
@@ -248,7 +252,7 @@ namespace Common_Namespace
         //--------------------------------------------------------------------------
         public static void Make_H_GPS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
         {
-            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_odo_model = SINSstate.value_iMx_kappa_13_ds,
+            int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
 
             int iMx_dV_12 = SINSstate.value_iMx_dV_12,

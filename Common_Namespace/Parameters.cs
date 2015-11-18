@@ -28,7 +28,6 @@ namespace Common_Namespace
 
             SINSstate.decrementVerticalNoise = 1.0;
             SINSstate.MyOwnKalman_Korrection = false;
-            SINSstate.MyOwnKalman_Forecast = false;
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
@@ -37,8 +36,7 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = false;
-                SINSstate.MyOwnKalman_Forecast = false;
+                SINSstate.MyOwnKalman_Korrection = true;
 
                 // === best configurations === //
                 //(the best?) VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=0	Class=0.02	Noise=1E-06
@@ -210,7 +208,6 @@ namespace Common_Namespace
 
                 // -- С MyOwnKalman_Korrection=true при чекнутых шумах dR только в горизонте получается конечная ошибка  метра!!
                 SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -335,7 +332,6 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -403,7 +399,6 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -475,7 +470,6 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -540,7 +534,6 @@ namespace Common_Namespace
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
-                SINSstate.MyOwnKalman_Forecast = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
