@@ -211,7 +211,7 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
@@ -393,7 +393,7 @@ namespace Common_Namespace
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
-                KalmanVars.OdoNoise_STOP = 0.5;
+                KalmanVars.OdoNoise_STOP = 0.001;
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
@@ -469,11 +469,11 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Korrection = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
@@ -537,7 +537,7 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===

@@ -117,6 +117,7 @@
             this.GRTV_Ekat_151029_1_zaezd = new System.Windows.Forms.CheckBox();
             this.GRTV_Ekat_151029_2_zaezd = new System.Windows.Forms.CheckBox();
             this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
+            this.equalizeVertNoise = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1123,18 +1124,29 @@
             // SeparateHorizVSVertical
             // 
             this.SeparateHorizVSVertical.AutoSize = true;
-            this.SeparateHorizVSVertical.Location = new System.Drawing.Point(846, 13);
+            this.SeparateHorizVSVertical.Location = new System.Drawing.Point(797, 12);
             this.SeparateHorizVSVertical.Name = "SeparateHorizVSVertical";
             this.SeparateHorizVSVertical.Size = new System.Drawing.Size(142, 17);
             this.SeparateHorizVSVertical.TabIndex = 89;
             this.SeparateHorizVSVertical.Text = "SeparateHorizVSVertical";
             this.SeparateHorizVSVertical.UseVisualStyleBackColor = true;
             // 
+            // equalizeVertNoise
+            // 
+            this.equalizeVertNoise.AutoSize = true;
+            this.equalizeVertNoise.Location = new System.Drawing.Point(797, 27);
+            this.equalizeVertNoise.Name = "equalizeVertNoise";
+            this.equalizeVertNoise.Size = new System.Drawing.Size(201, 17);
+            this.equalizeVertNoise.TabIndex = 90;
+            this.equalizeVertNoise.Text = "Сравнять верт.шум ньютонометра";
+            this.equalizeVertNoise.UseVisualStyleBackColor = true;
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.equalizeVertNoise);
             this.Controls.Add(this.SeparateHorizVSVertical);
             this.Controls.Add(this.GRTV_Ekat_151029_2_zaezd);
             this.Controls.Add(this.GRTV_Ekat_151029_1_zaezd);
@@ -1284,6 +1296,7 @@
         private System.Windows.Forms.CheckBox GRTV_Ekat_151029_1_zaezd;
         private System.Windows.Forms.CheckBox GRTV_Ekat_151029_2_zaezd;
         private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
+        private System.Windows.Forms.CheckBox equalizeVertNoise;
     }
 }
 

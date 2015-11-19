@@ -664,7 +664,7 @@ namespace Common_Namespace
                     ProcHelp.datastring += " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2) + " " + SINSstate.Altitude
                                         + " " + ((SINSstate.Latitude) * SimpleData.ToDegree) + " " + ((SINSstate.Longitude) * SimpleData.ToDegree)
-                                        + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 3)
+                                        + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 5)
                                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
                                         + " " + ProcHelp.distance
@@ -921,45 +921,34 @@ namespace Common_Namespace
                         + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_rOdo3]
                         ;
 
-                    if (SINSstate.Vertical_alphaBeta > 0)
-                    {
-                        ProcHelp.datastring = ProcHelp.datastring
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_alphaBeta + 0] * SimpleData.ToDegree
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_alphaBeta + 1] * SimpleData.ToDegree
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_alphaBeta + 2] * SimpleData.ToDegree
-                            ;
-                    }
-                    if (SINSstate.Vertical_nu0 > 0)
-                    {
-                        ProcHelp.datastring = ProcHelp.datastring
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_nu0 + 0] * SimpleData.ToDegree * 3600.0
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_nu0 + 1] * SimpleData.ToDegree * 3600.0
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_nu0 + 2] * SimpleData.ToDegree * 3600.0
-                            ;
-                    }
-                    if (SINSstate.Vertical_f0_12 > 0)
-                    {
-                        ProcHelp.datastring = ProcHelp.datastring
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_12 + 0]
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_12 + 1]
-                            ;
-                    }
                     if (SINSstate.Vertical_f0_3 > 0)
-                    {
-                        ProcHelp.datastring = ProcHelp.datastring
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_3 + 0]
-                            ;
-                    }
+                        ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_3 + 0];
 
                     if (SINSstate.Vertical_kappa1 > 0)
                     {
                         ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa1] * SimpleData.ToDegree;
                         if (SINSstate.Vertical_kappa3Scale > 0)
-                        {
                             ProcHelp.datastring = ProcHelp.datastring
                                 + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa3Scale + 0] * SimpleData.ToDegree
                                 + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa3Scale + 1];
-                        }
+                    }
+
+                    if (true)
+                    {
+                        SimpleOperations.CopyArray(Vertical_ErrorConditionVector, KalmanVars.Vertical_ErrorConditionVector_p);
+
+                        ProcHelp.datastring += " - " + Vertical_ErrorConditionVector[0]
+                            + " " + Vertical_ErrorConditionVector[1]
+                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_rOdo3]
+                            ;
+
+                        if (SINSstate.Vertical_f0_3 > 0)
+                            ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_3 + 0];
+
+                        if (SINSstate.Vertical_kappa1 > 0)
+                            ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa1] * SimpleData.ToDegree;
+
+                        ProcHelp.datastring += " " + SINSstate.tmp_dh_timeStep;
                     }
 
                     Nav_Vertical_StateErrorsVector.WriteLine(ProcHelp.datastring);

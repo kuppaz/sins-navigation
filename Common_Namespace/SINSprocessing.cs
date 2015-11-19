@@ -19,6 +19,11 @@ namespace Common_Namespace
                 if (SINSstate.flag_UsingCorrection == true || SINSstate.flag_UseOnlyStops == true)
                 // || SINSstate.flag_slipping == true - в большей степени SlipageProcessing это обработка выбросов одометра, а не проскальзывания. Поэтому не обнуляем OdoTimeStepCount 
                 {
+                    if (SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev == 0)
+                        SINSstate.OdometerZUPT_counter++;
+                    else
+                        SINSstate.OdometerZUPT_counter = 0;
+
                     SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
                     SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
                     SINSstate.OdoTimeStepCount = 0;
@@ -394,7 +399,7 @@ namespace Common_Namespace
 
 
 
-        public static int MatrixNoise_ReDef(SINS_State SINSstate, Kalman_Vars KalmanVars, bool AlignmentFLG)
+        public static void MatrixNoise_ReDef(SINS_State SINSstate, Kalman_Vars KalmanVars, bool AlignmentFLG)
         {
             int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
@@ -407,7 +412,6 @@ namespace Common_Namespace
                 iMx_r_odo_3 = SINSstate.value_iMx_r_odo_3
                 ;
 
-            int tmpCounter = 0;
             double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
             double[] Noise_Vel_in_Mx = new double[3], Noise_Angl_in_Mx = new double[3];
 
@@ -420,17 +424,16 @@ namespace Common_Namespace
                 Noise_Vel_in_Mx[j] = Math.Sqrt(Math.Pow(SINSstate.A_x0s[j, 0] * KalmanVars.Noise_Vel[0], 2) +
                                                Math.Pow(SINSstate.A_x0s[j, 1] * KalmanVars.Noise_Vel[1], 2) +
                                                Math.Pow(SINSstate.A_x0s[j, 2] * KalmanVars.Noise_Vel[2], 2));
+
                 Noise_Angl_in_Mx[j] = Math.Sqrt(Math.Pow(SINSstate.A_x0s[j, 0] * KalmanVars.Noise_Angl[0], 2) +
                                                Math.Pow(SINSstate.A_x0s[j, 1] * KalmanVars.Noise_Angl[1], 2) +
                                                Math.Pow(SINSstate.A_x0s[j, 2] * KalmanVars.Noise_Angl[2], 2));
-
             }
 
             if (SINSstate.flag_iMqDeltaR)
             {
                 KalmanVars.CovarianceMatrixNoise[0 * iMq + 0] = KalmanVars.Noise_Pos * sqrt_freq;
                 KalmanVars.CovarianceMatrixNoise[1 * iMq + 1] = KalmanVars.Noise_Pos * sqrt_freq;
-                tmpCounter = tmpCounter + 2;
             }
 
             // так как в векторе состояния дрейфы в проекции на приборные оси, надо задавать соответственно матрицу шумов //
@@ -441,14 +444,12 @@ namespace Common_Namespace
             KalmanVars.CovarianceMatrixNoise[(iMx_alphaBeta + 0) * iMq + iMx_alphaBeta + 0] = Noise_Angl_in_Mx[0] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[(iMx_alphaBeta + 1) * iMq + iMx_alphaBeta + 1] = Noise_Angl_in_Mx[1] * sqrt_freq;
             KalmanVars.CovarianceMatrixNoise[(iMx_alphaBeta + 2) * iMq + iMx_alphaBeta + 2] = Noise_Angl_in_Mx[2] * sqrt_freq;
-            tmpCounter = tmpCounter + 5;
 
             if (SINSstate.flag_iMqDeltaNu)
             {
                 KalmanVars.CovarianceMatrixNoise[(iMx_Nu0 + 0) * iMq + iMx_Nu0 + 0] = KalmanVars.Noise_Drift * sqrt_freq;
                 KalmanVars.CovarianceMatrixNoise[(iMx_Nu0 + 1) * iMq + iMx_Nu0 + 1] = KalmanVars.Noise_Drift * sqrt_freq;
                 KalmanVars.CovarianceMatrixNoise[(iMx_Nu0 + 2) * iMq + iMx_Nu0 + 2] = KalmanVars.Noise_Drift * sqrt_freq;
-                tmpCounter = tmpCounter + 3;
             }
             if (SINSstate.flag_iMqDeltaF)
             {
@@ -456,7 +457,6 @@ namespace Common_Namespace
                 KalmanVars.CovarianceMatrixNoise[(f0_12 + 1) * iMq + f0_12 + 1] = KalmanVars.Noise_Accel * sqrt_freq;
 
                 KalmanVars.CovarianceMatrixNoise[(f0_3 + 0) * iMq + f0_3 + 0] = KalmanVars.Noise_Accel * sqrt_freq;
-                tmpCounter = tmpCounter + 3;
             }
 
 
@@ -468,12 +468,9 @@ namespace Common_Namespace
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 if (SINSstate.flag_iMqDeltaR)
-                {
                     KalmanVars.CovarianceMatrixNoise[(value_iMx_dr3 + 0) * iMq + value_iMx_dr3 + 0] = KalmanVars.Noise_Pos * sqrt_freq / SINSstate.decrementVerticalNoise;
-                    tmpCounter = tmpCounter + 1;
-                }
+                
                 KalmanVars.CovarianceMatrixNoise[(value_iMx_dV3 + 0) * iMq + value_iMx_dV3 + 0] = Noise_Vel_in_Mx[2] * sqrt_freq;
-                tmpCounter = tmpCounter + 1;
             }
 
             if (SINSstate.flag_iMx_kappa_13_ds)
@@ -482,14 +479,12 @@ namespace Common_Namespace
                 {
                     if (SINSstate.value_iMx_kappa_1 > 0)
                         KalmanVars.CovarianceMatrixNoise[(iMx_kappa_1 + 0) * iMq + iMx_kappa_1 + 0] = KalmanVars.Noise_OdoKappa * sqrt_freq;
+
                     KalmanVars.CovarianceMatrixNoise[(iMx_kappa_3_ds + 0) * iMq + iMx_kappa_3_ds + 0] = KalmanVars.Noise_OdoKappa * sqrt_freq;
-                    tmpCounter = tmpCounter + 2;
                 }
+
                 if (SINSstate.flag_iMqKappa)
-                {
                     KalmanVars.CovarianceMatrixNoise[(iMx_kappa_3_ds + 1) * iMq + iMx_kappa_3_ds + 1] = KalmanVars.Noise_OdoScale * sqrt_freq;
-                    tmpCounter = tmpCounter + 1;
-                }
             }
 
 
@@ -503,7 +498,7 @@ namespace Common_Namespace
                 for (int i = 0; i < SimpleData.iMx_Vertical * SimpleData.iMq_Vertical; i++)
                     KalmanVars.Vertical_CovarianceMatrixNoise[i] = 0.0;
 
-                KalmanVars.Vertical_CovarianceMatrixNoise[1 * SimpleData.iMq_Vertical + 1] = Noise_Vel_in_Mx[2] * sqrt_freq;
+                KalmanVars.Vertical_CovarianceMatrixNoise[1 * SimpleData.iMq_Vertical + 1] = Noise_Vel_in_Mx[2] * sqrt_freq * 1.0;
                 Vertical_tmpCounter = Vertical_tmpCounter + 1;
 
                 if (SINSstate.Vertical_alphaBeta > 0)
@@ -513,12 +508,6 @@ namespace Common_Namespace
                     KalmanVars.Vertical_CovarianceMatrixNoise[(SINSstate.Vertical_alphaBeta + 2) * SimpleData.iMq_Vertical + (SINSstate.Vertical_alphaBeta + 2)] = Noise_Angl_in_Mx[2] * sqrt_freq;
                 }
             }
-
-
-
-
-            return tmpCounter;
-            //PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, iMx, iMq);
         }
 
 
@@ -711,6 +700,8 @@ namespace Common_Namespace
 
 
             // ----------------------------------------------------------//
+            // ----------------------------------------------------------//
+            // ----------------------------------------------------------//
             if (SINSstate.flag_SeparateHorizVSVertical == true)
             {
                 int iMxV = SimpleData.iMx_Vertical,
@@ -778,9 +769,7 @@ namespace Common_Namespace
                 }
                 if (SINSstate.Vertical_f0_3 > 0)
                 {
-                    KalmanVars.Vertical_Matrix_A[1 * iMxV + SINSstate.Vertical_f0_3] = 1.0;
-                    //if (SINSstate.Vertical_f0_12 > 0)
-                    //    KalmanVars.Vertical_Matrix_A[1 * iMxV + SINSstate.Vertical_f0_3] = SINSstate.A_x0s[2, 2];
+                    KalmanVars.Vertical_Matrix_A[1 * iMxV + SINSstate.Vertical_f0_3] = SINSstate.A_x0s[2, 2];
                 }
             }
         }
@@ -840,8 +829,6 @@ namespace Common_Namespace
         {
             double[] fz = new double[3], Wz = new double[3], u = new double[3], tempV = new double[3], Wz_avg = new double[3];
             double[] Vx_0 = new double[3], Vx_0_prev = new double[3];
-
-            int datetimeCounter = 0;
 
             Matrix AT_z_xi = new Matrix(3, 3); Matrix B_x_eta = new Matrix(3, 3);
             Matrix dAT = new Matrix(3, 3); Matrix D_x_z = new Matrix(3, 3);
@@ -915,10 +902,6 @@ namespace Common_Namespace
             }
 
 
-            // --- //
-            //SINSstate.startDt[datetimeCounter] = DateTime.Now;
-            // --- //
-
 
             W_z_abs = Math.Sqrt(Wz[0] * Wz[0] + Wz[1] * Wz[1] + Wz[2] * Wz[2]);
             dlt = Math.Sin(W_z_abs * SINSstate.timeStep) / W_z_abs;
@@ -938,9 +921,6 @@ namespace Common_Namespace
                     AT_z_xi[i, j] = AT_z_xi[i, j] / tempV[i];
             }
 
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
-            // --- //
 
             CopyMatrix(SINSstate.AT, AT_z_xi);
 
@@ -948,10 +928,6 @@ namespace Common_Namespace
             CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
             //--------------------------------------------------------------------------------------
 
-
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
-            // --- //
 
 
             //---------------------------------ИНТЕГРИРОВАНИЕ СКОРОСТЕЙ----------------------------
@@ -975,6 +951,8 @@ namespace Common_Namespace
 
                 dh = (Vx_0[2] + Vx_0_prev[2]) / 2.0;
                 Altitude += dh * SINSstate.timeStep;
+
+                //SINSstate.tmp_dh_timeStep = dh * SINSstate.timeStep;
             }
             //--- Если выставлен соответствующий флаг - переопределяем Vup вертикальной скоростью, вычисленной по одомеру ---//
             if (SINSstate.flag_iMx_r3_dV3 && SINSstate.flag_VupOdo_till_VupSINS)
@@ -982,10 +960,6 @@ namespace Common_Namespace
                 Vx_0[2] = SINSstate_OdoMod.Vx_0[2];
             }
 
-
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
-            // --- //
 
 
             //---------ИНТЕГРИРОВАНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z--------------
@@ -1010,11 +984,6 @@ namespace Common_Namespace
             Hat2 = Matrix.SkewSymmetricMatrixSquare(SINSstate.Omega_x);
 
 
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
-            // --- //
-
-
             CopyMatrix(dMatrix, E + Hat1 * dlt + Hat2 * dlt2);
             CopyMatrix(B_x_eta, dMatrix * B_x_eta);
 
@@ -1027,11 +996,6 @@ namespace Common_Namespace
             }
 
 
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
-            // --- //
-
-
             CopyMatrix(W_x_xi, B_x_eta * SINSstate.A_nxi);
             CopyMatrix(D_x_z, W_x_xi * SINSstate.AT.Transpose());
 
@@ -1040,11 +1004,6 @@ namespace Common_Namespace
             CopyMatrix(SINSstate.A_x0s, D_x_z);
             CopyMatrix(SINSstate.A_x0n, B_x_eta);
             CopyMatrix(SINSstate.A_nx0, B_x_eta.Transpose());
-
-
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
-            // --- //
 
 
 
@@ -1075,12 +1034,6 @@ namespace Common_Namespace
             CopyArray(SINSstate.W_x, SINSstate.A_x0s * Wz);
 
 
-
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; SINSstate.startDt[datetimeCounter + 1] = DateTime.Now; datetimeCounter++;
-            // --- //
-
-
             //--------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------
 
@@ -1107,10 +1060,6 @@ namespace Common_Namespace
             else
                 SimpleOperations.CopyArray(SINSstate_OdoMod.OdoSpeed_x0, SINSstate.OdoSpeed_x0);
 
-
-            // --- //
-            //SINSstate.endDt[datetimeCounter] = DateTime.Now; datetimeCounter++;
-            // --- //
 
 
             //---------ВЫЧИСЛЕНИЕ МАТРИЦЫ B_X_ETA И ВТОРОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z для одометрического счисления--------------

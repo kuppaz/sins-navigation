@@ -45,49 +45,6 @@ namespace Common_Namespace
 
                 KalmanVars.cnt_measures += 1;
             }
-
-
-            //---АЛГЕБРАИЧЕСКАЯ КАЛИБРОВКА---//
-            //if (SINSstate.flag_using_GoCalibrInCP == true && SINSstate.flag_iMx_kappa_13_ds)
-            //{
-            //    double lat_dif_calc = (SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n;
-            //    double long_dif_calc = (SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
-            //    double lat_dif_true = (Latitude_CP - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(Latitude_CP, Altitude_CP);
-            //    double long_dif_true = (Longitude_CP - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(Latitude_CP, Altitude_CP) * Math.Cos(Latitude_CP);
-
-            //    double l_calc = Math.Sqrt(Math.Pow(lat_dif_calc, 2) + Math.Pow(long_dif_calc, 2));
-            //    double l_true = Math.Sqrt(Math.Pow(lat_dif_true, 2) + Math.Pow(long_dif_true, 2));
-
-            //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 2] = 1.0;
-            //    if (SINSstate.flag_FeedbackExist)
-            //        KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value / (1 + SINSstate.Cumulative_KappaEst[1]) - l_true) / l_true;
-            //    else
-            //        KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.OdometerData.odometer_left.Value - l_true) / l_true;
-            //    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.002;
-            //    KalmanVars.cnt_measures += 1;
-
-            //    double tst = Math.Atan2(long_dif_calc, lat_dif_calc);
-            //    double tst2 = Math.Atan2(long_dif_true, lat_dif_true);
-
-            //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = Math.Tan(SINSstate.Latitude) / SINSstate.R_e;
-            //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = -Math.Sin(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-            //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = -Math.Cos(SINSstate.Heading) * Math.Tan(SINSstate.Pitch);
-            //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 6] = 1.0;
-            //    KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 1] = 1.0;
-            //    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Heading - Math.Atan2(long_dif_true, lat_dif_true);
-            //    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 5.0 * SimpleData.ToRadian_min;
-            //    KalmanVars.cnt_measures += 1;
-
-            //    if (SINSstate.flag_Using_iMx_r_odo_3)
-            //    {
-            //        KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 4] = -Math.Cos(SINSstate.Heading);
-            //        KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 5] = Math.Sin(SINSstate.Heading);
-            //        KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_odo_model + 0] = 1.0;
-            //        KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
-            //        KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 0.1;
-            //        KalmanVars.cnt_measures += 1;
-            //    }
-            //}
         }
 
 
@@ -130,12 +87,12 @@ namespace Common_Namespace
 
             if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
             {
-                if (SINSstate.flag_SeparateHorizVSVertical == false)
+                if (iMx_kappa_1 > 0)
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_1 + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[0, 1];
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[0, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[0, 1];
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 1] = -SINSstate.OdoSpeed_x0[0];
 
-                if (SINSstate.flag_SeparateHorizVSVertical == false)
+                if (iMx_kappa_1 > 0)
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_kappa_1 + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[1, 1];
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_kappa_3_ds + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[1, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[1, 1];
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 1) * iMx + iMx_kappa_3_ds + 1] = -SINSstate.OdoSpeed_x0[1];
@@ -149,7 +106,7 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_iMx_kappa_13_ds && SINSstate.flag_OdoModelOnlyCP == false)
                 {
-                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                    if (iMx_kappa_1 > 0)
                         KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_1 + 0] = -SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 2] + SINSstate.OdoSpeed_s[2] * SINSstate.A_x0s[2, 1];
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 0] = SINSstate.OdoSpeed_s[1] * SINSstate.A_x0s[2, 0] - SINSstate.OdoSpeed_s[0] * SINSstate.A_x0s[2, 1];
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_kappa_3_ds + 1] = -SINSstate.OdoSpeed_x0[2];
@@ -243,6 +200,33 @@ namespace Common_Namespace
             }
 
 
+            // ----------------------------------------------------------//
+            // ----------------------------------------------------------//
+            if (SINSstate.flag_SeparateHorizVSVertical == true)
+            {
+                KalmanVars.Vertical_Measure[KalmanVars.Vertical_cnt_measures] = SINSstate.Vx_0[2];
+                KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 1] = 1.0;
+                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = KalmanVars.OdoNoise_STOP;
+                KalmanVars.Vertical_cnt_measures += 1;
+            };
+        }
+        public static void Make_Vertical_H_KNS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
+        {
+            KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 1] = 1.0;
+            KalmanVars.Vertical_Measure[KalmanVars.Vertical_cnt_measures] = SINSstate.Vx_0[2];
+            KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = KalmanVars.OdoNoise_STOP;
+
+            KalmanVars.Vertical_cnt_measures += 1;
+
+
+            {
+                KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 0] = 1.0;
+                KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = -1.0;
+                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = 0;
+                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = KalmanVars.OdoNoise_Dist / 10.0;
+
+                KalmanVars.Vertical_cnt_measures += 1;
+            }
         }
 
 

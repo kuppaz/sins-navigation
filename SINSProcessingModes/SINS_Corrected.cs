@@ -70,6 +70,7 @@ namespace SINSProcessingModes
             Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate" + ".txt");
 
             Nav_Vertical_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_ErrVect_Vertical.txt");
+            Nav_Vertical_StateErrorsVector.WriteLine("time dr3 dV3 dr3_d d_F3 kappa_1");
 
             Cicle_Debag_Solution = new StreamWriter(SimpleData.PathOutputString + "Debaging//Solution_"
                 + KalmanVars.Noise_Angl[0].ToString("E2") + "_" + KalmanVars.Noise_Vel[0].ToString("E2") + ".txt");
@@ -104,10 +105,6 @@ namespace SINSProcessingModes
             SINSstate.NowSmoothing = NowSmoothing;
             if (SINSstate.NowSmoothing) start_i = SINSstate.LastCountForRead - 1;
 
-            DateTime[] comulativeTime = new DateTime[10]
-                , startDt = new DateTime[10]
-                , endDt = new DateTime[10]
-                ;
 
             //=========================================================================//
             //=========================================================================//
@@ -138,8 +135,6 @@ namespace SINSProcessingModes
                     if (SINSstate.NowSmoothing)
                         i = i + 2;
                 }
-
-                //if (SINSstate.Count > 70000) break;
 
 
                 //---------------------------------------------------------------------//
@@ -176,18 +171,10 @@ namespace SINSProcessingModes
                 }
                 //---------------------------------------------------------------------//
 
-                startDt[0] = DateTime.Now;
-
                 //-------------------------- MAIN STEPS ------------------------------//
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
-
-                endDt[0] = DateTime.Now;
-                startDt[1] = DateTime.Now;
-
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
                 KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
-
-                endDt[1] = DateTime.Now;
 
 
                 if (SINSstate.Count % 5000 == 0)
@@ -198,8 +185,7 @@ namespace SINSProcessingModes
                 }
 
 
-                startDt[2] = DateTime.Now;
-                // --- Тут можно рулить перевязками вертикально и гор. каналов. Kappa_1 - если убрать, то решение по высоте может получиться хорошим ---//
+                
                 if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
 
@@ -207,18 +193,26 @@ namespace SINSProcessingModes
 
                 if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
                     SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-                endDt[2] = DateTime.Now;
-
                 
                 
                 SINSstate.flag_UsingCorrection = false;
+
                 //---------------Формирование флага остановки------------//
                 SINSstate.flag_ZUPT = false;
+                SINSstate.flag_Vertical_ZUPT = false;
                 if (SINSstate.FLG_Stop == 1 && SINSstate.flag_NotUse_ZUPT == false)
                 {
                     SINSstate.flag_ZUPT = true;
                     SINSstate.flag_UsingCorrection = true;
                 }
+
+                // === Кооррекция по нулевой скорости вертикального канала === //
+                //if (SINSstate.flag_SeparateHorizVSVertical == true && SINSstate.OdometerZUPT_counter >= 25)
+                //{
+                //    SINSstate.flag_Vertical_ZUPT = true;
+                //    SINSstate.flag_UsingCorrection = true;
+                //}
+
 
                 //--------------- Формируем флаг коррекции по одометру---------------//
                 if (SINSstate.OdometerData.odometer_left.isReady == 1 && SINSstate.flag_UseOnlyStops == false)
@@ -277,6 +271,10 @@ namespace SINSProcessingModes
                     if (SINSstate.flag_ZUPT == true)
                         CorrectionModel.Make_H_KNS(KalmanVars, SINSstate, SINSstate_OdoMod);
 
+                    //=== ZUPT коррекция вертикального канала ===//
+                    if (SINSstate.flag_Vertical_ZUPT == true && SINSstate.flag_SeparateHorizVSVertical == true)
+                        CorrectionModel.Make_Vertical_H_KNS(KalmanVars, SINSstate, SINSstate_OdoMod);
+
                     // --- Считаем невязки измерени если не FB --- //
                     if (SINSstate.flag_FeedbackExist == false)
                         KalmanProcs.Check_Measurement(SINSstate, KalmanVars);
@@ -314,8 +312,6 @@ namespace SINSProcessingModes
                 //----------------------------ЭТАП КОРРЕКЦИИ END---------------------------------//
 
 
-                startDt[3] = DateTime.Now;
-
 
                 //=================================================Сглаживание============================================================
                 if (SINSstate.flag_Smoothing && !SINSstate.NowSmoothing)
@@ -345,8 +341,6 @@ namespace SINSProcessingModes
 
                 //===============================================Сглаживание END===========================================================
 
-
-                endDt[3] = DateTime.Now;
 
 
                 /*------------------------------------OUTPUT-------------------------------------------------*/
@@ -381,39 +375,9 @@ namespace SINSProcessingModes
 
                 //--- Переопределение значений данных одометра ---
                 SINSprocessing.Redifinition_OdoCounts(SINSstate, SINSstate2, SINSstate_OdoMod);
-
-
-                for (int j = 0; j < comulativeTime.Length; j++)
-                    comulativeTime[j] += endDt[j] - startDt[j];
-                for (int j = 0; j < SINSstate.comulativeTime.Length; j++)
-                    SINSstate.comulativeTime[j] += SINSstate.endDt[j] - SINSstate.startDt[j];
             }
             /*----------------------------------------END---------------------------------------------*/
             /*----------------------------------------------------------------------------------------*/
-
-
-
-
-            string strDtComulative = "";
-            for (int j = 0; j < comulativeTime.Length; j++)
-                if (comulativeTime[j] > Convert.ToDateTime("0001-01-01T00:00:01"))
-                    strDtComulative += "comulativeTime_" + j + ": " + comulativeTime[j].ToString() + " \n";
-            Console.WriteLine(strDtComulative);
-
-            string path_strDtComulative = "Debaging//_strDtComulative.txt";
-            if (!NowSmoothing) path_strDtComulative = "Debaging//_strDtComulative_back.txt";
-            StreamWriter File_strDtComulative = new StreamWriter(SimpleData.PathOutputString + path_strDtComulative);
-            File_strDtComulative.WriteLine(strDtComulative + "\n \n");
-
-            strDtComulative = "";
-            for (int j = 0; j < SINSstate.comulativeTime.Length; j++)
-                if (SINSstate.comulativeTime[j] > Convert.ToDateTime("0001-01-01T00:00:01"))
-                    strDtComulative += "SINSstate.comulativeTime_" + j + ": " + SINSstate.comulativeTime[j].ToString() + " \n";
-            Console.WriteLine(strDtComulative);
-            File_strDtComulative.WriteLine(strDtComulative);
-
-            File_strDtComulative.Close();
-
 
 
 

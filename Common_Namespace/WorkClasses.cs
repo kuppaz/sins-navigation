@@ -85,7 +85,7 @@ namespace Common_Namespace
         public bool flag_UseAlgebraDrift = false;
 
         //---параметры коррекции---
-        public bool flag_UsingCorrection = false, flag_UsingAngleCorrection = false, flag_ZUPT = false, flag_UsingAltitudeCorrection = false;
+        public bool flag_UsingCorrection = false, flag_UsingAngleCorrection = false, flag_ZUPT = false, flag_Vertical_ZUPT = false, flag_UsingAltitudeCorrection = false;
         public bool flag_Using_SNS = false, flag_UseOnlyStops = false, flag_NotUse_ZUPT = false, flag_using_Checkpotints = false, flag_using_GoCalibrInCP = false;
         public bool flag_UseOdoVelocity_In_Oz = false;
 
@@ -256,6 +256,9 @@ namespace Common_Namespace
                        , global_VerticalError = new double[50000]
                        , global_V_Up = new double[50000]
                        ;
+        public int OdometerZUPT_counter;
+        public double tmp_dh_timeStep;
+        public bool flag_equalizeVertNoise;
     }
 
 

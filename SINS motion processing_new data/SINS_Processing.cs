@@ -1061,6 +1061,8 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_Smoothing = this.flag_Smoothing.Checked;
             SINSstate.flag_iMSmthd_Is_2_plus_Odo = this.iMSmthd_Is_2_plus_Odo.Checked;
 
+            SINSstate.flag_equalizeVertNoise = this.equalizeVertNoise.Checked;
+
             SINSstate.flag_NotUse_ZUPT = this.flag_not_use_zupt.Checked;
             SINSstate.flag_using_slippage = this.flag_using_slippage.Checked;
             SINSstate.flag_using_Checkpotints = this.flag_using_Checkpotints.Checked;

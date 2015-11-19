@@ -213,6 +213,13 @@ namespace Common_Namespace
                     KalmanVars.Noise_Angl[j] = sigma_w[j] / 1.0;
             }
 
+            // === По вертикальному шум всегда будет меньше на выставке, поэтому мы немного сглаживаем === //
+            if (SINSstate.flag_equalizeVertNoise == true)
+            {
+                KalmanVars.Noise_Vel[2] = KalmanVars.Noise_Vel.Average();
+                KalmanVars.Noise_Angl[2] = KalmanVars.Noise_Angl.Average();
+            }
+
             SINSstate.Pitch = Math.Atan2(f_avg[1], Math.Sqrt(f_avg[0] * f_avg[0] + f_avg[2] * f_avg[2]));
             SINSstate.Roll = -Math.Atan2(f_avg[0], f_avg[2]);
 
