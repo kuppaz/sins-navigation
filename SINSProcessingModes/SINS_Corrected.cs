@@ -70,7 +70,13 @@ namespace SINSProcessingModes
             Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_SlnEstimate" + ".txt");
 
             Nav_Vertical_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + "S" + str_name_forvard_back + "_ErrVect_Vertical.txt");
-            Nav_Vertical_StateErrorsVector.WriteLine("time dr3 dV3 dr3_d d_F3 kappa_1");
+
+            string str1 = "time dr3 dV3 dr3_d";
+            if (SINSstate.Vertical_f0_12 > 0) str1 += " d_F1 d_F2";
+            if (SINSstate.Vertical_f0_3 > 0) str1 += " d_F3";
+            if (SINSstate.Vertical_kappa1 > 0) str1 += " kappa1";
+            if (SINSstate.Vertical_kappa3Scale > 0) str1 += " kappa3 Scale";
+            Nav_Vertical_StateErrorsVector.WriteLine(str1);
 
             Cicle_Debag_Solution = new StreamWriter(SimpleData.PathOutputString + "Debaging//Solution_"
                 + KalmanVars.Noise_Angl[0].ToString("E2") + "_" + KalmanVars.Noise_Vel[0].ToString("E2") + ".txt");
@@ -81,7 +87,7 @@ namespace SINSProcessingModes
                 str = str + " dr3 dV3";
             if (SINSstate.flag_Odometr_SINS_case)
                 str = str + " odo_dr1 odo_dr2";
-            if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_Using_iMx_r_odo_3)
+            if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_iMx_r3_dV3)
                 str = str + " odo_dr3";
             if (SINSstate.flag_iMx_kappa_13_ds)
                 str = str + " kappa1_grad kappa3_grad Scale";
@@ -113,7 +119,7 @@ namespace SINSProcessingModes
                 if (SINSstate.NowSmoothing) { i = i - 2; if (i < l + 1) break; }
 
                 if (SINSstate.flag_UsingClasAlignment == false)
-                    if (i < ProcHelp.AlgnCnt)
+                    if (i < ProcHelp.AlignmentCounts)
                     {
                         ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
                         continue;
@@ -147,7 +153,6 @@ namespace SINSProcessingModes
                     SINSstate.OdoTimeStepCount = (SINSstate.Time - SINSstate.odotime_prev) / SINSstate.timeStep;
 
 
-
                 //---------------- Формируем вектора измерений одометра ---------------//
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {
@@ -157,12 +162,12 @@ namespace SINSProcessingModes
                     SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
                     SINSstate.OdoSpeed_s[1] = SINSstate.OdometerVector[1] / SINSstate.OdoTimeStepCount / SINSstate.timeStep;
 
-                    if (SINSstate.flag_SeparateHorizVSVertical)
-                        SINSstate.Cumulative_KappaEst[0] = SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1];
-
                     //--- Если обратные связи, то сразу корректируем измерение одометра по честной оценке ---//
                     if (SINSstate.flag_FeedbackExist && SINSstate.flag_iMx_kappa_13_ds)
                     {
+                        if (SINSstate.flag_SeparateHorizVSVertical == true)
+                            SINSstate.Cumulative_KappaEst[0] = SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1];
+
                         SimpleOperations.CopyArray(SINSstate.OdoSpeed_s,
                             (Matrix.UnitMatrix(3) + Matrix.SkewSymmetricMatrix(SINSstate.Cumulative_KappaEst)) / (1.0 + SINSstate.Cumulative_KappaEst[1]) * SINSstate.OdoSpeed_s);
                         SimpleOperations.CopyArray(SINSstate.OdometerVector,
@@ -177,11 +182,19 @@ namespace SINSProcessingModes
                 KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
 
 
+
                 if (SINSstate.Count % 5000 == 0)
                 {
                     SimpleOperations.PrintMatrixToFile(KalmanVars.Matrix_A, SimpleData.iMx, SimpleData.iMx, "Matrix_A");
                     SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixNoise, SimpleData.iMx, SimpleData.iMq, "CovarianceMatrixNoise");
                     SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx, "CovarianceMatrixS_m");
+
+                    if (SINSstate.flag_SeparateHorizVSVertical == true)
+                    {
+                        SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_Matrix_A, SimpleData.iMx_Vertical, SimpleData.iMx_Vertical, "Vertical_Matrix_A");
+                        SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_CovarianceMatrixNoise, SimpleData.iMx_Vertical, SimpleData.iMq_Vertical, "Vertical_Noise");
+                        SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_CovarianceMatrixS_m, SimpleData.iMx_Vertical, SimpleData.iMx_Vertical, "Vertical_CovarianceS");
+                    }
                 }
 
 
@@ -225,6 +238,7 @@ namespace SINSProcessingModes
 
                 SimpleOperations.NullingOfArray(KalmanVars.Matrix_H);
                 SimpleOperations.NullingOfArray(KalmanVars.Vertical_Matrix_H);
+
 
                 if (SINSstate.flag_using_Checkpotints == true)
                     CheckPointProcessing(SINSstate, SINSstate_OdoMod, KalmanVars);

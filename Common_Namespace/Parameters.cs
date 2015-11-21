@@ -28,21 +28,41 @@ namespace Common_Namespace
 
             SINSstate.decrementVerticalNoise = 1.0;
             SINSstate.MyOwnKalman_Korrection = false;
+            SINSstate.flag_equalizeVertNoise = false;
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.OdoLimitMeasuresNum = 1;
+
+                ProcHelp.AlignmentCounts = 9000;
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = true;
 
+                //---для имитатора---
+                ParamStart.Imitator_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Imitator_Noise_Vel = 3E-4;
+                ParamStart.Imitator_Noise_Angl = 3E-6;
+
                 // === best configurations === //
-                //(the best?) VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=0	Class=0.02	Noise=1E-06
-                //VertRel=1	NoisModl=1	MyCorr=0	MyFut=1	CoordNois=0	Class=0.02	Noise=1E-05
-                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02
-                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02                                                                                                                                                                                      
+                //         
+
+
+                ParamStart.Imitator_Noise_OdoScale = 0.000000001;
+                ParamStart.Imitator_Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                ParamStart.Imitator_Noise_Pos = 0.1;
+                ParamStart.Imitator_Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
+                ParamStart.Imitator_Noise_Accel = 0.000000002;
+
+                ParamStart.Imitator_stdR = 0.5;
+                ParamStart.Imitator_stdOdoR = 0.5; // метров
+                ParamStart.Imitator_stdV = 0.1;
+                ParamStart.Imitator_stdScale = 0.01;
+                ParamStart.Imitator_stdKappa1 = 20.0; //минут
+                ParamStart.Imitator_stdKappa3 = 20.0; //минут
+                                                                                                                                        
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -60,12 +80,14 @@ namespace Common_Namespace
                 SINSstate.OdoLimitMeasuresNum = 10;
                 SINSstate.odo_min_increment = 0.2;
 
+                ProcHelp.AlignmentCounts = 40000;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
-
+                SINSstate.flag_equalizeVertNoise = false;
 
                 //=== С параметрами ниже решение OdoSINS лучше SINSOdo (акцент на 3E-5 и 3E-7)
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -108,11 +130,14 @@ namespace Common_Namespace
                 SINSstate.OdoLimitMeasuresNum = 5;
                 SINSstate.odo_min_increment = 0.2;
 
+                ProcHelp.AlignmentCounts = 45000;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = false;
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -151,11 +176,14 @@ namespace Common_Namespace
 
                 SINSstate.odo_min_increment = 0.2;
 
+                ProcHelp.AlignmentCounts = 35000;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.01;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = false;
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -199,27 +227,29 @@ namespace Common_Namespace
 
                 SINSstate.odo_min_increment = 0.035;
 
+                ProcHelp.AlignmentCounts = 48000;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = true;
 
                 // -- С MyOwnKalman_Korrection=true при чекнутых шумах dR только в горизонте получается конечная ошибка  метра!!
                 SINSstate.MyOwnKalman_Korrection = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 // === best configurations === //
-                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=0	Class=0.02	Noise=1E-05
-                //VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05
-                //VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-05 14.622	34.156	19.697	245.039	412.623	341.14
+                //VertRel=0	NoisModl=0	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=NO -- вообще шик
+                //VertRel=0	NoisModl=1	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.02	Noise=1E-05 -- вот этот тоже ничо так, только ошибка высоты хуже
 
                 KalmanVars.Noise_Pos = 0.5;
                 // -------------------------------------------//
@@ -257,64 +287,6 @@ namespace Common_Namespace
             }
 
 
-            if (SINSstate.Global_file == "GRTVout_GCEF_format_030715выезд")
-            {
-
-                SINSstate.timeStep = SINSstate.Freq = 0.020480;
-                SINSstate.OdoLimitMeasuresNum = 5;
-
-                SINSstate.odo_min_increment = 0.1;
-
-                KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
-                KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
-                KalmanVars.OdoNoise_STOP = 0.5;
-
-                SINSstate.decrementVerticalNoise = 1.0;
-                SINSstate.existRelationHoriz_VS_Vertical = false;
-
-                //=== 
-                //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 5.00E-001; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-003; //3E-6- optim При этом ошибка - максимум 50 метров!!!
-                //===
-
-                KalmanVars.Noise_Pos = 0.5;
-                // -------------------------------------------//
-
-
-
-                KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_Accel = 0.0000002;
-                KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
-
-                ParamStart.Experiment_stdR = 0.05;
-                ParamStart.Experiment_stdOdoR = 0.05; // метров
-                ParamStart.Experiment_stdV = 0.01;
-                ParamStart.Experiment_stdScale = 0.005;
-                ParamStart.Experiment_stdKappa1 = 5.0; //минут
-                ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
-
-
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.264756 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.999337 * SimpleData.ToRadian;
-                ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 10.0;
-
-                ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
-                ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
-
-
-                ApplyMatrixStartCondition(SINSstate);
-                ApplyMatrixStartCondition(SINSstate_OdoMod);
-
-                //flElevation=-1.126
-                SINSstate.alpha_x = 0.0 * SimpleData.ToRadian;
-                SINSstate.alpha_y = 1.126 * SimpleData.ToRadian;
-                SINSstate.alpha_z = 0.0 * SimpleData.ToRadian;
-            }
-
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)")
             {
@@ -324,12 +296,15 @@ namespace Common_Namespace
 
                 SINSstate.odo_min_increment = 0.1;
 
+                ProcHelp.AlignmentCounts = 5000;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = true;
 
                 SINSstate.MyOwnKalman_Korrection = true;
 
@@ -391,12 +366,15 @@ namespace Common_Namespace
 
                 SINSstate.odo_min_increment = 0.1;
 
+                ProcHelp.AlignmentCounts = 7500;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.001;
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = true;
 
                 SINSstate.MyOwnKalman_Korrection = true;
 
@@ -408,8 +386,7 @@ namespace Common_Namespace
                 //===
 
                 // === best configurations === //
-                //VertRel=1	NoisModl=0	MyCorr=0	MyFut=1	CoordNois=0	Class=0.02
-                //VertRel=0	NoisModl=0	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02
+                //VertRel=0	NoisModl=0	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=NO
 
                 KalmanVars.Noise_Pos = 1.0;
                 // -------------------------------------------//
@@ -462,12 +439,15 @@ namespace Common_Namespace
 
                 SINSstate.odo_min_increment = 0.1;
 
+                ProcHelp.AlignmentCounts = 25000;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = true;
 
                 SINSstate.MyOwnKalman_Korrection = false;
 
@@ -475,16 +455,13 @@ namespace Common_Namespace
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim 
                 //===
 
                 // === best configurations === //
-                //VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05	5.817	21.384	8.651	57.554	-119.208	36.832
-                //(the best?) VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-05	4.845	15.295	3.84	59.211	-26.893
-                //VertRel=1	NoisModl=0	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=NO	3.511	12.165	6.807	61.491	-4.327	10.444
-                //VertRel=0	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05	5.314	24.31	5.396	55.181	125.746	303.253	-246.908
-                //(OK при OdoLimitMeasuresNum = 1) VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.2	Noise=1E-05	9.124	22.376	7.639	49.547	5.658	8.536	-8.187
-                //(только горизонт, OdoLimitMeasuresNum = 1) VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-06	20.608	56.353	48.16	19.782
+                //VertRel=0	NoisModl=0	eqlzVert=0	MyCorr=1	CoordNois=1	Class=0.2	Noise=NO (наверно, лучший)
+                //VertRel=0	NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	Class=0.02	Noise=NO
+                //VertRel=0	NoisModl=1	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=1E-05 -- Здесь оценился kappa1, горизон в целом чуть получше, чем у ПНППК, но конечная ошибка похуже
 
                 KalmanVars.Noise_Pos = 1.0;
                 // -------------------------------------------//
@@ -526,12 +503,15 @@ namespace Common_Namespace
 
                 SINSstate.odo_min_increment = 0.1;
 
+                ProcHelp.AlignmentCounts = 14500;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = true;
 
                 SINSstate.MyOwnKalman_Korrection = true;
 
@@ -539,12 +519,12 @@ namespace Common_Namespace
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim
                 //===
 
                 // === best configurations === //
-                //VertRel=1	NoisModl=1	MyCorr=0	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-06 34.523	47.137	38.514	7.773
-                //(the best?) VertRel=0	NoisModl=1	MyCorr=1	MyFut=0	CoordNois=1	Class=0.02	Noise=1E-05	3.11	8.149	1.127	33.668	9.082	10.984	9.195
+                //VertRel=0	NoisModl=0	eqlzVert=0	MyCorr=0	CoordNois=1	Class=0.2	Noise=NO -- не, ну не плохо. Повторили решение ПНППК + высота получше
+                //VertRel=0	NoisModl=1	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=1E-05 -- выглядит красиво. Нет уверенности, что старт.тчку выбрал правильно
 
                 KalmanVars.Noise_Pos = 1.0;
                 // -------------------------------------------//
@@ -602,6 +582,8 @@ namespace Common_Namespace
                 SINSstate.ControlPointCount[1] = 48829;
                 SINSstate.ControlPointCount[2] = 73243;
 
+                ProcHelp.AlignmentCounts = 10300;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 10.0;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
@@ -658,7 +640,10 @@ namespace Common_Namespace
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.01;
 
+                ProcHelp.AlignmentCounts = 22000;
+
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = false;
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
@@ -707,11 +692,14 @@ namespace Common_Namespace
                 SINSstate.DoHaveControlPoints = true;
                 SINSstate.NumberOfControlPoints = 3;
 
+                ProcHelp.AlignmentCounts = 95000;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.01;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = false;
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
@@ -745,11 +733,14 @@ namespace Common_Namespace
                 SINSstate.DoHaveControlPoints = true;
                 SINSstate.NumberOfControlPoints = 3;
 
+                ProcHelp.AlignmentCounts = 27320;
+
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.1;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = false;
 
                 SINSstate.MyOwnKalman_Korrection = false;
 

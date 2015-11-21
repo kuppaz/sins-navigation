@@ -74,7 +74,7 @@ namespace Common_Namespace
                 SINSstate.F_z[0] = Convert.ToDouble(dataArray[17]); SINSstate.W_z[0] = Convert.ToDouble(dataArray[14]);
 
 
-                if ((Convert.ToInt32(dataArray[2]) == 1 && SINSstate.timeStep > 0.5) || SINSstate.Count <= ProcHelp.AlgnCnt)
+                if ((Convert.ToInt32(dataArray[2]) == 1 && SINSstate.timeStep > 0.5) || SINSstate.Count <= ProcHelp.AlignmentCounts)
                     SINSstate.FLG_Stop = 1;
                 else
                     SINSstate.FLG_Stop = 0;
@@ -466,7 +466,7 @@ namespace Common_Namespace
 
 
                 int modeGRTV = 16;
-                if (i < ProcHelp.AlgnCnt) modeGRTV = 8;
+                if (i < ProcHelp.AlignmentCounts) modeGRTV = 8;
 
                 GRTV_output.WriteLine(
                     SINSstate.Count
@@ -520,7 +520,7 @@ namespace Common_Namespace
                         str_hat += "std_dr3 ";
                     if (SINSstate.flag_Odometr_SINS_case)
                         str_hat += "std_odo_dr1 std_odo_dr2 ";
-                    if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_Using_iMx_r_odo_3 == true)
+                    if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_iMx_r3_dV3 == true)
                         str_hat += "std_odo_dr3 ";
 
                     str_hat += "std_dV1 std_dV2 ";
@@ -542,7 +542,7 @@ namespace Common_Namespace
 
                 if (SINSstate.flag_Odometr_SINS_case == true)
                     str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_r_odo_12, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_r_odo_12 + 1, KalmanVars);
-                if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_Using_iMx_r_odo_3 == true)
+                if (SINSstate.flag_Odometr_SINS_case == true && SINSstate.flag_iMx_r3_dV3 == true)
                     str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_r_odo_3, KalmanVars);
 
                 str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_dV_12, KalmanVars) + " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_dV_12 + 1, KalmanVars);
@@ -560,14 +560,14 @@ namespace Common_Namespace
                 str = str + " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_f0_12, KalmanVars)
                     + " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_f0_12 + 1, KalmanVars);
 
-                if (SINSstate.flag_SeparateHorizVSVertical == false)
+                if (SINSstate.value_iMx_f0_3 > 0)
                     str += " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_f0_3, KalmanVars);
                 else
                     str += " 0";
 
                 if (SINSstate.flag_iMx_kappa_13_ds)
                 {
-                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                    if (SINSstate.value_iMx_kappa_1 > 0)
                         str += " " + KalmanProcs.Sigmf_Disp(SINSstate.value_iMx_kappa_1 + 0, KalmanVars) * SimpleData.ToDegree;
                     else
                         str += " 0";
@@ -682,7 +682,7 @@ namespace Common_Namespace
                     {
                         ProcHelp.datastring += " " + SINSstate.Cumulative_KalmanErrorVector[(iMx_alphaBeta + 2)] * SimpleData.ToDegree;
 
-                        if (SINSstate.flag_SeparateHorizVSVertical == true)
+                        if (SINSstate.Vertical_kappa1 > 0)
                             ProcHelp.datastring += " " + SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1] * SimpleData.ToDegree;
                         else
                             ProcHelp.datastring += " " + SINSstate.Cumulative_KalmanErrorVector[iMx_kappa_1 + 0] * SimpleData.ToDegree;
@@ -701,10 +701,11 @@ namespace Common_Namespace
 
 
                     // --- Сохраняем значения для передачи в цикл по подбору стартовых настроек ---//
-                    if (SINSstate.flag_SeparateHorizVSVertical == true)
+                    if (SINSstate.Vertical_kappa1 > 0)
                         SINSstate.global_kappa1_grad[SINSstate.global_indx] = SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1] * SimpleData.ToDegree;
                     else
                         SINSstate.global_kappa1_grad[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_kappa_1 + 0] * SimpleData.ToDegree;
+
                     SINSstate.global_kappa3_grad[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_kappa_3_ds + 0] * SimpleData.ToDegree;
                     SINSstate.global_scale[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_kappa_3_ds + 1];
                     SINSstate.global_HorizontalError[SINSstate.global_indx] = ProcHelp.distance;
@@ -817,7 +818,7 @@ namespace Common_Namespace
                         + " " + KalmanVars.ErrorConditionVector_p[(f0_12 + 0)]
                         + " " + KalmanVars.ErrorConditionVector_p[(f0_12 + 1)];
 
-                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                    if (f0_3 > 0)
                         ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[(f0_3 + 0)];
                     else
                         ProcHelp.datastring = ProcHelp.datastring + " 0";
@@ -838,7 +839,7 @@ namespace Common_Namespace
                         + " " + SINSstate.Cumulative_KalmanErrorVector[(f0_12 + 0)]
                         + " " + SINSstate.Cumulative_KalmanErrorVector[(f0_12 + 1)];
 
-                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                    if (f0_3 > 0)
                         ProcHelp.datastring = ProcHelp.datastring + " " + SINSstate.Cumulative_KalmanErrorVector[(f0_3 + 0)];
                     else
                         ProcHelp.datastring = ProcHelp.datastring + " 0";
@@ -866,7 +867,7 @@ namespace Common_Namespace
                             + " " + SINSstate.Cumulative_KalmanErrorVector[iMx_r12_odo] 
                             + " " + SINSstate.Cumulative_KalmanErrorVector[iMx_r12_odo + 1];
                 }
-                if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_Using_iMx_r_odo_3)
+                if (SINSstate.flag_Odometr_SINS_case && SINSstate.flag_iMx_r3_dV3)
                 {
                     if (SINSstate.flag_FeedbackExist == false)
                         ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[iMx_r_odo_3];
@@ -878,7 +879,7 @@ namespace Common_Namespace
                 {
                     if (SINSstate.flag_FeedbackExist == false)
                     {
-                        if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        if (iMx_kappa_1 > 0)
                             ProcHelp.datastring = ProcHelp.datastring + " " + KalmanVars.ErrorConditionVector_p[iMx_kappa_1] * SimpleData.ToDegree;
                         else
                             ProcHelp.datastring = ProcHelp.datastring + " 0";
@@ -888,7 +889,7 @@ namespace Common_Namespace
                     }
                     else
                     {
-                        if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        if (iMx_kappa_1 > 0)
                             ProcHelp.datastring = ProcHelp.datastring + " " + SINSstate.Cumulative_KalmanErrorVector[iMx_kappa_1] * SimpleData.ToDegree;
                         else
                             ProcHelp.datastring = ProcHelp.datastring + " 0";
@@ -921,45 +922,21 @@ namespace Common_Namespace
                         + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_rOdo3]
                         ;
 
+                    if (SINSstate.Vertical_f0_12 > 0)
+                        ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_12 + 0] + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_12 + 1];
+
                     if (SINSstate.Vertical_f0_3 > 0)
                         ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_3 + 0];
 
                     if (SINSstate.Vertical_kappa1 > 0)
-                    {
                         ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa1] * SimpleData.ToDegree;
-                        if (SINSstate.Vertical_kappa3Scale > 0)
-                            ProcHelp.datastring = ProcHelp.datastring
-                                + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa3Scale + 0] * SimpleData.ToDegree
-                                + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa3Scale + 1];
-                    }
 
-                    if (true)
-                    {
-                        SimpleOperations.CopyArray(Vertical_ErrorConditionVector, KalmanVars.Vertical_ErrorConditionVector_p);
+                    if (SINSstate.Vertical_kappa3Scale > 0)
+                        ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa3Scale + 0] * SimpleData.ToDegree 
+                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa3Scale + 1];
 
-                        ProcHelp.datastring += " - " + Vertical_ErrorConditionVector[0]
-                            + " " + Vertical_ErrorConditionVector[1]
-                            + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_rOdo3]
-                            ;
-
-                        if (SINSstate.Vertical_f0_3 > 0)
-                            ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_f0_3 + 0];
-
-                        if (SINSstate.Vertical_kappa1 > 0)
-                            ProcHelp.datastring = ProcHelp.datastring + " " + Vertical_ErrorConditionVector[SINSstate.Vertical_kappa1] * SimpleData.ToDegree;
-
-                        ProcHelp.datastring += " " + SINSstate.tmp_dh_timeStep;
-                    }
 
                     Nav_Vertical_StateErrorsVector.WriteLine(ProcHelp.datastring);
-
-                    if (i % 5000 == 0)
-                    {
-                        SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_Matrix_A, SimpleData.iMx_Vertical, SimpleData.iMx_Vertical, "Vertical_Matrix_A");
-                        SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_Matrix_H, SimpleData.iMx_Vertical, 5, "Vertical_Matrix_H");
-                        SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_CovarianceMatrixNoise, SimpleData.iMx_Vertical, SimpleData.iMq_Vertical, "Vertical_Noise");
-                        SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_CovarianceMatrixS_m, SimpleData.iMx_Vertical, SimpleData.iMx_Vertical, "Vertical_CovarianceMatrixS_m");
-                    }
                 }
 
 

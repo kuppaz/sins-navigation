@@ -43,7 +43,7 @@ namespace SINSAlignment
 
                 while (true)
                 {
-                    if (SINSstate.FLG_Stop == 0 || (ProcHelp.AlgnCnt != 0 && i == ProcHelp.AlgnCnt))
+                    if (SINSstate.FLG_Stop == 0 || (ProcHelp.AlignmentCounts != 0 && i == ProcHelp.AlignmentCounts))
                         break;
 
                     ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);

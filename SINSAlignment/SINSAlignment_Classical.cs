@@ -49,7 +49,7 @@ namespace SINSAlignment
                 SimpleOperations.CopyArray(KalmanAlign.Noise_Angl, KalmanVars.Noise_Angl);
                 Alignment_Classical.InitOfCovarianceMatrixes(KalmanAlign);
 
-                for (int j = i; j < ProcHelp.AlgnCnt; j++)
+                for (int j = i; j < ProcHelp.AlignmentCounts; j++)
                 {
                     ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
 

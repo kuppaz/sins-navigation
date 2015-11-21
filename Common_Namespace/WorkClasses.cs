@@ -81,16 +81,15 @@ namespace Common_Namespace
         public bool flag_OdoSINSWeakConnect = false, flag_OdoSINSWeakConnect_MODIF = false;
 
         //---параметры запуска---
-        public bool flag_Using_iMx_r_odo_3 = false, flag_UsingAvegering = false, flag_Smoothing = false, flag_BackRun = false, flag_using_slippage = false;
+        public bool flag_UsingAvegering = false, flag_Smoothing = false, flag_BackRun = false, flag_using_slippage = false;
         public bool flag_UseAlgebraDrift = false;
 
         //---параметры коррекции---
-        public bool flag_UsingCorrection = false, flag_UsingAngleCorrection = false, flag_ZUPT = false, flag_Vertical_ZUPT = false, flag_UsingAltitudeCorrection = false;
-        public bool flag_Using_SNS = false, flag_UseOnlyStops = false, flag_NotUse_ZUPT = false, flag_using_Checkpotints = false, flag_using_GoCalibrInCP = false;
+        public bool flag_UsingCorrection = false, flag_UsingAngleCorrection = false, flag_ZUPT = false, flag_Vertical_ZUPT = false;
+        public bool flag_Using_SNS = false, flag_UseOnlyStops = false, flag_NotUse_ZUPT = false, flag_using_Checkpotints = false;
         public bool flag_UseOdoVelocity_In_Oz = false;
 
         public bool flag_UsingOdoPosition = false, flag_UsingOdoVelocity = false, add_velocity_to_position = false, flag_onlyZeroSideVelocity = false;
-        public bool flag_OdoModelOnlyCP = false;
 
         //---остальное вспомогательное---
         public bool flag_UseLastMinusOneOdo = false, flag_slipping = false;
@@ -237,7 +236,7 @@ namespace Common_Namespace
         public bool flag_GRTV_output { get; set; }
 
 
-        public int Vertical_kappa1, Vertical_kappa3Scale, Vertical_alphaBeta, Vertical_nu0, Vertical_f0_12, Vertical_f0_3, Vertical_rOdo3;
+        public int Vertical_kappa1, Vertical_kappa3Scale, Vertical_f0_12, Vertical_f0_3, Vertical_rOdo3;
         public double[] Vertical_Cumulative_KalmanErrorVector = new double[SimpleData.iMx_Vertical];
 
         public int value_iMx_dV_12, value_iMx_alphaBeta, value_iMx_Nu0, value_iMx_f0_12, value_iMx_f0_3, value_iMx_dr3, value_iMx_dV3, value_iMx_r_odo_3,
@@ -257,7 +256,6 @@ namespace Common_Namespace
                        , global_V_Up = new double[50000]
                        ;
         public int OdometerZUPT_counter;
-        public double tmp_dh_timeStep;
         public bool flag_equalizeVertNoise;
     }
 
@@ -415,7 +413,7 @@ namespace Common_Namespace
 
         public double LatSNS, LongSNS, AltSNS, SpeedSNS, Ve_SNS, Vn_SNS;
 
-        public int corrected = 0, AlgnCnt = 0;
+        public int corrected = 0, AlignmentCounts = 0;
     }
 }
 

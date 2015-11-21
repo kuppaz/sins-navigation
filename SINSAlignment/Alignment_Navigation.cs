@@ -190,7 +190,6 @@ namespace SINSAlignment
             KalmanVars.Matrix_A[7 * SimpleData.iMx + 2] = -SINSstate.Omega_x[1] / SimpleData.A;
             KalmanVars.Matrix_A[7 * SimpleData.iMx + 3] = 1.0 / SimpleData.A;
             KalmanVars.Matrix_A[7 * SimpleData.iMx + 6] = -(SINSstate.u_x[2] + SINSstate.Omega_x[2]);
-            KalmanVars.Matrix_A[7 * SimpleData.iMx + 8] = SINSstate.u_x[0];
             KalmanVars.Matrix_A[7 * SimpleData.iMx + 10] = -1.0;
 
             KalmanVars.Matrix_A[8 * SimpleData.iMx + 0] = SINSstate.Omega_x[0] / SimpleData.A;
@@ -232,15 +231,12 @@ namespace SINSAlignment
             KalmanVars.Matrix_A[5 * SimpleData.iMx + 1] = -SINSstate.u_x[2] / SimpleData.A;
             KalmanVars.Matrix_A[5 * SimpleData.iMx + 2] = 1.0 / SimpleData.A;
             KalmanVars.Matrix_A[5 * SimpleData.iMx + 4] = -SINSstate.u_x[2];
-            KalmanVars.Matrix_A[5 * SimpleData.iMx + 6] = SINSstate.u_x[0];
             KalmanVars.Matrix_A[5 * SimpleData.iMx + 7] = -SINSstate.A_x0s[1, 0];
             KalmanVars.Matrix_A[5 * SimpleData.iMx + 8] = -SINSstate.A_x0s[1, 1];
             KalmanVars.Matrix_A[5 * SimpleData.iMx + 9] = -SINSstate.A_x0s[1, 2];
 
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 0] = SINSstate.u_x[0] / SimpleData.A;
             KalmanVars.Matrix_A[6 * SimpleData.iMx + 1] = SINSstate.u_x[1] / SimpleData.A;
             KalmanVars.Matrix_A[6 * SimpleData.iMx + 4] = SINSstate.u_x[1];
-            KalmanVars.Matrix_A[6 * SimpleData.iMx + 5] = -SINSstate.u_x[0];
             KalmanVars.Matrix_A[6 * SimpleData.iMx + 7] = -SINSstate.A_x0s[2, 0];
             KalmanVars.Matrix_A[6 * SimpleData.iMx + 8] = -SINSstate.A_x0s[2, 1];
             KalmanVars.Matrix_A[6 * SimpleData.iMx + 9] = -SINSstate.A_x0s[2, 2];

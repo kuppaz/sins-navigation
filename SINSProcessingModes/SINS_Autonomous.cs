@@ -50,7 +50,7 @@ namespace SINSProcessingModes
 
             for (int i = l; i < SINSstate.LastCountForRead; i++)
             {
-                if (SINSstate.flag_UsingClasAlignment == false) { if (i < ProcHelp.AlgnCnt) { myFile.ReadLine(); continue; } }
+                if (SINSstate.flag_UsingClasAlignment == false) { if (i < ProcHelp.AlignmentCounts) { myFile.ReadLine(); continue; } }
 
                 ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
