@@ -522,7 +522,7 @@ namespace Common_Namespace
                     = KalmanVars.CovarianceMatrixS_p[(SINSstate.value_iMx_r_odo_3 + 0) * SimpleData.iMx + (SINSstate.value_iMx_r_odo_3 + 0)] = SINSstate.stdOdoR;
 
 
-            SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx, "CovarianceMatrixS_m");
+            SimpleOperations.PrintMatrixToFile(KalmanVars.CovarianceMatrixS_m, SimpleData.iMx, SimpleData.iMx, "StartCovariance");
 
 
 

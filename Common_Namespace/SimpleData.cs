@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Common_Namespace
 {
     public class SimpleData
     {
-        public static string PathInputString = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//All_data//",
-                             PathOutputString = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Output//",
+        public static string 
+                             //PathInputString = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//All_data//",
+                             //PathOutputString = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Output//",
                              PathTelemetricString = "D://SINS Solution//Imitator_Kompas_temp//Work//DataForImitator//Imitator_",
                              PathImitatorData = "D://SINS Solution//MovingImitator_Azimut//MovingImitator_Azimut//Imitator_data//";
 
-        //public static string PathInputString = "",
-        //                     PathOutputString = "",
-        //                     PathTelemetricString = "Imitator_";
+        public static string PathInputString = Regex.Replace(Application.StartupPath.ToString(), "(\\\\bin|\\\\Debug|\\\\trunk|\\\\SINS motion processing_new data)", String.Empty) + "\\MovingImitator_Azimut\\All_data\\",
+                             PathOutputString = Regex.Replace(Application.StartupPath.ToString(), "(\\\\bin|\\\\Debug|\\\\trunk|\\\\SINS motion processing_new data)", String.Empty) + "\\MovingImitator_Azimut\\Output\\"
+                             ;
 
         public static int iMx;
         public static int iMxSmthd;

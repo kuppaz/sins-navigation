@@ -724,6 +724,11 @@ namespace Common_Namespace
                     KalmanVars.Matrix_A[(iMx_dV_12 + 1) * iMx + (iMx_Nu0 + 0)] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 0];
                     KalmanVars.Matrix_A[(iMx_dV_12 + 1) * iMx + (iMx_Nu0 + 1)] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 1];
                     KalmanVars.Matrix_A[(iMx_dV_12 + 1) * iMx + (iMx_Nu0 + 2)] += -SINSstate.Vx_0[2] * SINSstate.A_x0s[0, 2];
+
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 0) * iMx + 0] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_e;
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 0) * iMx + (iMx_alphaBeta + 1)] += -SINSstate_OdoMod.Vx_0[2];
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + 1] += SINSstate_OdoMod.Vx_0[2] / SINSstate_OdoMod.R_n;
+                    KalmanVars.Matrix_A[(iMx_r12_odo + 1) * iMx + (iMx_alphaBeta + 0)] += SINSstate_OdoMod.Vx_0[2];
                 }
             }
         }

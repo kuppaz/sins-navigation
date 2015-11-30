@@ -12,6 +12,7 @@ using Common_Namespace;
 using SINSAlignment;
 using SINSProcessingModes;
 using SINS_motion_processing;
+using System.Text.RegularExpressions;
 
 
 
@@ -959,6 +960,8 @@ namespace SINS_motion_processing_new_data
 
         public void SelectDataIn()
         {
+            string tt9 = Regex.Replace(Application.StartupPath.ToString(), "(\\\\bin|\\\\Debug)", String.Empty);
+
             if (Azimut_15_08_2012.Checked == true)
             {
                 myFile = new StreamReader(SimpleData.PathInputString + "AzimutB_210530_Other_120815_Autolab_DPC_100Hz_14-40-04.dat");
