@@ -680,9 +680,9 @@ namespace SINS_motion_processing_new_data
                 Pitch_addError = (SINSstate.stdF[1] / 9.81 * Math.Cos(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Sin(SINSstate.Heading)),
                 Roll_addError = -(-SINSstate.stdF[1] / 9.81 * Math.Sin(SINSstate.Heading) + SINSstate.stdF[0] / 9.81 * Math.Cos(SINSstate.Heading)) / Math.Cos(SINSstate.Pitch)
                 ;
-            SINSstate.Heading = Convert.ToDouble(dataArray[29]) + Heading_addError / Heading_tmpDevide;
-            SINSstate.Pitch = Convert.ToDouble(dataArray[33]) + Pitch_addError / Heading_tmpDevide;
-            SINSstate.Roll = Convert.ToDouble(dataArray[31]) + Roll_addError / Heading_tmpDevide;
+            SINSstate.Heading = Convert.ToDouble(dataArray[29]) + Heading_addError ;
+            SINSstate.Pitch = Convert.ToDouble(dataArray[33]) + Pitch_addError ;
+            SINSstate.Roll = Convert.ToDouble(dataArray[31]) + Roll_addError ;
 
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             SINSstate.A_x0s = SINSstate.A_sx0.Transpose();

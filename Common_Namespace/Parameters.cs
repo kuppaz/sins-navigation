@@ -39,7 +39,7 @@ namespace Common_Namespace
                 SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
-                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Korrection = false;
 
                 //---для имитатора---
                 ParamStart.Imitator_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
@@ -47,7 +47,8 @@ namespace Common_Namespace
                 ParamStart.Imitator_Noise_Angl = 3E-6;
 
                 // === best configurations === //
-                //         
+                // Для 0.02 Heading_tmpDevide должен быть равен 1, а шумы - 3Е-6
+                // Для 0.2 Heading_tmpDevide должен быть равен 10, а шумы - 3Е-6
 
 
                 ParamStart.Imitator_Noise_OdoScale = 0.000000001;
