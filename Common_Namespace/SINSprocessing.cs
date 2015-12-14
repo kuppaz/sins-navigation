@@ -471,13 +471,12 @@ namespace Common_Namespace
 
             if (SINSstate.flag_iMx_kappa_13_ds)
             {
-                if (SINSstate.flag_iMqVarkappa13)
-                {
-                    if (SINSstate.value_iMx_kappa_1 > 0)
-                        KalmanVars.CovarianceMatrixNoise[(iMx_kappa_1 + 0) * iMq + iMx_kappa_1 + 0] = KalmanVars.Noise_OdoKappa * sqrt_freq;
+                if (SINSstate.flag_iMqVarkappa3)
+                    KalmanVars.CovarianceMatrixNoise[(iMx_kappa_3_ds + 0) * iMq + iMx_kappa_3_ds + 0] = KalmanVars.Noise_OdoKappa_3 * sqrt_freq;
 
-                    KalmanVars.CovarianceMatrixNoise[(iMx_kappa_3_ds + 0) * iMq + iMx_kappa_3_ds + 0] = KalmanVars.Noise_OdoKappa * sqrt_freq;
-                }
+                if (SINSstate.flag_iMqVarkappa1)
+                    if (SINSstate.value_iMx_kappa_1 > 0)
+                        KalmanVars.CovarianceMatrixNoise[(iMx_kappa_1 + 0) * iMq + iMx_kappa_1 + 0] = KalmanVars.Noise_OdoKappa_1 * sqrt_freq;
 
                 if (SINSstate.flag_iMqKappa)
                     KalmanVars.CovarianceMatrixNoise[(iMx_kappa_3_ds + 1) * iMq + iMx_kappa_3_ds + 1] = KalmanVars.Noise_OdoScale * sqrt_freq;
@@ -488,13 +487,13 @@ namespace Common_Namespace
             // ----------------------------------------------------------//
             if (SINSstate.flag_SeparateHorizVSVertical == true)
             {
-                int Vertical_tmpCounter = 0;
-
                 for (int i = 0; i < SimpleData.iMx_Vertical * SimpleData.iMq_Vertical; i++)
                     KalmanVars.Vertical_CovarianceMatrixNoise[i] = 0.0;
 
                 KalmanVars.Vertical_CovarianceMatrixNoise[1 * SimpleData.iMq_Vertical + 1] = Noise_Vel_in_Mx[2] * sqrt_freq * 1.0;
-                Vertical_tmpCounter = Vertical_tmpCounter + 1;
+
+                if (SINSstate.flag_iMqVarkappa1)
+                    KalmanVars.Vertical_CovarianceMatrixNoise[SINSstate.Vertical_kappa1 * SimpleData.iMq_Vertical + SINSstate.Vertical_kappa1] = KalmanVars.Noise_OdoKappa_1 * sqrt_freq;
             }
         }
 

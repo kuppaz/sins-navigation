@@ -56,6 +56,8 @@
             this.flag_not_use_zupt = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.GRTV_Ekat_151029_2_zaezd = new System.Windows.Forms.CheckBox();
+            this.GRTV_Ekat_151029_1_zaezd = new System.Windows.Forms.CheckBox();
             this.GRTVout_GCEF_format_070715_zavod = new System.Windows.Forms.CheckBox();
             this.GRTVout_GCEF_format_070715_kulikova = new System.Windows.Forms.CheckBox();
             this.Azimut_514_08Nov2013_11_15 = new System.Windows.Forms.CheckBox();
@@ -67,6 +69,7 @@
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.flag_UseAlgebraDrift = new System.Windows.Forms.CheckBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
             this.flag_VupOdo_till_VupSINS = new System.Windows.Forms.CheckBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
@@ -84,7 +87,7 @@
             this.flag_Smoothing = new System.Windows.Forms.CheckBox();
             this.iMqDeltaR = new System.Windows.Forms.CheckBox();
             this.iMqDeltaF = new System.Windows.Forms.CheckBox();
-            this.iMqVarkappa13 = new System.Windows.Forms.CheckBox();
+            this.iMqVarkappa3 = new System.Windows.Forms.CheckBox();
             this.iMqKappa = new System.Windows.Forms.CheckBox();
             this.iMqDeltaNu = new System.Windows.Forms.CheckBox();
             this.iMqDeltaRodo = new System.Windows.Forms.CheckBox();
@@ -104,9 +107,7 @@
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.CycleStartParamChoosing = new System.Windows.Forms.Button();
-            this.GRTV_Ekat_151029_1_zaezd = new System.Windows.Forms.CheckBox();
-            this.GRTV_Ekat_151029_2_zaezd = new System.Windows.Forms.CheckBox();
-            this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
+            this.iMqVarkappa1 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -435,6 +436,28 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Азимут, Кама";
             // 
+            // GRTV_Ekat_151029_2_zaezd
+            // 
+            this.GRTV_Ekat_151029_2_zaezd.AutoSize = true;
+            this.GRTV_Ekat_151029_2_zaezd.Location = new System.Drawing.Point(9, 124);
+            this.GRTV_Ekat_151029_2_zaezd.Name = "GRTV_Ekat_151029_2_zaezd";
+            this.GRTV_Ekat_151029_2_zaezd.Size = new System.Drawing.Size(172, 17);
+            this.GRTV_Ekat_151029_2_zaezd.TabIndex = 88;
+            this.GRTV_Ekat_151029_2_zaezd.Text = "GRTV_Ekat_151029_2_zaezd";
+            this.GRTV_Ekat_151029_2_zaezd.UseVisualStyleBackColor = true;
+            this.GRTV_Ekat_151029_2_zaezd.CheckedChanged += new System.EventHandler(this.GRTV_Ekat_151029_2_zaezd_CheckedChanged);
+            // 
+            // GRTV_Ekat_151029_1_zaezd
+            // 
+            this.GRTV_Ekat_151029_1_zaezd.AutoSize = true;
+            this.GRTV_Ekat_151029_1_zaezd.Location = new System.Drawing.Point(9, 110);
+            this.GRTV_Ekat_151029_1_zaezd.Name = "GRTV_Ekat_151029_1_zaezd";
+            this.GRTV_Ekat_151029_1_zaezd.Size = new System.Drawing.Size(172, 17);
+            this.GRTV_Ekat_151029_1_zaezd.TabIndex = 87;
+            this.GRTV_Ekat_151029_1_zaezd.Text = "GRTV_Ekat_151029_1_zaezd";
+            this.GRTV_Ekat_151029_1_zaezd.UseVisualStyleBackColor = true;
+            this.GRTV_Ekat_151029_1_zaezd.CheckedChanged += new System.EventHandler(this.GRTV_Ekat_151029_1_zaezd_CheckedChanged);
+            // 
             // GRTVout_GCEF_format_070715_zavod
             // 
             this.GRTVout_GCEF_format_070715_zavod.AutoSize = true;
@@ -560,6 +583,16 @@
             this.groupBox9.TabIndex = 38;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Dimention of Error Vector";
+            // 
+            // SeparateHorizVSVertical
+            // 
+            this.SeparateHorizVSVertical.AutoSize = true;
+            this.SeparateHorizVSVertical.Location = new System.Drawing.Point(9, 22);
+            this.SeparateHorizVSVertical.Name = "SeparateHorizVSVertical";
+            this.SeparateHorizVSVertical.Size = new System.Drawing.Size(142, 17);
+            this.SeparateHorizVSVertical.TabIndex = 89;
+            this.SeparateHorizVSVertical.Text = "SeparateHorizVSVertical";
+            this.SeparateHorizVSVertical.UseVisualStyleBackColor = true;
             // 
             // flag_VupOdo_till_VupSINS
             // 
@@ -723,7 +756,7 @@
             // iMq_eq_iMx
             // 
             this.iMq_eq_iMx.AutoSize = true;
-            this.iMq_eq_iMx.Location = new System.Drawing.Point(68, 19);
+            this.iMq_eq_iMx.Location = new System.Drawing.Point(6, 19);
             this.iMq_eq_iMx.Name = "iMq_eq_iMx";
             this.iMq_eq_iMx.Size = new System.Drawing.Size(71, 17);
             this.iMq_eq_iMx.TabIndex = 49;
@@ -761,15 +794,16 @@
             this.iMqDeltaF.Text = "iMq Delta F";
             this.iMqDeltaF.UseVisualStyleBackColor = true;
             // 
-            // iMqVarkappa13
+            // iMqVarkappa3
             // 
-            this.iMqVarkappa13.AutoSize = true;
-            this.iMqVarkappa13.Location = new System.Drawing.Point(96, 42);
-            this.iMqVarkappa13.Name = "iMqVarkappa13";
-            this.iMqVarkappa13.Size = new System.Drawing.Size(109, 17);
-            this.iMqVarkappa13.TabIndex = 60;
-            this.iMqVarkappa13.Text = "iMq varkappa 1 3";
-            this.iMqVarkappa13.UseVisualStyleBackColor = true;
+            this.iMqVarkappa3.AutoSize = true;
+            this.iMqVarkappa3.Location = new System.Drawing.Point(96, 42);
+            this.iMqVarkappa3.Name = "iMqVarkappa3";
+            this.iMqVarkappa3.Size = new System.Drawing.Size(100, 17);
+            this.iMqVarkappa3.TabIndex = 60;
+            this.iMqVarkappa3.Text = "iMq varkappa 3";
+            this.iMqVarkappa3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.iMqVarkappa3.UseVisualStyleBackColor = true;
             // 
             // iMqKappa
             // 
@@ -936,7 +970,8 @@
             // 
             // groupBox17
             // 
-            this.groupBox17.Controls.Add(this.iMqVarkappa13);
+            this.groupBox17.Controls.Add(this.iMqVarkappa1);
+            this.groupBox17.Controls.Add(this.iMqVarkappa3);
             this.groupBox17.Controls.Add(this.iMq_eq_iMx);
             this.groupBox17.Controls.Add(this.iMqDeltaR);
             this.groupBox17.Controls.Add(this.iMqDeltaRodo);
@@ -980,37 +1015,16 @@
             this.CycleStartParamChoosing.UseVisualStyleBackColor = true;
             this.CycleStartParamChoosing.Click += new System.EventHandler(this.CycleStartParamChoosing_Click);
             // 
-            // GRTV_Ekat_151029_1_zaezd
+            // iMqVarkappa1
             // 
-            this.GRTV_Ekat_151029_1_zaezd.AutoSize = true;
-            this.GRTV_Ekat_151029_1_zaezd.Location = new System.Drawing.Point(9, 110);
-            this.GRTV_Ekat_151029_1_zaezd.Name = "GRTV_Ekat_151029_1_zaezd";
-            this.GRTV_Ekat_151029_1_zaezd.Size = new System.Drawing.Size(172, 17);
-            this.GRTV_Ekat_151029_1_zaezd.TabIndex = 87;
-            this.GRTV_Ekat_151029_1_zaezd.Text = "GRTV_Ekat_151029_1_zaezd";
-            this.GRTV_Ekat_151029_1_zaezd.UseVisualStyleBackColor = true;
-            this.GRTV_Ekat_151029_1_zaezd.CheckedChanged += new System.EventHandler(this.GRTV_Ekat_151029_1_zaezd_CheckedChanged);
-            // 
-            // GRTV_Ekat_151029_2_zaezd
-            // 
-            this.GRTV_Ekat_151029_2_zaezd.AutoSize = true;
-            this.GRTV_Ekat_151029_2_zaezd.Location = new System.Drawing.Point(9, 124);
-            this.GRTV_Ekat_151029_2_zaezd.Name = "GRTV_Ekat_151029_2_zaezd";
-            this.GRTV_Ekat_151029_2_zaezd.Size = new System.Drawing.Size(172, 17);
-            this.GRTV_Ekat_151029_2_zaezd.TabIndex = 88;
-            this.GRTV_Ekat_151029_2_zaezd.Text = "GRTV_Ekat_151029_2_zaezd";
-            this.GRTV_Ekat_151029_2_zaezd.UseVisualStyleBackColor = true;
-            this.GRTV_Ekat_151029_2_zaezd.CheckedChanged += new System.EventHandler(this.GRTV_Ekat_151029_2_zaezd_CheckedChanged);
-            // 
-            // SeparateHorizVSVertical
-            // 
-            this.SeparateHorizVSVertical.AutoSize = true;
-            this.SeparateHorizVSVertical.Location = new System.Drawing.Point(9, 22);
-            this.SeparateHorizVSVertical.Name = "SeparateHorizVSVertical";
-            this.SeparateHorizVSVertical.Size = new System.Drawing.Size(142, 17);
-            this.SeparateHorizVSVertical.TabIndex = 89;
-            this.SeparateHorizVSVertical.Text = "SeparateHorizVSVertical";
-            this.SeparateHorizVSVertical.UseVisualStyleBackColor = true;
+            this.iMqVarkappa1.AutoSize = true;
+            this.iMqVarkappa1.Location = new System.Drawing.Point(96, 26);
+            this.iMqVarkappa1.Name = "iMqVarkappa1";
+            this.iMqVarkappa1.Size = new System.Drawing.Size(100, 17);
+            this.iMqVarkappa1.TabIndex = 64;
+            this.iMqVarkappa1.Text = "iMq varkappa 1";
+            this.iMqVarkappa1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.iMqVarkappa1.UseVisualStyleBackColor = true;
             // 
             // SINS_Processing
             // 
@@ -1120,7 +1134,7 @@
         private System.Windows.Forms.CheckBox WeakConnect;
         private System.Windows.Forms.CheckBox iMqDeltaR;
         private System.Windows.Forms.CheckBox iMqDeltaF;
-        private System.Windows.Forms.CheckBox iMqVarkappa13;
+        private System.Windows.Forms.CheckBox iMqVarkappa3;
         private System.Windows.Forms.CheckBox iMqKappa;
         private System.Windows.Forms.CheckBox iMqDeltaNu;
         private System.Windows.Forms.CheckBox iMqDeltaRodo;
@@ -1150,6 +1164,7 @@
         private System.Windows.Forms.CheckBox GRTV_Ekat_151029_1_zaezd;
         private System.Windows.Forms.CheckBox GRTV_Ekat_151029_2_zaezd;
         private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
+        private System.Windows.Forms.CheckBox iMqVarkappa1;
     }
 }
 

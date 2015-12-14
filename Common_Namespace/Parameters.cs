@@ -66,7 +66,8 @@ namespace Common_Namespace
                                                                                                                                         
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.000000002;
@@ -107,7 +108,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = (56.2681502 - 0.00151686666666666666666666666667) * SimpleData.ToRadian;
                 ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = (57.9990499 + 3.7787777777777777777777777777778e-4) * SimpleData.ToRadian;
@@ -157,7 +159,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.268466 * SimpleData.ToRadian;
                 ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.9993716 * SimpleData.ToRadian;
@@ -203,7 +206,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.268466 * SimpleData.ToRadian;
                 ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.9987987 * SimpleData.ToRadian;
@@ -260,7 +264,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
@@ -324,7 +329,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
@@ -397,7 +403,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.1 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
@@ -469,14 +476,15 @@ namespace Common_Namespace
 
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
-                KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoScale = 0.001;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
-                ParamStart.Experiment_stdV = 0.01;
+                ParamStart.Experiment_stdV = 0.0005;
                 ParamStart.Experiment_stdScale = 0.005;
-                ParamStart.Experiment_stdKappa1 = 1.0; //минут
+                ParamStart.Experiment_stdKappa1 = 5.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
                 ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
 
@@ -533,7 +541,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
@@ -608,7 +617,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 0.485964934299;
                 ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 0.9414566620339;
@@ -663,7 +673,8 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 0.982366681098938;
                 ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 1.00708794593811;
@@ -703,7 +714,8 @@ namespace Common_Namespace
                 SINSstate.flag_equalizeVertNoise = false;
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
-                KalmanVars.Noise_OdoKappa = 0.0000001 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
                 KalmanVars.Noise_Pos = 0.000075;
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
@@ -758,7 +770,8 @@ namespace Common_Namespace
 
 
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa = 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 KalmanVars.Noise_Pos = 1.1;
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;

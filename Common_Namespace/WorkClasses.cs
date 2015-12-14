@@ -197,7 +197,7 @@ namespace Common_Namespace
         public double[] GK_Longitude = new double[50];
         public double alpha_z, alpha_x, alpha_y, DirectionalAngle;
 
-        public bool flag_iMqDeltaR = false, flag_iMqDeltaF = false, flag_iMqDeltaNu = false, flag_iMqVarkappa13 = false, flag_iMqKappa = false, flag_iMqDeltaRodo = false;
+        public bool flag_iMqDeltaR = false, flag_iMqDeltaF = false, flag_iMqDeltaNu = false, flag_iMqVarkappa3 = false, flag_iMqVarkappa1 = false, flag_iMqKappa = false, flag_iMqDeltaRodo = false;
         public bool flag_AccuracyClass_NoErr;
         public bool flag_AccuracyClass_0_02grph, flag_AccuracyClass_2_0_grph, flag_AccuracyClass_0_2_grph, flag_AccuracyClass_Custom;
 
@@ -334,7 +334,7 @@ namespace Common_Namespace
         public double[] CovarianceMatrixS_Smoothed = new double[SimpleData.iMx * SimpleData.iMx]
                       , CovarianceMatrix_SP_Smoothed = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
 
-        public double Noise_Pos, Noise_Drift, Noise_Accel, Noise_OdoScale, Noise_OdoKappa;
+        public double Noise_Pos, Noise_Drift, Noise_Accel, Noise_OdoScale, Noise_OdoKappa_3, Noise_OdoKappa_1;
         public double[] Noise_Vel = new double[3];
         public double[] Noise_Angl = new double[3];
 

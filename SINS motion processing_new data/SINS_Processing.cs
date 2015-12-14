@@ -662,7 +662,8 @@ namespace SINS_motion_processing_new_data
 
 
             KalmanVars.Noise_OdoScale = ParamStart.Imitator_Noise_OdoScale;
-            KalmanVars.Noise_OdoKappa = ParamStart.Imitator_Noise_OdoKappa;
+            KalmanVars.Noise_OdoKappa_1 = ParamStart.Imitator_Noise_OdoKappa;
+            KalmanVars.Noise_OdoKappa_3 = ParamStart.Imitator_Noise_OdoKappa;
             KalmanVars.Noise_Pos = ParamStart.Imitator_Noise_Pos;
             KalmanVars.Noise_Drift = ParamStart.Imitator_Noise_Drift;
             KalmanVars.Noise_Accel = ParamStart.Imitator_Noise_Accel;
@@ -887,7 +888,8 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_iMqDeltaR = iMqDeltaR.Checked;
             SINSstate.flag_iMqDeltaF = iMqDeltaF.Checked;
             SINSstate.flag_iMqDeltaNu = iMqDeltaNu.Checked;
-            SINSstate.flag_iMqVarkappa13 = iMqVarkappa13.Checked;
+            SINSstate.flag_iMqVarkappa1 = iMqVarkappa1.Checked;
+            SINSstate.flag_iMqVarkappa3 = iMqVarkappa3.Checked;
             SINSstate.flag_iMqKappa = iMqKappa.Checked;
             SINSstate.flag_iMqDeltaRodo = iMqDeltaRodo.Checked;
             SINSstate.flag_Imitator_Telemetric = Imitator_Telemetric.Checked;
@@ -1585,14 +1587,14 @@ namespace SINS_motion_processing_new_data
                 this.iMqDeltaF.Checked = true;
                 this.iMqDeltaNu.Checked = true;
                 this.iMqDeltaRodo.Checked = true;
-                this.iMqVarkappa13.Checked = true;
+                this.iMqVarkappa3.Checked = true;
             }
             else
             {
                 this.iMqKappa.Checked = false;
                 this.iMqDeltaF.Checked = false;
                 this.iMqDeltaNu.Checked = false;
-                this.iMqVarkappa13.Checked = false;
+                this.iMqVarkappa3.Checked = false;
 
                 if (this.Odometr_SINS_case.Checked == false)
                 {
