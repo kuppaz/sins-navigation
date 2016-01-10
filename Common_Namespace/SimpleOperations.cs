@@ -362,22 +362,86 @@ namespace Common_Namespace
         }
         public static Matrix C_convultion_VerticalCoordinate(SINS_State SINSstate)
         {
-            Matrix MatrixResult = new Matrix(1, SimpleData.iMx);
-
-            MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
+            Matrix MatrixResult;
+            if (SINSstate.flag_SeparateHorizVSVertical == true)
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx_Vertical);
+                MatrixResult[0, 0] = 1.0;
+            }
+            else
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx);
+                MatrixResult[0, SINSstate.value_iMx_dr3 + 0] = 1.0;
+            }
 
             return MatrixResult;
         }
         public static Matrix C_convultion_VerticalVelocity(SINS_State SINSstate)
         {
+            Matrix MatrixResult;
+            if (SINSstate.flag_SeparateHorizVSVertical == true)
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx_Vertical);
+
+                MatrixResult[0, 1] = 1.0;
+            }
+            else
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx);
+
+                MatrixResult[0, SINSstate.value_iMx_dV3 + 0] = 1.0;
+                MatrixResult[0, SINSstate.value_iMx_alphaBeta + 0] = -SINSstate.Vx_0[1];
+                MatrixResult[0, SINSstate.value_iMx_alphaBeta + 1] = SINSstate.Vx_0[0];
+                MatrixResult[0, 0] = -SINSstate.Vx_0[0] / SINSstate.R_e;
+                MatrixResult[0, 1] = -SINSstate.Vx_0[1] / SINSstate.R_n;
+            }
+
+            return MatrixResult;
+        }
+        public static Matrix C_convultion_dF0_3(SINS_State SINSstate)
+        {
+            Matrix MatrixResult;
+            if (SINSstate.flag_SeparateHorizVSVertical == true)
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx_Vertical);
+                MatrixResult[0, SINSstate.Vertical_f0_3 + 0] = 1.0;
+            }
+            else
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx);
+                MatrixResult[0, SINSstate.value_iMx_f0_3 + 0] = 1.0;
+            }
+
+            return MatrixResult;
+        }
+
+
+        public static Matrix C_convultion_OdoKappa_1(SINS_State SINSstate)
+        {
+            Matrix MatrixResult;
+            if (SINSstate.flag_SeparateHorizVSVertical == true)
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx_Vertical);
+                MatrixResult[0, SINSstate.Vertical_kappa1 + 0] = 1.0;
+            }
+            else
+            {
+                MatrixResult = new Matrix(1, SimpleData.iMx);
+                MatrixResult[0, SINSstate.value_iMx_kappa_1 + 0] = 1.0;
+            }
+
+            return MatrixResult;
+        }
+        public static Matrix C_convultion_OdoKappa_3(SINS_State SINSstate)
+        {
             Matrix MatrixResult = new Matrix(1, SimpleData.iMx); ;
-
-            MatrixResult[0, SINSstate.value_iMx_dV3 + 0] = 1.0;
-            MatrixResult[0, SINSstate.value_iMx_alphaBeta + 0] = -SINSstate.Vx_0[1];
-            MatrixResult[0, SINSstate.value_iMx_alphaBeta + 1] = SINSstate.Vx_0[0];
-            MatrixResult[0, 0] = -SINSstate.Vx_0[0] / SINSstate.R_e;
-            MatrixResult[0, 1] = -SINSstate.Vx_0[1] / SINSstate.R_n;
-
+            MatrixResult[0, SINSstate.value_iMx_kappa_3_ds + 0] = 1.0;
+            return MatrixResult;
+        }
+        public static Matrix C_convultion_ScaleError(SINS_State SINSstate)
+        {
+            Matrix MatrixResult = new Matrix(1, SimpleData.iMx); ;
+            MatrixResult[0, SINSstate.value_iMx_kappa_3_ds + 1] = 1.0;
             return MatrixResult;
         }
 

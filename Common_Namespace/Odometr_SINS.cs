@@ -38,8 +38,10 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) * 10.0;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Max(Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) * 10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist * 10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = KalmanVars.OdoNoise_Dist * 10.0;
+            //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist) * 10.0;
+            //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist) * 10.0;
 
             KalmanVars.cnt_measures += 2;
 
@@ -70,7 +72,7 @@ namespace Common_Namespace
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r_odo_3] = -1.0;
 
                     KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
-                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Max(Math.Abs(SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist), KalmanVars.OdoNoise_Dist) / 0.5;
+                    KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
 
                     KalmanVars.cnt_measures += 1;
                 }
@@ -91,6 +93,7 @@ namespace Common_Namespace
 
                     KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
                     KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
+                    //KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = Math.Abs(SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist);
 
                     KalmanVars.Vertical_cnt_measures += 1;
                 }
@@ -556,7 +559,7 @@ namespace Common_Namespace
                 KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 1) * iMq + iMx_r12_odo + 1] = KalmanVars.Noise_Pos * sqrt_freq;
 
                 if (SINSstate.flag_iMx_r3_dV3)
-                    KalmanVars.CovarianceMatrixNoise[(iMx_r_odo_3 + 0) * iMq + iMx_r_odo_3 + 0] = KalmanVars.Noise_Pos * sqrt_freq / SINSstate.decrementVerticalNoise;
+                    KalmanVars.CovarianceMatrixNoise[(iMx_r_odo_3 + 0) * iMq + iMx_r_odo_3 + 0] = KalmanVars.Noise_Pos * sqrt_freq;
             }
 
 
@@ -565,6 +568,11 @@ namespace Common_Namespace
             // ----------------------------------------------------------//
             if (SINSstate.flag_SeparateHorizVSVertical == true)
             {
+                if (SINSstate.flag_iMqDeltaRodo)
+                    KalmanVars.Vertical_CovarianceMatrixNoise[SINSstate.Vertical_rOdo3 * SimpleData.iMq_Vertical + SINSstate.Vertical_rOdo3] = KalmanVars.Noise_Pos_Odo * sqrt_freq;
+
+                if (SINSstate.flag_iMqVarkappa1)
+                    KalmanVars.Vertical_CovarianceMatrixNoise[SINSstate.Vertical_kappa1 * SimpleData.iMq_Vertical + SINSstate.Vertical_kappa1] = KalmanVars.Noise_OdoKappa_1 * sqrt_freq;
             }
         }
 

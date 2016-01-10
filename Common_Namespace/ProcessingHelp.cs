@@ -35,6 +35,8 @@ namespace Common_Namespace
 
             ProcHelp.datastring = myFile.ReadLine();
 
+            if (myFile.EndOfStream) return;
+
             if (SINSstate.Global_file == "topo")
             {
                 if (SINSstate.firstLineRead == false)
@@ -121,8 +123,9 @@ namespace Common_Namespace
 
                 SINSstate.Time = (SINSstate.Count - SINSstate.initCount) * Math.Abs(SINSstate.timeStep);
 
-                SINSstate.F_z[1] = Convert.ToDouble(dataArray2[1]); 
-                SINSstate.F_z[2] = Convert.ToDouble(dataArray2[2]); 
+                SINSstate.F_z[1] = Convert.ToDouble(dataArray2[1]);
+                SINSstate.F_z[2] = Convert.ToDouble(dataArray2[2]);
+                //SINSstate.F_z[2] = Convert.ToDouble(dataArray2[2]) + 0.0068; 
                 SINSstate.F_z[0] = Convert.ToDouble(dataArray2[3]);
 
                 SINSstate.W_z[1] = Convert.ToDouble(dataArray2[4]);
@@ -146,7 +149,7 @@ namespace Common_Namespace
                     SimpleOperations.CopyArray(SINSstate.F_z, fz);
                     SimpleOperations.CopyArray(SINSstate.W_z, Wz);
                 }
-                if (SINSstate.Global_file.Contains("GRTVout_GCEF_format"))
+                if (SINSstate.Global_file.Contains("GRTVout_GCEF_format") || SINSstate.Global_file.Contains("GRTV_Ekat"))
                 {
                     double[] fz = new double[3], Wz = new double[3];
 
@@ -259,6 +262,13 @@ namespace Common_Namespace
 
                         //SINSstate.alpha_x = -0.01613 * SimpleData.ToRadian;
                         //SINSstate.alpha_z = -0.00114 * SimpleData.ToRadian; 
+                    }
+
+                    if (SINSstate.Global_file.Contains("GRTV_Ekat"))
+                    {
+                        //double correction_OdoScale = -0.00957;
+                        //SINSstate.OdometerData.odometer_left.Value /= (1.0 + correction_OdoScale);
+                        //SINSstate.OdometerData.odometer_right.Value /= (1.0 + correction_OdoScale);
                     }
                 }
 
@@ -441,6 +451,8 @@ namespace Common_Namespace
             ProcHelp.distance_from_start = Math.Sqrt(Math.Pow((Lat - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(Lat, SINSstate.Altitude), 2) +
                                  Math.Pow((Long - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
 
+
+            //if (SINSstate.Time + SINSstate.Time_Alignment < 2955.53) return;
 
 
             // --- Вывод в файл данных, необходимых для формирования GRTV бинарного фалйа --- //
@@ -723,22 +735,51 @@ namespace Common_Namespace
             {
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                     //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
-                                        + " " + Math.Round(((SINSstate_Smooth.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
-                                        + " " + Math.Round(((SINSstate_Smooth.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude)), 2) + " " + SINSstate_Smooth.Altitude
-                                        + " " + ((SINSstate_Smooth.Latitude) * SimpleData.ToDegree) + " " + ((SINSstate_Smooth.Longitude) * SimpleData.ToDegree)
-                                        + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate_Smooth.Latitude) * SINSstate.R_n), 2)
-                                        + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_Smooth.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude)), 2)
-                                        + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
-                                        + " " + Math.Round(SINSstate_Smooth.Vx_0[0], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[1], 3) + " " + Math.Round(SINSstate_Smooth.Vx_0[2], 3)
-                                        + " " + Math.Round((SINSstate_Smooth.Heading * SimpleData.ToDegree), 9)
-                                        + " " + Math.Round((SINSstate_Smooth.Roll * SimpleData.ToDegree), 9) + " " + Math.Round((SINSstate_Smooth.Pitch * SimpleData.ToDegree), 9)
-                                        ;
+                        + " " + (SINSstate_Smooth.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n
+                        + " " + (SINSstate_Smooth.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude) + " " + SINSstate_Smooth.Altitude
+                        + " " + SINSstate_Smooth.Latitude * SimpleData.ToDegree
+                        + " " + SINSstate_Smooth.Longitude * SimpleData.ToDegree
+                        + " " + (ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate_Smooth.Latitude) * SINSstate.R_n
+                        + " " + (ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_Smooth.Longitude) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude)
+                        + " " + ProcHelp.AltSNS + " " + ProcHelp.SpeedSNS
+                        + " " + SINSstate_Smooth.Vx_0[0] + " " + SINSstate_Smooth.Vx_0[1]  + " " + SINSstate_Smooth.Vx_0[2]
+                        + " " + SINSstate_Smooth.Heading * SimpleData.ToDegree
+                        + " " + SINSstate_Smooth.Roll * SimpleData.ToDegree
+                        + " " + SINSstate_Smooth.Pitch * SimpleData.ToDegree
+                        //----- инструментальные ошибки -----//
+                        + " " + SINSstate_Smooth.Cumulative_KalmanErrorVector[Math.Max(SINSstate.value_iMx_kappa_1, SINSstate.Vertical_kappa1)] * SimpleData.ToDegree
+                        + " " + SINSstate_Smooth.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 0] * SimpleData.ToDegree
+                        + " " + SINSstate_Smooth.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 1]
+                        + " " + SINSstate_Smooth.Cumulative_KalmanErrorVector[Math.Max(SINSstate.value_iMx_f0_3, SINSstate.Vertical_f0_3)]
+                        ;
 
                 if (SINSstate.Global_file == "Saratov_run_2014_07_23")
                     ProcHelp.datastring = ProcHelp.datastring + " " + Math.Round(SINSstate.Count);
 
                 Nav_Smoothed.WriteLine(ProcHelp.datastring);
             }
+
+
+            
+            if (i % 5 == 0)
+            {
+                //------------------------------------------------------------//
+                if (SINSstate.flag_FeedbackExist)
+                    KMLFileOut.WriteLine(SINSstate.Longitude * SimpleData.ToDegree + "," + SINSstate.Latitude * SimpleData.ToDegree 
+                        //+ "," + SINSstate.Altitude);
+                        + "," + (SINSstate.Time + SINSstate.Time_Alignment));
+                else
+                    KMLFileOut.WriteLine(SINSstate2.Longitude * SimpleData.ToDegree + "," + SINSstate2.Latitude * SimpleData.ToDegree 
+                        //+ "," + SINSstate2.Altitude);
+                        + "," + (SINSstate.Time + SINSstate.Time_Alignment));
+
+                if (SINSstate.NowSmoothing)
+                    KMLFileOutSmoothed.WriteLine(SINSstate_Smooth.Longitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Latitude * SimpleData.ToDegree 
+                        //+ "," + SINSstate_Smooth.Altitude);
+                        + "," + (SINSstate.Time + SINSstate.Time_Alignment));
+            }
+
+
 
             if (i % SINSstate.FreqOutput == 0)
             {
@@ -938,18 +979,6 @@ namespace Common_Namespace
 
                     Nav_Vertical_StateErrorsVector.WriteLine(ProcHelp.datastring);
                 }
-
-
-
-
-                //------------------------------------------------------------//
-                if (SINSstate.flag_FeedbackExist)
-                    KMLFileOut.WriteLine(SINSstate.Longitude * SimpleData.ToDegree + "," + SINSstate.Latitude * SimpleData.ToDegree + "," + SINSstate.Altitude);
-                else
-                    KMLFileOut.WriteLine(SINSstate2.Longitude * SimpleData.ToDegree + "," + SINSstate2.Latitude * SimpleData.ToDegree + "," + SINSstate2.Altitude);
-
-                if (SINSstate.NowSmoothing)
-                    KMLFileOutSmoothed.WriteLine(SINSstate_Smooth.Longitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Latitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Altitude);
             }
 
         }
@@ -963,7 +992,7 @@ namespace Common_Namespace
                 KMLFileOut.WriteLine("<?xml version='1.0' encoding='UTF-8'?>                                                 ");
                 KMLFileOut.WriteLine("<kml xmlns='http://earth.google.com/kml/2.2'>                                          ");
                 KMLFileOut.WriteLine("<Document>                                                                             ");
-                KMLFileOut.WriteLine("<name>" + SINSstate.global_paramsCycleScanning + "NavLab Nikitin Markers</name>");
+                KMLFileOut.WriteLine("<name>" + SINSstate.Global_file + SINSstate.global_paramsCycleScanning + "</name>");
                 KMLFileOut.WriteLine("<visibility>1</visibility>                                                             ");
                 KMLFileOut.WriteLine("<open>1</open>                                                                         ");
                 KMLFileOut.WriteLine("<Style id='MarkerIcon'>                                                                ");

@@ -104,10 +104,10 @@
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.iMSmthd_Is_2_plus_Odo = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.iMqVarkappa1 = new System.Windows.Forms.CheckBox();
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.CycleStartParamChoosing = new System.Windows.Forms.Button();
-            this.iMqVarkappa1 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -301,7 +301,7 @@
             this.Output_Freq.Name = "Output_Freq";
             this.Output_Freq.Size = new System.Drawing.Size(28, 20);
             this.Output_Freq.TabIndex = 28;
-            this.Output_Freq.Text = "100";
+            this.Output_Freq.Text = "25";
             this.Output_Freq.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label1
@@ -985,6 +985,17 @@
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Matrix Noise Dimension";
             // 
+            // iMqVarkappa1
+            // 
+            this.iMqVarkappa1.AutoSize = true;
+            this.iMqVarkappa1.Location = new System.Drawing.Point(96, 26);
+            this.iMqVarkappa1.Name = "iMqVarkappa1";
+            this.iMqVarkappa1.Size = new System.Drawing.Size(100, 17);
+            this.iMqVarkappa1.TabIndex = 64;
+            this.iMqVarkappa1.Text = "iMq varkappa 1";
+            this.iMqVarkappa1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.iMqVarkappa1.UseVisualStyleBackColor = true;
+            // 
             // flag_GRTV_output
             // 
             this.flag_GRTV_output.AutoSize = true;
@@ -1014,17 +1025,6 @@
             this.CycleStartParamChoosing.Text = "Cycle Start Param";
             this.CycleStartParamChoosing.UseVisualStyleBackColor = true;
             this.CycleStartParamChoosing.Click += new System.EventHandler(this.CycleStartParamChoosing_Click);
-            // 
-            // iMqVarkappa1
-            // 
-            this.iMqVarkappa1.AutoSize = true;
-            this.iMqVarkappa1.Location = new System.Drawing.Point(96, 26);
-            this.iMqVarkappa1.Name = "iMqVarkappa1";
-            this.iMqVarkappa1.Size = new System.Drawing.Size(100, 17);
-            this.iMqVarkappa1.TabIndex = 64;
-            this.iMqVarkappa1.Text = "iMq varkappa 1";
-            this.iMqVarkappa1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.iMqVarkappa1.UseVisualStyleBackColor = true;
             // 
             // SINS_Processing
             // 

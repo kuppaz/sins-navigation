@@ -77,7 +77,8 @@ namespace Common_Namespace
 
         //---мод запуска программы---
         public bool flag_Alignment = false, flag_Autonomous_Solution = false, flag_FeedbackExist = false, flag_EstimateExist = false;
-        public bool flag_UsingClasAlignment = false, flag_UsingNavAlignment = false, flag_OnlyAlignment = false;
+        public bool flag_UsingClasAlignment = false, flag_UsingNavAlignment = false, flag_OnlyAlignment = false, Alignment_HeadingDetermined = false;
+        public double Alignment_HeadingValue;
         public bool flag_OdoSINSWeakConnect = false, flag_OdoSINSWeakConnect_MODIF = false;
 
         //---параметры запуска---
@@ -216,7 +217,6 @@ namespace Common_Namespace
         public bool flag_AccuracyClass_0_0grph;
         public double Noise_GPS_PositionError;
         public bool flag_VupOdo_till_VupSINS;
-        public double decrementVerticalNoise;
         public bool flag_SeparateHorizVSVertical;
 
         public string SmoothingOutput_str_X, SmoothingOutput_str_P = "", SmoothingOutput_strForBack = "";
@@ -334,7 +334,7 @@ namespace Common_Namespace
         public double[] CovarianceMatrixS_Smoothed = new double[SimpleData.iMx * SimpleData.iMx]
                       , CovarianceMatrix_SP_Smoothed = new double[SimpleData.iMxSmthd * SimpleData.iMxSmthd];
 
-        public double Noise_Pos, Noise_Drift, Noise_Accel, Noise_OdoScale, Noise_OdoKappa_3, Noise_OdoKappa_1;
+        public double Noise_Pos, Noise_Pos_Odo, Noise_Drift, Noise_Accel, Noise_OdoScale, Noise_OdoKappa_3, Noise_OdoKappa_1;
         public double[] Noise_Vel = new double[3];
         public double[] Noise_Angl = new double[3];
 

@@ -261,9 +261,6 @@ namespace Common_Namespace
             }
 
 
-
-
-
             SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
             U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
 
@@ -282,34 +279,10 @@ namespace Common_Namespace
             SINSstate.Time_Alignment = SINSstate.Time;
 
 
+            // --- Если задан курс в настройках ---//
+            if (SINSstate.Alignment_HeadingDetermined == true)
+                SINSstate.Heading = SINSstate.Alignment_HeadingValue;
 
-
-            if (SINSstate.Global_file == "Azimuth_minsk_race_4_3to6to2")
-            {
-                SINSstate.Heading = -3.0504734;
-            }
-            if (SINSstate.Global_file == "ktn004_15.03.2012")
-            {
-                SINSstate.Heading = 15.28 * SimpleData.ToRadian;
-            }
-
-            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)")
-            {
-                SINSstate.Heading = 153.4796 * SimpleData.ToRadian;
-            }
-            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
-            {
-                SINSstate.Heading = -78.61045 * SimpleData.ToRadian;
-                //SINSstate.Heading -= 0.0663 * SimpleData.ToRadian;
-            }
-            if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd")
-            {
-                SINSstate.Heading = 33.91437 * SimpleData.ToRadian;
-            }
-            if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd")
-            {
-                SINSstate.Heading = 40.31628 * SimpleData.ToRadian;
-            }
 
 
 

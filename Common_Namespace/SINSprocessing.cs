@@ -30,11 +30,23 @@ namespace Common_Namespace
 
                     SINSstate.odotime_prev = SINSstate.Time;
 
-                    SINSstate.Latitude_prev = SINSstate.Latitude; SINSstate2.Latitude_prev = SINSstate2.Latitude;
-                    SINSstate.Longitude_prev = SINSstate.Longitude; SINSstate2.Longitude_prev = SINSstate2.Longitude;
-                    SINSstate.Altitude_prev = SINSstate.Altitude; SINSstate2.Altitude_prev = SINSstate2.Altitude;
+                    SINSstate_OdoMod.Latitude_prev = SINSstate.Latitude;
+                    SINSstate_OdoMod.Longitude_prev = SINSstate.Longitude;
+                    SINSstate_OdoMod.Altitude_prev = SINSstate.Altitude;
+
+                    SINSstate_OdoMod.Heading_prev = SINSstate_OdoMod.Heading;
+                    SINSstate_OdoMod.Roll_prev = SINSstate_OdoMod.Roll;
+                    SINSstate_OdoMod.Pitch_prev = SINSstate_OdoMod.Pitch;
                 }
             }
+
+            SINSstate.Latitude_prev = SINSstate.Latitude; SINSstate2.Latitude_prev = SINSstate2.Latitude;
+            SINSstate.Longitude_prev = SINSstate.Longitude; SINSstate2.Longitude_prev = SINSstate2.Longitude;
+            SINSstate.Altitude_prev = SINSstate.Altitude; SINSstate2.Altitude_prev = SINSstate2.Altitude;
+
+            SINSstate.Heading_prev = SINSstate.Heading; SINSstate2.Heading_prev = SINSstate2.Heading;
+            SINSstate.Roll_prev = SINSstate.Roll; SINSstate2.Roll_prev = SINSstate2.Roll;
+            SINSstate.Pitch_prev = SINSstate.Pitch; SINSstate2.Pitch_prev = SINSstate2.Pitch;
         }
 
 
@@ -464,7 +476,7 @@ namespace Common_Namespace
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 if (SINSstate.flag_iMqDeltaR)
-                    KalmanVars.CovarianceMatrixNoise[(value_iMx_dr3 + 0) * iMq + value_iMx_dr3 + 0] = KalmanVars.Noise_Pos * sqrt_freq / SINSstate.decrementVerticalNoise;
+                    KalmanVars.CovarianceMatrixNoise[(value_iMx_dr3 + 0) * iMq + value_iMx_dr3 + 0] = KalmanVars.Noise_Pos * sqrt_freq;
                 
                 KalmanVars.CovarianceMatrixNoise[(value_iMx_dV3 + 0) * iMq + value_iMx_dV3 + 0] = Noise_Vel_in_Mx[2] * sqrt_freq;
             }
@@ -490,10 +502,13 @@ namespace Common_Namespace
                 for (int i = 0; i < SimpleData.iMx_Vertical * SimpleData.iMq_Vertical; i++)
                     KalmanVars.Vertical_CovarianceMatrixNoise[i] = 0.0;
 
+                if (SINSstate.flag_iMqDeltaR)
+                    KalmanVars.Vertical_CovarianceMatrixNoise[0 * SimpleData.iMq_Vertical + 0] = KalmanVars.Noise_Pos_Odo * sqrt_freq;
+
                 KalmanVars.Vertical_CovarianceMatrixNoise[1 * SimpleData.iMq_Vertical + 1] = Noise_Vel_in_Mx[2] * sqrt_freq * 1.0;
 
-                if (SINSstate.flag_iMqVarkappa1)
-                    KalmanVars.Vertical_CovarianceMatrixNoise[SINSstate.Vertical_kappa1 * SimpleData.iMq_Vertical + SINSstate.Vertical_kappa1] = KalmanVars.Noise_OdoKappa_1 * sqrt_freq;
+                if (SINSstate.flag_iMqDeltaF)
+                    KalmanVars.Vertical_CovarianceMatrixNoise[SINSstate.Vertical_f0_3 * SimpleData.iMq_Vertical + SINSstate.Vertical_f0_3] = KalmanVars.Noise_Accel * sqrt_freq;
             }
         }
 
@@ -1035,8 +1050,18 @@ namespace Common_Namespace
                 //--- Производим одометрическое счисление координат ---//
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {
+                    SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_sx0, SINSstate_OdoMod.A_x0s.Transpose());
+
+                    SINSstate_OdoMod.Heading = Math.Atan2(SINSstate_OdoMod.A_sx0[1, 0], SINSstate_OdoMod.A_sx0[1, 1]);
+                    SINSstate_OdoMod.Roll = -Math.Atan2(SINSstate_OdoMod.A_sx0[0, 2], SINSstate_OdoMod.A_sx0[2, 2]);
+                    SINSstate_OdoMod.Pitch = Math.Atan2(SINSstate_OdoMod.A_sx0[1, 2], Math.Sqrt(SINSstate_OdoMod.A_sx0[0, 2] * SINSstate_OdoMod.A_sx0[0, 2] + SINSstate_OdoMod.A_sx0[2, 2] * SINSstate_OdoMod.A_sx0[2, 2]));
+
                     double[] dS_x = new double[3];
                     SimpleOperations.CopyArray(dS_x, SINSstate_OdoMod.A_x0s * SINSstate.OdometerVector);
+
+                    // -- Используются средние значения углов ориентации между двумя моментами съема показаний одометра -- //
+                    //SimpleOperations.CopyArray(dS_x, SimpleOperations.A_sx0((SINSstate_OdoMod.Heading + SINSstate_OdoMod.Heading_prev) / 2.0, 
+                    //    (SINSstate_OdoMod.Roll + SINSstate_OdoMod.Roll_prev) / 2.0, (SINSstate_OdoMod.Pitch + SINSstate_OdoMod.Pitch_prev) / 2.0).Transpose() * SINSstate.OdometerVector);
 
                     SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
                     SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) / Math.Cos(SINSstate_OdoMod.Latitude);
@@ -1348,7 +1373,6 @@ namespace Common_Namespace
                     dim_shift_for_X = u + 1;
                 }
 
-
                 SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
                 for (int u = 0; u < tmp_dim; u++)
                 {
@@ -1435,12 +1459,141 @@ namespace Common_Namespace
             }
 
 
+            //-----------------------------------------------------------------
+            //------------------СГЛАЖИВАНИЕ KAPPA_1----------------------------
+            //-----------------------------------------------------------------
+            {
+                int u2 = 0;
+                int tmp_dim = 1, dim_shift = dim_shift_for_X;
+
+                double Time_Back = SINSstate.Count;
+                double Time_Streight = Convert.ToDouble(BackInputX_LineArray[0]);
+                for (int u = 0 + dim_shift; u < tmp_dim + dim_shift; u++)
+                {
+                    KalmanVars.ErrorVector_Straight[u - dim_shift] = Convert.ToDouble(BackInputX_LineArray[u + 1]);
+                    dim_shift_for_X = u + 1;
+                }
+
+                SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
+                for (int u = 0; u < tmp_dim; u++)
+                {
+                    for (int u1 = u; u1 < tmp_dim; u1++)
+                    {
+                        KalmanVars.CovarianceMatrix_SP_Straight[u * tmp_dim + u1] = Convert.ToDouble(BackInputP_LineArray[u2 + dim_shift_for_P]);
+                        u2++;
+                    }
+                }
+                dim_shift_for_P += u2;
+
+                if (SINSstate.flag_SeparateHorizVSVertical == true)
+                    KalmanVars.ErrorVector_m[0] = SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1];
+                else
+                    KalmanVars.ErrorVector_m[0] = SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_1];
+
+                Matrix MatrixS_For_VerticalCoordinate = new Matrix(tmp_dim, tmp_dim);
+                if (SINSstate.flag_SeparateHorizVSVertical == false)
+                    MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_OdoKappa_1(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_OdoKappa_1(SINSstate).Transpose();
+                else
+                    MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_OdoKappa_1(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_OdoKappa_1(SINSstate).Transpose();
+
+                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrix_SP_m, KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_VerticalCoordinate), tmp_dim));
+
+                //==============================================================//
+                KalmanProcs.Smoothing(KalmanVars, SINSstate, tmp_dim);
+                //==============================================================//
+
+                SINSstate_Smooth.Cumulative_KalmanErrorVector[Math.Max(SINSstate.value_iMx_kappa_1, SINSstate.Vertical_kappa1)] = KalmanVars.ErrorVector_Smoothed[0];
+            }
+
+            //-----------------------------------------------------------------
+            //------------------СГЛАЖИВАНИЕ KAPPA_3----------------------------
+            //-----------------------------------------------------------------
+            {
+                int u2 = 0;
+                int tmp_dim = 1, dim_shift = dim_shift_for_X;
+
+                double Time_Back = SINSstate.Count;
+                double Time_Streight = Convert.ToDouble(BackInputX_LineArray[0]);
+                for (int u = 0 + dim_shift; u < tmp_dim + dim_shift; u++)
+                {
+                    KalmanVars.ErrorVector_Straight[u - dim_shift] = Convert.ToDouble(BackInputX_LineArray[u + 1]);
+                    dim_shift_for_X = u + 1;
+                }
+
+                SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
+                for (int u = 0; u < tmp_dim; u++)
+                {
+                    for (int u1 = u; u1 < tmp_dim; u1++)
+                    {
+                        KalmanVars.CovarianceMatrix_SP_Straight[u * tmp_dim + u1] = Convert.ToDouble(BackInputP_LineArray[u2 + dim_shift_for_P]);
+                        u2++;
+                    }
+                }
+                dim_shift_for_P += u2;
+
+                KalmanVars.ErrorVector_m[0] = SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 0];
+
+                Matrix MatrixS_For_VerticalCoordinate = new Matrix(tmp_dim, tmp_dim);
+                MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_OdoKappa_3(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_OdoKappa_3(SINSstate).Transpose();
+
+                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrix_SP_m, KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_VerticalCoordinate), tmp_dim));
+
+                //==============================================================//
+                KalmanProcs.Smoothing(KalmanVars, SINSstate, tmp_dim);
+                //==============================================================//
+
+                SINSstate_Smooth.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 0] = KalmanVars.ErrorVector_Smoothed[0];
+            }
+
+            //-----------------------------------------------------------------
+            //------------------СГЛАЖИВАНИЕ SCALE FACTOR----------------------------
+            //-----------------------------------------------------------------
+            {
+                int u2 = 0;
+                int tmp_dim = 1, dim_shift = dim_shift_for_X;
+
+                double Time_Back = SINSstate.Count;
+                double Time_Streight = Convert.ToDouble(BackInputX_LineArray[0]);
+                for (int u = 0 + dim_shift; u < tmp_dim + dim_shift; u++)
+                {
+                    KalmanVars.ErrorVector_Straight[u - dim_shift] = Convert.ToDouble(BackInputX_LineArray[u + 1]);
+                    dim_shift_for_X = u + 1;
+                }
+
+                SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
+                for (int u = 0; u < tmp_dim; u++)
+                {
+                    for (int u1 = u; u1 < tmp_dim; u1++)
+                    {
+                        KalmanVars.CovarianceMatrix_SP_Straight[u * tmp_dim + u1] = Convert.ToDouble(BackInputP_LineArray[u2 + dim_shift_for_P]);
+                        u2++;
+                    }
+                }
+                dim_shift_for_P += u2;
+
+                KalmanVars.ErrorVector_m[0] = SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 1];
+
+                Matrix MatrixS_For_VerticalCoordinate = new Matrix(tmp_dim, tmp_dim);
+                MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_ScaleError(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_ScaleError(SINSstate).Transpose();
+
+                SimpleOperations.CopyArray(KalmanVars.CovarianceMatrix_SP_m, KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_VerticalCoordinate), tmp_dim));
+
+                //==============================================================//
+                KalmanProcs.Smoothing(KalmanVars, SINSstate, tmp_dim);
+                //==============================================================//
+
+                SINSstate_Smooth.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 1] = KalmanVars.ErrorVector_Smoothed[0];
+            }
 
 
 
 
             //===================Vertical Channel===================//
-            if (SINSstate.flag_iMx_r3_dV3)
+            if (SINSstate.flag_iMx_r3_dV3 == true || SINSstate.flag_SeparateHorizVSVertical == true)
             {
                 if (SimpleData.iMxSmthd >= 2)
                 {
@@ -1472,11 +1625,13 @@ namespace Common_Namespace
                     KalmanVars.ErrorVector_m[0] = SINSstate.Altitude;
 
                     Matrix MatrixS_ForNavDeltas = new Matrix(tmp_dim, tmp_dim);
-                    MatrixS_ForNavDeltas = SimpleOperations.C_convultion_VerticalCoordinate(SINSstate)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
-                                            * SimpleOperations.C_convultion_VerticalCoordinate(SINSstate).Transpose()
-                                            ;
+                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        MatrixS_ForNavDeltas = SimpleOperations.C_convultion_VerticalCoordinate(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalCoordinate(SINSstate).Transpose();
+                    else
+                        MatrixS_ForNavDeltas = SimpleOperations.C_convultion_VerticalCoordinate(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalCoordinate(SINSstate).Transpose();
+
                     SimpleOperations.CopyArray(KalmanVars.CovarianceMatrix_SP_m, KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), tmp_dim));
 
                     //==============================================================//
@@ -1516,11 +1671,13 @@ namespace Common_Namespace
                     KalmanVars.ErrorVector_m[0] = SINSstate.Vx_0[2];
 
                     Matrix MatrixS_ForNavDeltas = new Matrix(tmp_dim, tmp_dim);
-                    MatrixS_ForNavDeltas = SimpleOperations.C_convultion_VerticalVelocity(SINSstate)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
-                                            * SimpleOperations.C_convultion_VerticalVelocity(SINSstate).Transpose()
-                                            ;
+                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        MatrixS_ForNavDeltas = SimpleOperations.C_convultion_VerticalVelocity(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalVelocity(SINSstate).Transpose();
+                    else
+                        MatrixS_ForNavDeltas = SimpleOperations.C_convultion_VerticalVelocity(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalVelocity(SINSstate).Transpose();
+
                     SimpleOperations.CopyArray(KalmanVars.CovarianceMatrix_SP_m, KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_ForNavDeltas), tmp_dim));
 
                     //==============================================================//
@@ -1528,6 +1685,55 @@ namespace Common_Namespace
                     //==============================================================//
 
                     SINSstate_Smooth.Vx_0[2] = KalmanVars.ErrorVector_Smoothed[0];
+                }
+
+
+                //-----------------------------------------------------------------
+                //------------------СГЛАЖИВАНИЕ dF0_3----------------------------
+                //-----------------------------------------------------------------
+                {
+                    int u2 = 0;
+                    int tmp_dim = 1, dim_shift = dim_shift_for_X;
+
+                    double Time_Back = SINSstate.Count;
+                    double Time_Streight = Convert.ToDouble(BackInputX_LineArray[0]);
+                    for (int u = 0 + dim_shift; u < tmp_dim + dim_shift; u++)
+                    {
+                        KalmanVars.ErrorVector_Straight[u - dim_shift] = Convert.ToDouble(BackInputX_LineArray[u + 1]);
+                        dim_shift_for_X = u + 1;
+                    }
+
+                    SimpleOperations.NullingOfArray(KalmanVars.CovarianceMatrix_SP_Straight);
+                    for (int u = 0; u < tmp_dim; u++)
+                    {
+                        for (int u1 = u; u1 < tmp_dim; u1++)
+                        {
+                            KalmanVars.CovarianceMatrix_SP_Straight[u * tmp_dim + u1] = Convert.ToDouble(BackInputP_LineArray[u2 + dim_shift_for_P]);
+                            u2++;
+                        }
+                    }
+                    dim_shift_for_P += u2;
+
+                    if (SINSstate.flag_SeparateHorizVSVertical == true)
+                        KalmanVars.ErrorVector_m[0] = SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_f0_3];
+                    else
+                        KalmanVars.ErrorVector_m[0] = SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_f0_3];
+
+                    Matrix MatrixS_For_VerticalCoordinate = new Matrix(tmp_dim, tmp_dim);
+                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_dF0_3(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_dF0_3(SINSstate).Transpose();
+                    else
+                        MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_dF0_3(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_dF0_3(SINSstate).Transpose();
+
+                    SimpleOperations.CopyArray(KalmanVars.CovarianceMatrix_SP_m, KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_VerticalCoordinate), tmp_dim));
+
+                    //==============================================================//
+                    KalmanProcs.Smoothing(KalmanVars, SINSstate, tmp_dim);
+                    //==============================================================//
+
+                    SINSstate_Smooth.Cumulative_KalmanErrorVector[Math.Max(SINSstate.value_iMx_f0_3, SINSstate.Vertical_f0_3)] = KalmanVars.ErrorVector_Smoothed[0];
                 }
             }
         }
@@ -1607,46 +1813,104 @@ namespace Common_Namespace
                         str_P += CovarianceMatrix_SP_Straight_3[ii * tmp_dim + ji].ToString() + " ";
             }
 
+            //------------------------------------------------------------------
+            // --- Делаем свертку до S_X по Kappa_1 угловой ошибке установки БИНС ---
+            {
+                int tmp_dim = 1;
+                Matrix MatrixS_For_Kappa_1 = new Matrix(tmp_dim, tmp_dim);
+                if (SINSstate.flag_SeparateHorizVSVertical == true)
+                    MatrixS_For_Kappa_1 = SimpleOperations.C_convultion_OdoKappa_1(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_OdoKappa_1(SINSstate).Transpose();
+                else
+                    MatrixS_For_Kappa_1 = SimpleOperations.C_convultion_OdoKappa_1(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_OdoKappa_1(SINSstate).Transpose();
+
+                SimpleOperations.NullingOfArray(CovarianceMatrix_SP_Straight_1);
+                CovarianceMatrix_SP_Straight_1 = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_Kappa_1), tmp_dim);
+
+                str_P += CovarianceMatrix_SP_Straight_1[0].ToString() + " ";
+            }
+            // --- Делаем свертку до S_X по Kappa_3 угловой ошибке установки БИНС ---
+            {
+                int tmp_dim = 1;
+                Matrix MatrixS_For_Kappa_3 = new Matrix(tmp_dim, tmp_dim);
+                MatrixS_For_Kappa_3 = SimpleOperations.C_convultion_OdoKappa_3(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_OdoKappa_3(SINSstate).Transpose();
+
+                SimpleOperations.NullingOfArray(CovarianceMatrix_SP_Straight_1);
+                CovarianceMatrix_SP_Straight_1 = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_Kappa_3), tmp_dim);
+
+                str_P += CovarianceMatrix_SP_Straight_1[0].ToString() + " ";
+            }
+            // --- Делаем свертку до S_X по ошибке масштаба одометр---
+            {
+                int tmp_dim = 1;
+                Matrix MatrixS_For_Scale = new Matrix(tmp_dim, tmp_dim);
+                MatrixS_For_Scale = SimpleOperations.C_convultion_ScaleError(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_ScaleError(SINSstate).Transpose();
+
+                SimpleOperations.NullingOfArray(CovarianceMatrix_SP_Straight_1);
+                CovarianceMatrix_SP_Straight_1 = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_Scale), tmp_dim);
+
+                str_P += CovarianceMatrix_SP_Straight_1[0].ToString() + " ";
+            }
+            //------------------------------------------------------------------
+
 
 
             //------------------------------------------------------------------
             // --- Делаем свертку до S_X по высоте---
-            if (SINSstate.flag_iMx_r3_dV3)
+            if (SINSstate.flag_iMx_r3_dV3 == true || SINSstate.flag_SeparateHorizVSVertical == true)
             {
                 if (SimpleData.iMxSmthd >= 2)
                 {
                     int tmp_dim = 1;
                     Matrix MatrixS_For_VerticalCoordinate = new Matrix(tmp_dim, tmp_dim);
-                    MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_VerticalCoordinate(SINSstate)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
-                                            * SimpleOperations.C_convultion_VerticalCoordinate(SINSstate).Transpose();
+                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_VerticalCoordinate(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalCoordinate(SINSstate).Transpose();
+                    else
+                        MatrixS_For_VerticalCoordinate = SimpleOperations.C_convultion_VerticalCoordinate(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalCoordinate(SINSstate).Transpose();
 
                     SimpleOperations.NullingOfArray(CovarianceMatrix_SP_Straight_1);
                     CovarianceMatrix_SP_Straight_1 = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_VerticalCoordinate), tmp_dim);
 
-                    for (int ii = 0; ii < tmp_dim; ii++)
-                        for (int ji = ii; ji < tmp_dim; ji++)
-                            str_P += CovarianceMatrix_SP_Straight_1[ii * tmp_dim + ji].ToString() + " ";
+                    str_P += CovarianceMatrix_SP_Straight_1[0].ToString() + " ";
                 }
-
-                //------------------------------------------------------------------
                 // --- Делаем свертку до S_X по вертикальной скорости---
                 if (SimpleData.iMxSmthd >= 4)
                 {
                     int tmp_dim = 1;
                     Matrix MatrixS_For_VerticalVelocity = new Matrix(tmp_dim, tmp_dim);
-                    MatrixS_For_VerticalVelocity = SimpleOperations.C_convultion_VerticalVelocity(SINSstate)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
-                                            * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose()
-                                            * SimpleOperations.C_convultion_VerticalVelocity(SINSstate).Transpose();
+                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        MatrixS_For_VerticalVelocity = SimpleOperations.C_convultion_VerticalVelocity(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalVelocity(SINSstate).Transpose();
+                    else
+                        MatrixS_For_VerticalVelocity = SimpleOperations.C_convultion_VerticalVelocity(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_VerticalVelocity(SINSstate).Transpose();
 
                     SimpleOperations.NullingOfArray(CovarianceMatrix_SP_Straight_1);
                     CovarianceMatrix_SP_Straight_1 = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_VerticalVelocity), tmp_dim);
 
-                    for (int ii = 0; ii < tmp_dim; ii++)
-                        for (int ji = ii; ji < tmp_dim; ji++)
-                            str_P += CovarianceMatrix_SP_Straight_1[ii * tmp_dim + ji].ToString() + " ";
+                    str_P += CovarianceMatrix_SP_Straight_1[0].ToString() + " ";
+                }
+
+                // --- Делаем свертку до S_X по нулю вертикального ньютонометра ---
+                {
+                    int tmp_dim = 1;
+                    Matrix MatrixS_For_Vertical_F0 = new Matrix(tmp_dim, tmp_dim);
+                    if (SINSstate.flag_SeparateHorizVSVertical == false)
+                        MatrixS_For_Vertical_F0 = SimpleOperations.C_convultion_dF0_3(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_dF0_3(SINSstate).Transpose();
+                    else
+                        MatrixS_For_Vertical_F0 = SimpleOperations.C_convultion_dF0_3(SINSstate) * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p)
+                                * SimpleOperations.ArrayToMatrix(KalmanVars.Vertical_CovarianceMatrixS_p).Transpose() * SimpleOperations.C_convultion_dF0_3(SINSstate).Transpose();
+
+                    SimpleOperations.NullingOfArray(CovarianceMatrix_SP_Straight_1);
+                    CovarianceMatrix_SP_Straight_1 = KalmanProcs.rsb_rsb(SimpleOperations.MatrixToArray(MatrixS_For_Vertical_F0), tmp_dim);
+
+                    str_P += CovarianceMatrix_SP_Straight_1[0].ToString() + " ";
                 }
             }
 
@@ -1676,13 +1940,27 @@ namespace Common_Namespace
             if (SimpleData.iMxSmthd >= 7)
                 str_X = str_X + " " + SINSstate.Pitch + " " + SINSstate.Roll + " " + SINSstate.Heading;
 
-            if (SINSstate.flag_iMx_r3_dV3)
+            // --- Вывод комулятивных оценок модели ошибок одометра ТОЛЬКО ДЛЯ ОБРЫТНЫХ СВЯЗЕЙ --- //
+            if (SINSstate.flag_SeparateHorizVSVertical == true)
+                str_X += " " + SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1];
+            else
+                str_X += " " + SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_1];
+            str_X += " " + SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 0];
+            str_X += " " + SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_kappa_3_ds + 1];
+
+            if (SINSstate.flag_iMx_r3_dV3 == true || SINSstate.flag_SeparateHorizVSVertical == true)
             {
                 if (SimpleData.iMxSmthd >= 2)
                     str_X = str_X + " " + SINSstate.Altitude;
 
                 if (SimpleData.iMxSmthd >= 4)
                     str_X = str_X + " " + SINSstate.Vx_0[2];
+
+                // --- Вывод комулятивной оценки нуля вертикального ньютоноетра ТОЛЬКО ДЛЯ ОБРЫТНЫХ СВЯЗЕЙ --- //
+                if (SINSstate.flag_SeparateHorizVSVertical == true)
+                    str_X += " " + SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_f0_3];
+                else
+                    str_X += " " + SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_f0_3];
             }
 
             if (i % EachN_CountOutput == 0)

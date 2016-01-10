@@ -25,18 +25,22 @@ namespace Common_Namespace
 
         public static void StartSINS_Parameters(SINS_State SINSstate, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars, ParamToStart ParamStart, Proc_Help ProcHelp)
         {
-
-            SINSstate.decrementVerticalNoise = 1.0;
             SINSstate.MyOwnKalman_Korrection = false;
             SINSstate.flag_equalizeVertNoise = false;
+            KalmanVars.Noise_Pos_Odo = 0.0;
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 1;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = false;
+                SINSstate.Alignment_HeadingValue = 0.0 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 9000;
 
-                SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
 
                 SINSstate.MyOwnKalman_Korrection = false;
@@ -63,7 +67,7 @@ namespace Common_Namespace
                 ParamStart.Imitator_stdScale = 0.01;
                 ParamStart.Imitator_stdKappa1 = 20.0; //минут
                 ParamStart.Imitator_stdKappa3 = 20.0; //минут
-                                                                                                                                        
+
 
                 KalmanVars.Noise_OdoScale = 0.000000001;
                 KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
@@ -79,9 +83,17 @@ namespace Common_Namespace
             if (SINSstate.Global_file == "Azimut_15.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 10;
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.2;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = false;
+                SINSstate.Alignment_HeadingValue = 0.0 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 40000;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
@@ -95,6 +107,8 @@ namespace Common_Namespace
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-5; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 3E-7; //3E-6- optim
+
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
                 ParamStart.Experiment_stdV = 0.1;
@@ -104,7 +118,10 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 0.75;
+                KalmanVars.Noise_Pos_Odo = 0.0;
+
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
@@ -130,9 +147,17 @@ namespace Common_Namespace
             if (SINSstate.Global_file == "Azimut_24.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 5;
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.2;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = false;
+                SINSstate.Alignment_HeadingValue = 0.0 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 45000;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
@@ -146,6 +171,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-3; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 3E-5; //3E-6- optim
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
                 ParamStart.Experiment_stdV = 0.1;
@@ -155,7 +181,10 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 0.75;
+                KalmanVars.Noise_Pos_Odo = 0.0;
+
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
@@ -176,10 +205,18 @@ namespace Common_Namespace
             if (SINSstate.Global_file == "Azimut_29.08.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 10;
 
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.2;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = false;
+                SINSstate.Alignment_HeadingValue = 0.0 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 35000;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
@@ -193,6 +230,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-3; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 3E-5; //3E-6- optim
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
                 ParamStart.Experiment_stdV = 0.1;
@@ -202,7 +240,10 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 0.75;
+                KalmanVars.Noise_Pos_Odo = 0.0;
+
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
@@ -228,17 +269,24 @@ namespace Common_Namespace
             if (SINSstate.Global_file == "ktn004_15.03.2012")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 5;
 
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.035;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = true;
+                SINSstate.Alignment_HeadingValue = 15.28 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 48000;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
-                SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
 
@@ -256,7 +304,9 @@ namespace Common_Namespace
                 //VertRel=0	NoisModl=0	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=NO -- вообще шик
                 //VertRel=0	NoisModl=1	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.02	Noise=1E-05 -- вот этот тоже ничо так, только ошибка высоты хуже
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 0.5;
+                KalmanVars.Noise_Pos_Odo = 0.0;
                 // -------------------------------------------//
 
 
@@ -267,6 +317,7 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_OdoKappa_3 = 0.01 * 3.141592 / 180.0 / 3600.0;
 
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
@@ -296,19 +347,25 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)")
             {
-
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 5;
 
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = true;
+                SINSstate.Alignment_HeadingValue = 153.4796 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 5000;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
-                SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
 
@@ -321,10 +378,10 @@ namespace Common_Namespace
                 ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.0;
+                KalmanVars.Noise_Pos_Odo = 0.0;
                 // -------------------------------------------//
-
-
 
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
@@ -332,6 +389,7 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
@@ -367,19 +425,25 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
             {
-
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 5;
 
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = true;
+                SINSstate.Alignment_HeadingValue = -78.61045 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 7500;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.001;
 
-                SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
 
@@ -395,10 +459,10 @@ namespace Common_Namespace
                 // === best configurations === //
                 //VertRel=0	NoisModl=0	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=NO
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.0;
+                KalmanVars.Noise_Pos_Odo = 0.01;
                 // -------------------------------------------//
-
-
 
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
@@ -406,6 +470,7 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_OdoKappa_3 = 0.1 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
@@ -441,19 +506,25 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd")
             {
-
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 5;
 
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = true;
+                SINSstate.Alignment_HeadingValue = 33.91437 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 25000;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
-                SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
 
@@ -471,22 +542,25 @@ namespace Common_Namespace
                 //VertRel=0	NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	Class=0.02	Noise=NO
                 //VertRel=0	NoisModl=1	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=1E-05 -- Здесь оценился kappa1, горизон в целом чуть получше, чем у ПНППК, но конечная ошибка похуже
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.0;
+                KalmanVars.Noise_Pos_Odo = 0.01;
                 // -------------------------------------------//
 
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_Accel = 0.0000002;
-                KalmanVars.Noise_OdoScale = 0.001;
-                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_Accel = 0.0002;
+                KalmanVars.Noise_OdoScale = 0.0001;
+                KalmanVars.Noise_OdoKappa_1 = 0.001 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.1 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
-                ParamStart.Experiment_stdV = 0.0005;
-                ParamStart.Experiment_stdScale = 0.005;
-                ParamStart.Experiment_stdKappa1 = 5.0; //минут
+                ParamStart.Experiment_stdV = 0.01;
+                ParamStart.Experiment_stdScale = 0.01;
+                ParamStart.Experiment_stdKappa1 = 1.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
+                ParamStart.Experiment_GPS_PositionError = 0.01; // в метрах
 
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 60.71558888888 * SimpleData.ToRadian;
@@ -501,24 +575,34 @@ namespace Common_Namespace
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
                 ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
 
+                //SINSstate.alpha_x = 0.026 * SimpleData.ToRadian;
+                //SINSstate.alpha_y = 0.0 * SimpleData.ToRadian;
+                //SINSstate.alpha_z = 0.96 * SimpleData.ToRadian;
+
                 ApplyMatrixStartCondition(SINSstate);
                 ApplyMatrixStartCondition(SINSstate_OdoMod);
             }
             if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd")
             {
-
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 5;
 
+                // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = true;
+                SINSstate.Alignment_HeadingValue = 40.31628 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 14500;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.5;
 
-                SINSstate.decrementVerticalNoise = 1.0;
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
 
@@ -535,7 +619,9 @@ namespace Common_Namespace
                 //VertRel=0	NoisModl=0	eqlzVert=0	MyCorr=0	CoordNois=1	Class=0.2	Noise=NO -- не, ну не плохо. Повторили решение ПНППК + высота получше
                 //VertRel=0	NoisModl=1	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=1E-05 -- выглядит красиво. Нет уверенности, что старт.тчку выбрал правильно
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.0;
+                KalmanVars.Noise_Pos_Odo = 0.1;
                 // -------------------------------------------//
 
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
@@ -544,13 +630,14 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
                 ParamStart.Experiment_stdScale = 0.005;
                 ParamStart.Experiment_stdKappa1 = 1.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
+                ParamStart.Experiment_GPS_PositionError = 1.0; // в метрах
 
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 60.71558888888 * SimpleData.ToRadian;
@@ -582,9 +669,12 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "Azimuth_minsk_race_4_3to6to2")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
-                SINSstate.odo_min_increment = 0.2;
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 1;
+                // --- Минимальное приращение показания одометра --- //
+                SINSstate.odo_min_increment = 0.2;
 
                 SINSstate.DoHaveControlPoints = true;
                 SINSstate.NumberOfControlPoints = 3;
@@ -592,6 +682,11 @@ namespace Common_Namespace
                 SINSstate.ControlPointCount[1] = 48829;
                 SINSstate.ControlPointCount[2] = 73243;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = true;
+                SINSstate.Alignment_HeadingValue = -3.0504734;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 10300;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 10.0;
@@ -604,6 +699,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-4; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 3E-6; //3E-6- optim
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
                 ParamStart.Experiment_stdV = 0.1;
@@ -613,7 +709,10 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.1;
+                KalmanVars.Noise_Pos_Odo = 0.0;
+
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
@@ -643,14 +742,22 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "AZIMUT_T_2013_10_18_12_55")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
-                SINSstate.odo_min_increment = 0.1268;
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 2;
+                // --- Минимальное приращение показания одометра --- //
+                SINSstate.odo_min_increment = 0.1268;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 10.0;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
                 KalmanVars.OdoNoise_STOP = 0.01;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = false;
+                SINSstate.Alignment_HeadingValue = 0.0 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 22000;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
@@ -660,6 +767,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-4; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 3E-6; //3E-6- optim
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
                 ParamStart.Experiment_stdV = 0.1;
@@ -669,7 +777,10 @@ namespace Common_Namespace
                 ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 0.000075;
+                KalmanVars.Noise_Pos_Odo = 0.0;
+
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
                 KalmanVars.Noise_OdoScale = 0.000000001;
@@ -697,13 +808,21 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "Azimut_514_08Nov2013_11_15")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
-                SINSstate.odo_min_increment = 0.1268;
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 1;
+                // --- Минимальное приращение показания одометра --- //
+                SINSstate.odo_min_increment = 0.1268;
 
                 SINSstate.DoHaveControlPoints = true;
                 SINSstate.NumberOfControlPoints = 3;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = false;
+                SINSstate.Alignment_HeadingValue = 0.0 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 95000;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
@@ -717,7 +836,10 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_OdoKappa_3 = 0.0000001 * 3.141592 / 180.0 / 3600.0;
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 0.000075;
+                KalmanVars.Noise_Pos_Odo = 0.0;
+
                 KalmanVars.Noise_Drift = 0.0000002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.00000002;
 
@@ -739,13 +861,21 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "Saratov_run_2014_07_23")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
-                SINSstate.odo_min_increment = 0.05;
                 SINSstate.timeStep = SINSstate.Freq = 0.01048;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 1;
+                // --- Минимальное приращение показания одометра --- //
+                SINSstate.odo_min_increment = 0.05;
 
                 SINSstate.DoHaveControlPoints = true;
                 SINSstate.NumberOfControlPoints = 3;
 
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = false;
+                SINSstate.Alignment_HeadingValue = 0.0 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = 27320;
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / 5.0;
@@ -760,6 +890,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
                 ParamStart.Experiment_Noise_Vel = 3E-2; //3E-4- optim
                 ParamStart.Experiment_Noise_Angl = 3E-4; //3E-6- optim
+                // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.10;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 0.01;
@@ -773,7 +904,10 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_OdoKappa_3 = 0.01 * 3.141592 / 180.0 / 3600.0;
 
+                // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.1;
+                KalmanVars.Noise_Pos_Odo = 0.0;
+
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0000002;
 
