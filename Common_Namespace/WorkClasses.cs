@@ -89,6 +89,8 @@ namespace Common_Namespace
         public bool flag_UsingCorrection = false, flag_UsingAngleCorrection = false, flag_ZUPT = false, flag_Vertical_ZUPT = false;
         public bool flag_Using_SNS = false, flag_UseOnlyStops = false, flag_NotUse_ZUPT = false, flag_using_Checkpotints = false;
         public bool flag_UseOdoVelocity_In_Oz = false;
+        public bool flag_first100m_StartHeightCorrection = false;
+        public double first100m_StartHeightCorrection_value = 0.0;
 
         public bool flag_UsingOdoPosition = false, flag_UsingOdoVelocity = false, add_velocity_to_position = false, flag_onlyZeroSideVelocity = false;
 

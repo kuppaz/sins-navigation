@@ -53,15 +53,14 @@ namespace SINSAlignment
                 {
                     ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
 
-
                     Alignment_Classical.AlignStateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                     Alignment_Classical.Make_A(SINSstate, KalmanAlign);
                     Alignment_Classical.MatrixNoise_ReDef(SINSstate, KalmanAlign);
 
                     KalmanProcs.Make_F_Align(SINSstate.timeStep, KalmanAlign);
-                    KalmanProcs.KalmanForecast_Align(KalmanAlign);
 
                     Alignment_Classical.Make_H_and_Correction(SINSstate, KalmanAlign);
+                    KalmanProcs.KalmanForecast_Align(KalmanAlign);
 
                     i = j;
 
@@ -81,7 +80,7 @@ namespace SINSAlignment
 
                 }
 
-                //SimpleOperations.PrintMatrixToFile(KalmanAlign.CovarianceMatrixS_p, SimpleData.iMx_Align, SimpleData.iMx_Align);
+                SimpleOperations.PrintMatrixToFile(KalmanAlign.CovarianceMatrixS_p, SimpleData.iMx_Align, SimpleData.iMx_Align);
 
                 SINSstate.Heading = SINSstate.Heading - SINSstate.DeltaHeading;
                 SINSstate.Roll = SINSstate.Roll - SINSstate.DeltaRoll;
@@ -101,14 +100,6 @@ namespace SINSAlignment
 
 
                 SINSstate.Time_Alignment = SINSstate.Time;
-
-                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-                if (SINSstate.Global_file == "Azimuth_minsk_race_4_3to6to2")
-                {
-                    //SINSstate.Heading = -3.0504734;
-                }
-                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
-
 
                 SINSstate.A_sx0 = SimpleOperations.A_sx0(SINSstate);
                 SINSstate.A_x0s = SINSstate.A_sx0.Transpose();

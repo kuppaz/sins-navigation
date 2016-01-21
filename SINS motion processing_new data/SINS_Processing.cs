@@ -928,6 +928,7 @@ namespace SINS_motion_processing_new_data
             SINSstate.flag_OdoSINSWeakConnect_MODIF = this.ModifWeakConnect.Checked;
             SINSstate.flag_UseOnlyStops = this.Use_Only_Stops.Checked;
             SINSstate.flag_OnlyAlignment = this.OnlyAlignment.Checked;
+            SINSstate.flag_first100m_StartHeightCorrection = this.flag_first100m_StartHeightCorrection.Checked;
 
             SINSstate.flag_Smoothing = this.flag_Smoothing.Checked;
             SINSstate.flag_iMSmthd_Is_2_plus_Odo = this.iMSmthd_Is_2_plus_Odo.Checked;

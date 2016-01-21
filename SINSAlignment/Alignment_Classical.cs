@@ -41,7 +41,7 @@ namespace SINSAlignment
             KalmanAlign.Matrix_A[2 * SimpleData.iMx_Align + 7] = SINSstate.A_x0s[2, 1];
             KalmanAlign.Matrix_A[2 * SimpleData.iMx_Align + 8] = SINSstate.A_x0s[2, 2];
 
-            //SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_A, SimpleData.iMx_Align, SimpleData.iMx_Align);
+            SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_A, SimpleData.iMx_Align, SimpleData.iMx_Align);
         }
 
 
@@ -58,9 +58,9 @@ namespace SINSAlignment
             KalmanAlign.Matrix_H[1 * SimpleData.iMx_Align + 3] = SINSstate.A_x0s[1, 0];
             KalmanAlign.Matrix_H[1 * SimpleData.iMx_Align + 4] = SINSstate.A_x0s[1, 1];
             KalmanAlign.Matrix_H[1 * SimpleData.iMx_Align + 5] = SINSstate.A_x0s[1, 2];
-            //KalmanAlign.Matrix_H[2 * SimpleData.iMx_Align + 6] = SINSstate.A_x0s[2, 0];
-            //KalmanAlign.Matrix_H[2 * SimpleData.iMx_Align + 7] = SINSstate.A_x0s[2, 1];
-            //KalmanAlign.Matrix_H[2 * SimpleData.iMx_Align + 8] = SINSstate.A_x0s[2, 2];
+            KalmanAlign.Matrix_H[2 * SimpleData.iMx_Align + 3] = SINSstate.A_x0s[2, 0];
+            KalmanAlign.Matrix_H[2 * SimpleData.iMx_Align + 4] = SINSstate.A_x0s[2, 1];
+            KalmanAlign.Matrix_H[2 * SimpleData.iMx_Align + 5] = SINSstate.A_x0s[2, 2];
 
             SimpleOperations.CopyArray(SINSstate.F_x, SINSstate.A_x0s * SINSstate.F_z);
 
@@ -69,12 +69,13 @@ namespace SINSAlignment
 
             //KalmanAlign.Noize_Z[0] = Math.Abs(SINSstate.A_x0s[0, 0] * KalmanAlign.Noise_Vel[0] + SINSstate.A_x0s[0, 1] * KalmanAlign.Noise_Vel[1] + SINSstate.A_x0s[0, 2] * KalmanAlign.Noise_Vel[2]);
             //KalmanAlign.Noize_Z[1] = Math.Abs(SINSstate.A_x0s[1, 0] * KalmanAlign.Noise_Vel[0] + SINSstate.A_x0s[1, 1] * KalmanAlign.Noise_Vel[1] + SINSstate.A_x0s[1, 2] * KalmanAlign.Noise_Vel[2]);
-            KalmanAlign.Noize_Z[0] = 0.05;
-            KalmanAlign.Noize_Z[1] = 0.05;
+            KalmanAlign.Noize_Z[0] = 0.003;
+            KalmanAlign.Noize_Z[1] = 0.003;
+            KalmanAlign.Noize_Z[2] = 0.003;
 
-            KalmanAlign.cnt_measures = 2;
+            KalmanAlign.cnt_measures = 3;
 
-            if (true)
+            if (false)
             {
                 KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 3] = SINSstate.W_z[0];
                 KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 4] = SINSstate.W_z[1];
@@ -116,7 +117,7 @@ namespace SINSAlignment
             //    KalmanAlign.cnt_measures++;
             //}
 
-            //SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_H, KalmanAlign.cnt_measures, SimpleData.iMx_Align);
+            SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_H, KalmanAlign.cnt_measures, SimpleData.iMx_Align);
 
             KalmanProcs.KalmanCorrection_Align(KalmanAlign);
         }
@@ -132,9 +133,9 @@ namespace SINSAlignment
             //KalmanAlign.CovarianceMatrixNoise[0 * SimpleData.iMq_Align + 0] = KalmanAlign.Noise_Angl[0];
             //KalmanAlign.CovarianceMatrixNoise[1 * SimpleData.iMq_Align + 1] = KalmanAlign.Noise_Angl[1];
             //KalmanAlign.CovarianceMatrixNoise[2 * SimpleData.iMq_Align + 2] = KalmanAlign.Noise_Angl[2];
-            KalmanAlign.CovarianceMatrixNoise[0 * SimpleData.iMq_Align + 0] = 0.0000001;
-            KalmanAlign.CovarianceMatrixNoise[1 * SimpleData.iMq_Align + 1] = 0.0000001;
-            KalmanAlign.CovarianceMatrixNoise[2 * SimpleData.iMq_Align + 2] = 0.0000001;
+            KalmanAlign.CovarianceMatrixNoise[0 * SimpleData.iMq_Align + 0] = 1e-7;
+            KalmanAlign.CovarianceMatrixNoise[1 * SimpleData.iMq_Align + 1] = 1e-7;
+            KalmanAlign.CovarianceMatrixNoise[2 * SimpleData.iMq_Align + 2] = 1e-7;
 
             //SimpleOperations.PrintMatrixToFile(KalmanAlign.CovarianceMatrixNoise, SimpleData.iMx_Align, SimpleData.iMq_Align);
         }
@@ -144,7 +145,7 @@ namespace SINSAlignment
 
         public static void AlignStateIntegration_AT(SINS_State SINSstate, Kalman_Vars KalmanVars, SINS_State SINSstate2, SINS_State SINSstate_OdoMod)
         {
-            double[] fz = new double[3], Wz = new double[3], u = new double[3], tempV = new double[3], Wz_avg = new double[3];
+            double[] fz = new double[3], Wz = new double[3], tempV = new double[3], Wz_avg = new double[3];
             double[] Vx_0 = new double[3], Vx_0_prev = new double[3];
 
             Matrix AT_z_xi = new Matrix(3, 3); Matrix B_x_eta = new Matrix(3, 3);
@@ -156,50 +157,30 @@ namespace SINSAlignment
             Matrix E = Matrix.UnitMatrix(3);
             Matrix dMatrix = new Matrix(3, 3);
 
-            double W_z_abs, Omega_x_abs, dlt, dlt2, Altitude, Altitude_prev, dh, dVx, dVy, dVh;
-            double kren, tang, gkurs, Azimth;
+            double W_z_abs, dlt, dlt2, kren, tang, gkurs;
 
             SimpleOperations.CopyMatrix(AT_z_xi, SINSstate.AT);
             SimpleOperations.CopyMatrix(B_x_eta, SINSstate.A_x0n);
 
             SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
             //C_eta_xi = Matrix.DoA_eta_xi(SINSstate.Time);
-            Altitude = SINSstate.Altitude;
-            Altitude_prev = SINSstate.Altitude_prev;
-            //Azimth = SINSstate.Azimth;
 
-            fz[1] = SINSstate.F_z[1]; Wz[1] = SINSstate.W_z[1];
-            fz[2] = SINSstate.F_z[2]; Wz[2] = SINSstate.W_z[2];
-            fz[0] = SINSstate.F_z[0]; Wz[0] = SINSstate.W_z[0];
-
-            SimpleOperations.CopyArray(SINSstate.F_z, fz);
-            SimpleOperations.CopyArray(SINSstate.W_z, Wz);
+            SimpleOperations.CopyArray(fz, SINSstate.F_z);
+            SimpleOperations.CopyArray(Wz, SINSstate.W_z);
 
             SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
             SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
 
             SINSstate.u_x = SimpleOperations.U_x0(SINSstate.Latitude);
 
-            u[0] = 0.0;
-            u[1] = SimpleData.U * Math.Cos(SINSstate.Latitude);
-            u[2] = SimpleData.U * Math.Sin(SINSstate.Latitude);
-
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    Wz[i] = Wz[i] - SINSstate.AlignAlgebraDrifts[i];// -drzg[i];
-            //}
-
-
             //-------------ИНТЕГРИРОВАНИЕ МАТРИЦЫ AT_Z_XI И ПЕРВОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z---------
 
             if (SINSstate.flag_UsingAvegering == true)
-            {
                 for (int i = 0; i < 3; i++)
                 {
                     fz[i] = (fz[i] + SINSstate.F_z_prev[i]) / 2.0;
                     Wz[i] = (Wz[i] + SINSstate.W_z_prev[i]) / 2.0;
                 }
-            }
 
             W_z_abs = Math.Sqrt(Wz[0] * Wz[0] + Wz[1] * Wz[1] + Wz[2] * Wz[2]);
             dlt = Math.Sin(W_z_abs * SINSstate.timeStep) / W_z_abs;
@@ -229,26 +210,12 @@ namespace SINSAlignment
             //--- надо вычислять, используется, например в выставке ---//
             SINSstate.g = 9.78049 * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014;
             if (true)
-                SINSstate.g -= 2 * 0.000001538 * Altitude;
+                SINSstate.g -= 2 * 0.000001538 * SINSstate.Altitude;
 
 
             //----------------Вычисление углов и переприсвоение матриц---------------------------
             SimpleOperations.CopyMatrix(SINSstate.A_sx0, D_x_z.Transpose());
             SimpleOperations.CopyMatrix(SINSstate.A_x0s, D_x_z);
-            SimpleOperations.CopyMatrix(SINSstate.A_x0n, B_x_eta);
-            SimpleOperations.CopyMatrix(SINSstate.A_nx0, B_x_eta.Transpose());
-
-            //---ОПРЕДЕЛЕНИЕ ГЕОГРАФИЧЕСКИХ КООРДИНАТ---
-            SINSstate.Longitude = Math.Atan2(B_x_eta[2, 1], B_x_eta[2, 0]);
-            SINSstate.Latitude = Math.Atan2(B_x_eta[2, 2], Math.Sqrt(B_x_eta[0, 2] * B_x_eta[0, 2] + B_x_eta[1, 2] * B_x_eta[1, 2]));
-            Azimth = Math.Atan2(B_x_eta[0, 2], B_x_eta[1, 2]);
-            SINSstate.Altitude_prev = SINSstate.Altitude;
-            SINSstate.Altitude = Altitude;
-
-
-            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.u_x = SimpleOperations.U_x0(SINSstate.Latitude);
 
             SimpleOperations.CopyArray(SINSstate.W_x, SINSstate.A_x0s * Wz);
 

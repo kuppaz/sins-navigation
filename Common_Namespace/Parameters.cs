@@ -27,6 +27,7 @@ namespace Common_Namespace
         {
             SINSstate.MyOwnKalman_Korrection = false;
             SINSstate.flag_equalizeVertNoise = false;
+            SINSstate.first100m_StartHeightCorrection_value = 100.0;
             KalmanVars.Noise_Pos_Odo = 0.0;
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -527,8 +528,9 @@ namespace Common_Namespace
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
-
                 SINSstate.MyOwnKalman_Korrection = false;
+
+                SINSstate.first100m_StartHeightCorrection_value = 110.0;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -558,7 +560,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
                 ParamStart.Experiment_stdScale = 0.01;
-                ParamStart.Experiment_stdKappa1 = 1.0; //минут
+                ParamStart.Experiment_stdKappa1 = 5.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
                 ParamStart.Experiment_GPS_PositionError = 0.01; // в метрах
 
@@ -605,8 +607,9 @@ namespace Common_Namespace
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
+                SINSstate.MyOwnKalman_Korrection = false;
 
-                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.first100m_StartHeightCorrection_value = 100.0;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -621,23 +624,23 @@ namespace Common_Namespace
 
                 // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.0;
-                KalmanVars.Noise_Pos_Odo = 0.1;
+                KalmanVars.Noise_Pos_Odo = 0.01;
                 // -------------------------------------------//
 
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_Accel = 0.0000002;
+                KalmanVars.Noise_Accel = 0.0002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
-                KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.001 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.1 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.05;
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
-                ParamStart.Experiment_stdScale = 0.005;
-                ParamStart.Experiment_stdKappa1 = 1.0; //минут
+                ParamStart.Experiment_stdScale = 0.01;
+                ParamStart.Experiment_stdKappa1 = 5.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 1.0; // в метрах
+                ParamStart.Experiment_GPS_PositionError = 0.01; // в метрах
 
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 60.71558888888 * SimpleData.ToRadian;
