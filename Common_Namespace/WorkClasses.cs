@@ -41,7 +41,8 @@ namespace Common_Namespace
     public class odometer_data
     {
         public DataWithIsReady odometer_left = new DataWithIsReady()
-                             , odometer_right = new DataWithIsReady();
+                             , odometer_right = new DataWithIsReady()
+                             , odometer_left_ABS = new DataWithIsReady();
 
         public DataWithIsReady odometer_left_prev = new DataWithIsReady()
                              , odometer_right_prev = new DataWithIsReady();

@@ -28,20 +28,33 @@ namespace SINSAlignment
             Alignment_SINSstate.WriteLine("Time  Count Lat Long Altitude V1 V2 Heading HeadingCor Roll RollCor Pitch PitchCor");
 
 
+            bool exist_real_Classical_Alignment = false;
+            int AlignmentCounts_tmp = ProcHelp.AlignmentCounts;
+
+
             //---Этап грубой выставки---
 
             //int temp_AlgnCnt = ProcHelp.AlgnCnt;
             //ProcHelp.AlgnCnt = Convert.ToInt32(120.0 / SINSstate.Freq);
 
+            if (exist_real_Classical_Alignment == true)
+            {
+                ProcHelp.AlignmentCounts = Convert.ToInt32(Math.Round(ProcHelp.AlignmentCounts / 3.0));
+                SINSstate.Alignment_HeadingDetermined = false;
+            }
+
             i = Alignment.RougthAlignment(ProcHelp, SINSstate, myFile, KalmanVars, SINSstate_OdoMod, GRTV_output);
+
+            if (exist_real_Classical_Alignment == true)
+                ProcHelp.AlignmentCounts = AlignmentCounts_tmp;
 
             //ProcHelp.AlgnCnt = temp_AlgnCnt;
             SINSstate.flag_Alignment = true;
 
 
-            
 
-            if (false)
+
+            if (exist_real_Classical_Alignment)
             {
                 Kalman_Align KalmanAlign = new Kalman_Align();
 

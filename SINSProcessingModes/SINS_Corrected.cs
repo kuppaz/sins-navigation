@@ -245,9 +245,12 @@ namespace SINSProcessingModes
                 if (SINSstate.flag_using_Checkpotints == true)
                     CheckPointProcessing(SINSstate, SINSstate_OdoMod, KalmanVars);
 
-                if (SINSstate.flag_first100m_StartHeightCorrection)
-                    if (SINSstate.OdometerData.odometer_left.Value > 0.1 && SINSstate.OdometerData.odometer_left.Value <= SINSstate.first100m_StartHeightCorrection_value)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.0, 0.0, 306.0);
+                //=== Принудительная коррекция по начальной высоте первые 100 (N) метров ===//
+                if (SINSstate.flag_first100m_StartHeightCorrection
+                    && SINSstate.OdometerData.odometer_left.Value > SINSstate.first100m_StartHeightCorrection_value / 2.0
+                    && SINSstate.OdometerData.odometer_left.Value <= SINSstate.first100m_StartHeightCorrection_value 
+                    && i % 100 == 0 )
+                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.0, 0.0, SINSstate.Altitude_Start);
 
                 if (SINSstate.flag_Using_SNS == true && SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                     SINSstate.flag_UsingCorrection = true;

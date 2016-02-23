@@ -294,6 +294,8 @@ namespace Common_Namespace
                 // -- С MyOwnKalman_Korrection=true при чекнутых шумах dR только в горизонте получается конечная ошибка  метра!!
                 SINSstate.MyOwnKalman_Korrection = true;
 
+                SINSstate.first100m_StartHeightCorrection_value = 100.0;
+
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
@@ -447,8 +449,9 @@ namespace Common_Namespace
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
-
                 SINSstate.MyOwnKalman_Korrection = true;
+
+                SINSstate.first100m_StartHeightCorrection_value = 100.0;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -478,7 +481,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = 0.005;
                 ParamStart.Experiment_stdKappa1 = 1.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
+                ParamStart.Experiment_GPS_PositionError = 2.0; // в метрах
 
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.75999166666 * SimpleData.ToRadian; //56.76146
@@ -530,7 +533,7 @@ namespace Common_Namespace
                 SINSstate.flag_equalizeVertNoise = true;
                 SINSstate.MyOwnKalman_Korrection = false;
 
-                SINSstate.first100m_StartHeightCorrection_value = 110.0;
+                SINSstate.first100m_StartHeightCorrection_value = 130.0;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -552,7 +555,7 @@ namespace Common_Namespace
                 KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_Accel = 0.0002;
                 KalmanVars.Noise_OdoScale = 0.0001;
-                KalmanVars.Noise_OdoKappa_1 = 0.001 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_1 = 0.03 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
                 KalmanVars.Noise_OdoKappa_3 = 0.1 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 // --- Начальные ковариации --- //
@@ -560,9 +563,9 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdOdoR = 0.05; // метров
                 ParamStart.Experiment_stdV = 0.01;
                 ParamStart.Experiment_stdScale = 0.01;
-                ParamStart.Experiment_stdKappa1 = 5.0; //минут
+                ParamStart.Experiment_stdKappa1 = 1.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 0.01; // в метрах
+                ParamStart.Experiment_GPS_PositionError = 2.0; // в метрах
 
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 60.71558888888 * SimpleData.ToRadian;
@@ -577,9 +580,13 @@ namespace Common_Namespace
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
                 ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
 
-                //SINSstate.alpha_x = 0.026 * SimpleData.ToRadian;
+                //SINSstate.alpha_x = 0.0 * SimpleData.ToRadian;
                 //SINSstate.alpha_y = 0.0 * SimpleData.ToRadian;
-                //SINSstate.alpha_z = 0.96 * SimpleData.ToRadian;
+                //SINSstate.alpha_z = 0.90 * SimpleData.ToRadian;
+
+                //--- В случае выставления поправки на угол kappa_1 именшаем нач.ковариацию ---//
+                if (SINSstate.alpha_z > 0.01 * SimpleData.ToRadian)
+                    ParamStart.Experiment_stdKappa1 = 1.0; //минут
 
                 ApplyMatrixStartCondition(SINSstate);
                 ApplyMatrixStartCondition(SINSstate_OdoMod);
@@ -640,7 +647,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = 0.01;
                 ParamStart.Experiment_stdKappa1 = 5.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 0.01; // в метрах
+                ParamStart.Experiment_GPS_PositionError = 2.0; // в метрах
 
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 60.71558888888 * SimpleData.ToRadian;
@@ -654,6 +661,10 @@ namespace Common_Namespace
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
                 ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
+
+                //SINSstate.alpha_x = 0.0 * SimpleData.ToRadian;
+                //SINSstate.alpha_y = 0.0 * SimpleData.ToRadian;
+                //SINSstate.alpha_z = -0.5 * SimpleData.ToRadian;
 
                 ApplyMatrixStartCondition(SINSstate);
                 ApplyMatrixStartCondition(SINSstate_OdoMod);

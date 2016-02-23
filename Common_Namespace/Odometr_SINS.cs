@@ -163,20 +163,26 @@ namespace Common_Namespace
             // ----------------------------------------------------------//
             if (SINSstate.flag_SeparateHorizVSVertical == true && Altitude_CP != 0.0)
             {
+                double VerticalNoise = SINSstate.Noise_GPS_PositionError;
+
+                if (Latitude_CP == 0 && Longitude_CP == 0)
+                    VerticalNoise = 0.05;
+
                 KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 0] = 1.0;
                 KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 1) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = 1.0;
 
                 KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
                 KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 1)] = SINSstate_OdoMod.Altitude - Altitude_CP;
 
-                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
-                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 1)] = SINSstate.Noise_GPS_PositionError;
+                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = VerticalNoise;
+                KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 1)] = VerticalNoise;
 
                 KalmanVars.Vertical_cnt_measures += 2;
             }
 
 
-            SINSstate.flag_UsingCorrection = true;
+            if (Latitude_CP != 0 || Longitude_CP != 0 || Altitude_CP != 0.0)
+                SINSstate.flag_UsingCorrection = true;
         }
 
 

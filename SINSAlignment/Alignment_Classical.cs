@@ -11,9 +11,9 @@ namespace SINSAlignment
     {
         public static void InitOfCovarianceMatrixes(Kalman_Align KalmanAlign)
         {
-            KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 0 + 0] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 0 + 0] = 5 * SimpleData.ToRadian / 60.0;
-            KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 1 + 1] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 1 + 1] = 5 * SimpleData.ToRadian / 60.0;
-            KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 2 + 2] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 2 + 2] = 5 * SimpleData.ToRadian / 60.0;
+            KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 0 + 0] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 0 + 0] = 20 * SimpleData.ToRadian / 60.0;
+            KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 1 + 1] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 1 + 1] = 20 * SimpleData.ToRadian / 60.0;
+            KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 2 + 2] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 2 + 2] = 20 * SimpleData.ToRadian / 60.0;
 
             KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 3 + 3] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 3 + 3] = 0.01;
             KalmanAlign.CovarianceMatrixS_m[SimpleData.iMx_Align * 4 + 4] = KalmanAlign.CovarianceMatrixS_p[SimpleData.iMx_Align * 4 + 4] = 0.01;
@@ -41,7 +41,7 @@ namespace SINSAlignment
             KalmanAlign.Matrix_A[2 * SimpleData.iMx_Align + 7] = SINSstate.A_x0s[2, 1];
             KalmanAlign.Matrix_A[2 * SimpleData.iMx_Align + 8] = SINSstate.A_x0s[2, 2];
 
-            SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_A, SimpleData.iMx_Align, SimpleData.iMx_Align);
+            //SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_A, SimpleData.iMx_Align, SimpleData.iMx_Align);
         }
 
 
@@ -66,12 +66,15 @@ namespace SINSAlignment
 
             KalmanAlign.Measure[0] = SINSstate.F_x[0];
             KalmanAlign.Measure[1] = SINSstate.F_x[1];
+            KalmanAlign.Measure[2] = SINSstate.F_x[2] - SINSstate.g;
 
-            //KalmanAlign.Noize_Z[0] = Math.Abs(SINSstate.A_x0s[0, 0] * KalmanAlign.Noise_Vel[0] + SINSstate.A_x0s[0, 1] * KalmanAlign.Noise_Vel[1] + SINSstate.A_x0s[0, 2] * KalmanAlign.Noise_Vel[2]);
-            //KalmanAlign.Noize_Z[1] = Math.Abs(SINSstate.A_x0s[1, 0] * KalmanAlign.Noise_Vel[0] + SINSstate.A_x0s[1, 1] * KalmanAlign.Noise_Vel[1] + SINSstate.A_x0s[1, 2] * KalmanAlign.Noise_Vel[2]);
-            KalmanAlign.Noize_Z[0] = 0.003;
-            KalmanAlign.Noize_Z[1] = 0.003;
-            KalmanAlign.Noize_Z[2] = 0.003;
+            //KalmanAlign.Noize_Z[0] = 0.0003;
+            //KalmanAlign.Noize_Z[1] = 0.0003;
+            //KalmanAlign.Noize_Z[2] = 0.0003;
+
+            KalmanAlign.Noize_Z[0] = Math.Abs(SINSstate.A_x0s[0, 0] * KalmanAlign.Noise_Vel[0] + SINSstate.A_x0s[0, 1] * KalmanAlign.Noise_Vel[1] + SINSstate.A_x0s[0, 2] * KalmanAlign.Noise_Vel[2]);
+            KalmanAlign.Noize_Z[1] = Math.Abs(SINSstate.A_x0s[1, 0] * KalmanAlign.Noise_Vel[0] + SINSstate.A_x0s[1, 1] * KalmanAlign.Noise_Vel[1] + SINSstate.A_x0s[1, 2] * KalmanAlign.Noise_Vel[2]);
+            KalmanAlign.Noize_Z[2] = Math.Abs(SINSstate.A_x0s[2, 0] * KalmanAlign.Noise_Vel[0] + SINSstate.A_x0s[2, 1] * KalmanAlign.Noise_Vel[1] + SINSstate.A_x0s[2, 2] * KalmanAlign.Noise_Vel[2]);
 
             KalmanAlign.cnt_measures = 3;
 
@@ -99,25 +102,25 @@ namespace SINSAlignment
 
                 KalmanAlign.Measure[KalmanAlign.cnt_measures] = SimpleOperations.SkalyarProduct(SINSstate.W_z, SINSstate.W_z) - SimpleData.U * SimpleData.U;
                 //KalmanAlign.Noize_Z[KalmanAlign.cnt_measures] = 2.0 * SimpleOperations.SkalyarProduct(SINSstate.W_z, KalmanAlign.Noise_Angl);
-                KalmanAlign.Noize_Z[KalmanAlign.cnt_measures] = 0.0000001;
+                KalmanAlign.Noize_Z[KalmanAlign.cnt_measures] = 0.00000000001;
 
                 KalmanAlign.cnt_measures++;
             }
 
-            //if (true)
-            //{
-            //    KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 3] = 2.0 * SINSstate.F_z[0];
-            //    KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 4] = 2.0 * SINSstate.F_z[1];
-            //    KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 5] = 2.0 * SINSstate.F_z[2];
+            if (false)
+            {
+                KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 3] = 2.0 * SINSstate.F_z[0];
+                KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 4] = 2.0 * SINSstate.F_z[1];
+                KalmanAlign.Matrix_H[KalmanAlign.cnt_measures * SimpleData.iMx_Align + 5] = 2.0 * SINSstate.F_z[2];
 
-            //    KalmanAlign.Measure[KalmanAlign.cnt_measures] = SimpleOperations.SkalyarProduct(SINSstate.F_z, SINSstate.F_z) - SINSstate.g * SINSstate.g;
-            //    //KalmanAlign.Noize_Z[KalmanAlign.cnt_measures] = 2.0 * SimpleOperations.SkalyarProduct(SINSstate.F_z, KalmanAlign.Noise_Vel);
-            //    KalmanAlign.Noize_Z[KalmanAlign.cnt_measures] = 0.05;
+                KalmanAlign.Measure[KalmanAlign.cnt_measures] = SimpleOperations.SkalyarProduct(SINSstate.F_z, SINSstate.F_z) - SINSstate.g * SINSstate.g;
+                //KalmanAlign.Noize_Z[KalmanAlign.cnt_measures] = 2.0 * SimpleOperations.SkalyarProduct(SINSstate.F_z, KalmanAlign.Noise_Vel);
+                KalmanAlign.Noize_Z[KalmanAlign.cnt_measures] = 0.01;
 
-            //    KalmanAlign.cnt_measures++;
-            //}
+                KalmanAlign.cnt_measures++;
+            }
 
-            SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_H, KalmanAlign.cnt_measures, SimpleData.iMx_Align);
+            //SimpleOperations.PrintMatrixToFile(KalmanAlign.Matrix_H, KalmanAlign.cnt_measures, SimpleData.iMx_Align);
 
             KalmanProcs.KalmanCorrection_Align(KalmanAlign);
         }

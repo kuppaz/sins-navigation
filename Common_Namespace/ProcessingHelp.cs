@@ -201,6 +201,8 @@ namespace Common_Namespace
                 SINSstate.OdometerData.odometer_right.Value = Convert.ToDouble(dataArray2[20]);
                 SINSstate.OdometerData.odometer_right.isReady = Convert.ToInt32(dataArray2[21]);
 
+                SINSstate.OdometerData.odometer_left_ABS.Value += Math.Abs(SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev);
+
 
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {

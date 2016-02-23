@@ -143,7 +143,7 @@ namespace Common_Namespace
                 if (k > MovingWindow && k % 5 == 0)
                 {
                     Alignment_avg_rougth.WriteLine(SINSstate.Count.ToString() + " " + (f_avg[0] / k).ToString() + " " + (f_avg[1] / k).ToString() + " " + (f_avg[2] / k).ToString() + " " + (w_avg[0] / k).ToString() + " " + (w_avg[1] / k).ToString() + " " + (w_avg[2] / k).ToString()
-                        + " " + Heading.ToString() + " " + Roll.ToString() + " " + Pitch.ToString() + " " + Latitude.ToString() + " " + Otklon.ToString()
+                        + " " + (Heading * SimpleData.ToDegree).ToString() + " " + Roll.ToString() + " " + Pitch.ToString() + " " + Latitude.ToString() + " " + Otklon.ToString()
                         + " " + (w_avg_x[0] / k).ToString() + " " + (w_avg_x[1] / k).ToString() + " " + (w_avg_x[2] / k).ToString()
                         );
 
@@ -275,7 +275,7 @@ namespace Common_Namespace
 
             // --- Если задан курс в настройках ---//
             if (SINSstate.Alignment_HeadingDetermined == true)
-                SINSstate.Heading = SINSstate.Alignment_HeadingValue;
+                SINSstate.Heading = SINSstate.Alignment_HeadingValue + SINSstate.alpha_x;
 
 
 
