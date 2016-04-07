@@ -117,7 +117,7 @@ namespace SINSProcessingModes
                         + ",  Vx_1=" + Math.Round(SINSstate.Vx_0[0], 2) + ",  Vx_2=" + Math.Round(SINSstate.Vx_0[1], 3)
                         );
 
-                ProcessingHelp.OutPutInfo(i, i, ProcHelp, SINSstate, SINSstate2, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut, GRTV_output, Cicle_Debag_Solution, Cicle_Debag_Solution, Cicle_Debag_Solution);
+                ProcessingHelp.OutPutInfo(i, i, ProcHelp, SINSstate, SINSstate, SINSstate2, SINSstate2, KalmanVars, Nav_EstimateSolution, Nav_Autonomous, Nav_FeedbackSolution, Nav_StateErrorsVector, Nav_Errors, STD_data, Speed_Angles, DinamicOdometer, Speed_Angles, KMLFileOut, KMLFileOut, GRTV_output, Cicle_Debag_Solution, Cicle_Debag_Solution, Cicle_Debag_Solution);
 
                 if (SINSstate.OdometerData.odometer_left.isReady == 1)
                 {

@@ -75,7 +75,7 @@ namespace MovingImitator
             SINSstate.Roll = StartRoll;
             SINSstate.Longitude = SINSstate.Longitude_prev = SINSstate.GPS_Data.gps_Longitude.Value = StartLongitude; OdometerCoordinate_s[1] = 0.0;
             SINSstate.Pitch = StartPitch;
-            SINSstate.Altitude = SINSstate.Altitude_prev = SINSstate.GPS_Data.gps_Altitude.Value = StartAltitude; OdometerCoordinate_s[2] = 0.0;
+            SINSstate.Height = SINSstate.Height_prev = SINSstate.GPS_Data.gps_Altitude.Value = StartAltitude; OdometerCoordinate_s[2] = 0.0;
             SINSstate.Heading_prev = SINSstate.Heading;
             SINSstate.Roll_prev = SINSstate.Roll;
             SINSstate.Pitch_prev = SINSstate.Pitch;
@@ -320,14 +320,14 @@ namespace MovingImitator
                 SINSstate.GPS_Data.gps_Latitude.isReady = 2;
                 SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.Longitude;
                 SINSstate.GPS_Data.gps_Longitude.isReady = 2;
-                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
+                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Height;
                 SINSstate.GPS_Data.gps_Altitude.isReady = 2;
 
 
                 //Относительные угловые скорости
                 RelativeAngular_sx0 = SimpleOperations.RelativeAngular_sx0(CurrentTime - Alignment_End, SINSstate, dOrientationAngles);
                 RelativeAngular_x0s = SimpleOperations.RelativeAngular_x0s(CurrentTime - Alignment_End, SINSstate, dOrientationAngles);
-                RelativeAngular_x0 = SimpleOperations.RelativeAngular_x0(SINSstate.Vx_0, SINSstate.Latitude, SINSstate.Altitude);
+                RelativeAngular_x0 = SimpleOperations.RelativeAngular_x0(SINSstate.Vx_0, SINSstate.Latitude, SINSstate.Height);
                 RelativeAngular_x0_in_s = SINSstate.A_sx0 * RelativeAngular_x0;
 
 
@@ -336,7 +336,7 @@ namespace MovingImitator
                 SINSstate.u_s = SINSstate.A_sx0 * SINSstate.u_x;
 
                 //Формирование вектора удельной силы тяжести
-                SINSstate.g = SimpleOperations.GilmertGravityForce(SINSstate.Latitude, SINSstate.Altitude);
+                SINSstate.g = SimpleOperations.GilmertGravityForce(SINSstate.Latitude, SINSstate.Height);
                 SINSstate.F_x = SimpleOperations.Force_x0(dT, SINSstate.Vx_0, SINSstate.Vx_0_prev, RelativeAngular_x0, SINSstate.u_x, SINSstate.g);
                 SINSstate.F_z = SINSstate.A_sx0 * SINSstate.F_x;
 
@@ -354,7 +354,7 @@ namespace MovingImitator
                                 SINSstate.Vx_0[0].ToString() + " " + SINSstate.Vx_0[1].ToString() + " " + SINSstate.Vx_0[2].ToString() + " " +
                                 SINSstate.CourseHeading + " " + SINSstate.CoursePitch + " " + SINSstate.beta_c + " " + SINSstate.alpha_c + " " + SINSstate.gamma_c + " " +
                                 SINSstate.Heading.ToString() + " " + SINSstate.Roll.ToString() + " " + SINSstate.Pitch.ToString() + " " +
-                                SINSstate.Latitude.ToString() + " " + SINSstate.Longitude.ToString() + " " + SINSstate.Altitude.ToString() + " " +
+                                SINSstate.Latitude.ToString() + " " + SINSstate.Longitude.ToString() + " " + SINSstate.Height.ToString() + " " +
                                 OdometerPosition[0].ToString() + " " + OdometerPosition[1].ToString() + " " + OdometerPosition[2].ToString() + " " +
                                 SimpleOperations.AbsoluteVectorValue(SINSstate.F_z).ToString() + " " + SINSstate.g.ToString());
 
@@ -375,7 +375,7 @@ namespace MovingImitator
                 SINSstate.Pitch_prev = SINSstate.Pitch;
                 SINSstate.Latitude_prev = SINSstate.Latitude;
                 SINSstate.Longitude_prev = SINSstate.Longitude;
-                SINSstate.Altitude_prev = SINSstate.Altitude;
+                SINSstate.Height_prev = SINSstate.Height;
             }
             ///////////////////////////////////////////// Конец рабочего цикла ////////////////////////////////////////////
             ExitInfoClear.Close(); Imitator_Data_for_Process.Close();
@@ -531,7 +531,7 @@ namespace MovingImitator
 
             ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = Convert.ToDouble(dataArray[3]);
             ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = Convert.ToDouble(dataArray[1]);
-            ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = Convert.ToDouble(dataArray[5]);
+            ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = Convert.ToDouble(dataArray[5]);
             ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
             ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
 
@@ -548,8 +548,8 @@ namespace MovingImitator
             SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
             SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
 
-            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Height);
 
 
 
@@ -739,7 +739,7 @@ namespace MovingImitator
 
             outFile.WriteLine("Latitude= " + SINSstate.Latitude
                 + " Longitude= " + SINSstate.Longitude
-                + " Height= " + SINSstate.Altitude
+                + " Height= " + SINSstate.Height
                 + " SINS_Freq= " + 1.0 / SINSstate.timeStep
                 + " df_0(E)= " + Params_df_0_x0[0]
                 + " df_0(N)= " + Params_df_0_x0[1]
@@ -783,7 +783,7 @@ namespace MovingImitator
                 {
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.OdoTimeStepCount + " " + SINSstate.OdometerVector[1]
                          + " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
-                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3) + " " + SINSstate.Altitude
+                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3) + " " + SINSstate.Height
                          + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 3)
                          + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3)
                          + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
@@ -877,7 +877,7 @@ namespace MovingImitator
                 SINSstate.GPS_Data.gps_Vn.isReady = 2;
                 SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.Latitude;
                 SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.Longitude;
-                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
+                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Height;
 
                 SimpleOperations.CopyArray(SINSstate.Vz, SINSstate.A_sx0 * SINSstate.Vx_0);
 
@@ -1174,38 +1174,38 @@ namespace MovingImitator
 
                 SINSstate.Latitude = Convert.ToDouble(readStringArray[1]);
                 SINSstate.Longitude = Convert.ToDouble(readStringArray[2]);
-                SINSstate.Altitude = Convert.ToDouble(readStringArray[3]);
+                SINSstate.Height = Convert.ToDouble(readStringArray[3]);
                 SINSstate.Heading = Convert.ToDouble(readStringArray[7]);
                 SINSstate.Roll = Convert.ToDouble(readStringArray[8]);
                 SINSstate.Pitch = Convert.ToDouble(readStringArray[9]);
 
-                SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Height);
+                SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Height);
 
                 if (i == 0)
                 {
                     SINSstate.timeStep = SINSstate.Time - SINSstate.Time_prev;
                     SINSstate.Latitude_prev = SINSstate.Latitude;
                     SINSstate.Longitude_prev = SINSstate.Longitude;
-                    SINSstate.Altitude_prev = SINSstate.Altitude;
+                    SINSstate.Height_prev = SINSstate.Height;
                 }
 
                 SINSstate.Vx_0[0] = (SINSstate.Longitude - SINSstate.Longitude_prev) / SINSstate.timeStep
-                    * (SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude) + SINSstate.Altitude + SimpleOperations.RadiusE(SINSstate.Latitude_prev, SINSstate.Altitude_prev) + SINSstate.Altitude_prev) / 2.0
+                    * (SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Height) + SINSstate.Height + SimpleOperations.RadiusE(SINSstate.Latitude_prev, SINSstate.Height_prev) + SINSstate.Height_prev) / 2.0
                     * Math.Cos((SINSstate.Latitude + SINSstate.Latitude_prev) / 2.0);
                 SINSstate.Vx_0[1] = (SINSstate.Latitude - SINSstate.Latitude_prev) / SINSstate.timeStep
-                    * (SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude) + SINSstate.Altitude + SimpleOperations.RadiusN(SINSstate.Latitude_prev, SINSstate.Altitude_prev) + SINSstate.Altitude_prev) / 2.0;
-                SINSstate.Vx_0[2] = (SINSstate.Altitude - SINSstate.Altitude_prev) / SINSstate.timeStep;
+                    * (SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Height) + SINSstate.Height + SimpleOperations.RadiusN(SINSstate.Latitude_prev, SINSstate.Height_prev) + SINSstate.Height_prev) / 2.0;
+                SINSstate.Vx_0[2] = (SINSstate.Height - SINSstate.Height_prev) / SINSstate.timeStep;
 
 
-                OutPutFile.WriteLine(SINSstate.Time + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Vx_0[2]
+                OutPutFile.WriteLine(SINSstate.Time + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Height + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[1] + " " + SINSstate.Vx_0[2]
                         + " " + SINSstate.Heading + " " + SINSstate.Roll + " " + SINSstate.Pitch);
 
 
                 SINSstate.Time_prev = SINSstate.Time;
                 SINSstate.Latitude_prev = SINSstate.Latitude;
                 SINSstate.Longitude_prev = SINSstate.Longitude;
-                SINSstate.Altitude_prev = SINSstate.Altitude;
+                SINSstate.Height_prev = SINSstate.Height;
             }
 
             OutPutFile.Close();
@@ -1253,7 +1253,7 @@ namespace MovingImitator
 
                 SINSstate.Latitude = Convert.ToDouble(readStringArray[1]);
                 SINSstate.Longitude = Convert.ToDouble(readStringArray[2]);
-                SINSstate.Altitude = Convert.ToDouble(readStringArray[3]);
+                SINSstate.Height = Convert.ToDouble(readStringArray[3]);
                 SINSstate.Vx_0[0] = Convert.ToDouble(readStringArray[4]);
                 SINSstate.Vx_0[1] = Convert.ToDouble(readStringArray[5]);
                 SINSstate.Vx_0[2] = Convert.ToDouble(readStringArray[6]);
@@ -1261,8 +1261,8 @@ namespace MovingImitator
                 SINSstate.Roll = Convert.ToDouble(readStringArray[8]);
                 SINSstate.Pitch = Convert.ToDouble(readStringArray[9]);
 
-                SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Height);
+                SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Height);
 
                 if (i == 0)
                 {
@@ -1276,9 +1276,9 @@ namespace MovingImitator
 
                     SINSstate.Latitude_prev = SINSstate.Latitude;
                     SINSstate.Longitude_prev = SINSstate.Longitude;
-                    SINSstate.Altitude_prev = SINSstate.Altitude;
+                    SINSstate.Height_prev = SINSstate.Height;
 
-                    v_x0[0] = SINSstate.Vx_0[0] + SimpleData.U * (SINSstate.R_e + SINSstate.Altitude) * Math.Cos(SINSstate.Latitude);
+                    v_x0[0] = SINSstate.Vx_0[0] + SimpleData.U * (SINSstate.R_e + SINSstate.Height) * Math.Cos(SINSstate.Latitude);
                     v_x0[1] = SINSstate.Vx_0[1];
                     v_x0[2] = SINSstate.Vx_0[2];
                     SimpleOperations.CopyArray(v_z, SINSstate.A_sx0_prev * v_x0);
@@ -1320,9 +1320,9 @@ namespace MovingImitator
 
 
 
-                n_[0] = (SINSstate.R_e + SINSstate.Altitude) * Math.Cos(SINSstate.Latitude) * Math.Cos(SINSstate.Longitude);
-                n_[1] = (SINSstate.R_e + SINSstate.Altitude) * Math.Cos(SINSstate.Latitude) * Math.Sin(SINSstate.Longitude);
-                n_[2] = ((1 - SimpleData.Ex_Squared) * SINSstate.R_e + SINSstate.Altitude) * Math.Sin(SINSstate.Latitude);
+                n_[0] = (SINSstate.R_e + SINSstate.Height) * Math.Cos(SINSstate.Latitude) * Math.Cos(SINSstate.Longitude);
+                n_[1] = (SINSstate.R_e + SINSstate.Height) * Math.Cos(SINSstate.Latitude) * Math.Sin(SINSstate.Longitude);
+                n_[2] = ((1 - SimpleData.Ex_Squared) * SINSstate.R_e + SINSstate.Height) * Math.Sin(SINSstate.Latitude);
                 SimpleOperations.CopyArray(z_, SINSstate.A_sx0 * SINSstate.A_x0n * n_);
 
                 if (i == 0)
@@ -1333,10 +1333,10 @@ namespace MovingImitator
                         z_prev[j] = z_[j] - v_z[j] * SINSstate.timeStep;
                 }
 
-                SINSstate.g = SimpleOperations.GilmertGravityForce(SINSstate.Latitude, SINSstate.Altitude);
+                SINSstate.g = SimpleOperations.GilmertGravityForce(SINSstate.Latitude, SINSstate.Height);
                 g0_x0[0] = 0.0;
-                g0_x0[1] = SimpleData.U * SimpleData.U * (SINSstate.R_e + SINSstate.Altitude) * Math.Sin(SINSstate.Latitude) * Math.Cos(SINSstate.Latitude);
-                g0_x0[2] = -SINSstate.g - SimpleData.U * SimpleData.U * (SINSstate.R_e + SINSstate.Altitude) * Math.Cos(SINSstate.Latitude) * Math.Cos(SINSstate.Latitude);
+                g0_x0[1] = SimpleData.U * SimpleData.U * (SINSstate.R_e + SINSstate.Height) * Math.Sin(SINSstate.Latitude) * Math.Cos(SINSstate.Latitude);
+                g0_x0[2] = -SINSstate.g - SimpleData.U * SimpleData.U * (SINSstate.R_e + SINSstate.Height) * Math.Cos(SINSstate.Latitude) * Math.Cos(SINSstate.Latitude);
                 SimpleOperations.CopyArray(g0_z, SINSstate.A_sx0 * g0_x0);
 
                 Matrix C_1 = new Matrix(3, 3), C_2 = new Matrix(3, 3), C_3 = new Matrix(3, 3);
@@ -1387,7 +1387,7 @@ namespace MovingImitator
                 }
                 else if (false)
                 {
-                    v_x0[0] = SINSstate.Vx_0[0] + SimpleData.U * (SINSstate.R_e + SINSstate.Altitude) * Math.Cos(SINSstate.Latitude);
+                    v_x0[0] = SINSstate.Vx_0[0] + SimpleData.U * (SINSstate.R_e + SINSstate.Height) * Math.Cos(SINSstate.Latitude);
                     v_x0[1] = SINSstate.Vx_0[1];
                     v_x0[2] = SINSstate.Vx_0[2];
                     SimpleOperations.CopyArray(v_z, SINSstate.A_sx0 * v_x0);
@@ -1399,7 +1399,7 @@ namespace MovingImitator
                 }
                 else
                 {
-                    v_x0[0] = SINSstate.Vx_0[0] + SimpleData.U * (SINSstate.R_e + SINSstate.Altitude) * Math.Cos(SINSstate.Latitude);
+                    v_x0[0] = SINSstate.Vx_0[0] + SimpleData.U * (SINSstate.R_e + SINSstate.Height) * Math.Cos(SINSstate.Latitude);
                     v_x0[1] = SINSstate.Vx_0[1];
                     v_x0[2] = SINSstate.Vx_0[2];
                     SimpleOperations.CopyArray(v_z, SINSstate.A_sx0 * v_x0);
@@ -1424,8 +1424,8 @@ namespace MovingImitator
 
                 if (SINSstate.FLG_Stop != 1)
                 {
-                    odometer_left += Math.Sqrt(Math.Pow((SINSstate.Latitude - SINSstate.Latitude_prev) * (SINSstate.R_n + SINSstate.Altitude), 2) +
-                                Math.Pow((SINSstate.Longitude - SINSstate.Longitude_prev) * (SINSstate.R_e + SINSstate.Altitude) * Math.Cos(SINSstate.Latitude), 2) + Math.Pow(SINSstate.Altitude - SINSstate.Altitude_prev, 2));
+                    odometer_left += Math.Sqrt(Math.Pow((SINSstate.Latitude - SINSstate.Latitude_prev) * (SINSstate.R_n + SINSstate.Height), 2) +
+                                Math.Pow((SINSstate.Longitude - SINSstate.Longitude_prev) * (SINSstate.R_e + SINSstate.Height) * Math.Cos(SINSstate.Latitude), 2) + Math.Pow(SINSstate.Height - SINSstate.Height_prev, 2));
 
                     if (i % 5 == 0)
                     {
@@ -1440,7 +1440,7 @@ namespace MovingImitator
                 //---ДЖПС---//
                 SINSstate.GPS_Data.gps_Longitude.Value = SINSstate.Longitude;
                 SINSstate.GPS_Data.gps_Latitude.Value = SINSstate.Latitude;
-                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Altitude;
+                SINSstate.GPS_Data.gps_Altitude.Value = SINSstate.Height;
 
                 if (i % 50 == 0)
                 {
@@ -1475,7 +1475,7 @@ namespace MovingImitator
                 SimpleOperations.CopyArray(v_z_prev, v_z);
                 SINSstate.Latitude_prev = SINSstate.Latitude;
                 SINSstate.Longitude_prev = SINSstate.Longitude;
-                SINSstate.Altitude_prev = SINSstate.Altitude;
+                SINSstate.Height_prev = SINSstate.Height;
             }
 
             Imitator_Telemetric.Close();

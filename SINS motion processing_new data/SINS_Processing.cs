@@ -676,7 +676,7 @@ namespace SINS_motion_processing_new_data
 
             ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = Convert.ToDouble(dataArray[3]);
             ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = Convert.ToDouble(dataArray[1]);
-            ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = Convert.ToDouble(dataArray[5]);
+            ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = Convert.ToDouble(dataArray[5]);
             ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
             ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
 
@@ -699,8 +699,8 @@ namespace SINS_motion_processing_new_data
             SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
             SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
 
-            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Height);
 
             SINSstate_OdoMod.A_sx0 = SimpleOperations.A_sx0(SINSstate_OdoMod);
             SINSstate_OdoMod.A_x0s = SINSstate_OdoMod.A_sx0.Transpose();
@@ -710,8 +710,8 @@ namespace SINS_motion_processing_new_data
             SINSstate_OdoMod.AT = Matrix.Multiply(SINSstate_OdoMod.A_sx0, SINSstate_OdoMod.A_x0n);
             SINSstate_OdoMod.AT = Matrix.Multiply(SINSstate_OdoMod.AT, SINSstate_OdoMod.A_nxi);
 
-            SINSstate_OdoMod.R_e = SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-            SINSstate_OdoMod.R_n = SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+            SINSstate_OdoMod.R_e = SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Height);
+            SINSstate_OdoMod.R_n = SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Height);
 
 
             //------------------------------------------------------
@@ -1055,6 +1055,16 @@ namespace SINS_motion_processing_new_data
                 myFile = new StreamReader(SimpleData.PathInputString + "PNPPK_Ekat//GRTV_Ekat_151029_2_zaezd.txt");
                 SINSstate.Global_file = "GRTV_Ekat_151029_2_zaezd";
             }
+            if (GRTV_ktn004_marsh16_afterbdnwin_20032012.Checked == true)
+            {
+                myFile = new StreamReader(SimpleData.PathInputString + "PNPPK_Ekat//GRTV_ktn004_marsh16_afterbdnwin_20032012.txt");
+                SINSstate.Global_file = "GRTV_ktn004_marsh16_afterbdnwin_20032012";
+            }
+            if (GRTV_ktn004_marsh16_repeat_21032012.Checked == true)
+            {
+                myFile = new StreamReader(SimpleData.PathInputString + "PNPPK_Ekat//GRTV_ktn004_marsh16_repeat_21032012.txt");
+                SINSstate.Global_file = "GRTV_ktn004_marsh16_repeat_21032012";
+            }
 
 
 
@@ -1108,6 +1118,8 @@ namespace SINS_motion_processing_new_data
             this.GRTVout_GCEF_format_070715_kulikova.Enabled = false;
             this.GRTV_Ekat_151029_1_zaezd.Enabled = false;
             this.GRTV_Ekat_151029_2_zaezd.Enabled = false;
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Enabled = false;
+            this.GRTV_ktn004_marsh16_repeat_21032012.Enabled = false;
         }
         public void FreeInData()
         {
@@ -1118,6 +1130,8 @@ namespace SINS_motion_processing_new_data
             this.GRTVout_GCEF_format_070715_kulikova.Enabled = true;
             this.GRTV_Ekat_151029_1_zaezd.Enabled = true;
             this.GRTV_Ekat_151029_2_zaezd.Enabled = true;
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Enabled = true;
+            this.GRTV_ktn004_marsh16_repeat_21032012.Enabled = true;
         }
 
         public void LockParamsOfStart()
@@ -1344,6 +1358,26 @@ namespace SINS_motion_processing_new_data
             }
             else CheckedFalseDataIn();
         }
+        private void GRTV_ktn004_marsh16_afterbdnwin_20032012_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+
+        private void GRTV_ktn004_marsh16_repeat_21032012_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GRTV_ktn004_marsh16_repeat_21032012.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.GRTV_ktn004_marsh16_repeat_21032012.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+
 
 
 
@@ -1630,6 +1664,8 @@ namespace SINS_motion_processing_new_data
         {
 
         }
+
+        
 
 
 

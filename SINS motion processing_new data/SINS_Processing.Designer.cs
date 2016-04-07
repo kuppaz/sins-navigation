@@ -72,6 +72,7 @@
             this.SeparateHorizVSVertical = new System.Windows.Forms.CheckBox();
             this.flag_VupOdo_till_VupSINS = new System.Windows.Forms.CheckBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.flag_first100m_StartHeightCorrection = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.SaratovFullRun = new System.Windows.Forms.CheckBox();
@@ -108,7 +109,8 @@
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
             this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.CycleStartParamChoosing = new System.Windows.Forms.Button();
-            this.flag_first100m_StartHeightCorrection = new System.Windows.Forms.CheckBox();
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012 = new System.Windows.Forms.CheckBox();
+            this.GRTV_ktn004_marsh16_repeat_21032012 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -619,6 +621,16 @@
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Correction Modes";
             // 
+            // flag_first100m_StartHeightCorrection
+            // 
+            this.flag_first100m_StartHeightCorrection.AutoSize = true;
+            this.flag_first100m_StartHeightCorrection.Location = new System.Drawing.Point(34, 319);
+            this.flag_first100m_StartHeightCorrection.Name = "flag_first100m_StartHeightCorrection";
+            this.flag_first100m_StartHeightCorrection.Size = new System.Drawing.Size(140, 17);
+            this.flag_first100m_StartHeightCorrection.TabIndex = 34;
+            this.flag_first100m_StartHeightCorrection.Text = "h=h_start первые 100м";
+            this.flag_first100m_StartHeightCorrection.UseVisualStyleBackColor = true;
+            // 
             // groupBox11
             // 
             this.groupBox11.Controls.Add(this.Azimuth_minsk_race_4_3to6to2);
@@ -1028,21 +1040,35 @@
             this.CycleStartParamChoosing.UseVisualStyleBackColor = true;
             this.CycleStartParamChoosing.Click += new System.EventHandler(this.CycleStartParamChoosing_Click);
             // 
-            // flag_first100m_StartHeightCorrection
+            // GRTV_ktn004_marsh16_afterbdnwin_20032012
             // 
-            this.flag_first100m_StartHeightCorrection.AutoSize = true;
-            this.flag_first100m_StartHeightCorrection.Location = new System.Drawing.Point(34, 319);
-            this.flag_first100m_StartHeightCorrection.Name = "flag_first100m_StartHeightCorrection";
-            this.flag_first100m_StartHeightCorrection.Size = new System.Drawing.Size(140, 17);
-            this.flag_first100m_StartHeightCorrection.TabIndex = 34;
-            this.flag_first100m_StartHeightCorrection.Text = "h=h_start первые 100м";
-            this.flag_first100m_StartHeightCorrection.UseVisualStyleBackColor = true;
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.AutoSize = true;
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Location = new System.Drawing.Point(243, 13);
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Name = "GRTV_ktn004_marsh16_afterbdnwin_20032012";
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Size = new System.Drawing.Size(256, 17);
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.TabIndex = 87;
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.Text = "GRTV_ktn004_marsh16_afterbdnwin_20032012";
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.UseVisualStyleBackColor = true;
+            this.GRTV_ktn004_marsh16_afterbdnwin_20032012.CheckedChanged += new System.EventHandler(this.GRTV_ktn004_marsh16_afterbdnwin_20032012_CheckedChanged);
+            // 
+            // GRTV_ktn004_marsh16_repeat_21032012
+            // 
+            this.GRTV_ktn004_marsh16_repeat_21032012.AutoSize = true;
+            this.GRTV_ktn004_marsh16_repeat_21032012.Location = new System.Drawing.Point(243, 31);
+            this.GRTV_ktn004_marsh16_repeat_21032012.Name = "GRTV_ktn004_marsh16_repeat_21032012";
+            this.GRTV_ktn004_marsh16_repeat_21032012.Size = new System.Drawing.Size(231, 17);
+            this.GRTV_ktn004_marsh16_repeat_21032012.TabIndex = 88;
+            this.GRTV_ktn004_marsh16_repeat_21032012.Text = "GRTV_ktn004_marsh16_repeat_21032012";
+            this.GRTV_ktn004_marsh16_repeat_21032012.UseVisualStyleBackColor = true;
+            this.GRTV_ktn004_marsh16_repeat_21032012.CheckedChanged += new System.EventHandler(this.GRTV_ktn004_marsh16_repeat_21032012_CheckedChanged);
             // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.GRTV_ktn004_marsh16_repeat_21032012);
+            this.Controls.Add(this.GRTV_ktn004_marsh16_afterbdnwin_20032012);
             this.Controls.Add(this.CycleStartParamChoosing);
             this.Controls.Add(this.NoiseParamsScanning);
             this.Controls.Add(this.flag_GRTV_output);
@@ -1179,6 +1205,8 @@
         private System.Windows.Forms.CheckBox SeparateHorizVSVertical;
         private System.Windows.Forms.CheckBox iMqVarkappa1;
         private System.Windows.Forms.CheckBox flag_first100m_StartHeightCorrection;
+        private System.Windows.Forms.CheckBox GRTV_ktn004_marsh16_afterbdnwin_20032012;
+        private System.Windows.Forms.CheckBox GRTV_ktn004_marsh16_repeat_21032012;
     }
 }
 

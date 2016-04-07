@@ -32,7 +32,7 @@ namespace Common_Namespace
 
                     SINSstate_OdoMod.Latitude_prev = SINSstate.Latitude;
                     SINSstate_OdoMod.Longitude_prev = SINSstate.Longitude;
-                    SINSstate_OdoMod.Altitude_prev = SINSstate.Altitude;
+                    SINSstate_OdoMod.Height_prev = SINSstate.Height;
 
                     SINSstate_OdoMod.Heading_prev = SINSstate_OdoMod.Heading;
                     SINSstate_OdoMod.Roll_prev = SINSstate_OdoMod.Roll;
@@ -42,7 +42,7 @@ namespace Common_Namespace
 
             SINSstate.Latitude_prev = SINSstate.Latitude; SINSstate2.Latitude_prev = SINSstate2.Latitude;
             SINSstate.Longitude_prev = SINSstate.Longitude; SINSstate2.Longitude_prev = SINSstate2.Longitude;
-            SINSstate.Altitude_prev = SINSstate.Altitude; SINSstate2.Altitude_prev = SINSstate2.Altitude;
+            SINSstate.Height_prev = SINSstate.Height; SINSstate2.Height_prev = SINSstate2.Height;
 
             SINSstate.Heading_prev = SINSstate.Heading; SINSstate2.Heading_prev = SINSstate2.Heading;
             SINSstate.Roll_prev = SINSstate.Roll; SINSstate2.Roll_prev = SINSstate2.Roll;
@@ -67,8 +67,8 @@ namespace Common_Namespace
             SINSstate.AT = Matrix.Multiply(SINSstate.A_sx0, SINSstate.A_x0n);
             SINSstate.AT = Matrix.Multiply(SINSstate.AT, SINSstate.A_nxi);
 
-            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Height);
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
             SINSstate.Omega_x[0] = -(SINSstate.Vx_0[1] + SINSstate.Vx_0_prev[1]) / 2.0 / SINSstate.R_n;
@@ -76,7 +76,7 @@ namespace Common_Namespace
             SINSstate.Omega_x[2] = Math.Tan(SINSstate.Latitude) * SINSstate.Omega_x[1];
 
             SINSstate.g = 9.78049 * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014;
-            SINSstate.g -= 2 * 0.000001538 * SINSstate.Altitude;
+            SINSstate.g -= 2 * 0.000001538 * SINSstate.Height;
         }
 
 
@@ -172,7 +172,7 @@ namespace Common_Namespace
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 SINSstate2.Vx_0[2] = SINSstate.Vx_0[2] - SINSstate.DeltaV_3;
-                SINSstate2.Altitude = SINSstate.Altitude - SINSstate.DeltaAltitude;
+                SINSstate2.Height = SINSstate.Height - SINSstate.DeltaAltitude;
             }
 
             SINSstate2.Roll = SINSstate.Roll - SINSstate.DeltaRoll;
@@ -218,7 +218,7 @@ namespace Common_Namespace
                 SINSstate_OdoMod.Latitude_Corr = SINSstate_OdoMod.Latitude - SINSstate_OdoMod.DeltaLatitude;
                 SINSstate_OdoMod.Longitude_Corr = SINSstate_OdoMod.Longitude - SINSstate_OdoMod.DeltaLongitude;
                 if (SINSstate.flag_iMx_r3_dV3)
-                    SINSstate_OdoMod.Altitude_Corr = SINSstate_OdoMod.Altitude - SINSstate_OdoMod.DeltaAltitude;
+                    SINSstate_OdoMod.Altitude_Corr = SINSstate_OdoMod.Height - SINSstate_OdoMod.DeltaAltitude;
 
 
                 if (SINSstate.flag_FeedbackExist == true)
@@ -227,7 +227,7 @@ namespace Common_Namespace
                     SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude - SINSstate_OdoMod.DeltaLongitude;
 
                     if (SINSstate.flag_iMx_r3_dV3)
-                        SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude - SINSstate_OdoMod.DeltaAltitude;
+                        SINSstate_OdoMod.Height = SINSstate_OdoMod.Height - SINSstate_OdoMod.DeltaAltitude;
 
                     SINSstate_OdoMod.A_x0n = A_x0n(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Longitude);
                     SINSstate_OdoMod.A_nx0 = SINSstate_OdoMod.A_x0n.Transpose();
@@ -247,9 +247,9 @@ namespace Common_Namespace
             if (SINSstate.flag_SeparateHorizVSVertical == true)
             {
                 SINSstate2.Vx_0[2] = SINSstate.Vx_0[2] - SINSstate.DeltaV_3;
-                SINSstate2.Altitude = SINSstate.Altitude - SINSstate.DeltaAltitude;
+                SINSstate2.Height = SINSstate.Height - SINSstate.DeltaAltitude;
 
-                SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude - SINSstate_OdoMod.DeltaAltitude;
+                SINSstate_OdoMod.Height = SINSstate_OdoMod.Height - SINSstate_OdoMod.DeltaAltitude;
 
                 for (int i = 0; i < SimpleData.iMx_Vertical; i++)
                     SINSstate2.Vertical_Cumulative_KalmanErrorVector[i] += KalmanVars.Vertical_ErrorConditionVector_p[i];
@@ -425,7 +425,12 @@ namespace Common_Namespace
                 iMx_r_odo_3 = SINSstate.value_iMx_r_odo_3
                 ;
 
+            double sqrt_freq_vert = Math.Sqrt(Math.Abs(SINSstate.Freq)); ;
             double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
+            //double sqrt_freq = 1.0;
+            //sqrt_freq_vert = sqrt_freq;
+
+
             double[] Noise_Vel_in_Mx = new double[3], Noise_Angl_in_Mx = new double[3];
 
             for (int i = 0; i < iMx * iMq; i++)
@@ -819,8 +824,8 @@ namespace Common_Namespace
 
             SINSstate2.Time = SINSstate.Time;
             SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-            Altitude = SINSstate.Altitude;
-            Altitude_prev = SINSstate.Altitude_prev;
+            Altitude = SINSstate.Height;
+            Altitude_prev = SINSstate.Height_prev;
 
             fz[1] = SINSstate.F_z[1];
             fz[2] = SINSstate.F_z[2];
@@ -849,8 +854,8 @@ namespace Common_Namespace
             CopyArray(Vx_0, SINSstate.Vx_0);
             CopyArray(Vx_0_prev, SINSstate.Vx_0_prev);
 
-            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Height);
 
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
@@ -985,8 +990,8 @@ namespace Common_Namespace
             SINSstate.Latitude = Math.Atan2(SINSstate.A_x0n[2, 2], Math.Sqrt(SINSstate.A_x0n[0, 2] * SINSstate.A_x0n[0, 2] + SINSstate.A_x0n[1, 2] * SINSstate.A_x0n[1, 2]));
             Azimth = Math.Atan2(SINSstate.A_x0n[0, 2], SINSstate.A_x0n[1, 2]);
 
-            SINSstate.Altitude_prev = SINSstate.Altitude;
-            SINSstate.Altitude = Altitude;
+            SINSstate.Height_prev = SINSstate.Height;
+            SINSstate.Height = Altitude;
 
 
             //SINSstate.Heading = gkurs - Azimth;
@@ -995,8 +1000,8 @@ namespace Common_Namespace
             SINSstate.Pitch = Math.Atan2(SINSstate.A_sx0[1, 2], Math.Sqrt(SINSstate.A_sx0[0, 2] * SINSstate.A_sx0[0, 2] + SINSstate.A_sx0[2, 2] * SINSstate.A_sx0[2, 2]));
             //SINSstate.Azimth = Azimth;
 
-            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Height);
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
             CopyArray(SINSstate.Vx_0_prev, SINSstate.Vx_0);
@@ -1063,9 +1068,9 @@ namespace Common_Namespace
                     //SimpleOperations.CopyArray(dS_x, SimpleOperations.A_sx0((SINSstate_OdoMod.Heading + SINSstate_OdoMod.Heading_prev) / 2.0, 
                     //    (SINSstate_OdoMod.Roll + SINSstate_OdoMod.Roll_prev) / 2.0, (SINSstate_OdoMod.Pitch + SINSstate_OdoMod.Pitch_prev) / 2.0).Transpose() * SINSstate.OdometerVector);
 
-                    SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-                    SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude) / Math.Cos(SINSstate_OdoMod.Latitude);
-                    SINSstate_OdoMod.Altitude = SINSstate_OdoMod.Altitude + dS_x[2];
+                    SINSstate_OdoMod.Latitude = SINSstate_OdoMod.Latitude + dS_x[1] / SimpleOperations.RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Height);
+                    SINSstate_OdoMod.Longitude = SINSstate_OdoMod.Longitude + dS_x[0] / SimpleOperations.RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Height) / Math.Cos(SINSstate_OdoMod.Latitude);
+                    SINSstate_OdoMod.Height = SINSstate_OdoMod.Height + dS_x[2];
                 }
 
                 //----------------Вычисление углов и переприсвоение матриц---------------------------
@@ -1081,8 +1086,8 @@ namespace Common_Namespace
                 SimpleOperations.CopyMatrix(SINSstate_OdoMod.A_sx0, SINSstate_OdoMod.A_x0s.Transpose());
             }
 
-            SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
-            SINSstate_OdoMod.R_n = RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Altitude);
+            SINSstate_OdoMod.R_e = RadiusE(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Height);
+            SINSstate_OdoMod.R_n = RadiusN(SINSstate_OdoMod.Latitude, SINSstate_OdoMod.Height);
             //--------------------------------------------------------------------------------------
         }
 
@@ -1116,8 +1121,8 @@ namespace Common_Namespace
 
             SINSstate2.Time = SINSstate.Time;
             SINSstate.A_nxi = SimpleOperations.A_ne(SINSstate.Time, SINSstate.Longitude_Start);
-            Altitude = SINSstate.Altitude;
-            Altitude_prev = SINSstate.Altitude_prev;
+            Altitude = SINSstate.Height;
+            Altitude_prev = SINSstate.Height_prev;
 
             fz[1] = SINSstate.F_z[1];
             fz[2] = SINSstate.F_z[2];
@@ -1131,8 +1136,8 @@ namespace Common_Namespace
             CopyArray(Vx_0, SINSstate.Vx_0);
             CopyArray(Vx_0_prev, SINSstate.Vx_0_prev);
 
-            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Height);
 
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
@@ -1259,8 +1264,8 @@ namespace Common_Namespace
             SINSstate.Latitude = Math.Atan2(SINSstate.A_x0n[2, 2], Math.Sqrt(SINSstate.A_x0n[0, 2] * SINSstate.A_x0n[0, 2] + SINSstate.A_x0n[1, 2] * SINSstate.A_x0n[1, 2]));
             Azimth = Math.Atan2(SINSstate.A_x0n[0, 2], SINSstate.A_x0n[1, 2]);
 
-            SINSstate.Altitude_prev = SINSstate.Altitude;
-            SINSstate.Altitude = Altitude;
+            SINSstate.Height_prev = SINSstate.Height;
+            SINSstate.Height = Altitude;
 
 
             //SINSstate.Heading = gkurs - Azimth;
@@ -1269,8 +1274,8 @@ namespace Common_Namespace
             SINSstate.Pitch = Math.Atan2(SINSstate.A_sx0[1, 2], Math.Sqrt(SINSstate.A_sx0[0, 2] * SINSstate.A_sx0[0, 2] + SINSstate.A_sx0[2, 2] * SINSstate.A_sx0[2, 2]));
             //SINSstate.Azimth = Azimth;
 
-            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = RadiusN(SINSstate.Latitude, SINSstate.Height);
             SINSstate.u_x = U_x0(SINSstate.Latitude);
 
             CopyArray(SINSstate.Vx_0_prev, SINSstate.Vx_0);
@@ -1622,7 +1627,7 @@ namespace Common_Namespace
                     }
                     dim_shift_for_P += u2;
 
-                    KalmanVars.ErrorVector_m[0] = SINSstate.Altitude;
+                    KalmanVars.ErrorVector_m[0] = SINSstate.Height;
 
                     Matrix MatrixS_ForNavDeltas = new Matrix(tmp_dim, tmp_dim);
                     if (SINSstate.flag_SeparateHorizVSVertical == false)
@@ -1638,7 +1643,7 @@ namespace Common_Namespace
                     KalmanProcs.Smoothing(KalmanVars, SINSstate, tmp_dim);
                     //==============================================================//
 
-                    SINSstate_Smooth.Altitude = KalmanVars.ErrorVector_Smoothed[0];
+                    SINSstate_Smooth.Height = KalmanVars.ErrorVector_Smoothed[0];
                 }
 
                 if (SimpleData.iMxSmthd >= 4)
@@ -1951,7 +1956,7 @@ namespace Common_Namespace
             if (SINSstate.flag_iMx_r3_dV3 == true || SINSstate.flag_SeparateHorizVSVertical == true)
             {
                 if (SimpleData.iMxSmthd >= 2)
-                    str_X = str_X + " " + SINSstate.Altitude;
+                    str_X = str_X + " " + SINSstate.Height;
 
                 if (SimpleData.iMxSmthd >= 4)
                     str_X = str_X + " " + SINSstate.Vx_0[2];

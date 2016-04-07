@@ -171,8 +171,8 @@ namespace SINSAlignment
             SimpleOperations.CopyArray(fz, SINSstate.F_z);
             SimpleOperations.CopyArray(Wz, SINSstate.W_z);
 
-            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+            SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Height);
+            SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Height);
 
             SINSstate.u_x = SimpleOperations.U_x0(SINSstate.Latitude);
 
@@ -213,7 +213,7 @@ namespace SINSAlignment
             //--- надо вычислять, используется, например в выставке ---//
             SINSstate.g = 9.78049 * (1.0 + 0.0053020 * Math.Pow(Math.Sin(SINSstate.Latitude), 2) - 0.000007 * Math.Pow(Math.Sin(2 * SINSstate.Latitude), 2)) - 0.00014;
             if (true)
-                SINSstate.g -= 2 * 0.000001538 * SINSstate.Altitude;
+                SINSstate.g -= 2 * 0.000001538 * SINSstate.Height;
 
 
             //----------------Вычисление углов и переприсвоение матриц---------------------------

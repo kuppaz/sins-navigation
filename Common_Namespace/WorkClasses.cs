@@ -78,8 +78,9 @@ namespace Common_Namespace
 
         //---мод запуска программы---
         public bool flag_Alignment = false, flag_Autonomous_Solution = false, flag_FeedbackExist = false, flag_EstimateExist = false;
-        public bool flag_UsingClasAlignment = false, flag_UsingNavAlignment = false, flag_OnlyAlignment = false, Alignment_HeadingDetermined = false;
-        public double Alignment_HeadingValue;
+        public bool flag_UsingClasAlignment = false, flag_UsingNavAlignment = false, flag_OnlyAlignment = false;
+        public bool Alignment_HeadingDetermined = false, Alignment_RollDetermined = false, Alignment_PitchDetermined = false;
+        public double Alignment_HeadingValue, Alignment_RollValue, Alignment_PitchValue;
         public bool flag_OdoSINSWeakConnect = false, flag_OdoSINSWeakConnect_MODIF = false;
 
         //---параметры запуска---
@@ -158,7 +159,7 @@ namespace Common_Namespace
         public double[] AlignAlgebraDrifts = new double[3];
         public double GyroHeading, Heading, Roll, Pitch, PitchAuto, Heading_prev, Roll_prev, Pitch_prev, Azimth, LongSNS, LatSNS, AltSNS, g, g_0, F_mod, R_e, R_n, HeadingImitator;
         public double CourseHeading, CoursePitch, beta_c, gamma_c, alpha_c;
-        public double Latitude, Longitude, Altitude, Latitude_Start, Longitude_Start, Altitude_Start, Latitude_Point, Altitude_prev, Latitude_prev, Longitude_prev;
+        public double Latitude, Longitude, Height, Latitude_Start, Longitude_Start, Height_Start, Latitude_Point, Height_prev, Latitude_prev, Longitude_prev;
         public double Latitude_Corr, Longitude_Corr, Altitude_Corr;
 
         public double[] Vx_0 = new double[3]
@@ -199,7 +200,7 @@ namespace Common_Namespace
         public double[] tempVect = new double[3];
         public double[] GK_Latitude = new double[50];
         public double[] GK_Longitude = new double[50];
-        public double alpha_z, alpha_x, alpha_y, DirectionalAngle;
+        public double alpha_kappa_3, alpha_kappa_1, alpha_scaleError, DirectionalAngle;
 
         public bool flag_iMqDeltaR = false, flag_iMqDeltaF = false, flag_iMqDeltaNu = false, flag_iMqVarkappa3 = false, flag_iMqVarkappa1 = false, flag_iMqKappa = false, flag_iMqDeltaRodo = false;
         public bool flag_AccuracyClass_NoErr;
@@ -260,6 +261,9 @@ namespace Common_Namespace
                        ;
         public int OdometerZUPT_counter;
         public bool flag_equalizeVertNoise;
+        public int OdoVerticalNoiseMultiplicator;
+        public bool SINS_is_accurateMounted_by_kappa_1, SINS_is_accurateMounted_by_kappa_3, SINS_is_accurateMounted_by_scaleError;
+        public double OdometerStartValue;
     }
 
 

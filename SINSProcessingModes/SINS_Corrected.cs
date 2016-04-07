@@ -34,6 +34,8 @@ namespace SINSProcessingModes
         {
             int t = 0;
 
+            SINSstate.firstLineRead = false;
+
             SINS_State SINSstate_Smooth = new SINS_State();
             KalmanVars.NumberOfIterationForOneForSmoothing = NumberOfIterationForOneForSmoothing;
             SINSstate.NumberOfFilesForSmoothing = Math.Floor(SINSstate.LastCountForRead / Convert.ToDouble(NumberOfIterationForOneForSmoothing)) + 1;
@@ -114,6 +116,7 @@ namespace SINSProcessingModes
             int start_i = l;
             SINSstate.NowSmoothing = NowSmoothing;
             if (SINSstate.NowSmoothing) start_i = SINSstate.LastCountForRead - 1;
+
 
 
             //=========================================================================//
@@ -250,7 +253,7 @@ namespace SINSProcessingModes
                     && SINSstate.OdometerData.odometer_left.Value > SINSstate.first100m_StartHeightCorrection_value / 2.0
                     && SINSstate.OdometerData.odometer_left.Value <= SINSstate.first100m_StartHeightCorrection_value 
                     && i % 100 == 0 )
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.0, 0.0, SINSstate.Altitude_Start);
+                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 0.0, 0.0, SINSstate.Height_Start);
 
                 if (SINSstate.flag_Using_SNS == true && SINSstate.GPS_Data.gps_Latitude.isReady == 1)
                     SINSstate.flag_UsingCorrection = true;
@@ -461,6 +464,52 @@ namespace SINSProcessingModes
         public static void CheckPointProcessing(SINS_State SINSstate, SINS_State SINSstate_OdoMod, Kalman_Vars KalmanVars)
         {
             SINSstate.flag_ControlPointCorrection = false;
+
+
+            if (SINSstate.Global_file == "GRTV_ktn004_marsh16_afterbdnwin_20032012")
+            {
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4400.0) < 0.02)
+                {
+                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
+
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                    else 
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                }
+
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2497.0) < 0.02)
+                {
+                    double Lat = 56 + (18.0 + 16.04 / 60.0) / 60.0;
+                    double Long = 43 + (6.0 + 59.69 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
+                }
+
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1772.1) < 0.02 || Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3126.7) < 0.02)
+                //{
+                //    double Lat = 56 + (19.0 + 4.7 / 60.0) / 60.0;
+                //    double Long = 43 + (6.0 + 42.58 / 60.0) / 60.0;
+                //    if (SINSstate.flag_Odometr_SINS_case == true)
+                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                //    else
+                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                //}
+            }
+            if (SINSstate.Global_file == "GRTV_ktn004_marsh16_repeat_21032012")
+            {
+                double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
+
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4250.0) < 0.02)
+                {
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                }
+            }
 
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")

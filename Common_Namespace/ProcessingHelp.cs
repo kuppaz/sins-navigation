@@ -133,28 +133,17 @@ namespace Common_Namespace
                 SINSstate.W_z[0] = Convert.ToDouble(dataArray2[6]);
 
 
-                //Юстировочные углы
-                if (SINSstate.Global_file == "ktn004_15.03.2012" || SINSstate.Global_file == "Saratov_run_2014_07_23")
+                // --- Поворот показаний датчиков на заднные углы несоосности БИНС и динамических осей объекта --- //
                 {
                     double[] fz = new double[3], Wz = new double[3];
 
-                    fz[1] = SINSstate.F_z[1] + SINSstate.alpha_z * SINSstate.F_z[2] + SINSstate.alpha_y * SINSstate.F_z[0];//-0.02;
-                    fz[2] = SINSstate.F_z[2] - SINSstate.alpha_z * SINSstate.F_z[1] + SINSstate.alpha_x * SINSstate.F_z[0];//+0.037;
-                    fz[0] = SINSstate.F_z[0] - SINSstate.alpha_y * SINSstate.F_z[1] - SINSstate.alpha_x * SINSstate.F_z[2];
+                    fz[0] = SINSstate.F_z[0] - SINSstate.alpha_kappa_3 * SINSstate.F_z[1];
+                    fz[1] = SINSstate.F_z[1] + SINSstate.alpha_kappa_3 * SINSstate.F_z[0] - SINSstate.alpha_kappa_1 * SINSstate.F_z[2];
+                    fz[2] = SINSstate.F_z[2] + SINSstate.alpha_kappa_1 * SINSstate.F_z[1];
 
-                    Wz[1] = SINSstate.W_z[1] + SINSstate.alpha_z * SINSstate.W_z[2] + SINSstate.alpha_y * SINSstate.W_z[0];
-                    Wz[2] = SINSstate.W_z[2] - SINSstate.alpha_z * SINSstate.W_z[1] + SINSstate.alpha_x * SINSstate.W_z[0];
-                    Wz[0] = SINSstate.W_z[0] - SINSstate.alpha_y * SINSstate.W_z[1] - SINSstate.alpha_x * SINSstate.W_z[2];
-
-                    SimpleOperations.CopyArray(SINSstate.F_z, fz);
-                    SimpleOperations.CopyArray(SINSstate.W_z, Wz);
-                }
-                if (SINSstate.Global_file.Contains("GRTVout_GCEF_format") || SINSstate.Global_file.Contains("GRTV_Ekat"))
-                {
-                    double[] fz = new double[3], Wz = new double[3];
-
-                    SimpleOperations.CopyArray(Wz, Matrix.Multiply(SimpleOperations.A_xs(SINSstate.alpha_x, SINSstate.alpha_y, SINSstate.alpha_z), SINSstate.W_z));
-                    SimpleOperations.CopyArray(fz, Matrix.Multiply(SimpleOperations.A_xs(SINSstate.alpha_x, SINSstate.alpha_y, SINSstate.alpha_z), SINSstate.F_z));
+                    Wz[0] = SINSstate.W_z[0] - SINSstate.alpha_kappa_3 * SINSstate.W_z[1];
+                    Wz[1] = SINSstate.W_z[1] + SINSstate.alpha_kappa_3 * SINSstate.W_z[0] - SINSstate.alpha_kappa_1 * SINSstate.W_z[2];
+                    Wz[2] = SINSstate.W_z[2] + SINSstate.alpha_kappa_1 * SINSstate.W_z[1];
 
                     SimpleOperations.CopyArray(SINSstate.F_z, fz);
                     SimpleOperations.CopyArray(SINSstate.W_z, Wz);
@@ -201,6 +190,10 @@ namespace Common_Namespace
                 SINSstate.OdometerData.odometer_right.Value = Convert.ToDouble(dataArray2[20]);
                 SINSstate.OdometerData.odometer_right.isReady = Convert.ToInt32(dataArray2[21]);
 
+                // --- Делаем поправку на введенное значение ошибки масштаба одометра
+                SINSstate.OdometerData.odometer_left.Value /= (1.0 + SINSstate.alpha_scaleError);
+                SINSstate.OdometerData.odometer_right.Value /= (1.0 + SINSstate.alpha_scaleError);
+
                 SINSstate.OdometerData.odometer_left_ABS.Value += Math.Abs(SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev);
 
 
@@ -229,6 +222,7 @@ namespace Common_Namespace
                 if (SINSstate.Global_file.ToLower().Contains("imitator") && dataArray2.Length >= 22)
                     SINSstate.HeadingImitator = Convert.ToDouble(dataArray2[22]);
 
+
                 if (SINSstate.Global_file.Contains("GRTV"))
                 {
                     bool flg_extract_complex_solution = false;
@@ -255,23 +249,6 @@ namespace Common_Namespace
                         }
                     }
                     catch { }
-
-                    if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
-                    {
-                        //double correction_OdoScale = 0.0025;
-                        //SINSstate.OdometerData.odometer_left.Value /= (1.0 + correction_OdoScale);
-                        //SINSstate.OdometerData.odometer_right.Value /= (1.0 + correction_OdoScale);
-
-                        //SINSstate.alpha_x = -0.01613 * SimpleData.ToRadian;
-                        //SINSstate.alpha_z = -0.00114 * SimpleData.ToRadian; 
-                    }
-
-                    if (SINSstate.Global_file.Contains("GRTV_Ekat"))
-                    {
-                        //double correction_OdoScale = -0.00957;
-                        //SINSstate.OdometerData.odometer_left.Value /= (1.0 + correction_OdoScale);
-                        //SINSstate.OdometerData.odometer_right.Value /= (1.0 + correction_OdoScale);
-                    }
                 }
 
                 //--- Поправки для пересчета в Кроссовского ---//
@@ -363,6 +340,7 @@ namespace Common_Namespace
                 SINSstate.Roll_prev = SINSstate.Roll;
                 SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
                 SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
+                SINSstate.OdometerStartValue = SINSstate.OdometerData.odometer_left.Value;
                 SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
                 SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
                 SINSstate.firstLineRead = true;
@@ -411,11 +389,11 @@ namespace Common_Namespace
                 {
                     if (SINSstate.flag_FeedbackExist)
                         Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
-                                + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
+                                + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Height
                                 + " " + (SINSstate.Heading * SimpleData.ToDegree) + " " + (SINSstate.Roll * SimpleData.ToDegree) + " " + (SINSstate.Pitch * SimpleData.ToDegree));
                     else if (SINSstate.flag_EstimateExist)
                         Imitator_Telemetric.WriteLine(((i - l + tmpFreqOut10) / tmpRoundFreq50).ToString()
-                                + " " + SINSstate2.Latitude + " " + SINSstate2.Longitude + " " + SINSstate2.Altitude
+                                + " " + SINSstate2.Latitude + " " + SINSstate2.Longitude + " " + SINSstate2.Height
                                 + " " + (SINSstate2.Heading * SimpleData.ToDegree) + " " + (SINSstate2.Roll * SimpleData.ToDegree) + " " + (SINSstate2.Pitch * SimpleData.ToDegree));
                 }
             }
@@ -448,10 +426,10 @@ namespace Common_Namespace
             }
 
 
-            ProcHelp.distance = Math.Sqrt(Math.Pow((Lat - ProcHelp.LatSNS * SimpleData.ToRadian) * SimpleOperations.RadiusN(Lat, SINSstate.Altitude), 2) +
-                                 Math.Pow((Long - ProcHelp.LongSNS * SimpleData.ToRadian) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
-            ProcHelp.distance_from_start = Math.Sqrt(Math.Pow((Lat - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(Lat, SINSstate.Altitude), 2) +
-                                 Math.Pow((Long - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat), 2));
+            ProcHelp.distance = Math.Sqrt(Math.Pow((Lat - ProcHelp.LatSNS * SimpleData.ToRadian) * SimpleOperations.RadiusN(Lat, SINSstate.Height), 2) +
+                                 Math.Pow((Long - ProcHelp.LongSNS * SimpleData.ToRadian) * SimpleOperations.RadiusE(Lat, SINSstate.Height) * Math.Cos(Lat), 2));
+            ProcHelp.distance_from_start = Math.Sqrt(Math.Pow((Lat - SINSstate.Latitude_Start) * SimpleOperations.RadiusN(Lat, SINSstate.Height), 2) +
+                                 Math.Pow((Long - SINSstate.Longitude_Start) * SimpleOperations.RadiusE(Lat, SINSstate.Height) * Math.Cos(Lat), 2));
 
 
             //if (SINSstate.Time + SINSstate.Time_Alignment < 2955.53) return;
@@ -469,7 +447,7 @@ namespace Common_Namespace
                         + "nInstallationModel 0\n"                               // 0 – продольная ось прибора совпадает с продольной осью объекта
                         + "flLatitudeID " + SINSstate.Latitude_Start + " 1\n"
                         + "flLongitudeID " + SINSstate.Longitude_Start + " 1\n"
-                        + "flHeightID " + SINSstate.Altitude_Start + " 1\n"
+                        + "flHeightID " + SINSstate.Height_Start + " 1\n"
                         + "flTrueHeadID " + SINSstate.Heading + " 1\n"     //начальная долгота, заданная с пульта [рад]
                         + "flAzimuthMisalignment 0.0 0\n"                          // Угол азимутального рассогласования
                         + "flElevation 0.0 0"                                    //начальный угол возвышения ИНС [рад]
@@ -488,11 +466,11 @@ namespace Common_Namespace
                     + " " + SINSstate.F_z_orig[1] + " " + SINSstate.F_z_orig[2] + " " + SINSstate.F_z_orig[0]
                     + " " + SINSstate.W_z_orig[1] + " " + SINSstate.W_z_orig[2] + " " + SINSstate.W_z_orig[0]
 
-                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Altitude
+                    + " " + SINSstate.Latitude + " " + SINSstate.Longitude + " " + SINSstate.Height
                     + " " + SINSstate.Vx_0[1] + " " + SINSstate.Vx_0[0] + " " + SINSstate.Vx_0[2]
 
                     + " " + SINSstate.Heading + " " + SINSstate.Pitch + " " + SINSstate.Roll
-                    + " " + SINSstate.Latitude + " 1 " + SINSstate.Longitude + " 1 " + SINSstate.Altitude + " 1"
+                    + " " + SINSstate.Latitude + " 1 " + SINSstate.Longitude + " 1 " + SINSstate.Height + " 1"
                     + " " + SINSstate.Vx_0[1] + " 1 " + SINSstate.Vx_0[0] + " 1 " + SINSstate.Vx_0[2] + " 1"
 
                     + " " + SINSstate.OdometerData.odometer_left.Value_orig + " " + SINSstate.OdometerData.odometer_left.isReady_orig
@@ -601,7 +579,7 @@ namespace Common_Namespace
                                  + " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate_OdoMod.OdoSpeed_s)
                                  + " " + Math.Round(((SINSstate_OdoMod.Latitude - SINSstate.Latitude_Start) * SINSstate_OdoMod.R_n), 2)
                                  + " " + Math.Round(((SINSstate_OdoMod.Longitude - SINSstate.Longitude_Start) * SINSstate_OdoMod.R_e * Math.Cos(SINSstate_OdoMod.Latitude)), 2)
-                                 + " " + SINSstate_OdoMod.Altitude + " " + SINSstate_OdoMod.Altitude_Corr + " "
+                                 + " " + SINSstate_OdoMod.Height + " " + SINSstate_OdoMod.Altitude_Corr + " "
                                  + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate_OdoMod.Latitude_Corr) * SINSstate_OdoMod.R_n), 2)
                                  + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate_OdoMod.Longitude_Corr) * SINSstate_OdoMod.R_e * Math.Cos(SINSstate_OdoMod.Latitude)), 2)
                                  + " " + ((SINSstate_OdoMod.Latitude) * SimpleData.ToDegree) + " " + ((SINSstate_OdoMod.Longitude) * SimpleData.ToDegree)
@@ -621,7 +599,7 @@ namespace Common_Namespace
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                                  + " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
                                  + " " + Math.Round(((SINSstate2.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
-                                 + " " + Math.Round(((SINSstate2.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate2.Latitude)), 2) + " " + SINSstate2.Altitude
+                                 + " " + Math.Round(((SINSstate2.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate2.Latitude)), 2) + " " + SINSstate2.Height
                                  + " " + ((SINSstate2.Latitude) * SimpleData.ToDegree) + " " + ((SINSstate2.Longitude) * SimpleData.ToDegree)
                                  + " " + Math.Round(SINSstate2.Vx_0[0], 3) + " " + Math.Round(SINSstate2.Vx_0[1], 3) + " " + Math.Round(SINSstate2.Vx_0[2], 3)
                                  //+ " " + ProcHelp.corrected
@@ -649,7 +627,7 @@ namespace Common_Namespace
                 {
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.OdoTimeStepCount + " " + SINSstate.OdometerVector[1]
                          + " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
-                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3) + " " + SINSstate.Altitude
+                         + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 3) + " " + SINSstate.Height
                          + " " + SINSstate.Latitude * SimpleData.ToDegree
                          + " " + SINSstate.Longitude * SimpleData.ToDegree
                          + " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude_Start) * SINSstate.R_n), 3)
@@ -676,13 +654,13 @@ namespace Common_Namespace
                         ProcHelp.datastring += " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s);
 
                     ProcHelp.datastring += " " + Math.Round(((SINSstate.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n), 2)
-                                        + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2) + " " + SINSstate.Altitude
+                                        + " " + Math.Round(((SINSstate.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2) + " " + SINSstate.Height
                                         + " " + ((SINSstate.Latitude) * SimpleData.ToDegree) + " " + ((SINSstate.Longitude) * SimpleData.ToDegree)
                                         + " " + Math.Round(SINSstate.Vx_0[0], 3) + " " + Math.Round(SINSstate.Vx_0[1], 3) + " " + Math.Round(SINSstate.Vx_0[2], 5)
                                         + " " + Math.Round((SINSstate.Heading * SimpleData.ToDegree), 8)
                                         + " " + Math.Round((SINSstate.Roll * SimpleData.ToDegree), 8) + " " + Math.Round((SINSstate.Pitch * SimpleData.ToDegree), 8)
                                         + " " + ProcHelp.distance
-                                        + " " + (SINSstate.Altitude - ProcHelp.AltSNS)
+                                        + " " + (SINSstate.Height - ProcHelp.AltSNS)
                                         + " " + ProcHelp.distance_from_start
                                         ;
                     if (SINSstate.global_paramsCycleScanning == "")
@@ -708,7 +686,7 @@ namespace Common_Namespace
                     Nav_FeedbackSolution.WriteLine(ProcHelp.datastring);
 
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
-                                        + " " + SINSstate.Altitude
+                                        + " " + SINSstate.Height
                                         + " " + ProcHelp.distance ;
 
                     Cicle_Debag_Solution.WriteLine(ProcHelp.datastring);
@@ -724,7 +702,7 @@ namespace Common_Namespace
                     SINSstate.global_scale[SINSstate.global_indx] = SINSstate.Cumulative_KalmanErrorVector[iMx_kappa_3_ds + 1];
                     SINSstate.global_HorizontalError[SINSstate.global_indx] = ProcHelp.distance;
                     SINSstate.global_HorizontalErrorFromStart[SINSstate.global_indx] = ProcHelp.distance_from_start;
-                    SINSstate.global_VerticalError[SINSstate.global_indx] = SINSstate.Altitude - ProcHelp.AltSNS;
+                    SINSstate.global_VerticalError[SINSstate.global_indx] = SINSstate.Height - ProcHelp.AltSNS;
                     SINSstate.global_V_Up[SINSstate.global_indx] = SINSstate.Vx_0[2];
                     SINSstate.global_indx++;
                 }
@@ -738,7 +716,7 @@ namespace Common_Namespace
                 ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment) + " " + SINSstate.Count
                     //+ " " + SINSstate.OdoTimeStepCount + " " + SimpleOperations.AbsoluteVectorValue(SINSstate.OdoSpeed_s)
                         + " " + (SINSstate_Smooth.Latitude - SINSstate.Latitude_Start) * SINSstate.R_n
-                        + " " + (SINSstate_Smooth.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude) + " " + SINSstate_Smooth.Altitude
+                        + " " + (SINSstate_Smooth.Longitude - SINSstate.Longitude_Start) * SINSstate.R_e * Math.Cos(SINSstate_Smooth.Latitude) + " " + SINSstate_Smooth.Height
                         + " " + SINSstate_Smooth.Latitude * SimpleData.ToDegree
                         + " " + SINSstate_Smooth.Longitude * SimpleData.ToDegree
                         + " " + (ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate_Smooth.Latitude) * SINSstate.R_n
@@ -763,7 +741,7 @@ namespace Common_Namespace
 
 
             
-            if (i % 5 == 0)
+            if (i % 15 == 0)
             {
                 //------------------------------------------------------------//
                 if (SINSstate.flag_FeedbackExist)
@@ -790,8 +768,8 @@ namespace Common_Namespace
                 {
                     if (SINSstate.flag_FeedbackExist == false)
                         ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
-                            + " " + SINSstate.DeltaLatitude * SimpleOperations.RadiusN(Lat, SINSstate.Altitude)
-                            + " " + SINSstate.DeltaLongitude * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat)
+                            + " " + SINSstate.DeltaLatitude * SimpleOperations.RadiusN(Lat, SINSstate.Height)
+                            + " " + SINSstate.DeltaLongitude * SimpleOperations.RadiusE(Lat, SINSstate.Height) * Math.Cos(Lat)
                             + " " + SINSstate.DeltaAltitude
                             + " " + SINSstate.DeltaV_1 
                             + " " + SINSstate.DeltaV_2 
@@ -802,8 +780,8 @@ namespace Common_Namespace
                             ;
                     else
                         ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
-                            + " " + SINSstate.Cumulative_StateErrorVector[0] * SimpleOperations.RadiusN(Lat, SINSstate.Altitude)
-                            + " " + SINSstate.Cumulative_StateErrorVector[1] * SimpleOperations.RadiusE(Lat, SINSstate.Altitude) * Math.Cos(Lat)
+                            + " " + SINSstate.Cumulative_StateErrorVector[0] * SimpleOperations.RadiusN(Lat, SINSstate.Height)
+                            + " " + SINSstate.Cumulative_StateErrorVector[1] * SimpleOperations.RadiusE(Lat, SINSstate.Height) * Math.Cos(Lat)
                             + " " + SINSstate.Cumulative_StateErrorVector[2]
                             + " " + SINSstate.Cumulative_StateErrorVector[3] 
                             + " " + SINSstate.Cumulative_StateErrorVector[4] 

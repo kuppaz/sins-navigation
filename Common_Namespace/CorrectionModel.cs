@@ -40,7 +40,7 @@ namespace Common_Namespace
             if (SINSstate.flag_iMx_r3_dV3)
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dr3] = 1.0;
-                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
+                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Height - Altitude_CP;
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
 
                 KalmanVars.cnt_measures += 1;
@@ -247,12 +247,12 @@ namespace Common_Namespace
             {
 
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 0] = 1.0;
-                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate.GPS_Data.gps_Longitude.Value) * RadiusE(SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.Altitude) * Math.Cos(SINSstate.GPS_Data.gps_Latitude.Value);
+                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate.GPS_Data.gps_Longitude.Value) * RadiusE(SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.Height) * Math.Cos(SINSstate.GPS_Data.gps_Latitude.Value);
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 3.0;
                 KalmanVars.cnt_measures += 1;
 
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + 1] = 1.0;
-                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Latitude - SINSstate.GPS_Data.gps_Latitude.Value) * RadiusN(SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.Altitude);
+                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Latitude - SINSstate.GPS_Data.gps_Latitude.Value) * RadiusN(SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.Height);
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 3.0;
                 KalmanVars.cnt_measures += 1;
 
@@ -272,7 +272,7 @@ namespace Common_Namespace
                 if (SINSstate.flag_iMx_r3_dV3)
                 {
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dr3] = 1.0;
-                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstate.GPS_Data.gps_Altitude.Value;
+                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Height - SINSstate.GPS_Data.gps_Altitude.Value;
                     KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 5.0;
                     KalmanVars.cnt_measures += 1;
                 }

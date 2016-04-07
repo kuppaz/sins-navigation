@@ -38,10 +38,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist * 10.0;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = KalmanVars.OdoNoise_Dist * 10.0;
-            //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Math.Abs(SINSstate.A_x0s[0, 1] * KalmanVars.OdoNoise_Dist) * 10.0;
-            //KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Math.Abs(SINSstate.A_x0s[1, 1] * KalmanVars.OdoNoise_Dist) * 10.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 1.0;
 
             KalmanVars.cnt_measures += 2;
 
@@ -71,7 +69,7 @@ namespace Common_Namespace
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dr3] = 1.0;
                     KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r_odo_3] = -1.0;
 
-                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
+                    KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Height - SINSstate_OdoMod.Height;
                     KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
 
                     KalmanVars.cnt_measures += 1;
@@ -91,9 +89,8 @@ namespace Common_Namespace
                     KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 0] = 1.0;
                     KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = -1.0;
 
-                    KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Altitude - SINSstate_OdoMod.Altitude;
-                    KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = KalmanVars.OdoNoise_Dist;
-                    //KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = Math.Abs(SINSstate.A_x0s[2, 1] * KalmanVars.OdoNoise_Dist);
+                    KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Height - SINSstate_OdoMod.Height;
+                    KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = 1.0 * SINSstate.OdoVerticalNoiseMultiplicator;
 
                     KalmanVars.Vertical_cnt_measures += 1;
                 }
@@ -145,12 +142,12 @@ namespace Common_Namespace
             if (SINSstate.flag_iMx_r3_dV3 && Altitude_CP != 0.0)
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dr3] = 1.0;
-                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
+                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Height - Altitude_CP;
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
                 KalmanVars.cnt_measures += 1;
 
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + SINSstate.value_iMx_r_odo_3] = 1.0;
-                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate_OdoMod.Altitude - Altitude_CP;
+                KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate_OdoMod.Height - Altitude_CP;
                 KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
                 KalmanVars.cnt_measures += 1;
             }
@@ -171,8 +168,8 @@ namespace Common_Namespace
                 KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 0] = 1.0;
                 KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 1) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = 1.0;
 
-                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Altitude - Altitude_CP;
-                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 1)] = SINSstate_OdoMod.Altitude - Altitude_CP;
+                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Height - Altitude_CP;
+                KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 1)] = SINSstate_OdoMod.Height - Altitude_CP;
 
                 KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = VerticalNoise;
                 KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 1)] = VerticalNoise;

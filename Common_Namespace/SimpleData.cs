@@ -44,5 +44,19 @@ namespace Common_Namespace
         public static Matrix Identity = new Matrix(3, 3);
 
         public static int StartPosNum;
+
+
+        //  Parameters of the Earth
+        public static double A_84 = 6378137.0;          /* WGS84 Earth ellipsoide big semiaxe in meter */
+        public static double Alpha_84 = (1.0 / 298.257223563);
+        public static double E2_84 = (2.0 * Alpha_84 - Alpha_84 * Alpha_84);
+
+        public static double A_90 = 6378136.0;
+        public static double Alpha_90 = (1.0 / 298.25784);
+        public static double E2_90 = (2.0 * Alpha_90 - Alpha_90 * Alpha_90);
+
+        public static double A_42 = 6378245.0;
+        public static double Alpha_42 = (1.0 / 298.3);
+        public static double E2_42 = (2.0 * Alpha_42 - Alpha_42 * Alpha_42);
     }
 }

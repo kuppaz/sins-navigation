@@ -39,7 +39,7 @@ namespace Common_Namespace
 
             SINSstate.Latitude = 57.9987987 * SimpleData.ToRadian;
             SINSstate.Longitude = 56.268466 * SimpleData.ToRadian;
-            SINSstate.Altitude = 173.8157;
+            SINSstate.Height = 173.8157;
 
             datastring = myFile.ReadLine();
 
@@ -119,19 +119,19 @@ namespace Common_Namespace
                 A_sx0 = SimpleOperations.A_sx0(SINSstate);
                 A_x0s = A_sx0.Transpose();
 
-                SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Altitude);
-                SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Altitude);
+                SINSstate.R_e = SimpleOperations.RadiusE(SINSstate.Latitude, SINSstate.Height);
+                SINSstate.R_n = SimpleOperations.RadiusN(SINSstate.Latitude, SINSstate.Height);
 
                 SINSstate.OdometerVector[1] = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeftPrev;
                 SimpleOperations.CopyArray(dS_x, A_x0s * SINSstate.OdometerVector);
 
                 SINSstate.Latitude = SINSstate.Latitude + dS_x[1] / SINSstate.R_n;
                 SINSstate.Longitude = SINSstate.Longitude + dS_x[0] / SINSstate.R_e / Math.Cos(SINSstate.Latitude);
-                SINSstate.Altitude = SINSstate.Altitude + dS_x[2];
+                SINSstate.Height = SINSstate.Height + dS_x[2];
 
                 SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
 
-                string temp = (SINSstate.Latitude * SimpleData.ToDegree).ToString() + " " + (SINSstate.Longitude * SimpleData.ToDegree).ToString() + " " + SINSstate.Altitude;
+                string temp = (SINSstate.Latitude * SimpleData.ToDegree).ToString() + " " + (SINSstate.Longitude * SimpleData.ToDegree).ToString() + " " + SINSstate.Height;
 
                 Result_DataForAAStudent.WriteLine(temp);
             }

@@ -181,9 +181,9 @@ namespace Common_Namespace
 
         public static void PositionIntegration_x0(double dT, SINS_State SINSstate)
         {
-            SINSstate.Latitude = SINSstate.Latitude_prev + dT * (SINSstate.Vx_0[1] / RadiusN(SINSstate.Latitude_prev, SINSstate.Altitude_prev));
-            SINSstate.Longitude = SINSstate.Longitude_prev + dT * (SINSstate.Vx_0[0] / RadiusE(SINSstate.Latitude_prev, SINSstate.Altitude_prev) / Math.Cos(SINSstate.Latitude_prev));
-            SINSstate.Altitude = SINSstate.Altitude_prev + dT * SINSstate.Vx_0[2];
+            SINSstate.Latitude = SINSstate.Latitude_prev + dT * (SINSstate.Vx_0[1] / RadiusN(SINSstate.Latitude_prev, SINSstate.Height_prev));
+            SINSstate.Longitude = SINSstate.Longitude_prev + dT * (SINSstate.Vx_0[0] / RadiusE(SINSstate.Latitude_prev, SINSstate.Height_prev) / Math.Cos(SINSstate.Latitude_prev));
+            SINSstate.Height = SINSstate.Height_prev + dT * SINSstate.Vx_0[2];
         }
 
 
