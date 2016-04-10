@@ -488,15 +488,24 @@ namespace SINSProcessingModes
                         CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
                 }
 
-                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1772.1) < 0.02 || Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3126.7) < 0.02)
-                //{
-                //    double Lat = 56 + (19.0 + 4.7 / 60.0) / 60.0;
-                //    double Long = 43 + (6.0 + 42.58 / 60.0) / 60.0;
-                //    if (SINSstate.flag_Odometr_SINS_case == true)
-                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
-                //    else
-                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
-                //}
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1767.27) < 0.01)
+                {
+                    double Lat = 56 + (19.0 + 4.76 / 60.0) / 60.0;
+                    double Long = 43 + (6.0 + 42.8 / 60.0) / 60.0; 
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2913.00) < 0.01)
+                {
+                    double Lat = 56 + (19.0 + 18.33 / 60.0) / 60.0;
+                    double Long = 43 + (7.0 + 36.44 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                }
             }
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_repeat_21032012")
             {
@@ -508,6 +517,24 @@ namespace SINSProcessingModes
                         Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
                     else
                         CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2142.0) < 0.01)
+                {
+                    double Lat = 56 + (18.0 + 16.04 / 60.0) / 60.0;
+                    double Long = 43 + (6.0 + 59.69 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
+                }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1446.55) < 0.01 || Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3226.02) < 0.01)
+                {
+                    double Lat = 56 + (19.0 + 4.80 / 60.0) / 60.0;
+                    double Long = 43 + (6.0 + 43.05 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
                 }
             }
 

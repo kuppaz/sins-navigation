@@ -498,19 +498,19 @@ namespace SINS_motion_processing_new_data
                     for (int j = 0; j < 3; j++)
                     {
                         SINSstate.stdF[j] = 1E-5 * 9.81; //далее умножается G
-                        SINSstate.stdNu = 0.02; //град/час
+                        SINSstate.stdNu = 0.01; //град/час
                     }
                 if (SINSstate.flag_AccuracyClass_0_2_grph)
                     for (int j = 0; j < 3; j++)
                     {
                         SINSstate.stdF[j] = 1E-4 * 9.81; //далее умножается G
-                        SINSstate.stdNu = 0.2; //град/час
+                        SINSstate.stdNu = 0.1; //град/час
                     }
                 if (SINSstate.flag_AccuracyClass_2_0_grph)
                     for (int j = 0; j < 3; j++)
                     {
                         SINSstate.stdF[j] = 1E-3 * 9.81; //далее умножается G
-                        SINSstate.stdNu = 2.0; //град/час
+                        SINSstate.stdNu = 1.0; //град/час
                     }
 
                 if (ParamStart.Experiment_NoiseModelFlag == true)
