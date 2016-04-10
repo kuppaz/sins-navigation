@@ -133,6 +133,24 @@ namespace Common_Namespace
                 SINSstate.W_z[0] = Convert.ToDouble(dataArray2[6]);
 
 
+                // --- Введение ЛОЖНЫХ углов установки БИНС на корпусе объекта, если определено --- //
+                if (Math.Abs(SINSstate.WRONG_alpha_kappa_1) > 0.0 || Math.Abs(SINSstate.WRONG_alpha_kappa_3) > 0.0)
+                {
+                    double[] fz = new double[3], Wz = new double[3];
+
+                    fz[0] = SINSstate.F_z[0] - SINSstate.WRONG_alpha_kappa_3 * SINSstate.F_z[1];
+                    fz[1] = SINSstate.F_z[1] + SINSstate.WRONG_alpha_kappa_3 * SINSstate.F_z[0] - SINSstate.WRONG_alpha_kappa_1 * SINSstate.F_z[2];
+                    fz[2] = SINSstate.F_z[2] + SINSstate.WRONG_alpha_kappa_1 * SINSstate.F_z[1];
+
+                    Wz[0] = SINSstate.W_z[0] - SINSstate.WRONG_alpha_kappa_3 * SINSstate.W_z[1];
+                    Wz[1] = SINSstate.W_z[1] + SINSstate.WRONG_alpha_kappa_3 * SINSstate.W_z[0] - SINSstate.WRONG_alpha_kappa_1 * SINSstate.W_z[2];
+                    Wz[2] = SINSstate.W_z[2] + SINSstate.WRONG_alpha_kappa_1 * SINSstate.W_z[1];
+
+                    SimpleOperations.CopyArray(SINSstate.F_z, fz);
+                    SimpleOperations.CopyArray(SINSstate.W_z, Wz);
+                }
+
+
                 // --- Поворот показаний датчиков на заднные углы несоосности БИНС и динамических осей объекта --- //
                 {
                     double[] fz = new double[3], Wz = new double[3];
@@ -189,6 +207,12 @@ namespace Common_Namespace
                 SINSstate.OdometerData.odometer_left.isReady = Convert.ToInt32(dataArray2[19]);
                 SINSstate.OdometerData.odometer_right.Value = Convert.ToDouble(dataArray2[20]);
                 SINSstate.OdometerData.odometer_right.isReady = Convert.ToInt32(dataArray2[21]);
+
+
+                // --- Введение ЛОЖНОЙ ошибки масштаба одометра, если определено --- //
+                if (Math.Abs(SINSstate.WRONG_scaleError) > 0.0)
+                    SINSstate.OdometerData.odometer_left.Value /= (1.0 + SINSstate.WRONG_scaleError);
+
 
                 // --- Делаем поправку на введенное значение ошибки масштаба одометра
                 SINSstate.OdometerData.odometer_left.Value /= (1.0 + SINSstate.alpha_scaleError);

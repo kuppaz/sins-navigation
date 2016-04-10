@@ -289,9 +289,14 @@ namespace Common_Namespace
             //    U_s = SINSstate.A_sx0 * SimpleOperations.U_x0(SINSstate.Latitude);
             //}
 
+            double[] gilmertF = new double[3];
+            gilmertF[2] = SimpleOperations.GilmertGravityForce(SINSstate.Latitude, SINSstate.Height);
+            SimpleOperations.CopyArray(gilmertF, SINSstate.A_sx0 * gilmertF);
 
             for (int j = 0; j < 3; j++)
                 SINSstate.AlignAlgebraDrifts[j] = w_avg[j] - U_s[j];
+            for (int j = 0; j < 3; j++)
+                SINSstate.AlignAlgebraZeroF[j] = f_avg[j] - gilmertF[j];
 
             SINSstate.Time_Alignment = SINSstate.Time;
 
@@ -305,6 +310,10 @@ namespace Common_Namespace
                 SINSstate.Pitch = SINSstate.Alignment_PitchValue - SINSstate.alpha_kappa_1;
 
 
+            if (Math.Abs(SINSstate.WRONG_alpha_kappa_1) > 0.0)
+                SINSstate.Pitch = SINSstate.Alignment_PitchValue - SINSstate.WRONG_alpha_kappa_1;
+            if (Math.Abs(SINSstate.WRONG_alpha_kappa_3) > 0.0)
+                SINSstate.Heading = SINSstate.Alignment_HeadingValue + SINSstate.WRONG_alpha_kappa_3;
 
 
 

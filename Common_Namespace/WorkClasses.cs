@@ -156,7 +156,7 @@ namespace Common_Namespace
 
         //---Вычисляемые переменные---
         public bool init_bins = false, firstLineRead = false;
-        public double[] AlignAlgebraDrifts = new double[3];
+        public double[] AlignAlgebraDrifts = new double[3], AlignAlgebraZeroF = new double[3];
         public double GyroHeading, Heading, Roll, Pitch, PitchAuto, Heading_prev, Roll_prev, Pitch_prev, Azimth, LongSNS, LatSNS, AltSNS, g, g_0, F_mod, R_e, R_n, HeadingImitator;
         public double CourseHeading, CoursePitch, beta_c, gamma_c, alpha_c;
         public double Latitude, Longitude, Height, Latitude_Start, Longitude_Start, Height_Start, Latitude_Point, Height_prev, Latitude_prev, Longitude_prev;
@@ -186,6 +186,7 @@ namespace Common_Namespace
         //---Одометрические переменные---
         public double OdoTimeStepCount;
         public double[] OdometerVector = new double[3], OdoSpeed_x0 = new double[3], OdoSpeed_s = new double[3];
+        public double[] OdometerLeft_ArrayOfPrev = new double[50], OdometerLeft_ArrayOfPrevTime = new double[50];
         public double OdometerLeftPrev, OdometerRightPrev, OdoAbsSpeed;
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;
 
@@ -200,7 +201,7 @@ namespace Common_Namespace
         public double[] tempVect = new double[3];
         public double[] GK_Latitude = new double[50];
         public double[] GK_Longitude = new double[50];
-        public double alpha_kappa_3, alpha_kappa_1, alpha_scaleError, DirectionalAngle;
+        public double alpha_kappa_3, alpha_kappa_1, alpha_scaleError, DirectionalAngle, WRONG_alpha_kappa_1, WRONG_alpha_kappa_3, WRONG_scaleError;
 
         public bool flag_iMqDeltaR = false, flag_iMqDeltaF = false, flag_iMqDeltaNu = false, flag_iMqVarkappa3 = false, flag_iMqVarkappa1 = false, flag_iMqKappa = false, flag_iMqDeltaRodo = false;
         public bool flag_AccuracyClass_NoErr;

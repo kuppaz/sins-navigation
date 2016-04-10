@@ -32,6 +32,13 @@ namespace Common_Namespace
 
             SINSstate.OdoVerticalNoiseMultiplicator = 1;
 
+
+            // --- Параметры намеренного дополнительного введения ошибок одометра --- //
+            SINSstate.WRONG_scaleError = 0.0;
+            SINSstate.WRONG_alpha_kappa_1 = 0.0;
+            SINSstate.WRONG_alpha_kappa_3 = 0.0;
+
+
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //

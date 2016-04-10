@@ -37,6 +37,17 @@ namespace Common_Namespace
                     SINSstate_OdoMod.Heading_prev = SINSstate_OdoMod.Heading;
                     SINSstate_OdoMod.Roll_prev = SINSstate_OdoMod.Roll;
                     SINSstate_OdoMod.Pitch_prev = SINSstate_OdoMod.Pitch;
+
+                    /* --- Запоминаем предыдущие значения показания одометра --- */
+                    for (int i = 0; i < SINSstate.OdometerLeft_ArrayOfPrev.Length - 1; i++)
+                    {
+                        SINSstate.OdometerLeft_ArrayOfPrev[SINSstate.OdometerLeft_ArrayOfPrev.Length - 1 - i]
+                            = SINSstate.OdometerLeft_ArrayOfPrev[SINSstate.OdometerLeft_ArrayOfPrev.Length - 1 - i - 1];
+                        SINSstate.OdometerLeft_ArrayOfPrevTime[SINSstate.OdometerLeft_ArrayOfPrev.Length - 1 - i]
+                            = SINSstate.OdometerLeft_ArrayOfPrevTime[SINSstate.OdometerLeft_ArrayOfPrev.Length - 1 - i - 1];
+                    }
+                    SINSstate.OdometerLeft_ArrayOfPrev[0] = SINSstate.OdometerData.odometer_left.Value;
+                    SINSstate.OdometerLeft_ArrayOfPrevTime[0] = SINSstate.Time + SINSstate.Time_Alignment;
                 }
             }
 
@@ -845,7 +856,15 @@ namespace Common_Namespace
                     fz[2] -= SINSstate.Cumulative_KalmanErrorVector[(SINSstate.value_iMx_f0_3 + 0)];
 
                 for (int i = 0; i < 3; i++)
-                    Wz[i] -= SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_Nu0 + i];
+                    Wz[i] += SINSstate.Cumulative_KalmanErrorVector[SINSstate.value_iMx_Nu0 + i];
+            }
+
+            if (SINSstate.flag_UseAlgebraDrift)
+            {
+                for (int i = 0; i < 3; i++)
+                    fz[i] = fz[i] - SINSstate.AlignAlgebraZeroF[i];
+                for (int i = 0; i < 3; i++)
+                    Wz[i] = Wz[i] + SINSstate.AlignAlgebraDrifts[i];
             }
 
 
@@ -862,11 +881,6 @@ namespace Common_Namespace
             u[0] = 0.0;
             u[1] = SimpleData.U * Math.Cos(SINSstate.Latitude);
             u[2] = SimpleData.U * Math.Sin(SINSstate.Latitude);
-
-            if (SINSstate.flag_UseAlgebraDrift)
-                for (int i = 0; i < 3; i++)
-                    Wz[i] = Wz[i] - SINSstate.AlignAlgebraDrifts[i];
-
 
 
             //-------------ИНТЕГРИРОВАНИЕ МАТРИЦЫ AT_Z_XI И ПЕРВОЕ ВЫЧИСЛЕНИЕ МАТРИЦЫ D_X_Z---------
