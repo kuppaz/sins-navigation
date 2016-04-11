@@ -566,6 +566,8 @@
             // flag_UseAlgebraDrift
             // 
             this.flag_UseAlgebraDrift.AutoSize = true;
+            this.flag_UseAlgebraDrift.Checked = true;
+            this.flag_UseAlgebraDrift.CheckState = System.Windows.Forms.CheckState.Checked;
             this.flag_UseAlgebraDrift.Location = new System.Drawing.Point(21, 103);
             this.flag_UseAlgebraDrift.Name = "flag_UseAlgebraDrift";
             this.flag_UseAlgebraDrift.Size = new System.Drawing.Size(103, 17);

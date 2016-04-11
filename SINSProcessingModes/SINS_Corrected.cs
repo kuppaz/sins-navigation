@@ -536,6 +536,25 @@ namespace SINSProcessingModes
                     else
                         CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
                 }
+
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1670.00) < 0.01)
+                {
+                    double Lat = 56 + (19.0 + 18.32 / 60.0) / 60.0;
+                    double Long = 43 + (7.0 + 36.30 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1003.70) < 0.01)
+                {
+                    double Lat = 56 + (18.0 + 16.90 / 60.0) / 60.0;
+                    double Long = 43 + (5.0 + 3.72 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 90.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 90.0);
+                }
             }
 
 

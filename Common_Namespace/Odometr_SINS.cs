@@ -145,7 +145,7 @@ namespace Common_Namespace
                     KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = -1.0;
 
                     KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Height - SINSstate_OdoMod.Height;
-                    KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = 1.0 * SINSstate.OdoVerticalNoiseMultiplicator;
+                    KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = Noize * SINSstate.OdoVerticalNoiseMultiplicator;
 
                     KalmanVars.Vertical_cnt_measures += 1;
                 }
