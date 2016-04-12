@@ -30,7 +30,7 @@ namespace Common_Namespace
             SINSstate.first100m_StartHeightCorrection_value = 100.0;
             KalmanVars.Noise_Pos_Odo = 0.0;
 
-            SINSstate.OdoVerticalNoiseMultiplicator = 1;
+            SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
 
             // --- Параметры намеренного дополнительного введения ошибок одометра --- //
@@ -412,15 +412,9 @@ namespace Common_Namespace
                 SINSstate.SINS_is_accurateMounted_by_scaleError = true;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                {
                     ParamStart.Experiment_stdKappa1 = 1.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 1;
-                }
                 else
-                {
                     ParamStart.Experiment_stdKappa1 = 20.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 5;
-                }
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
                     ParamStart.Experiment_stdKappa3 = 1.0;
@@ -527,15 +521,9 @@ namespace Common_Namespace
                 SINSstate.SINS_is_accurateMounted_by_scaleError = true;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                {
                     ParamStart.Experiment_stdKappa1 = 1.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 1;
-                }
                 else
-                {
                     ParamStart.Experiment_stdKappa1 = 20.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 5;
-                }
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
                     ParamStart.Experiment_stdKappa3 = 1.0;
@@ -641,15 +629,9 @@ namespace Common_Namespace
                 SINSstate.SINS_is_accurateMounted_by_scaleError = true;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                {
                     ParamStart.Experiment_stdKappa1 = 1.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 1;
-                }
                 else
-                {
                     ParamStart.Experiment_stdKappa1 = 20.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 5;
-                }
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
                     ParamStart.Experiment_stdKappa3 = 1.0;
@@ -749,15 +731,9 @@ namespace Common_Namespace
                 SINSstate.SINS_is_accurateMounted_by_scaleError = true;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                {
                     ParamStart.Experiment_stdKappa1 = 1.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 1;
-                }
                 else
-                {
                     ParamStart.Experiment_stdKappa1 = 20.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 5;
-                }
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
                     ParamStart.Experiment_stdKappa3 = 1.0;
@@ -859,18 +835,12 @@ namespace Common_Namespace
                 SINSstate.SINS_is_accurateMounted_by_scaleError = false;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                {
-                    ParamStart.Experiment_stdKappa1 = 1.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 1;
-                }
+                    ParamStart.Experiment_stdKappa1 = 2.0;
                 else
-                {
                     ParamStart.Experiment_stdKappa1 = 20.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 5;
-                }
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
-                    ParamStart.Experiment_stdKappa3 = 1.0;
+                    ParamStart.Experiment_stdKappa3 = 2.0;
                 else
                     ParamStart.Experiment_stdKappa3 = 20.0;
 
@@ -878,6 +848,10 @@ namespace Common_Namespace
                     ParamStart.Experiment_stdScale = 0.001;
                 else
                     ParamStart.Experiment_stdScale = 0.01;
+
+
+                SINSstate.OdoVerticalNoiseMultiplicator = 5;
+
 
                 double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
 
@@ -893,9 +867,9 @@ namespace Common_Namespace
                 SINSstate.alpha_scaleError = 0.0;
 
                 if (Math.Abs(SINSstate.alpha_kappa_3) > 0.001 * SimpleData.ToRadian)
-                    ParamStart.Experiment_stdKappa3 = 1.0; //минут
+                    ParamStart.Experiment_stdKappa3 = 2.0; //минут
                 if (Math.Abs(SINSstate.alpha_kappa_1) > 0.001 * SimpleData.ToRadian)
-                    ParamStart.Experiment_stdKappa1 = 1.0; //минут
+                    ParamStart.Experiment_stdKappa1 = 2.0; //минут
                 if (Math.Abs(SINSstate.alpha_scaleError) > 0.00001)
                     ParamStart.Experiment_stdScale = 0.001;
 
@@ -963,18 +937,12 @@ namespace Common_Namespace
                 SINSstate.SINS_is_accurateMounted_by_scaleError = false;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                {
-                    ParamStart.Experiment_stdKappa1 = 1.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 1;
-                }
+                    ParamStart.Experiment_stdKappa1 = 2.0;
                 else
-                {
                     ParamStart.Experiment_stdKappa1 = 20.0;
-                    SINSstate.OdoVerticalNoiseMultiplicator = 5;
-                }
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
-                    ParamStart.Experiment_stdKappa3 = 1.0;
+                    ParamStart.Experiment_stdKappa3 = 2.0;
                 else
                     ParamStart.Experiment_stdKappa3 = 20.0;
 
@@ -983,6 +951,8 @@ namespace Common_Namespace
                 else
                     ParamStart.Experiment_stdScale = 0.01;
 
+
+                SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
 
                 double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
