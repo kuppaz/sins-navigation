@@ -311,9 +311,9 @@ namespace Common_Namespace
 
 
             if (Math.Abs(SINSstate.WRONG_alpha_kappa_1) > 0.0)
-                SINSstate.Pitch = SINSstate.Alignment_PitchValue - SINSstate.WRONG_alpha_kappa_1;
+                SINSstate.Pitch = SINSstate.Pitch - SINSstate.WRONG_alpha_kappa_1;
             if (Math.Abs(SINSstate.WRONG_alpha_kappa_3) > 0.0)
-                SINSstate.Heading = SINSstate.Alignment_HeadingValue + SINSstate.WRONG_alpha_kappa_3;
+                SINSstate.Heading = SINSstate.Heading + SINSstate.WRONG_alpha_kappa_3;
 
 
 

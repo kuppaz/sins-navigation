@@ -506,6 +506,15 @@ namespace SINSProcessingModes
                     else
                         CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
                 }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4164.50) < 0.01)
+                {
+                    double Lat = 56 + (17.0 + 20.72 / 60.0) / 60.0;
+                    double Long = 43 + (4.0 + 53.61 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
+                }
             }
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_repeat_21032012")
             {
@@ -554,6 +563,15 @@ namespace SINSProcessingModes
                         Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 90.0);
                     else
                         CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 90.0);
+                }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4011.05) < 0.01)
+                {
+                    double Lat = 56 + (17.0 + 20.73 / 60.0) / 60.0;
+                    double Long = 43 + (4.0 + 53.74 / 60.0) / 60.0;
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
                 }
             }
 
