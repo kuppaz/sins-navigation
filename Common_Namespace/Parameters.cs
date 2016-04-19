@@ -370,9 +370,14 @@ namespace Common_Namespace
                 // --- Заданный курс: флаг и значение --- //
                 SINSstate.Alignment_HeadingDetermined = true;
                 SINSstate.Alignment_HeadingValue = 153.4796 * SimpleData.ToRadian;
+                SINSstate.Alignment_RollDetermined = true;
+                SINSstate.Alignment_RollValue = 0.74554 * SimpleData.ToRadian;
+                SINSstate.Alignment_PitchDetermined = true;
+                SINSstate.Alignment_PitchValue = 3.27207 * SimpleData.ToRadian;
+
 
                 // --- Количество тактов БИНС для начальной выставки от начала  --- //
-                ProcHelp.AlignmentCounts = 5000;
+                ProcHelp.AlignmentCounts = Convert.ToInt32(500.0 / SINSstate.timeStep);
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
@@ -380,8 +385,7 @@ namespace Common_Namespace
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
-
-                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Korrection = false;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -402,22 +406,22 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_3 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 // --- Начальные ковариации --- //
-                ParamStart.Experiment_stdR = 0.05;
-                ParamStart.Experiment_stdOdoR = 0.05; // метров
-                ParamStart.Experiment_stdV = 0.01;
-                ParamStart.Experiment_GPS_PositionError = 10.0; // в метрах
+                ParamStart.Experiment_stdR = 0.1;
+                ParamStart.Experiment_stdOdoR = 0.1; // метров
+                ParamStart.Experiment_stdV = 1.0;
+                ParamStart.Experiment_GPS_PositionError = 2.0; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
-                SINSstate.SINS_is_accurateMounted_by_scaleError = true;
+                SINSstate.SINS_is_accurateMounted_by_scaleError = false;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                    ParamStart.Experiment_stdKappa1 = 1.0;
+                    ParamStart.Experiment_stdKappa1 = 2.0;
                 else
                     ParamStart.Experiment_stdKappa1 = 20.0;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
-                    ParamStart.Experiment_stdKappa3 = 1.0;
+                    ParamStart.Experiment_stdKappa3 = 2.0;
                 else
                     ParamStart.Experiment_stdKappa3 = 20.0;
 
@@ -426,15 +430,9 @@ namespace Common_Namespace
                 else
                     ParamStart.Experiment_stdScale = 0.01;
 
-
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.26555 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.998705555 * SimpleData.ToRadian;
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.267028 * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.998296* SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = 159.8;
-
-                //--- Координаты Кроссовского ---//
-                //ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.26703 * SimpleData.ToRadian;
-                //ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.9983 * SimpleData.ToRadian;
-                //ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 159.8;
 
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
@@ -477,7 +475,7 @@ namespace Common_Namespace
                 SINSstate.Alignment_PitchValue=-0.78953 * SimpleData.ToRadian;
 
                 // --- Количество тактов БИНС для начальной выставки от начала  --- //
-                ProcHelp.AlignmentCounts = 21972;
+                ProcHelp.AlignmentCounts = Convert.ToInt32(500.0 / SINSstate.timeStep);
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
@@ -535,15 +533,9 @@ namespace Common_Namespace
                 else
                     ParamStart.Experiment_stdScale = 0.01;
 
-
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.75999166666 * SimpleData.ToRadian; //56.76146
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.02436111111 * SimpleData.ToRadian; //58.02398
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.76146 * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.02398 * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = 187;
-
-                //--- Координаты Кроссовского ---//
-                //ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.76146 * SimpleData.ToRadian;
-                //ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 58.02398 * SimpleData.ToRadian;
-                //ProcHelp.AltSNS = SINSstate_OdoMod.Altitude = SINSstate.Altitude_Start = SINSstate.AltSNS = SINSstate.Altitude = SINSstate.Altitude_prev = 187;
 
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;

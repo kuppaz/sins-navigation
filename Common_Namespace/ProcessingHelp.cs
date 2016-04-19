@@ -247,34 +247,6 @@ namespace Common_Namespace
                     SINSstate.HeadingImitator = Convert.ToDouble(dataArray2[22]);
 
 
-                if (SINSstate.Global_file.Contains("GRTV"))
-                {
-                    bool flg_extract_complex_solution = false;
-                    if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)") flg_extract_complex_solution = true;
-                    if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)") flg_extract_complex_solution = true;
-                    if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd") flg_extract_complex_solution = true;
-                    if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd") flg_extract_complex_solution = true;
-
-                    try
-                    {
-                        if (flg_extract_complex_solution)
-                        {
-                            double amendmentLatitude = 0
-                                , amendmentLongitude = 0;
-
-                            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)") { amendmentLatitude = 0.0004055550323; amendmentLongitude = -0.0014799999225; }
-                            if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)") { amendmentLatitude = 0.0004033333445; amendmentLongitude = -0.0015534449943; }
-                            if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd") { amendmentLatitude = 0.000355555555; amendmentLongitude = -0.00132111112; }
-                            if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd") { amendmentLatitude = 0.000355555555; amendmentLongitude = -0.00132111112; }
-
-                            SINSstate.GPS_Data.gps_Latitude.Value = Convert.ToDouble(dataArray2[25]) + amendmentLatitude * SimpleData.ToRadian;
-                            SINSstate.GPS_Data.gps_Longitude.Value = Convert.ToDouble(dataArray2[26]) + amendmentLongitude * SimpleData.ToRadian;
-                            SINSstate.GPS_Data.gps_Altitude.Value = Convert.ToDouble(dataArray2[27]);
-                        }
-                    }
-                    catch { }
-                }
-
                 //--- Поправки для пересчета в Кроссовского ---//
                 if (SINSstate.Global_file == "ktn004_15.03.2012")
                 {
@@ -768,19 +740,43 @@ namespace Common_Namespace
             if (i % 15 == 0)
             {
                 //------------------------------------------------------------//
+                bool flag_SK42 = false;
+                double[] PhiLambdaH_WGS84 = new double[3];
+
+                if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)"
+                        || (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
+                        || (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd")
+                        || (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd")
+                        || (SINSstate.Global_file == "GRTV_ktn004_marsh16_afterbdnwin_20032012")
+                        || (SINSstate.Global_file == "GRTV_ktn004_marsh16_repeat_21032012")
+                    )
+                    flag_SK42 = true;
+
                 if (SINSstate.flag_FeedbackExist)
-                    KMLFileOut.WriteLine(SINSstate.Longitude * SimpleData.ToDegree + "," + SINSstate.Latitude * SimpleData.ToDegree 
+                {
+                    PhiLambdaH_WGS84[0] = SINSstate.Latitude; PhiLambdaH_WGS84[1] = SINSstate.Longitude; PhiLambdaH_WGS84[2] = SINSstate.Height;
+                    if (flag_SK42)
+                        PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(SINSstate.Latitude, SINSstate.Longitude, SINSstate.Height, 1);
+
+                    KMLFileOut.WriteLine(PhiLambdaH_WGS84[1] * SimpleData.ToDegree + "," + PhiLambdaH_WGS84[0] * SimpleData.ToDegree
                         //+ "," + SINSstate.Altitude);
                         + "," + (SINSstate.Time + SINSstate.Time_Alignment));
+                }
                 else
-                    KMLFileOut.WriteLine(SINSstate2.Longitude * SimpleData.ToDegree + "," + SINSstate2.Latitude * SimpleData.ToDegree 
+                    KMLFileOut.WriteLine(SINSstate2.Longitude * SimpleData.ToDegree + "," + SINSstate2.Latitude * SimpleData.ToDegree
                         //+ "," + SINSstate2.Altitude);
                         + "," + (SINSstate.Time + SINSstate.Time_Alignment));
 
                 if (SINSstate.NowSmoothing)
-                    KMLFileOutSmoothed.WriteLine(SINSstate_Smooth.Longitude * SimpleData.ToDegree + "," + SINSstate_Smooth.Latitude * SimpleData.ToDegree 
+                {
+                    PhiLambdaH_WGS84[0] = SINSstate_Smooth.Latitude; PhiLambdaH_WGS84[1] = SINSstate_Smooth.Longitude; PhiLambdaH_WGS84[2] = SINSstate_Smooth.Height;
+                    if (flag_SK42)
+                        PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(SINSstate_Smooth.Latitude, SINSstate_Smooth.Longitude, SINSstate_Smooth.Height, 1);
+
+                    KMLFileOutSmoothed.WriteLine(PhiLambdaH_WGS84[1] * SimpleData.ToDegree + "," + PhiLambdaH_WGS84[0] * SimpleData.ToDegree
                         //+ "," + SINSstate_Smooth.Altitude);
                         + "," + (SINSstate.Time + SINSstate.Time_Alignment));
+                }
             }
 
 

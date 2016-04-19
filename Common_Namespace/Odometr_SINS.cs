@@ -93,8 +93,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.0;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 1.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Noize;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Noize;
 
             KalmanVars.cnt_measures += 2;
 
