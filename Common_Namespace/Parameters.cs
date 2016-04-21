@@ -483,7 +483,7 @@ namespace Common_Namespace
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
-                SINSstate.MyOwnKalman_Korrection = true;
+                SINSstate.MyOwnKalman_Korrection = false;
 
                 SINSstate.first100m_StartHeightCorrection_value = 100.0;
 
@@ -509,22 +509,22 @@ namespace Common_Namespace
                 KalmanVars.Noise_OdoKappa_3 = 0.1 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
 
                 // --- Начальные ковариации --- //
-                ParamStart.Experiment_stdR = 0.05;
-                ParamStart.Experiment_stdOdoR = 0.05; // метров
-                ParamStart.Experiment_stdV = 0.01;
+                ParamStart.Experiment_stdR = 0.1;
+                ParamStart.Experiment_stdOdoR = 0.1; // метров
+                ParamStart.Experiment_stdV = 1.0;
                 ParamStart.Experiment_GPS_PositionError = 2.0; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
-                SINSstate.SINS_is_accurateMounted_by_scaleError = true;
+                SINSstate.SINS_is_accurateMounted_by_scaleError = false;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
-                    ParamStart.Experiment_stdKappa1 = 1.0;
+                    ParamStart.Experiment_stdKappa1 = 2.0;
                 else
                     ParamStart.Experiment_stdKappa1 = 20.0;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
-                    ParamStart.Experiment_stdKappa3 = 1.0;
+                    ParamStart.Experiment_stdKappa3 = 2.0;
                 else
                     ParamStart.Experiment_stdKappa3 = 20.0;
 
