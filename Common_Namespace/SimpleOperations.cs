@@ -668,7 +668,7 @@ namespace Common_Namespace
         }
         public static void PrintMatrixToFile(double[] Matrix, int dim_str, int dim_colls, string nameFile)
         {
-            StreamWriter PrintMatrix = new StreamWriter(SimpleData.PathOutputString + "PrintMatrix_" + nameFile + ".txt");
+            StreamWriter PrintMatrix = new StreamWriter(SimpleData.PathOutputString + "PrintMatrix//" + "PrintMatrix_" + nameFile + ".txt");
             for (int j = 0; j < dim_str; j++)
             {
                 string str_odo = null;

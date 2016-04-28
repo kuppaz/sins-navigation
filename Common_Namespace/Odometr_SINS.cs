@@ -93,8 +93,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Noize;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Noize;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 1.0;
 
             KalmanVars.cnt_measures += 2;
 
@@ -146,6 +146,7 @@ namespace Common_Namespace
 
                     KalmanVars.Vertical_Measure[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.Height - SINSstate_OdoMod.Height;
                     KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = Noize * SINSstate.OdoVerticalNoiseMultiplicator;
+                    //KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.OdoAcceleration_s;
 
                     KalmanVars.Vertical_cnt_measures += 1;
                 }

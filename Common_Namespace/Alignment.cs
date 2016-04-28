@@ -17,12 +17,13 @@ namespace Common_Namespace
             StreamWriter Alignment_avg_rougth = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_avg_rougth.txt");
             StreamWriter Alignment_avg_rougthMovingAVG = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_avg_rougth_MovingAVG.txt");
 
-            double[] array_sigma_f_1 = new double[200000];
-            double[] array_sigma_f_2 = new double[200000];
-            double[] array_sigma_f_3 = new double[200000];
-            double[] array_sigma_w_1 = new double[200000];
-            double[] array_sigma_w_2 = new double[200000];
-            double[] array_sigma_w_3 = new double[200000];
+            // --- вспомогательные массивы для определения сигмы шумов
+            double[] array_f_1 = new double[100000], array_sigma_f_1 = new double[100000];
+            double[] array_f_2 = new double[100000], array_sigma_f_2 = new double[100000];
+            double[] array_f_3 = new double[100000], array_sigma_f_3 = new double[100000];
+            double[] array_w_1 = new double[100000], array_sigma_w_1 = new double[100000];
+            double[] array_w_2 = new double[100000], array_sigma_w_2 = new double[100000];
+            double[] array_w_3 = new double[100000], array_sigma_w_3 = new double[100000];
             double[] sigma_f = new double[3];
             double[] sigma_w = new double[3];
 
@@ -47,13 +48,14 @@ namespace Common_Namespace
 
             int t = i;
 
-            double AvgMean = 0, Otklon = 0;
             double Latitude = 0.0, Pitch = 0.0, Roll = 0.0, Heading = 0.0;
-            int max_cnt_jj = 100;
-            double[] BufAvg = new double[max_cnt_jj];
 
             int MovingWindow = 500;
             double[] MovingAverageAccGyro = new double[6];
+
+            // --- k_f, k_nu - отдельные счетчики сколько обновлений соответствующих датчиков были использованы для осреднения (в некоторых заездах
+            // --- почему-то ньютонометры на начальной выставке поставляют константное значение)
+            int k_f = 0, k_nu = 0;
 
             for (i = t; ; i++)
             {
@@ -65,50 +67,62 @@ namespace Common_Namespace
                 //if (i == 1000)
                 //    break;
 
+				array_f_1[k] = SINSstate.F_z[0];
+                array_f_2[k] = SINSstate.F_z[1];
+                array_f_3[k] = SINSstate.F_z[2];
+                array_w_1[k] = SINSstate.W_z[0];
+                array_w_2[k] = SINSstate.W_z[1];
+                array_w_3[k] = SINSstate.W_z[2];
 
-                array_sigma_f_1[k] = SINSstate.F_z[0];
-                array_sigma_f_2[k] = SINSstate.F_z[1];
-                array_sigma_f_3[k] = SINSstate.F_z[2];
-                array_sigma_w_1[k] = SINSstate.W_z[0];
-                array_sigma_w_2[k] = SINSstate.W_z[1];
-                array_sigma_w_3[k] = SINSstate.W_z[2];
+                double array_sigma_f_1_tmp_sum = 0.0, array_sigma_w_1_tmp_sum = 0.0;
+                int u = 0;
+                for (u = 1; u <= Math.Min(i, 50); u++)
+                    array_sigma_f_1_tmp_sum += array_f_1[i - u];
+                array_sigma_f_1_tmp_sum /= (u - 1);
 
-                f_avg[0] += SINSstate.F_z[0]; w_avg[0] += SINSstate.W_z[0];
-                f_avg[1] += SINSstate.F_z[1]; w_avg[1] += SINSstate.W_z[1];
-                f_avg[2] += SINSstate.F_z[2]; w_avg[2] += SINSstate.W_z[2];
+                if (Math.Abs(array_sigma_f_1_tmp_sum - array_f_1[i]) > 1E-9)
+                {
+                    array_sigma_f_1[k_f] = SINSstate.F_z[0];
+                    array_sigma_f_2[k_f] = SINSstate.F_z[1];
+                    array_sigma_f_3[k_f] = SINSstate.F_z[2];
+                    f_avg[0] += SINSstate.F_z[0];
+                    f_avg[1] += SINSstate.F_z[1];
+                    f_avg[2] += SINSstate.F_z[2];
+                    k_f++;
+                }
+
+                u = 0;
+                for (u = 1; u <= Math.Min(i, 50); u++)
+                    array_sigma_w_1_tmp_sum += array_w_1[i - u];
+                array_sigma_w_1_tmp_sum /= (u - 1);
+
+                if (Math.Abs(array_sigma_w_1_tmp_sum - array_w_1[i]) > 1E-9)
+                {
+                    array_sigma_w_1[k_nu] = SINSstate.W_z[0];
+                    array_sigma_w_2[k_nu] = SINSstate.W_z[1];
+                    array_sigma_w_3[k_nu] = SINSstate.W_z[2];
+                    w_avg[0] += SINSstate.W_z[0];
+                    w_avg[1] += SINSstate.W_z[1];
+                    w_avg[2] += SINSstate.W_z[2];
+                    k_nu++;
+                }
+
                 k++;
 
-                for (int u = 1; u <= Math.Min(k, MovingWindow); u++)
+                for (int u1 = 1; u1 <= Math.Min(k, MovingWindow); u1++)
                 {
-                    MovingAverageAccGyro[0] += array_sigma_f_1[k - u];
-                    MovingAverageAccGyro[1] += array_sigma_f_2[k - u];
-                    MovingAverageAccGyro[2] += array_sigma_f_3[k - u];
-                    MovingAverageAccGyro[3] += array_sigma_w_1[k - u];
-                    MovingAverageAccGyro[4] += array_sigma_w_2[k - u];
-                    MovingAverageAccGyro[5] += array_sigma_w_3[k - u];
+                    MovingAverageAccGyro[0] += array_f_1[k - u1];
+                    MovingAverageAccGyro[1] += array_f_2[k - u1];
+                    MovingAverageAccGyro[2] += array_f_3[k - u1];
+                    MovingAverageAccGyro[3] += array_w_1[k - u1];
+                    MovingAverageAccGyro[4] += array_w_2[k - u1];
+                    MovingAverageAccGyro[5] += array_w_3[k - u1];
                 }
-                for (int u = 0; u < 6; u++)
-                    MovingAverageAccGyro[u] = MovingAverageAccGyro[u] / MovingWindow;
+                for (int u1 = 0; u1 < 6; u1++)
+                    MovingAverageAccGyro[u1] = MovingAverageAccGyro[u1] / MovingWindow;
 
 
 
-                //---Считаем максимальное отклонение от текущего среднего по max_cnt_jj съемам данных----
-                for (int ij = 1; ij < max_cnt_jj; ij++)
-                    BufAvg[ij - 1] = BufAvg[ij];
-                BufAvg[max_cnt_jj - 1] = f_avg[2] / k;
-
-                AvgMean = 0;
-                for (int ij = 0; ij < max_cnt_jj; ij++)
-                    AvgMean += BufAvg[ij];
-
-                AvgMean = AvgMean / max_cnt_jj;
-                Otklon = Math.Abs(AvgMean - BufAvg[0]);
-
-                for (int ij = 0; ij < max_cnt_jj; ij++)
-                {
-                    if (Otklon < Math.Abs(AvgMean - BufAvg[ij]))
-                        Otklon = Math.Abs(AvgMean - BufAvg[ij]);
-                }
                 //-------
 
 
@@ -138,13 +152,15 @@ namespace Common_Namespace
                 }
 
                 for (int j = 0; j < 3; j++)
-                    SINSstate.AlignAlgebraDrifts[j] = w_avg[j] / k - U_s[j];
+                    SINSstate.AlignAlgebraDrifts[j] = w_avg[j] / k_nu - U_s[j];
 
-                if (k > MovingWindow && k % 5 == 0)
+                if (k > MovingWindow && k % 10 == 0)
                 {
-                    Alignment_avg_rougth.WriteLine(SINSstate.Count.ToString() + " " + (f_avg[0] / k).ToString() + " " + (f_avg[1] / k).ToString() + " " + (f_avg[2] / k).ToString() + " " + (w_avg[0] / k).ToString() + " " + (w_avg[1] / k).ToString() + " " + (w_avg[2] / k).ToString()
-                        + " " + (Heading * SimpleData.ToDegree).ToString() + " " + Roll.ToString() + " " + Pitch.ToString() + " " + Latitude.ToString() + " " + Otklon.ToString()
-                        + " " + (w_avg_x[0] / k).ToString() + " " + (w_avg_x[1] / k).ToString() + " " + (w_avg_x[2] / k).ToString()
+                    Alignment_avg_rougth.WriteLine(SINSstate.Count.ToString()
+                        + " " + (f_avg[0] / k_f).ToString() + " " + (f_avg[1] / k_f).ToString() + " " + (f_avg[2] / k_f).ToString()
+                        + " " + (w_avg[0] / k_nu).ToString() + " " + (w_avg[1] / k_nu).ToString() + " " + (w_avg[2] / k_nu).ToString()
+                        + " " + (Heading * SimpleData.ToDegree).ToString() + " " + (Roll * SimpleData.ToDegree).ToString() + " " + (Pitch * SimpleData.ToDegree).ToString() + " " + Latitude.ToString()
+                        + " " + (w_avg_x[0] / k_nu).ToString() + " " + (w_avg_x[1] / k_nu).ToString() + " " + (w_avg_x[2] / k_nu).ToString()
                         );
 
                     Alignment_avg_rougthMovingAVG.WriteLine(SINSstate.Time.ToString() + " " + MovingAverageAccGyro[0] + " " + MovingAverageAccGyro[1] + " " + MovingAverageAccGyro[2] + " " + MovingAverageAccGyro[3] + " " + MovingAverageAccGyro[4]
@@ -152,6 +168,7 @@ namespace Common_Namespace
                 }
 
 
+				// --- Вывод данных для формирования GRTV файла --- //
                 if (SINSstate.flag_GRTV_output)
                 {
                     GRTV_output.WriteLine(
@@ -182,41 +199,21 @@ namespace Common_Namespace
             }
 
 
-            f_avg[0] = f_avg[0] / k; w_avg[0] = w_avg[0] / k;
-            f_avg[1] = f_avg[1] / k; w_avg[1] = w_avg[1] / k;
-            f_avg[2] = f_avg[2] / k; w_avg[2] = w_avg[2] / k;
+            f_avg[0] = f_avg[0] / k_f; w_avg[0] = w_avg[0] / k_nu;
+            f_avg[1] = f_avg[1] / k_f; w_avg[1] = w_avg[1] / k_nu;
+            f_avg[2] = f_avg[2] / k_f; w_avg[2] = w_avg[2] / k_nu;
 
-            // --- k_f, k_nu - отдельные счетчики сколько обновлений соответствующих датчиков были использованы для осреднения (в некоторых заездах
-            // --- почему-то ньютонометры на начальной выставке поставляют константное значение)
-            int k_f = 0, k_nu = 0;
-            for (int j = 1; j < k; j++)
+            for (int j = 1; j < k_f; j++)
             {
-                double array_sigma_f_1_tmp_sum = 0.0, array_sigma_w_1_tmp_sum = 0.0;
-                int u = 0;
-                for (u = 1; u <= Math.Min(j, 50); u++)
-                    array_sigma_f_1_tmp_sum += array_sigma_f_1[j - u];
-                array_sigma_f_1_tmp_sum /= (u - 1);
-
-                if (array_sigma_f_1_tmp_sum != array_sigma_f_1[j])
-                {
-                    sigma_f[0] += Math.Pow((array_sigma_f_1[j] - f_avg[0]), 2);
-                    sigma_f[1] += Math.Pow((array_sigma_f_2[j] - f_avg[1]), 2);
-                    sigma_f[2] += Math.Pow((array_sigma_f_3[j] - f_avg[2]), 2);
-                    k_f++;
-                }
-
-                u = 0;
-                for (u = 1; u <= Math.Min(j, 50); u++)
-                    array_sigma_w_1_tmp_sum += array_sigma_w_1[j - u];
-                array_sigma_w_1_tmp_sum /= (u - 1);
-
-                if (array_sigma_w_1_tmp_sum != array_sigma_w_1[j])
-                {
-                    sigma_w[0] += Math.Pow((array_sigma_w_1[j] - w_avg[0]), 2);
-                    sigma_w[1] += Math.Pow((array_sigma_w_2[j] - w_avg[1]), 2);
-                    sigma_w[2] += Math.Pow((array_sigma_w_3[j] - w_avg[2]), 2);
-                    k_nu++;
-                }
+                sigma_f[0] += Math.Pow((array_sigma_f_1[j] - f_avg[0]), 2);
+                sigma_f[1] += Math.Pow((array_sigma_f_2[j] - f_avg[1]), 2);
+                sigma_f[2] += Math.Pow((array_sigma_f_3[j] - f_avg[2]), 2);
+            }
+            for (int j = 1; j < k_nu; j++)
+            {
+                sigma_w[0] += Math.Pow((array_sigma_w_1[j] - w_avg[0]), 2);
+                sigma_w[1] += Math.Pow((array_sigma_w_2[j] - w_avg[1]), 2);
+                sigma_w[2] += Math.Pow((array_sigma_w_3[j] - w_avg[2]), 2);
             }
 
             sigma_f[0] = Math.Sqrt(sigma_f[0] / k_f);
@@ -295,6 +292,7 @@ namespace Common_Namespace
 
             for (int j = 0; j < 3; j++)
                 SINSstate.AlignAlgebraDrifts[j] = w_avg[j] - U_s[j];
+
             for (int j = 0; j < 3; j++)
                 SINSstate.AlignAlgebraZeroF[j] = f_avg[j] - gilmertF[j];
 

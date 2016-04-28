@@ -184,8 +184,8 @@ namespace Common_Namespace
         public double DeltaLatitude, DeltaLongitude, DeltaV_1, DeltaV_2, DeltaV_3, DeltaHeading, DeltaRoll, DeltaPitch, DeltaAltitude;
 
         //---Одометрические переменные---
-        public double OdoTimeStepCount;
-        public double[] OdometerVector = new double[3], OdoSpeed_x0 = new double[3], OdoSpeed_s = new double[3];
+        public double OdoTimeStepCount, OdoAcceleration_s;
+        public double[] OdometerVector = new double[3], OdoSpeed_x0 = new double[3], OdoSpeed_s = new double[3], OdoSpeed_s_prev = new double[3];
         public double[] OdometerLeft_ArrayOfPrev = new double[50], OdometerLeft_ArrayOfPrevTime = new double[50];
         public double OdometerLeftPrev, OdometerRightPrev, OdoAbsSpeed;
         public int OdoLimitMeasuresNum, OdoLimitMeasuresNum_Count;

@@ -26,6 +26,7 @@ namespace Common_Namespace
 
                     SINSstate.OdometerLeftPrev = SINSstate.OdometerData.odometer_left.Value;
                     SINSstate.OdometerRightPrev = SINSstate.OdometerData.odometer_right.Value;
+                    SINSstate.OdoSpeed_s_prev[1] = SINSstate.OdoSpeed_s[1];
                     SINSstate.OdoTimeStepCount = 0;
 
                     SINSstate.odotime_prev = SINSstate.Time;
@@ -438,7 +439,8 @@ namespace Common_Namespace
 
             double sqrt_freq_vert = Math.Sqrt(Math.Abs(SINSstate.Freq)); ;
             double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
-            //double sqrt_freq = 1.0;
+
+            //sqrt_freq = 1.0;
             //sqrt_freq_vert = sqrt_freq;
 
 
