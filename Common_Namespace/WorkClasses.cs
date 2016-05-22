@@ -107,7 +107,7 @@ namespace Common_Namespace
 
         //---Считывание данных из файла---
         public double FLG_Stop;
-        public double Count, initCount, timeStep, Time, Time_prev;
+        public double Count, initCount, timeStep, Time, Time_prevForecast, TimeBetweenForecast, Time_prev;
         public gps_data GPS_Data = new gps_data();
         public odometer_data OdometerData = new odometer_data();
 

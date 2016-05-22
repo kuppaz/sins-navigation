@@ -14,6 +14,9 @@ namespace Common_Namespace
 
         public static void Redifinition_OdoCounts(SINS_State SINSstate, SINS_State SINSstate2, SINS_State SINSstate_OdoMod)
         {
+            if (SINSstate.flag_UsingCorrection == true)
+                SINSstate.Time_prevForecast = SINSstate.Time;
+
             if (SINSstate.OdometerData.odometer_left.isReady == 1)
             {
                 if (SINSstate.flag_UsingCorrection == true || SINSstate.flag_UseOnlyStops == true)
@@ -437,11 +440,9 @@ namespace Common_Namespace
                 iMx_r_odo_3 = SINSstate.value_iMx_r_odo_3
                 ;
 
-            double sqrt_freq_vert = Math.Sqrt(Math.Abs(SINSstate.Freq)); ;
             double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
-
+            sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
             //sqrt_freq = 1.0;
-            //sqrt_freq_vert = sqrt_freq;
 
 
             double[] Noise_Vel_in_Mx = new double[3], Noise_Angl_in_Mx = new double[3];
@@ -541,8 +542,6 @@ namespace Common_Namespace
                     Odometr_SINS.Make_A(SINSstate, KalmanVars, SINSstate_OdoMod);
                 else if (SINSstate.flag_FeedbackExist == false)
                     Odometr_SINS.Make_A(SINSstate2, KalmanVars, SINSstate_OdoMod);
-
-                Odometr_SINS.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
             }
             else
             {
@@ -550,8 +549,6 @@ namespace Common_Namespace
                     SINSprocessing.Make_A(SINSstate, KalmanVars, SINSstate_OdoMod);
                 else if (SINSstate.flag_FeedbackExist == false)
                     SINSprocessing.Make_A(SINSstate2, KalmanVars, SINSstate_OdoMod);
-
-                SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
             }
         }
 

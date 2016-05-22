@@ -430,7 +430,7 @@ namespace Common_Namespace
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
-                SINSstate.SINS_is_accurateMounted_by_scaleError = false;
+                SINSstate.SINS_is_accurateMounted_by_scaleError = true;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
                     ParamStart.Experiment_stdKappa1 = 2.0;
@@ -443,7 +443,7 @@ namespace Common_Namespace
                     ParamStart.Experiment_stdKappa3 = 20.0;
 
                 if (SINSstate.SINS_is_accurateMounted_by_scaleError == true)
-                    ParamStart.Experiment_stdScale = 0.001;
+                    ParamStart.Experiment_stdScale = 0.005;
                 else
                     ParamStart.Experiment_stdScale = 0.01;
 
@@ -533,7 +533,7 @@ namespace Common_Namespace
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
-                SINSstate.SINS_is_accurateMounted_by_scaleError = false;
+                SINSstate.SINS_is_accurateMounted_by_scaleError = true;
 
                 if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
                     ParamStart.Experiment_stdKappa1 = 2.0;
@@ -546,7 +546,7 @@ namespace Common_Namespace
                     ParamStart.Experiment_stdKappa3 = 20.0;
 
                 if (SINSstate.SINS_is_accurateMounted_by_scaleError == true)
-                    ParamStart.Experiment_stdScale = 0.001;
+                    ParamStart.Experiment_stdScale = 0.005;
                 else
                     ParamStart.Experiment_stdScale = 0.01;
 
@@ -586,6 +586,7 @@ namespace Common_Namespace
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
+                SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
                 // --- Заданный курс: флаг и значение --- //
                 SINSstate.Alignment_HeadingDetermined = true;
@@ -855,10 +856,8 @@ namespace Common_Namespace
                 SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
 
-                double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
-
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = PhiLambdaH_WGS84[1];
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = PhiLambdaH_WGS84[0];
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 43.08689 * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 56.28916 * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = 96.0;
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
@@ -957,10 +956,8 @@ namespace Common_Namespace
                 SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
 
-                double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
-
-                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = PhiLambdaH_WGS84[1];
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = PhiLambdaH_WGS84[0];
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 43.08689 * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 56.28916 * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = 96.0;
 
                 ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;

@@ -18,12 +18,12 @@ namespace Common_Namespace
             StreamWriter Alignment_avg_rougthMovingAVG = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_avg_rougth_MovingAVG.txt");
 
             // --- вспомогательные массивы для определения сигмы шумов
-            double[] array_f_1 = new double[100000], array_sigma_f_1 = new double[100000];
-            double[] array_f_2 = new double[100000], array_sigma_f_2 = new double[100000];
-            double[] array_f_3 = new double[100000], array_sigma_f_3 = new double[100000];
-            double[] array_w_1 = new double[100000], array_sigma_w_1 = new double[100000];
-            double[] array_w_2 = new double[100000], array_sigma_w_2 = new double[100000];
-            double[] array_w_3 = new double[100000], array_sigma_w_3 = new double[100000];
+            double[] array_f_1 = new double[200000], array_sigma_f_1 = new double[200000];
+            double[] array_f_2 = new double[200000], array_sigma_f_2 = new double[200000];
+            double[] array_f_3 = new double[200000], array_sigma_f_3 = new double[200000];
+            double[] array_w_1 = new double[200000], array_sigma_w_1 = new double[200000];
+            double[] array_w_2 = new double[200000], array_sigma_w_2 = new double[200000];
+            double[] array_w_3 = new double[200000], array_sigma_w_3 = new double[200000];
             double[] sigma_f = new double[3];
             double[] sigma_w = new double[3];
 
@@ -241,6 +241,19 @@ namespace Common_Namespace
 
             SINSstate.Pitch = Math.Atan2(f_avg[1], Math.Sqrt(f_avg[0] * f_avg[0] + f_avg[2] * f_avg[2]));
             SINSstate.Roll = -Math.Atan2(f_avg[0], f_avg[2]);
+
+            //if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd")
+            //{
+            //    KalmanVars.Noise_Vel[0] = 0.007814; KalmanVars.Noise_Angl[0] = 0.0000888;
+            //    KalmanVars.Noise_Vel[1] = 0.003528; KalmanVars.Noise_Angl[1] = 0.0002505;
+            //    KalmanVars.Noise_Vel[2] = 0.005671; KalmanVars.Noise_Angl[2] = 0.0001697;
+            //}
+            //if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)" || SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
+            //{
+            //    KalmanVars.Noise_Vel[0] = 0.0018; KalmanVars.Noise_Angl[0] = 0.000020;
+            //    KalmanVars.Noise_Vel[1] = 0.0018; KalmanVars.Noise_Angl[1] = 0.000020;
+            //    KalmanVars.Noise_Vel[2] = 0.0018; KalmanVars.Noise_Angl[2] = 0.000020;
+            //}
 
             A_xs = SimpleOperations.A_xs(SINSstate);
             w_avg_x = Matrix.Multiply(A_xs, w_avg);

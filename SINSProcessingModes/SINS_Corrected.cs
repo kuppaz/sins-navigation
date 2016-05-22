@@ -82,7 +82,7 @@ namespace SINSProcessingModes
                 + KalmanVars.Noise_Angl[0].ToString("E2") + "_" + KalmanVars.Noise_Vel[0].ToString("E2") + ".txt");
 
 
-            string str = "count  dr1 dr2 dV1 dV2 Alpha1_grad Alpha2_grad Beta3_grad Nu_1_grad Nu_2_grad/h Nu_3_grad/h dF_1 dF_2 dF_3";
+            string str = "count timeBtwForecast dr1 dr2 dV1 dV2 Alpha1_grad Alpha2_grad Beta3_grad Nu_1_grad Nu_2_grad/h Nu_3_grad/h dF_1 dF_2 dF_3";
             if (SINSstate.flag_iMx_r3_dV3)
                 str += " dr3 dV3";
             if (SINSstate.flag_Odometr_SINS_case)
@@ -111,7 +111,7 @@ namespace SINSProcessingModes
             Nav_EstimateSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS V_abs");
 
             if (SINSstate.global_paramsCycleScanning == "")
-                Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError AltError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS difHeadingSINStoODO difToTrueHeading");
+                Nav_FeedbackSolution.WriteLine("time  count  OdoCnt  OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError AltError PositErrStart LatSNS-Lat LngSNS-Lng AltSNS  SpeedSNS OdoValue difHeadingSINStoODO difToTrueHeading");
             else
                 Nav_FeedbackSolution.WriteLine("time OdoV  LatRelStart  LongRelStart Altitude Latitude  Longitude V_x1  V_x2  V_x3  Yaw  Roll  Pitch PositError AltError PositErrStart Beta3_grad kappa1_grad kappa3_grad Scale");
 
@@ -189,8 +189,20 @@ namespace SINSProcessingModes
                 //-------------------------- MAIN STEPS ------------------------------//
                 SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                 SINSprocessing.Make_A_bridge(SINSstate, SINSstate2, KalmanVars, SINSstate_OdoMod);             //--- Формируем матрицу А фильтра ---//
-                KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
 
+                //if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
+                //    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
+
+                //if (SINSstate.flag_Odometr_SINS_case == true)
+                //    Odometr_SINS.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
+                //else
+                //    SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
+
+                //KalmanProcs.Make_F(SINSstate.timeStep, KalmanVars, SINSstate);
+                //KalmanProcs.KalmanForecast(KalmanVars, SINSstate);
+
+                //if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
+                //    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
 
 
                 if (SINSstate.Count % 5000 == 0)
@@ -205,18 +217,7 @@ namespace SINSProcessingModes
                         SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_CovarianceMatrixNoise, SimpleData.iMx_Vertical, SimpleData.iMq_Vertical, "Vertical_Noise");
                         SimpleOperations.PrintMatrixToFile(KalmanVars.Vertical_CovarianceMatrixS_m, SimpleData.iMx_Vertical, SimpleData.iMx_Vertical, "Vertical_CovarianceS");
                     }
-                }
-
-
-                
-                if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
-                    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-
-                KalmanProcs.KalmanForecast(KalmanVars, SINSstate);
-
-                if (!SINSstate.existRelationHoriz_VS_Vertical && SINSstate.flag_iMx_r3_dV3)
-                    SINSprocessing.DeletePerevyazkaVertikalToHorizontal(SINSstate, KalmanVars);
-                
+                }                
                 
                 SINSstate.flag_UsingCorrection = false;
 
@@ -268,6 +269,21 @@ namespace SINSProcessingModes
                 ProcHelp.corrected = 0;
                 if (SINSstate.flag_UsingCorrection == true)
                 {
+                    // --- --- --- --- --- --- --- --- --- --- --- --- //
+                    // --- Шаг прогноза только если есть коррекция --- //
+                    SINSstate.TimeBetweenForecast = SINSstate.Time - SINSstate.Time_prevForecast;
+
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
+                    else
+                        SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
+
+                    KalmanProcs.Make_F(SINSstate.TimeBetweenForecast, KalmanVars, SINSstate);
+                    KalmanProcs.KalmanForecast(KalmanVars, SINSstate);
+                    // --- --- --- --- --- --- --- --- --- --- --- --- //
+                    // --- --- --- --- --- --- --- --- --- --- --- --- //
+
+
                     //=== КОРРЕКЦИЯ В СЛУЧАЕ БИНС+ ОДОМЕТР ===//
                     if (SINSstate.flag_Odometr_SINS_case == false && SINSstate.OdometerData.odometer_left.isReady == 1)
                     {
@@ -474,54 +490,82 @@ namespace SINSProcessingModes
 
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_afterbdnwin_20032012")
             {
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4400.0) < 0.02)
-                {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
+                double[] PhiLambdaH_WGS84;
 
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1124.36) < 0.01)
+                {
+                    double Lat = 56 + (17.0 + 31.70 / 60.0) / 60.0;
+                    double Long = 43 + (5.0 + 6.49 / 60.0) / 60.0;
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93, 0);
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
-                    else 
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 93.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 93.0);
+                }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1143.25) < 0.01)
+                {
+                    double Lat = 56 + (17.0 + 34.08 / 60.0) / 60.0;
+                    double Long = 43 + (5.0 + 10.55 / 60.0) / 60.0;
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 92, 0);
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 92.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 92.0);
                 }
 
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2497.0) < 0.02)
-                {
-                    double Lat = 56 + (18.0 + 16.04 / 60.0) / 60.0;
-                    double Long = 43 + (6.0 + 59.69 / 60.0) / 60.0;
-                    if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
-                    else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
-                }
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1767.27) < 0.01)
+                //{
+                //    double Lat = 56 + (19.0 + 4.76 / 60.0) / 60.0;
+                //    double Long = 43 + (6.0 + 42.8 / 60.0) / 60.0;
+                //    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99, 0);
+                //    if (SINSstate.flag_Odometr_SINS_case == true)
+                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
+                //    else
+                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
+                //}
 
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1767.27) < 0.01)
-                {
-                    double Lat = 56 + (19.0 + 4.76 / 60.0) / 60.0;
-                    double Long = 43 + (6.0 + 42.8 / 60.0) / 60.0; 
-                    if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
-                    else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
-                }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2913.00) < 0.01)
-                {
-                    double Lat = 56 + (19.0 + 18.33 / 60.0) / 60.0;
-                    double Long = 43 + (7.0 + 36.44 / 60.0) / 60.0;
-                    if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
-                    else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
-                }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4164.50) < 0.01)
-                {
-                    double Lat = 56 + (17.0 + 20.72 / 60.0) / 60.0;
-                    double Long = 43 + (4.0 + 53.61 / 60.0) / 60.0;
-                    if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
-                    else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
-                }
+
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4400.0) < 0.02)
+                //{
+                //    if (SINSstate.flag_Odometr_SINS_case == true)
+                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96.0);
+                //    else
+                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96.0);
+                //}
+
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2497.0) < 0.02)
+                //{
+                //    double Lat = 56 + (18.0 + 16.04 / 60.0) / 60.0;
+                //    double Long = 43 + (6.0 + 59.69 / 60.0) / 60.0;
+                //    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93, 0);
+                //    if (SINSstate.flag_Odometr_SINS_case == true)
+                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 93.0);
+                //    else
+                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 93.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2913.00) < 0.01)
+                //{
+                //    double Lat = 56 + (19.0 + 18.33 / 60.0) / 60.0;
+                //    double Long = 43 + (7.0 + 36.44 / 60.0) / 60.0;
+                //    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99, 0);
+                //    if (SINSstate.flag_Odometr_SINS_case == true)
+                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
+                //    else
+                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4164.50) < 0.01)
+                //{
+                //    double Lat = 56 + (17.0 + 20.72 / 60.0) / 60.0;
+                //    double Long = 43 + (4.0 + 53.61 / 60.0) / 60.0;
+                //    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98, 0);
+                //    if (SINSstate.flag_Odometr_SINS_case == true)
+                //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 98.0);
+                //    else
+                //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 98.0);
+                //}
             }
+
+
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_repeat_21032012")
             {
                 double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
@@ -533,92 +577,120 @@ namespace SINSProcessingModes
                     else
                         CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
                 }
+
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1003.70) < 0.01)
+                {
+                    double Lat = 56 + (18.0 + 16.90 / 60.0) / 60.0;
+                    double Long = 43 + (5.0 + 3.72 / 60.0) / 60.0;
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 90, 0);
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 90.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 90.0);
+                }
+
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2142.0) < 0.01)
                 {
                     double Lat = 56 + (18.0 + 16.04 / 60.0) / 60.0;
                     double Long = 43 + (6.0 + 59.69 / 60.0) / 60.0;
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93, 0);
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 93.0);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 93.0);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 93.0);
                 }
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1446.55) < 0.01 || Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3226.02) < 0.01)
                 {
                     double Lat = 56 + (19.0 + 4.80 / 60.0) / 60.0;
                     double Long = 43 + (6.0 + 43.05 / 60.0) / 60.0;
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99, 0);
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
                 }
 
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1670.00) < 0.01)
                 {
                     double Lat = 56 + (19.0 + 18.32 / 60.0) / 60.0;
                     double Long = 43 + (7.0 + 36.30 / 60.0) / 60.0;
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99, 0);
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 99.0);
-                }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1003.70) < 0.01)
-                {
-                    double Lat = 56 + (18.0 + 16.90 / 60.0) / 60.0;
-                    double Long = 43 + (5.0 + 3.72 / 60.0) / 60.0;
-                    if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 90.0);
-                    else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 90.0);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 99.0);
                 }
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4011.05) < 0.01)
                 {
                     double Lat = 56 + (17.0 + 20.73 / 60.0) / 60.0;
                     double Long = 43 + (4.0 + 53.74 / 60.0) / 60.0;
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98, 0);
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 98.0);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 98.0);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 98.0);
                 }
             }
 
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
             {
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1356.94) < 0.01)
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 856.51) < 0.01)
                 {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.0211888888 * SimpleData.ToRadian, 56.6468888888 * SimpleData.ToRadian, 203, 0);
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 203.0);
+                    double Lat = 58.0145129713715;
+                    double Long = 56.7600427246495;
+                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 192, 0);
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 192.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 192.0);
                 }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1865.32) < 0.01)
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 880.47) < 0.01)
                 {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.0496305555 * SimpleData.ToRadian, 56.554555555 * SimpleData.ToRadian, 205, 0);
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 205.0);
+                    double Lat = 58.0140083675296;
+                    double Long = 56.7543897189271;
+                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 197, 0);
+                    if (SINSstate.flag_Odometr_SINS_case == true)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 197.0);
+                    else
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 197.0);
                 }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2463.37) < 0.01)
-                {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.044925 * SimpleData.ToRadian, 56.4303305555 * SimpleData.ToRadian, 200, 0);
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 0.0);
-                }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2775.49) < 0.01)
-                {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.001077777 * SimpleData.ToRadian, 56.388552777 * SimpleData.ToRadian, 211, 0);
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 211.0);
-                }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3041.17) < 0.01)
-                {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.00486111 * SimpleData.ToRadian, 56.3199361 * SimpleData.ToRadian, 149, 0);
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 149.0);
-                }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3207.85) < 0.01)
-                {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.9903757777 * SimpleData.ToRadian, 56.2972866666 * SimpleData.ToRadian, 167, 0);
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 167.0);
-                }
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3923.39) < 0.01)
-                {
-                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.998705555 * SimpleData.ToRadian, 56.26555 * SimpleData.ToRadian, 160, 0);
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 160.0);
-                }
+
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1356.94) < 0.01)
+                //{
+                //    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.0211888888 * SimpleData.ToRadian, 56.6468888888 * SimpleData.ToRadian, 203, 0);
+                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 203.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1865.32) < 0.01)
+                //{
+                //    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.0496305555 * SimpleData.ToRadian, 56.554555555 * SimpleData.ToRadian, 205, 0);
+                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 205.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2463.37) < 0.01)
+                //{
+                //    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.044925 * SimpleData.ToRadian, 56.4303305555 * SimpleData.ToRadian, 200, 0);
+                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 0.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2775.49) < 0.01)
+                //{
+                //    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.001077777 * SimpleData.ToRadian, 56.388552777 * SimpleData.ToRadian, 211, 0);
+                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 211.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3041.17) < 0.01)
+                //{
+                //    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(58.00486111 * SimpleData.ToRadian, 56.3199361 * SimpleData.ToRadian, 149, 0);
+                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 149.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3207.85) < 0.01)
+                //{
+                //    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.9903757777 * SimpleData.ToRadian, 56.2972866666 * SimpleData.ToRadian, 167, 0);
+                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 167.0);
+                //}
+                //if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3923.39) < 0.01)
+                //{
+                //    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.998705555 * SimpleData.ToRadian, 56.26555 * SimpleData.ToRadian, 160, 0);
+                //    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 160.0);
+                //}
             }
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд завод)")
@@ -649,44 +721,62 @@ namespace SINSProcessingModes
             
             if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd")
             {
-                //57.062916666666, 60.7158194444444 
-                //57.0628888888888, 60.71589722222222
-                double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.062705555555 * SimpleData.ToRadian, 60.71558888888 * SimpleData.ToRadian, 306, 0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 517.00) < 0.01) 
-                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 306.0);
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 907.30) < 0.01)
+                {
+                    double Lat = 57.0656279272535;
+                    double Long = 60.728218927884;
+                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 299.84, 0);
+                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 299.84);
+                }
+                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 932.49) < 0.01)
+                {
+                    double Lat = 57.0672370277746;
+                    double Long = 60.7304676510378;
+                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(Lat * SimpleData.ToRadian, Long * SimpleData.ToRadian, 295.93, 0);
+                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 295.93);
+                }
 
-                //57.07005277777777, 60.7294472222222
-                PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.07005277777777 * SimpleData.ToRadian, 60.7294472222222 * SimpleData.ToRadian, 296.0, 0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 976.53) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1298.56) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1595.14) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1882.15) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2179.11) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2455.18) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2731.26) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3003.72) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3269.57) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3530.79) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3788.01) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4043.94) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                if (false)
+                {
+                    //57.062916666666, 60.7158194444444 
+                    //57.0628888888888, 60.71589722222222
+                    double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.062705555555 * SimpleData.ToRadian, 60.71558888888 * SimpleData.ToRadian, 306, 0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 517.00) < 0.01)
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 306.0);
 
-                //57.0652472222222, 60.7137888888888
-                PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.0652472222222 * SimpleData.ToRadian, 60.7137888888888 * SimpleData.ToRadian, 301.0, 0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1093.95) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1401.97) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1694.35) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1982.84) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2276.19) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2551.57) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2825.05) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3094.27) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3359.65) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3619.96) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3876.01) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4137.07) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    //57.07005277777777, 60.7294472222222
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.07005277777777 * SimpleData.ToRadian, 60.7294472222222 * SimpleData.ToRadian, 296.0, 0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 976.53) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1298.56) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1595.14) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1882.15) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2179.11) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2455.18) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2731.26) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3003.72) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3269.57) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3530.79) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3788.01) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4043.94) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 296.0);
 
-                PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.062705555555 * SimpleData.ToRadian, 60.71558888888 * SimpleData.ToRadian, 306, 0);
-                if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4279.14) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 306.0);
+                    //57.0652472222222, 60.7137888888888
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.0652472222222 * SimpleData.ToRadian, 60.7137888888888 * SimpleData.ToRadian, 301.0, 0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1093.95) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1401.97) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1694.35) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1982.84) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2276.19) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2551.57) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 2825.05) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3094.27) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3359.65) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3619.96) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 3876.01) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4137.07) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 301.0);
+
+                    PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(57.062705555555 * SimpleData.ToRadian, 60.71558888888 * SimpleData.ToRadian, 306, 0);
+                    if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4279.14) < 0.01) Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 306.0);
+                }
             }
 
             if (SINSstate.Global_file == "GRTV_Ekat_151029_2_zaezd")

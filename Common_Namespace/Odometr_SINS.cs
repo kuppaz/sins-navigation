@@ -607,6 +607,10 @@ namespace Common_Namespace
             SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
 
             double sqrt_freq = Math.Sqrt(SINSstate.Freq);
+            sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
+            //sqrt_freq = 1.0;
+
+
             if (SINSstate.flag_iMqDeltaRodo)
             {
                 KalmanVars.CovarianceMatrixNoise[(iMx_r12_odo + 0) * iMq + iMx_r12_odo + 0] = KalmanVars.Noise_Pos * sqrt_freq;

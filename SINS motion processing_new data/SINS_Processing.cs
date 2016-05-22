@@ -1063,6 +1063,7 @@ namespace SINS_motion_processing_new_data
             if (GRTV_ktn004_marsh16_repeat_21032012.Checked == true)
             {
                 myFile = new StreamReader(SimpleData.PathInputString + "PNPPK_Ekat//GRTV_ktn004_marsh16_repeat_21032012.txt");
+                //myFile = new StreamReader("C:\\Users\\kuppaz\\Dropbox\\5#_AspaWork\\2015.09.02 - Введение, GRTV\\!от Колеватова АП\\Example_GRTV\\GRTV\\GRTV\\Output in TXT\\GRTVout_GCEF_format.txt");
                 SINSstate.Global_file = "GRTV_ktn004_marsh16_repeat_21032012";
             }
 

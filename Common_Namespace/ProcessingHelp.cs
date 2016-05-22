@@ -332,6 +332,7 @@ namespace Common_Namespace
 
             if (SINSstate.firstLineRead == false)
             {
+                SINSstate.Time_prevForecast = SINSstate.Time - SINSstate.timeStep;
                 SINSstate.Roll_prev = SINSstate.Roll;
                 SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z);
                 SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z);
@@ -654,6 +655,7 @@ namespace Common_Namespace
                         ProcHelp.datastring += " " + Math.Round(((ProcHelp.LatSNS * SimpleData.ToRadian - SINSstate.Latitude) * SINSstate.R_n), 2)
                                         + " " + Math.Round(((ProcHelp.LongSNS * SimpleData.ToRadian - SINSstate.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude)), 2)
                                         + " " + Math.Round(ProcHelp.AltSNS, 2) + " " + Math.Round(ProcHelp.SpeedSNS, 3)
+                                        + " " + Math.Round(SINSstate.OdometerData.odometer_left.Value, 3)
                                         + " " + Math.Round((SINSstate.Heading - SINSstate.HeadingImitator) * SimpleData.ToDegree_sec, 8);
                     }
                     else
@@ -853,6 +855,7 @@ namespace Common_Namespace
                 if (SINSstate.flag_FeedbackExist == false)
                 {
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
+                        + " " + SINSstate.TimeBetweenForecast
                         + " " + KalmanVars.ErrorConditionVector_p[0]
                         + " " + KalmanVars.ErrorConditionVector_p[1]
                         + " " + KalmanVars.ErrorConditionVector_p[(iMx_dV_12 + 0)]
@@ -874,6 +877,7 @@ namespace Common_Namespace
                 else
                 {
                     ProcHelp.datastring = (SINSstate.Time + SINSstate.Time_Alignment)
+                        + " " + SINSstate.TimeBetweenForecast
                         + " " + SINSstate.Cumulative_KalmanErrorVector[0]
                         + " " + SINSstate.Cumulative_KalmanErrorVector[1]
                         + " " + SINSstate.Cumulative_KalmanErrorVector[(iMx_dV_12 + 0)]
