@@ -17,6 +17,8 @@ namespace Common_Namespace
             StreamWriter Alignment_avg_rougth = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_avg_rougth.txt");
             StreamWriter Alignment_avg_rougthMovingAVG = new StreamWriter(SimpleData.PathOutputString + "Alignment//Alignment_avg_rougth_MovingAVG.txt");
 
+            StreamWriter myFileWithSmoothedCoord = new StreamWriter(SimpleData.PathInputString + "DataWithSmoothedCoord//Align_InputDataWithSmoothedCoordinates.txt");
+
             // --- вспомогательные массивы для определения сигмы шумов
             double[] array_f_1 = new double[200000], array_sigma_f_1 = new double[200000];
             double[] array_f_2 = new double[200000], array_sigma_f_2 = new double[200000];
@@ -37,7 +39,7 @@ namespace Common_Namespace
                 if (i < 1) { myFile.ReadLine(); continue; }
                 if (SINSstate.FLG_Stop == 0 && false)
                 {
-                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, myFileWithSmoothedCoord, SINSstate, SINSstate_OdoMod, true);
                 }
                 else
                 {
@@ -59,7 +61,7 @@ namespace Common_Namespace
 
             for (i = t; ; i++)
             {
-                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, myFileWithSmoothedCoord, SINSstate, SINSstate_OdoMod, true);
 
                 if (/*SINSstate.FLG_Stop == 0 || */(ProcHelp.AlignmentCounts != 0 && i == ProcHelp.AlignmentCounts))
                     break;
@@ -381,6 +383,7 @@ namespace Common_Namespace
 
             Alignment_avg_rougth.Close();
             Alignment_avg_rougthMovingAVG.Close();
+            myFileWithSmoothedCoord.Close();
             return i;
         }
 

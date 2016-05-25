@@ -29,13 +29,13 @@ namespace Common_Namespace
             }
         }
 
-        public static void ReadSINSStateFromString(Proc_Help ProcHelp, StreamReader myFile, SINS_State SINSstate, SINS_State SINSstate_OdoMod)
+        public static void ReadSINSStateFromString(Proc_Help ProcHelp, StreamReader myFile, StreamWriter myFileWithSmoothedCoord, SINS_State SINSstate, SINS_State SINSstate_OdoMod, bool isAlignmentNow)
         {
             string[] dataArray;
 
-            ProcHelp.datastring = myFile.ReadLine();
-
             if (myFile.EndOfStream) return;
+
+            ProcHelp.datastring = myFile.ReadLine();
 
             if (SINSstate.Global_file == "topo")
             {
@@ -246,6 +246,25 @@ namespace Common_Namespace
                     SINSstate.HeadingImitator = Convert.ToDouble(dataArray2[22]);
 
 
+                if (SINSstate.NowSmoothing == true || isAlignmentNow == true && SINSstate.flag_Smoothing == true)
+                {
+                    string str = dataArray2[0]
+                        + " " + dataArray2[1] + " " + dataArray2[2] + " " + dataArray2[3]
+                        + " " + dataArray2[4] + " " + dataArray2[5] + " " + dataArray2[6]
+                        + " " + SINSstate.Latitude + " 0 " + SINSstate.Longitude + " 0 " + SINSstate.Height + " 0"
+                        + " " + dataArray2[13] + " " + dataArray2[14] + " " + dataArray2[15] + " " + dataArray2[16]
+                        + " " + dataArray2[17] + " " + dataArray2[18] + " " + dataArray2[19] + " " + dataArray2[20]
+                        + " " + dataArray2[21]
+                        ;
+                    for (int j = 0; j < dataArray2.Length - 22; j++)
+                        str += " " + dataArray2[22 + j];
+
+                    myFileWithSmoothedCoord.WriteLine(str);
+                }
+
+
+
+
                 //--- Поправки для пересчета в Кроссовского ---//
                 if (SINSstate.Global_file == "ktn004_15.03.2012")
                 {
@@ -264,8 +283,6 @@ namespace Common_Namespace
                     SINSstate.GPS_Data.gps_Latitude.Value += amendmentLatitude;
                     SINSstate.GPS_Data.gps_Longitude.Value += amendmentLongitude;
                 }
-
-
 
 
 

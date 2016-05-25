@@ -441,7 +441,7 @@ namespace Common_Namespace
                 ;
 
             double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
-            sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
+            //sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
             //sqrt_freq = 1.0;
 
 
@@ -2044,6 +2044,83 @@ namespace Common_Namespace
                 Smthing_Backward_R.Close(); Smthing_Backward_R_X.Close(); Smthing_Backward_R_P.Close();
             }
             Smthing_Backward_full.Close(); Smthing_Backward_X.Close(); Smthing_Backward_P.Close();
+        }
+
+        public static void TransposeFile(SINS_State SINSstate, string str_inputFile, string str_outputFile, string str_alignmentData, int NumberOfIterationForOneForSmoothing)
+        {
+            StreamReader inputFile = new StreamReader(str_inputFile);
+            StreamWriter outputFile = new StreamWriter(str_outputFile + "_0");
+
+            int i = 0, j = 0;
+            for (i = 0; ; i++)
+            {
+                if (inputFile.EndOfStream == true)
+                    break;
+
+                j = Convert.ToInt32(Math.Floor(Convert.ToDouble(Math.Abs(i)) / NumberOfIterationForOneForSmoothing));
+
+                if (j > Convert.ToInt32(Math.Floor(Convert.ToDouble(Math.Abs(i - 1)) / NumberOfIterationForOneForSmoothing)))
+                {
+                    outputFile.Close();
+                    outputFile = new StreamWriter(str_outputFile + "_" + j);
+                }
+
+                outputFile.WriteLine(inputFile.ReadLine());
+            }
+            inputFile.Close();
+            outputFile.Close();
+
+
+            outputFile = new StreamWriter(str_outputFile);
+            if (str_alignmentData != null)
+            {
+                StreamReader alignmentData = new StreamReader(str_alignmentData);
+                for (int i1 = 0; ; i1++)
+                {
+                    if (alignmentData.EndOfStream == true)
+                        break;
+                    outputFile.WriteLine(alignmentData.ReadLine());
+                }
+            }
+            for (int j1 = j; j1 >= 0; j1--)
+            {
+                string strTransposedFile = str_outputFile + "_" + j1 + "_tr";
+
+                TransposeFile_Part(SINSstate, str_outputFile + "_" + j1, strTransposedFile, NumberOfIterationForOneForSmoothing);
+
+                inputFile = new StreamReader(strTransposedFile);
+                for (int i1 = 0; ; i1++)
+                {
+                    if (inputFile.EndOfStream == true)
+                        break;
+                    outputFile.WriteLine(inputFile.ReadLine());
+                }
+            }
+            outputFile.Close();
+        }
+
+        public static void TransposeFile_Part(SINS_State SINSstate, string str_inputFile, string str_outputFile, int NumberOfIterationForOneForSmoothing)
+        {
+            StreamReader inputFile = new StreamReader(str_inputFile);
+            StreamWriter outputFile = new StreamWriter(str_outputFile);
+
+            string[] strTemp = new string[NumberOfIterationForOneForSmoothing];
+
+            int i = 0;
+            for (i = 0; ; i++)
+            {
+                if (inputFile.EndOfStream == true)
+                    break;
+
+                strTemp[i] = inputFile.ReadLine();
+            }
+            for (int j1 = i-1; j1 >= 0; j1--)
+            {
+                outputFile.WriteLine(strTemp[j1]);
+            }
+
+            inputFile.Close();
+            outputFile.Close();
         }
     }
 }

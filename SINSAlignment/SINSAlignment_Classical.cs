@@ -64,7 +64,7 @@ namespace SINSAlignment
 
                 for (int j = i; j < ProcHelp.AlignmentCounts; j++)
                 {
-                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, null, SINSstate, SINSstate_OdoMod, true);
 
                     Alignment_Classical.AlignStateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate_OdoMod);
                     Alignment_Classical.Make_A(SINSstate, KalmanAlign);

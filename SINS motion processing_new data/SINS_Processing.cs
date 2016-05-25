@@ -119,7 +119,7 @@ namespace SINS_motion_processing_new_data
                         this.Cicle_Noise_Velocity = NoiseVel_end;
                     //====================== 
 
-                    for (this.global_flag_equalizeVertNoise = 0; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
+                    for (this.global_flag_equalizeVertNoise = 1; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
                     {
                         if (this.global_NoiseModelFlag == 1)
                             this.global_flag_equalizeVertNoise = 1;
@@ -407,7 +407,6 @@ namespace SINS_motion_processing_new_data
 
             //---Инициализация начальных условий при отсутствии выставки---//
             Parameters.StartSINS_Parameters(SINSstate, SINSstate_OdoMod, KalmanVars, ParamStart, ProcHelp);
-
 
 
             // === Перебор вариантов стартовых настроек (без подбора шумов) === //

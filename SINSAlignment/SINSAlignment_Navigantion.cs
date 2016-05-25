@@ -46,7 +46,7 @@ namespace SINSAlignment
                     if (SINSstate.FLG_Stop == 0 || (ProcHelp.AlignmentCounts != 0 && i == ProcHelp.AlignmentCounts))
                         break;
 
-                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                    ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, null, SINSstate, SINSstate_OdoMod, true);
                     if (t == 0) { SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z); SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z); t = 1; }
 
                     SINSprocessing.StateIntegration_AT(SINSstate, KalmanVars, SINSstate2, SINSstate2);

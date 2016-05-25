@@ -52,7 +52,7 @@ namespace SINSProcessingModes
             {
                 if (SINSstate.flag_UsingClasAlignment == false) { if (i < ProcHelp.AlignmentCounts) { myFile.ReadLine(); continue; } }
 
-                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, null, SINSstate, SINSstate_OdoMod, false);
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
 
                 if (t == 0) { SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z); SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z); t = 1; }
