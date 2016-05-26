@@ -837,13 +837,13 @@ namespace Common_Namespace
                 }
                 else if (SINSstate.NowSmoothing == false)
                 {
-                    Check_Measurement.WriteLine(SINSstate.Count
-                        //+ " " + KalmanVars.Measure[0] + " " + KalmanVars.Measure[1] + " " + KalmanVars.Measure[2] + " " + KalmanVars.Measure[3]
-                        //+ " " + KalmanVars.Vertical_Measure[0] + " " + KalmanVars.Vertical_Measure[1]
-                        + " " + Math.Abs(KalmanVars.Measure[0]) + " " + Math.Abs(KalmanVars.Measure[1]) + " " + Math.Abs(KalmanVars.Measure[2])
-                        + " " + Math.Abs(KalmanVars.Measure[3]) + " " + Math.Abs(KalmanVars.Vertical_Measure[0]) + " " + Math.Abs(KalmanVars.Vertical_Measure[1])
-                        + " " + Math.Abs(SINSstate.OdoAcceleration_s)
-                        );
+                    //Check_Measurement.WriteLine(SINSstate.Count
+                    //    //+ " " + KalmanVars.Measure[0] + " " + KalmanVars.Measure[1] + " " + KalmanVars.Measure[2] + " " + KalmanVars.Measure[3]
+                    //    //+ " " + KalmanVars.Vertical_Measure[0] + " " + KalmanVars.Vertical_Measure[1]
+                    //    + " " + Math.Abs(KalmanVars.Measure[0]) + " " + Math.Abs(KalmanVars.Measure[1]) + " " + Math.Abs(KalmanVars.Measure[2])
+                    //    + " " + Math.Abs(KalmanVars.Measure[3]) + " " + Math.Abs(KalmanVars.Vertical_Measure[0]) + " " + Math.Abs(KalmanVars.Vertical_Measure[1])
+                    //    + " " + Math.Abs(SINSstate.OdoAcceleration_s)
+                    //    );
                 }
                 
 

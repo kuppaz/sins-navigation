@@ -49,7 +49,7 @@ namespace SINS_motion_processing_new_data
         private double Cicle_Noise_Velocity = 0, Cicle_Noise_Angular = 0;
 
         private double global_flag_AccuracyClass = 0
-                , global_odo_min_increment = 0;
+                , global_odo_measure_noise = 0;
 
         private int global_NoiseModelFlag = 0
                 , global_flag_equalizeVertNoise = 0
@@ -119,7 +119,7 @@ namespace SINS_motion_processing_new_data
                         this.Cicle_Noise_Velocity = NoiseVel_end;
                     //====================== 
 
-                    for (this.global_flag_equalizeVertNoise = 1; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
+                    for (this.global_flag_equalizeVertNoise = 0; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
                     {
                         if (this.global_NoiseModelFlag == 1)
                             this.global_flag_equalizeVertNoise = 1;
@@ -132,10 +132,10 @@ namespace SINS_motion_processing_new_data
                             for (this.global_CoordinateNoiseExist = 0; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
                             {
                                 // -- Параметры частоты фиксации показаний одометра (в шт. её обновления) --// Если 0, то берется из настроечных параметров
-                                for (this.global_OdoLimitMeasuresNum = 1; this.global_OdoLimitMeasuresNum <= 10; this.global_OdoLimitMeasuresNum += 4)
+                                for (this.global_OdoLimitMeasuresNum = 1; this.global_OdoLimitMeasuresNum <= 14; this.global_OdoLimitMeasuresNum += 4)
                                 {
                                     // -- Параметры матрицы начальной ковариации --// Если 0, то берется из настроечных параметров
-                                    for (this.global_odo_min_increment = 0.01; this.global_odo_min_increment <= 0.25; this.global_odo_min_increment *= 5.0)
+                                    for (this.global_odo_measure_noise = 0.05; this.global_odo_measure_noise <= 2.1; this.global_odo_measure_noise += 0.5)
                                     {
                                         // -- Параметры матрицы начальной ковариации --//
                                         for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass *= 10.0)
@@ -172,7 +172,7 @@ namespace SINS_motion_processing_new_data
                                                 + " MyCorr=" + global_MyOwnKalman_Korrection
                                                 + " CoordNois=" + global_CoordinateNoiseExist
                                                 + " OdoCntZ=" + global_OdoLimitMeasuresNum
-                                                + " OdoIncr=" + global_odo_min_increment
+                                                + " OdoNoise=" + global_odo_measure_noise
                                                 + " Class=" + global_flag_AccuracyClass
                                                 ;
                                             if (global_NoiseModelFlag == 0)
@@ -423,7 +423,7 @@ namespace SINS_motion_processing_new_data
                     //+ ";RdQ=" 
                     + this.global_CoordinateNoiseExist.ToString()
                     + this.global_OdoLimitMeasuresNum.ToString()
-                    + ";odo=" + this.global_odo_min_increment.ToString()
+                    + ";odo=" + this.global_odo_measure_noise.ToString()
                     + ";cls=" + this.global_flag_AccuracyClass.ToString()
                     ;
                 if (global_NoiseModelFlag == 0)
@@ -453,8 +453,9 @@ namespace SINS_motion_processing_new_data
 
                 if (this.global_OdoLimitMeasuresNum != 0)
                     SINSstate.OdoLimitMeasuresNum = this.global_OdoLimitMeasuresNum;
-                if (this.global_odo_min_increment != 0)
-                    SINSstate.odo_min_increment = this.global_odo_min_increment;
+
+                if (this.global_odo_measure_noise != 0)
+                    SINSstate.global_odo_measure_noise = this.global_odo_measure_noise;
 
                 // --- Уровень начальных ковариаций ---//
                 if (this.global_flag_AccuracyClass == 0.02) { SINSstate.flag_AccuracyClass_0_02grph = true; SINSstate.flag_AccuracyClass_0_2_grph = false; SINSstate.flag_AccuracyClass_2_0_grph = false; }

@@ -30,6 +30,10 @@ namespace Common_Namespace
 
             // --- шум измерения. Если объект стоит - уменьшаем
             double Noize = 1.0;
+
+            if (SINSstate.global_odo_measure_noise > 0.001)
+                Noize = SINSstate.global_odo_measure_noise;
+
             double longOdoIncrement = SINSstate.OdometerData.odometer_left.Value - SINSstate.OdometerLeft_ArrayOfPrev[Math.Min(20, SINSstate.OdometerLeft_ArrayOfPrev.Length)];
             double longOdoIncrement_dt = SINSstate.Time + SINSstate.Time_Alignment - SINSstate.OdometerLeft_ArrayOfPrevTime[Math.Min(20, SINSstate.OdometerLeft_ArrayOfPrev.Length)];
             if (longOdoIncrement / longOdoIncrement_dt == 0.0)
@@ -93,8 +97,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - SINSstate_OdoMod.Longitude) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - SINSstate_OdoMod.Latitude) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = 1.0;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = 1.0;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = Noize;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = Noize;
 
             KalmanVars.cnt_measures += 2;
 

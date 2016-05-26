@@ -780,6 +780,9 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_afterbdnwin_20032012")
             {
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoIncr=0.05	Class=0.2	Noise=NO
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoNoise=0.55	Class=0.2	Noise=NO
+
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
