@@ -49,7 +49,8 @@ namespace SINS_motion_processing_new_data
         private double Cicle_Noise_Velocity = 0, Cicle_Noise_Angular = 0;
 
         private double global_flag_AccuracyClass = 0
-                , global_odo_measure_noise = 0;
+                , global_odo_measure_noise = 0
+                , global_odo_measure_noise_Vertical = 0;
 
         private int global_NoiseModelFlag = 0
                 , global_flag_equalizeVertNoise = 0
@@ -94,13 +95,13 @@ namespace SINS_motion_processing_new_data
 
         private void CycleStartParamChoosing_Click(object sender, EventArgs e)
         {
-            double NoiseVel_start = 1E-5,
+            double NoiseVel_start = 1E-3,
                    NoiseVel_end = 1E-3,
                    NoiseVel_multpl = 10.0;
 
             StreamWriter Cycle_Start_Configurations = new StreamWriter(SimpleData.PathOutputString + "CycleParamScanning//[] Cycle_Start_Configurations.txt");
 
-            string str = "Count NoisModl eqlzVert MyCorr CoordNois OdoCntZ OdoIncr Class Noise ";
+            string str = "Count NoisModl eqlzVert MyCorr CoordNois OdoCntZ OdoIncr OdoIncrV Class Noise ";
             str += "HorErr_AVG HorErr_MAX HorErr_END HorStartErr_END ";
             str += "VertErr_AVG VertErr_MAX VertErr_END ";
             str += "V_Up_AVG V_Up_SPRD V_Up_END ";
@@ -119,78 +120,82 @@ namespace SINS_motion_processing_new_data
                         this.Cicle_Noise_Velocity = NoiseVel_end;
                     //====================== 
 
-                    for (this.global_flag_equalizeVertNoise = 0; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
+                    for (this.global_flag_equalizeVertNoise = 1; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
                     {
                         if (this.global_NoiseModelFlag == 1)
                             this.global_flag_equalizeVertNoise = 1;
                         //====================== 
 
                         // -- Параметр использования собственного алгоритма коррекции ФК --//
-                        for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 1; this.global_MyOwnKalman_Korrection++)
+                        for (this.global_MyOwnKalman_Korrection = 1; this.global_MyOwnKalman_Korrection <= 1; this.global_MyOwnKalman_Korrection++)
                         {
                             // -- Параметр использования шума по горизонтальным координатам --//
-                            for (this.global_CoordinateNoiseExist = 0; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
+                            for (this.global_CoordinateNoiseExist = 1; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
                             {
                                 // -- Параметры частоты фиксации показаний одометра (в шт. её обновления) --// Если 0, то берется из настроечных параметров
-                                for (this.global_OdoLimitMeasuresNum = 1; this.global_OdoLimitMeasuresNum <= 14; this.global_OdoLimitMeasuresNum += 4)
+                                for (this.global_OdoLimitMeasuresNum = 1; this.global_OdoLimitMeasuresNum <= 10; this.global_OdoLimitMeasuresNum += 2)
                                 {
                                     // -- Параметры матрицы начальной ковариации --// Если 0, то берется из настроечных параметров
-                                    for (this.global_odo_measure_noise = 0.05; this.global_odo_measure_noise <= 2.1; this.global_odo_measure_noise += 0.5)
+                                    for (this.global_odo_measure_noise = 0.25; this.global_odo_measure_noise <= 2.1; this.global_odo_measure_noise += 0.25)
                                     {
-                                        // -- Параметры матрицы начальной ковариации --//
-                                        for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass *= 10.0)
+                                        for (this.global_odo_measure_noise_Vertical = 0.5; this.global_odo_measure_noise_Vertical <= 5.1; this.global_odo_measure_noise_Vertical += 1.0)
                                         {
-                                            // === === === === === === === === ===//
-                                            this.StartParamScanning = true;
-                                            this.Single_Navigation_Processing();
-                                            // === === === === === === === === ===//
+                                            // -- Параметры матрицы начальной ковариации --//
+                                            for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 2.01; this.global_flag_AccuracyClass *= 10.0)
+                                            {
+                                                // === === === === === === === === ===//
+                                                this.StartParamScanning = true;
+                                                this.Single_Navigation_Processing();
+                                                // === === === === === === === === ===//
 
-                                            i++;
+                                                i++;
 
-                                            double[] array_kappa1_grad = new double[this.global_indx - 1]
-                                                , array_kappa3_grad = new double[this.global_indx - 1]
-                                                , array_scale = new double[this.global_indx - 1]
-                                                , array_HorizontalError = new double[this.global_indx - 1]
-                                                , array_HorizontalErrorFromStart = new double[this.global_indx - 1]
-                                                , array_VerticalError = new double[this.global_indx - 1]
-                                                , array_V_Up = new double[this.global_indx - 1]
-                                                ;
-
-                                            SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
-                                            SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
-                                            SimpleOperations.CopyArray(array_scale, this.global_scale);
-                                            SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
-                                            SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
-                                            SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
-                                            for (int r = 0; r < array_VerticalError.Length; r++)
-                                                array_VerticalError[r] = Math.Abs(array_VerticalError[r]);
-                                            SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
-
-                                            string str_out = "";
-                                            str_out += i + " NoisModl=" + global_NoiseModelFlag
-                                                + " eqlzVert=" + global_flag_equalizeVertNoise
-                                                + " MyCorr=" + global_MyOwnKalman_Korrection
-                                                + " CoordNois=" + global_CoordinateNoiseExist
-                                                + " OdoCntZ=" + global_OdoLimitMeasuresNum
-                                                + " OdoNoise=" + global_odo_measure_noise
-                                                + " Class=" + global_flag_AccuracyClass
-                                                ;
-                                            if (global_NoiseModelFlag == 0)
-                                                str_out += " Noise=NO";
-                                            else
-                                                str_out += " Noise=" + this.Cicle_Noise_Angular;
-
-                                            if (this.global_indx > 1)
-                                                str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
-                                                    + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
-                                                    + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(this.global_VerticalError[this.global_indx - 2], 3)
-                                                    + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
-                                                    + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
-                                                    + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
-                                                    + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
+                                                double[] array_kappa1_grad = new double[this.global_indx - 1]
+                                                    , array_kappa3_grad = new double[this.global_indx - 1]
+                                                    , array_scale = new double[this.global_indx - 1]
+                                                    , array_HorizontalError = new double[this.global_indx - 1]
+                                                    , array_HorizontalErrorFromStart = new double[this.global_indx - 1]
+                                                    , array_VerticalError = new double[this.global_indx - 1]
+                                                    , array_V_Up = new double[this.global_indx - 1]
                                                     ;
 
-                                            Cycle_Start_Configurations.WriteLine(str_out);
+                                                SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
+                                                SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
+                                                SimpleOperations.CopyArray(array_scale, this.global_scale);
+                                                SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
+                                                SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
+                                                SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
+                                                for (int r = 0; r < array_VerticalError.Length; r++)
+                                                    array_VerticalError[r] = Math.Abs(array_VerticalError[r]);
+                                                SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
+
+                                                string str_out = "";
+                                                str_out += i + " NoisModl=" + global_NoiseModelFlag
+                                                    + " eqlzVert=" + global_flag_equalizeVertNoise
+                                                    + " MyCorr=" + global_MyOwnKalman_Korrection
+                                                    + " CoordNois=" + global_CoordinateNoiseExist
+                                                    + " OdoCntZ=" + global_OdoLimitMeasuresNum
+                                                    + " OdoQz=" + global_odo_measure_noise
+                                                    + " OdoQzV=" + global_odo_measure_noise_Vertical
+                                                    + " Class=" + global_flag_AccuracyClass
+                                                    ;
+                                                if (global_NoiseModelFlag == 0)
+                                                    str_out += " Noise=NO";
+                                                else
+                                                    str_out += " Noise=" + this.Cicle_Noise_Angular;
+
+                                                if (this.global_indx > 1)
+                                                    str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                                        + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
+                                                        + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(this.global_VerticalError[this.global_indx - 2], 3)
+                                                        + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
+                                                        + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
+                                                        + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
+                                                        + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
+                                                        ;
+
+                                                Cycle_Start_Configurations.WriteLine(str_out);
+                                            }
                                         }
                                     }
                                 }
@@ -423,7 +428,8 @@ namespace SINS_motion_processing_new_data
                     //+ ";RdQ=" 
                     + this.global_CoordinateNoiseExist.ToString()
                     + this.global_OdoLimitMeasuresNum.ToString()
-                    + ";odo=" + this.global_odo_measure_noise.ToString()
+                    + ";odoQz=" + this.global_odo_measure_noise.ToString()
+                    + ";odoQzV=" + this.global_odo_measure_noise_Vertical.ToString()
                     + ";cls=" + this.global_flag_AccuracyClass.ToString()
                     ;
                 if (global_NoiseModelFlag == 0)
@@ -456,6 +462,8 @@ namespace SINS_motion_processing_new_data
 
                 if (this.global_odo_measure_noise != 0)
                     SINSstate.global_odo_measure_noise = this.global_odo_measure_noise;
+                if (this.global_odo_measure_noise_Vertical != 0)
+                    SINSstate.global_odo_measure_noise_Vertical = this.global_odo_measure_noise_Vertical;
 
                 // --- Уровень начальных ковариаций ---//
                 if (this.global_flag_AccuracyClass == 0.02) { SINSstate.flag_AccuracyClass_0_02grph = true; SINSstate.flag_AccuracyClass_0_2_grph = false; SINSstate.flag_AccuracyClass_2_0_grph = false; }

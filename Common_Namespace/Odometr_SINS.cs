@@ -152,6 +152,9 @@ namespace Common_Namespace
                     KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = Noize * SINSstate.OdoVerticalNoiseMultiplicator;
                     //KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.OdoAcceleration_s;
 
+                    if (SINSstate.global_odo_measure_noise_Vertical > 0.001)
+                        KalmanVars.Vertical_Noize_Z[(KalmanVars.Vertical_cnt_measures + 0)] = SINSstate.global_odo_measure_noise_Vertical;
+
                     KalmanVars.Vertical_cnt_measures += 1;
                 }
             }

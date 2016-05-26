@@ -383,6 +383,7 @@ namespace Common_Namespace
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
+                SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
                 // --- Заданный курс: флаг и значение --- //
                 SINSstate.Alignment_HeadingDetermined = true;
@@ -475,6 +476,10 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
             {
+                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoNoise=2.05	Class=0.02	Noise=1E-05
+                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoNoise=0.55	Class=0.02	Noise=1E-05
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoNoise=0.55	Class=0.2	Noise=NO
+
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
@@ -482,6 +487,9 @@ namespace Common_Namespace
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
+                SINSstate.OdoVerticalNoiseMultiplicator = 5;
+                
+                /*!!!!!!!!!*/ SINSstate.global_odo_measure_noise = 0.5;
 
                 // --- Заданный курс: флаг и значение --- //
                 SINSstate.Alignment_HeadingDetermined = true;

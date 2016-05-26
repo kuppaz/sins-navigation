@@ -152,7 +152,7 @@ namespace Common_Namespace
                       ;
 
         //------
-        public double Freq, odo_min_increment, global_odo_measure_noise, V_abs, DistanceModeled = 0.0, Time_Alignment = 0, V_norm;
+        public double Freq, odo_min_increment, global_odo_measure_noise, global_odo_measure_noise_Vertical, V_abs, DistanceModeled = 0.0, Time_Alignment = 0, V_norm;
 
         //---Вычисляемые переменные---
         public bool init_bins = false, firstLineRead = false;

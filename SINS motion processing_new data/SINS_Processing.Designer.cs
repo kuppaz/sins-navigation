@@ -592,6 +592,8 @@
             // SeparateHorizVSVertical
             // 
             this.SeparateHorizVSVertical.AutoSize = true;
+            this.SeparateHorizVSVertical.Checked = true;
+            this.SeparateHorizVSVertical.CheckState = System.Windows.Forms.CheckState.Checked;
             this.SeparateHorizVSVertical.Location = new System.Drawing.Point(9, 22);
             this.SeparateHorizVSVertical.Name = "SeparateHorizVSVertical";
             this.SeparateHorizVSVertical.Size = new System.Drawing.Size(142, 17);
@@ -709,6 +711,8 @@
             // Odometr_SINS_case
             // 
             this.Odometr_SINS_case.AutoSize = true;
+            this.Odometr_SINS_case.Checked = true;
+            this.Odometr_SINS_case.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Odometr_SINS_case.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.Odometr_SINS_case.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Odometr_SINS_case.Location = new System.Drawing.Point(15, 94);
@@ -737,6 +741,8 @@
             // ModifWeakConnect
             // 
             this.ModifWeakConnect.AutoSize = true;
+            this.ModifWeakConnect.Checked = true;
+            this.ModifWeakConnect.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ModifWeakConnect.Enabled = false;
             this.ModifWeakConnect.Location = new System.Drawing.Point(24, 123);
             this.ModifWeakConnect.Name = "ModifWeakConnect";
