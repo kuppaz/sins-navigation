@@ -499,6 +499,20 @@ namespace SINSProcessingModes
         {
             SINSstate.flag_ControlPointCorrection = false;
 
+            // --- В качестве контрольных точем можно использовать GPS позиционную информация для коррекции БИНСового и одометрического счисления --- //
+            //if (SINSstate.GPS_Data.gps_Latitude.isReady == 1 && SINSstate.GPS_CounterOfPoints % 5 == 0)
+            //{
+            //    if (SINSstate.flag_Odometr_SINS_case == true)
+            //        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+            //    else
+            //        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.GPS_Data.gps_Latitude.Value, SINSstate.GPS_Data.gps_Longitude.Value, SINSstate.GPS_Data.gps_Altitude.Value);
+            //}
+
+            if (SINSstate.Global_file == "someOtherInput")
+            {
+                if (Convert.ToInt32(SINSstate.Count) % 100 == 0)
+                    Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, SINSstate.Latitude_Start, SINSstate.Longitude_Start, SINSstate.Height_Start);
+            }
 
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_afterbdnwin_20032012")
             {
@@ -580,14 +594,14 @@ namespace SINSProcessingModes
 
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_repeat_21032012")
             {
-                double[] PhiLambdaH_WGS84 = GeodesicVsGreenwich.Geodesic2Geodesic(56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96, 1);
+                double[] PhiLambdaH_WGS84 = new double[3];
 
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 4250.0) < 0.02)
                 {
                     if (SINSstate.flag_Odometr_SINS_case == true)
-                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                        Odometr_SINS.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96.0);
                     else
-                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, PhiLambdaH_WGS84[0], PhiLambdaH_WGS84[1], 96.0);
+                        CorrectionModel.Make_H_CONTROLPOINTS(KalmanVars, SINSstate, SINSstate_OdoMod, 56.28916 * SimpleData.ToRadian, 43.08689 * SimpleData.ToRadian, 96.0);
                 }
 
                 if (Math.Abs(SINSstate.Time + SINSstate.Time_Alignment - 1003.70) < 0.01)

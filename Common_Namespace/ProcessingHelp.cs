@@ -698,6 +698,10 @@ namespace Common_Namespace
 
 
                     // --- Сохраняем значения для передачи в цикл по подбору стартовых настроек ---//
+                    
+                    if (SINSstate.global_indx >= SINSstate.global_kappa1_grad.Length)
+                        SINSstate.global_indx--;
+
                     if (SINSstate.Vertical_kappa1 > 0)
                         SINSstate.global_kappa1_grad[SINSstate.global_indx] = SINSstate.Vertical_Cumulative_KalmanErrorVector[SINSstate.Vertical_kappa1] * SimpleData.ToDegree;
                     else

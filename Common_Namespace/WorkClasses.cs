@@ -252,19 +252,20 @@ namespace Common_Namespace
 
         public string global_paramsCycleScanning = "", global_paramsCycleScanning_Path = "";
         public int global_indx = 0;
-        public double[] global_kappa1_grad = new double[50000]
-                       , global_kappa3_grad = new double[50000]
-                       , global_scale = new double[50000]
-                       , global_HorizontalError = new double[50000]
-                       , global_HorizontalErrorFromStart = new double[50000]
-                       , global_VerticalError = new double[50000]
-                       , global_V_Up = new double[50000]
+        public double[] global_kappa1_grad = new double[150000]
+                       , global_kappa3_grad = new double[150000]
+                       , global_scale = new double[150000]
+                       , global_HorizontalError = new double[150000]
+                       , global_HorizontalErrorFromStart = new double[150000]
+                       , global_VerticalError = new double[150000]
+                       , global_V_Up = new double[150000]
                        ;
         public int OdometerZUPT_counter;
         public bool flag_equalizeVertNoise;
         public int OdoVerticalNoiseMultiplicator;
         public bool SINS_is_accurateMounted_by_kappa_1, SINS_is_accurateMounted_by_kappa_3, SINS_is_accurateMounted_by_scaleError;
         public double OdometerStartValue;
+        public bool AlgebraicCalibration_F_Zero;
     }
 
 

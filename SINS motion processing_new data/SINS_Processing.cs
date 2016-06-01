@@ -127,7 +127,7 @@ namespace SINS_motion_processing_new_data
                         //====================== 
 
                         // -- Параметр использования собственного алгоритма коррекции ФК --//
-                        for (this.global_MyOwnKalman_Korrection = 1; this.global_MyOwnKalman_Korrection <= 1; this.global_MyOwnKalman_Korrection++)
+                        for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 0; this.global_MyOwnKalman_Korrection++)
                         {
                             // -- Параметр использования шума по горизонтальным координатам --//
                             for (this.global_CoordinateNoiseExist = 1; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
@@ -136,12 +136,12 @@ namespace SINS_motion_processing_new_data
                                 for (this.global_OdoLimitMeasuresNum = 1; this.global_OdoLimitMeasuresNum <= 10; this.global_OdoLimitMeasuresNum += 2)
                                 {
                                     // -- Параметры матрицы начальной ковариации --// Если 0, то берется из настроечных параметров
-                                    for (this.global_odo_measure_noise = 0.25; this.global_odo_measure_noise <= 2.1; this.global_odo_measure_noise += 0.25)
+                                    for (this.global_odo_measure_noise = 0.5; this.global_odo_measure_noise <= 3.1; this.global_odo_measure_noise += 0.5)
                                     {
                                         for (this.global_odo_measure_noise_Vertical = 0.5; this.global_odo_measure_noise_Vertical <= 5.1; this.global_odo_measure_noise_Vertical += 1.0)
                                         {
                                             // -- Параметры матрицы начальной ковариации --//
-                                            for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 2.01; this.global_flag_AccuracyClass *= 10.0)
+                                            for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass *= 10.0)
                                             {
                                                 // === === === === === === === === ===//
                                                 this.StartParamScanning = true;
@@ -382,6 +382,7 @@ namespace SINS_motion_processing_new_data
             this.DefineClassElementAndFlags();
             this.SelectDataIn();                                                                            //---выбор входного набора данных---//
 
+            //StreamWriter ForHelp_2 = new StreamWriter(SimpleData.PathOutputString + "Debaging//ForHelp_2.txt");
 
             //=== Вычисляем LastCountForRead ===
             SINSstate.LastCountForRead = -20;
@@ -399,12 +400,17 @@ namespace SINS_motion_processing_new_data
                     string[] dataArray = tmpstr.Split(' ');
                     double time = Convert.ToDouble(dataArray[0]);
 
-                    if (time > 51450)
+                    if (time > 5145)
                         break;
                 }
+
+                //ForHelp_2.WriteLine(tmpstr);
+                //if (SINSstate.LastCountForRead > 300000)
+                //        break;
             }
             int LastCountForRead = SINSstate.LastCountForRead;
             myFile.Close();
+            //ForHelp_2.Close();
 
             this.SelectDataIn();
             //=== ===
@@ -1076,6 +1082,12 @@ namespace SINS_motion_processing_new_data
             }
 
 
+            if (someOtherInput.Checked == true)
+            {
+                myFile = new StreamReader("D:\\NavLab\\GRTVout_GCEF_format_Azimuth10B_450612_48H_17-Feb-2016,17-31-23.dat.txt");
+                SINSstate.Global_file = "someOtherInput";
+            }
+
 
             if (topo_saratov.Checked == true)
             {
@@ -1387,6 +1399,16 @@ namespace SINS_motion_processing_new_data
             else CheckedFalseDataIn();
         }
 
+        private void someOtherInput_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.someOtherInput.Checked == true)
+            {
+                CheckedTrueDataIn();
+                this.someOtherInput.Enabled = true;
+            }
+            else CheckedFalseDataIn();
+        }
+
 
 
 
@@ -1673,6 +1695,8 @@ namespace SINS_motion_processing_new_data
         {
 
         }
+
+        
 
         
 

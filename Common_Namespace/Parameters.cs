@@ -32,6 +32,7 @@ namespace Common_Namespace
 
             SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
+            SINSstate.AlgebraicCalibration_F_Zero = false;
 
             // --- Параметры намеренного дополнительного введения ошибок одометра --- //
             SINSstate.WRONG_scaleError = 0.0;
@@ -449,7 +450,7 @@ namespace Common_Namespace
                     ParamStart.Experiment_stdScale = 0.01;
 
                 ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.267028 * SimpleData.ToRadian;
-                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.998296* SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.998296 * SimpleData.ToRadian;
                 ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = 159.8;
 
 
@@ -476,9 +477,21 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTVout_GCEF_format (070715выезд куликовка)")
             {
-                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoNoise=2.05	Class=0.02	Noise=1E-05
-                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoNoise=0.55	Class=0.02	Noise=1E-05
-                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoNoise=0.55	Class=0.2	Noise=NO
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=NO	25.441	62.868	45.27	29374.959	9.705	15.406	15.403
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=4.5	Class=0.2	Noise=NO	25.442	62.874	45.274	29374.969	10.114	16.528	16.341
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=3.5	Class=0.2	Noise=NO	25.443	62.875	45.276	29374.968	10.109	16.568	16.267
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=2.5	Class=0.2	Noise=NO	25.443	62.875	45.277	29374.967	10.06	16.508	16.099
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	25.443	62.875	45.277	29374.965	9.979	16.285	15.922
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=0.5	Class=0.2	Noise=NO	25.393	56.833	50.507	29350.243	9.763	15.552	15.552
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=4.5	Class=0.2	Noise=NO	25.393	56.834	50.507	29350.253	10.17	16.646	16.482
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=3.5	Class=0.2	Noise=NO	25.393	56.836	50.509	29350.253	10.166	16.685	16.408
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=2.5	Class=0.2	Noise=NO	25.394	56.837	50.51	29350.251	10.116	16.624	16.242
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	25.394	56.838	50.511	29350.249	10.036	16.402	16.067
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=4.5	Class=0.2	Noise=NO	26.857	63.59	55.024	29366.467	10.094	16.448	16.346
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=0.5	Class=0.2	Noise=NO	26.858	63.589	55.025	29366.459	9.863	15.759	15.725
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=3.5	Class=0.2	Noise=NO	26.858	63.593	55.027	29366.467	10.139	16.576	16.369
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=1.5	Class=0.2	Noise=NO	26.859	63.593	55.028	29366.464	10.037	16.429	16.01
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=2.5	Class=0.2	Noise=NO	26.859	63.594	55.029	29366.466	10.125	16.601	16.255
 
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
 
@@ -488,16 +501,18 @@ namespace Common_Namespace
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
                 SINSstate.OdoVerticalNoiseMultiplicator = 5;
-                
-                /*!!!!!!!!!*/ SINSstate.global_odo_measure_noise = 0.5;
+
+                /*!!!!!!!!!*/
+                //SINSstate.global_odo_measure_noise = 1.5;
+                //SINSstate.global_odo_measure_noise_Vertical = 0.5;
 
                 // --- Заданный курс: флаг и значение --- //
                 SINSstate.Alignment_HeadingDetermined = true;
                 SINSstate.Alignment_HeadingValue = -78.61045 * SimpleData.ToRadian;
                 SINSstate.Alignment_RollDetermined = true;
-                SINSstate.Alignment_RollValue=-1.81451 * SimpleData.ToRadian;
+                SINSstate.Alignment_RollValue = -1.81451 * SimpleData.ToRadian;
                 SINSstate.Alignment_PitchDetermined = true;
-                SINSstate.Alignment_PitchValue=-0.78953 * SimpleData.ToRadian;
+                SINSstate.Alignment_PitchValue = -0.78953 * SimpleData.ToRadian;
 
                 // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = Convert.ToInt32(450.0 / SINSstate.timeStep);
@@ -600,9 +615,9 @@ namespace Common_Namespace
                 SINSstate.Alignment_HeadingDetermined = true;
                 SINSstate.Alignment_HeadingValue = 33.91437 * SimpleData.ToRadian;
                 SINSstate.Alignment_RollDetermined = true;
-                SINSstate.Alignment_RollValue=0.06796 * SimpleData.ToRadian;
+                SINSstate.Alignment_RollValue = 0.06796 * SimpleData.ToRadian;
                 SINSstate.Alignment_PitchDetermined = true;
-                SINSstate.Alignment_PitchValue=1.23866 * SimpleData.ToRadian;
+                SINSstate.Alignment_PitchValue = 1.23866 * SimpleData.ToRadian;
 
                 // --- Количество тактов БИНС для начальной выставки от начала  --- //
                 ProcHelp.AlignmentCounts = Convert.ToInt32(500.0 / SINSstate.timeStep);
@@ -788,8 +803,15 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_afterbdnwin_20032012")
             {
-                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoIncr=0.05	Class=0.2	Noise=NO
-                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoNoise=0.55	Class=0.2	Noise=NO
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	11.778	24.992	14.616	14.976	11.986	29.099	9.653
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.692	23.93	14.591	14.95	11.993	29.115	9.679
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2	    OdoQzV=1.5	Class=0.2	Noise=NO	11.683	23.438	14.576	14.933	11.997	29.124	9.696
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=2	    OdoQzV=2.5	Class=0.2	Noise=NO	12.076	26.191	14.861	15.232	12.185	28.634	9.485
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=2.5	OdoQzV=2.5	Class=0.2	Noise=NO	11.862	25.151	14.799	15.165	12.192	28.654	9.512
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=3	    OdoQzV=2.5	Class=0.2	Noise=NO	11.786	24.427	14.757	15.119	12.197	28.667	9.53
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.886	25.242	14.855	15.227	11.607	32.337	3.898
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	11.8	24.226	14.836	15.206	11.612	32.337	3.919
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.785	23.775	14.822	15.19	11.616	32.336	3.937
 
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
@@ -942,7 +964,7 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.5; // в метрах
+                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = false;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -1288,12 +1310,122 @@ namespace Common_Namespace
 
 
             //--- В случае выставления поправки на угол kappa_1 именшаем нач.ковариацию ---//
-                if (Math.Abs(SINSstate.alpha_kappa_3) > 0.01 * SimpleData.ToRadian)
-                    ParamStart.Experiment_stdKappa1 = 2.0; //минут
-                //--- В случае выставления поправки на угол kappa_3 именшаем нач.ковариацию ---//
-                if (Math.Abs(SINSstate.alpha_kappa_1) > 0.01 * SimpleData.ToRadian)
-                    ParamStart.Experiment_stdKappa3 = 2.0; //минут
+            if (Math.Abs(SINSstate.alpha_kappa_3) > 0.01 * SimpleData.ToRadian)
+                ParamStart.Experiment_stdKappa1 = 2.0; //минут
+            //--- В случае выставления поправки на угол kappa_3 именшаем нач.ковариацию ---//
+            if (Math.Abs(SINSstate.alpha_kappa_1) > 0.01 * SimpleData.ToRadian)
+                ParamStart.Experiment_stdKappa3 = 2.0; //минут
 
+
+
+
+
+
+
+            if (SINSstate.Global_file == "someOtherInput")
+            {
+                SINSstate.timeStep = SINSstate.Freq = 0.01024;
+
+                // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
+                SINSstate.OdoLimitMeasuresNum = 5;
+
+                // --- Минимальное приращение показания одометра --- //
+                SINSstate.odo_min_increment = 0.1;
+                SINSstate.OdoVerticalNoiseMultiplicator = 5;
+
+                /*!!!!!!!!!*/
+                //SINSstate.global_odo_measure_noise = 0.5;
+
+                // --- Заданный курс: флаг и значение --- //
+                SINSstate.Alignment_HeadingDetermined = true;
+                SINSstate.Alignment_HeadingValue = 155.5936 * SimpleData.ToRadian;
+                SINSstate.Alignment_RollDetermined = true;
+                SINSstate.Alignment_RollValue = 2.421428 * SimpleData.ToRadian;
+                SINSstate.Alignment_PitchDetermined = true;
+                SINSstate.Alignment_PitchValue = 0.4594205 * SimpleData.ToRadian;
+
+                // --- Количество тактов БИНС для начальной выставки от начала  --- //
+                ProcHelp.AlignmentCounts = Convert.ToInt32(450.0 / SINSstate.timeStep);
+
+                KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
+                KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
+                KalmanVars.OdoNoise_STOP = 0.001;
+
+                SINSstate.existRelationHoriz_VS_Vertical = false;
+                SINSstate.flag_equalizeVertNoise = true;
+                SINSstate.MyOwnKalman_Korrection = false;
+
+                SINSstate.first100m_StartHeightCorrection_value = 100.0;
+
+                //=== 
+                //---Здесь нужно брать класс точности 2.0
+                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                //===
+
+
+                // --- Шум по горизонтальным координатам --- //
+                KalmanVars.Noise_Pos = 1.0;
+                KalmanVars.Noise_Pos_Odo = 0.01;
+                // -------------------------------------------//
+
+                KalmanVars.Noise_Drift = 0.002 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_Accel = 0.0000002;
+                KalmanVars.Noise_OdoScale = 0.0001;
+                KalmanVars.Noise_OdoKappa_1 = 0.2 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+                KalmanVars.Noise_OdoKappa_3 = 0.1 * SimpleData.ToRadian_min;// 0.01 * 3.141592 / 180.0 / 3600.0;
+
+                // --- Начальные ковариации --- //
+                ParamStart.Experiment_stdR = 0.1;
+                ParamStart.Experiment_stdOdoR = 0.1; // метров
+                ParamStart.Experiment_stdV = 1.0;
+                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
+
+                SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
+                SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
+                SINSstate.SINS_is_accurateMounted_by_scaleError = true;
+
+                if (SINSstate.SINS_is_accurateMounted_by_kappa_1 == true)
+                    ParamStart.Experiment_stdKappa1 = 2.0;
+                else
+                    ParamStart.Experiment_stdKappa1 = 20.0;
+
+                if (SINSstate.SINS_is_accurateMounted_by_kappa_3 == true)
+                    ParamStart.Experiment_stdKappa3 = 2.0;
+                else
+                    ParamStart.Experiment_stdKappa3 = 20.0;
+
+                if (SINSstate.SINS_is_accurateMounted_by_scaleError == true)
+                    ParamStart.Experiment_stdScale = 0.005;
+                else
+                    ParamStart.Experiment_stdScale = 0.01;
+
+                ProcHelp.LongSNS = SINSstate_OdoMod.Longitude = SINSstate.Longitude_Start = SINSstate.LongSNS = SINSstate.Longitude = 56.267033 * SimpleData.ToRadian;
+                ProcHelp.LatSNS = SINSstate_OdoMod.Latitude = SINSstate.Latitude_Start = SINSstate.LatSNS = SINSstate.Latitude = 57.998299 * SimpleData.ToRadian;
+                ProcHelp.AltSNS = SINSstate_OdoMod.Height = SINSstate.Height_Start = SINSstate.AltSNS = SINSstate.Height = SINSstate.Height_prev = 172.6004;
+
+
+                ProcHelp.LongSNS = ProcHelp.LongSNS * 180 / Math.PI;
+                ProcHelp.LatSNS = ProcHelp.LatSNS * 180 / Math.PI;
+
+
+                ApplyMatrixStartCondition(SINSstate);
+                ApplyMatrixStartCondition(SINSstate_OdoMod);
+
+                //flElevation=-1.126
+                SINSstate.alpha_kappa_1 = 0.0 * SimpleData.ToRadian;
+                SINSstate.alpha_kappa_3 = 0.0 * SimpleData.ToRadian;
+                SINSstate.alpha_scaleError = 0.0;
+
+
+                if (Math.Abs(SINSstate.alpha_kappa_3) > 0.001 * SimpleData.ToRadian)
+                    ParamStart.Experiment_stdKappa3 = 2.0; //минут
+                if (Math.Abs(SINSstate.alpha_kappa_1) > 0.001 * SimpleData.ToRadian)
+                    ParamStart.Experiment_stdKappa1 = 2.0; //минут
+                if (Math.Abs(SINSstate.alpha_scaleError) > 0.00001)
+                    ParamStart.Experiment_stdScale = 0.001;
+            }
         }
     }
 }

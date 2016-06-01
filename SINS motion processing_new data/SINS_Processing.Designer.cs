@@ -111,6 +111,7 @@
             this.CycleStartParamChoosing = new System.Windows.Forms.Button();
             this.GRTV_ktn004_marsh16_afterbdnwin_20032012 = new System.Windows.Forms.CheckBox();
             this.GRTV_ktn004_marsh16_repeat_21032012 = new System.Windows.Forms.CheckBox();
+            this.someOtherInput = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -711,8 +712,6 @@
             // Odometr_SINS_case
             // 
             this.Odometr_SINS_case.AutoSize = true;
-            this.Odometr_SINS_case.Checked = true;
-            this.Odometr_SINS_case.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Odometr_SINS_case.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.Odometr_SINS_case.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Odometr_SINS_case.Location = new System.Drawing.Point(15, 94);
@@ -1070,11 +1069,23 @@
             this.GRTV_ktn004_marsh16_repeat_21032012.UseVisualStyleBackColor = true;
             this.GRTV_ktn004_marsh16_repeat_21032012.CheckedChanged += new System.EventHandler(this.GRTV_ktn004_marsh16_repeat_21032012_CheckedChanged);
             // 
+            // someOtherInput
+            // 
+            this.someOtherInput.AutoSize = true;
+            this.someOtherInput.Location = new System.Drawing.Point(243, 48);
+            this.someOtherInput.Name = "someOtherInput";
+            this.someOtherInput.Size = new System.Drawing.Size(78, 17);
+            this.someOtherInput.TabIndex = 89;
+            this.someOtherInput.Text = "some other";
+            this.someOtherInput.UseVisualStyleBackColor = true;
+            this.someOtherInput.CheckedChanged += new System.EventHandler(this.someOtherInput_CheckedChanged);
+            // 
             // SINS_Processing
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 459);
+            this.Controls.Add(this.someOtherInput);
             this.Controls.Add(this.GRTV_ktn004_marsh16_repeat_21032012);
             this.Controls.Add(this.GRTV_ktn004_marsh16_afterbdnwin_20032012);
             this.Controls.Add(this.CycleStartParamChoosing);
@@ -1215,6 +1226,7 @@
         private System.Windows.Forms.CheckBox flag_first100m_StartHeightCorrection;
         private System.Windows.Forms.CheckBox GRTV_ktn004_marsh16_afterbdnwin_20032012;
         private System.Windows.Forms.CheckBox GRTV_ktn004_marsh16_repeat_21032012;
+        private System.Windows.Forms.CheckBox someOtherInput;
     }
 }
 

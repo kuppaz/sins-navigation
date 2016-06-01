@@ -308,8 +308,11 @@ namespace Common_Namespace
             for (int j = 0; j < 3; j++)
                 SINSstate.AlignAlgebraDrifts[j] = w_avg[j] - U_s[j];
 
-            for (int j = 0; j < 3; j++)
-                SINSstate.AlignAlgebraZeroF[j] = f_avg[j] - gilmertF[j];
+            if (SINSstate.AlgebraicCalibration_F_Zero == true)
+            {
+                for (int j = 0; j < 3; j++)
+                    SINSstate.AlignAlgebraZeroF[j] = f_avg[j] - gilmertF[j];
+            }
 
             SINSstate.Time_Alignment = SINSstate.Time;
 
