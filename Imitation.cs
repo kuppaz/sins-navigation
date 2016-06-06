@@ -770,7 +770,7 @@ namespace MovingImitator
             double odometer_left_ValueTrue = 0.0;
             for (int i = 1; i < SINSstate.LastCountForRead; i++)
             {
-                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, SINSstate, SINSstate_OdoMod);
+                ProcessingHelp.ReadSINSStateFromString(ProcHelp, myFile, Autonomous, SINSstate, SINSstate_OdoMod, false);
                 ProcessingHelp.DefSNSData(ProcHelp, SINSstate);
 
                 if (t == 0) { SimpleOperations.CopyArray(SINSstate.F_z_prev, SINSstate.F_z); SimpleOperations.CopyArray(SINSstate.W_z_prev, SINSstate.W_z); t = 1; }

@@ -562,6 +562,8 @@ namespace SINS_motion_processing_new_data
             else
                 SINSstate.Noise_GPS_PositionError = ParamStart.Experiment_GPS_PositionError;
 
+            SINSstate.Noise_Marker_PositionError = ParamStart.Experiment_Marker_PositionError;
+
 
             //---Инициализация начальной матрицы ковариации---
             if (SINSstate.flag_Odometr_SINS_case == true)

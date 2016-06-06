@@ -220,7 +220,7 @@ namespace Common_Namespace
         public double[,] MarkersInputData = new double[1000, 7];
         public double CountPrev;
         public bool flag_AccuracyClass_0_0grph;
-        public double Noise_GPS_PositionError;
+        public double Noise_GPS_PositionError, Noise_Marker_PositionError;
         public bool flag_VupOdo_till_VupSINS;
         public bool flag_SeparateHorizVSVertical;
 
@@ -279,7 +279,7 @@ namespace Common_Namespace
         public double Experiment_stdKappa1;
         public double Experiment_stdKappa3;
         public bool Experiment_NoiseModelFlag;
-        public double Experiment_GPS_PositionError;
+        public double Experiment_GPS_PositionError, Experiment_Marker_PositionError;
 
         public bool Imitator_addNoisSample_DUS, Imitator_addNoisSample_ACCS;
         public string Imitator_addNoisSamplePath_DUS, Imitator_addNoisSamplePath_ACCS;

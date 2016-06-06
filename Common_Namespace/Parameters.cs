@@ -39,6 +39,9 @@ namespace Common_Namespace
             SINSstate.WRONG_alpha_kappa_1 = 0.0;
             SINSstate.WRONG_alpha_kappa_3 = 0.0;
 
+            ParamStart.Experiment_Marker_PositionError = 0.1; // в метрах
+            ParamStart.Experiment_GPS_PositionError = 2.0; // в метрах
+
 
             if (SINSstate.Global_file == "Imitator_Data")                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             {
@@ -126,7 +129,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = 0.05;
                 ParamStart.Experiment_stdKappa1 = 20.0; //минут
                 ParamStart.Experiment_stdKappa3 = 20.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -189,7 +191,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = 0.05;
                 ParamStart.Experiment_stdKappa1 = 20.0; //минут
                 ParamStart.Experiment_stdKappa3 = 20.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -248,7 +249,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = 0.05;
                 ParamStart.Experiment_stdKappa1 = 20.0; //минут
                 ParamStart.Experiment_stdKappa3 = 20.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -328,7 +328,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = false;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -428,7 +427,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -552,7 +550,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -602,6 +599,13 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTV_Ekat_151029_1_zaezd")
             {
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1	    OdoQzV=4.5	Class=0.2	Noise=NO	38.617	89.678	69.807	68.857	22.188	56.225	-16.51
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1	    OdoQzV=4.5	Class=0.2	Noise=NO	38.619	88.299	70.821	69.848	20.221	60.34	5.482
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=1	    OdoQzV=3.5	Class=0.2	Noise=NO	39.018	87.836	72.343	71.354	21.518	57.056	-11.785
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=2.5	OdoQzV=3.5	Class=0.2	Noise=NO	38.994	87.933	72.397	71.383	21.423	57.061	-11.421
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=1.5	Class=0.02	Noise=NO	39.499	91.923	69.936	68.986	28.862	61.061	21.981
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=3	    OdoQzV=1.5	Class=0.02	Noise=NO	38.601	88.628	70.295	69.281	28.833	61.091	22.465
+
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
@@ -654,7 +658,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = false;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -755,7 +758,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = false;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -864,7 +866,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = false;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -913,6 +914,16 @@ namespace Common_Namespace
 
             if (SINSstate.Global_file == "GRTV_ktn004_marsh16_repeat_21032012")
             {
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=2	    OdoQzV=4.5	Class=0.2	Noise=NO	12.732	28.508	16.732	17.699	12.954	56.376	5.619
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=2	    OdoQzV=3.5	Class=0.2	Noise=NO	12.754	28.514	16.721	17.686	12.184	53.486	5.85
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=2.5	OdoQzV=2.5	Class=0.2	Noise=NO	12.016	26.597	16.623	17.588	12.275	50.6	7.91
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2	    OdoQzV=3.5	Class=0.2	Noise=NO	11.038	24.208	16.484	17.455	15.763	62.463	9.224
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=3.5	Class=0.2	Noise=NO	11.331	25.247	16.5	17.471	15.765	62.46	9.227
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=3.5	Class=0.2	Noise=NO	11.981	26.903	16.527	17.497	15.768	62.455	9.233
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=2.5	OdoQzV=2.5	Class=0.2	Noise=NO	10.88	23.751	16.67	17.637	15.669	61.948	9.767
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1.5	OdoQzV=2.5	Class=0.2	Noise=NO	11.088	24.367	16.684	17.65	15.671	61.944	9.768
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1	    OdoQzV=2.5	Class=0.2	Noise=NO	11.436	25.607	16.7	17.666	15.674	61.94	9.771
+
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
@@ -964,7 +975,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = false;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;
@@ -1062,7 +1072,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = -0.001;
                 ParamStart.Experiment_stdKappa1 = 5.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -1130,7 +1139,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = -0.001;
                 ParamStart.Experiment_stdKappa1 = 5.0; //минут
                 ParamStart.Experiment_stdKappa3 = 5.0; //минут
-                ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -1253,7 +1261,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdScale = 0.005;
                 ParamStart.Experiment_stdKappa1 = 0.01; //минут
                 ParamStart.Experiment_stdKappa3 = 0.01; //минут
-                ParamStart.Experiment_GPS_PositionError = 5.0; // в метрах
 
 
                 KalmanVars.Noise_OdoScale = 0.0001;
@@ -1380,7 +1387,6 @@ namespace Common_Namespace
                 ParamStart.Experiment_stdR = 0.1;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
                 ParamStart.Experiment_stdV = 1.0;
-                ParamStart.Experiment_GPS_PositionError = 0.1; // в метрах
 
                 SINSstate.SINS_is_accurateMounted_by_kappa_1 = true;
                 SINSstate.SINS_is_accurateMounted_by_kappa_3 = true;

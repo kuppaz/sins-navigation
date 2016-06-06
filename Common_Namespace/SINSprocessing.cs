@@ -441,7 +441,7 @@ namespace Common_Namespace
                 ;
 
             double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
-            //sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
+            sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
             //sqrt_freq = 1.0;
 
 
@@ -935,7 +935,7 @@ namespace Common_Namespace
 
 
             //--- Интегрируем вертикальную скорость ---//
-            if (SINSstate.flag_SeparateHorizVSVertical || SINSstate.flag_iMx_r3_dV3)
+            if ((SINSstate.flag_SeparateHorizVSVertical || SINSstate.flag_iMx_r3_dV3) && SINSstate.flag_Autonomous_Solution == false)
             {
                 dVh = SINSstate.F_x[2] - SINSstate.g + (Vx_0[0] + Vx_0_prev[0]) / 2.0 * (2 * u[1] + SINSstate.Omega_x[1]) - (Vx_0[1] + Vx_0_prev[1]) / 2.0 * (2 * u[0] + SINSstate.Omega_x[0]);
                 Vx_0[2] += dVh * SINSstate.timeStep;

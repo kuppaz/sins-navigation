@@ -163,7 +163,7 @@ namespace Common_Namespace
 
 
 
-        public static void Make_H_CONTROLPOINTS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod, double Latitude_CP, double Longitude_CP, double Altitude_CP)
+        public static void Make_H_CONTROLPOINTS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod, double Latitude_CP, double Longitude_CP, double Altitude_CP, double NoiseValue)
         {
             int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
@@ -187,8 +187,8 @@ namespace Common_Namespace
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - Longitude_CP) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - Latitude_CP) * SINSstate.R_n;
 
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.Noise_GPS_PositionError;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = NoiseValue;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = NoiseValue;
                 KalmanVars.cnt_measures += 2;
 
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + iMx_r12_odo + 0] = 1.0;
@@ -197,8 +197,8 @@ namespace Common_Namespace
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate_OdoMod.Longitude - Longitude_CP) * SINSstate_OdoMod.R_e * Math.Cos(SINSstate_OdoMod.Latitude);
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate_OdoMod.Latitude - Latitude_CP) * SINSstate_OdoMod.R_n;
 
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.Noise_GPS_PositionError;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = NoiseValue;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = NoiseValue;
                 KalmanVars.cnt_measures += 2;
             }
 
@@ -206,12 +206,12 @@ namespace Common_Namespace
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dr3] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Height - Altitude_CP;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = NoiseValue;
                 KalmanVars.cnt_measures += 1;
 
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + SINSstate.value_iMx_r_odo_3] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate_OdoMod.Height - Altitude_CP;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = NoiseValue;
                 KalmanVars.cnt_measures += 1;
             }
 
@@ -223,10 +223,10 @@ namespace Common_Namespace
             // ----------------------------------------------------------//
             if (SINSstate.flag_SeparateHorizVSVertical == true && Altitude_CP != 0.0)
             {
-                double VerticalNoise = SINSstate.Noise_GPS_PositionError;
+                double VerticalNoise = NoiseValue;
 
                 if (Latitude_CP == 0 && Longitude_CP == 0)
-                    VerticalNoise = 0.05;
+                    VerticalNoise = 0.01;
 
                 KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 0) * SimpleData.iMx_Vertical + 0] = 1.0;
                 KalmanVars.Vertical_Matrix_H[(KalmanVars.Vertical_cnt_measures + 1) * SimpleData.iMx_Vertical + SINSstate.Vertical_rOdo3] = 1.0;
@@ -614,7 +614,7 @@ namespace Common_Namespace
             SINSprocessing.MatrixNoise_ReDef(SINSstate, KalmanVars, SINSstate.flag_Alignment);
 
             double sqrt_freq = Math.Sqrt(SINSstate.Freq);
-            //sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
+            sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
             //sqrt_freq = 1.0;
 
 

@@ -10,7 +10,7 @@ namespace Common_Namespace
         //--------------------------------------------------------------------------
         //--------------------------ПОЗИЦИОННАЯ КОРЕКЦИЯ CHECKPOINTS-----------------------------
         //--------------------------------------------------------------------------
-        public static void Make_H_CONTROLPOINTS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod, double Latitude_CP, double Longitude_CP, double Altitude_CP)
+        public static void Make_H_CONTROLPOINTS(Kalman_Vars KalmanVars, SINS_State SINSstate, SINS_State SINSstate_OdoMod, double Latitude_CP, double Longitude_CP, double Altitude_CP, double NoiseValue)
         {
             int iMx = SimpleData.iMx, iMz = SimpleData.iMz, iMq = SimpleData.iMq, iMx_kappa_3_ds = SINSstate.value_iMx_kappa_3_ds, iMx_kappa_1 = SINSstate.value_iMx_kappa_1,
                 iMx_r12_odo = SINSstate.value_iMx_r_odo_12, value_iMx_dr3 = SINSstate.value_iMx_dr3, value_iMx_dV3 = SINSstate.value_iMx_dV3;
@@ -32,8 +32,8 @@ namespace Common_Namespace
             KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = (SINSstate.Longitude - Longitude_CP) * SINSstate.R_e * Math.Cos(SINSstate.Latitude);
             KalmanVars.Measure[(KalmanVars.cnt_measures + 1)] = (SINSstate.Latitude - Latitude_CP) * SINSstate.R_n;
 
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
-            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = SINSstate.Noise_GPS_PositionError;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = NoiseValue;
+            KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 1)] = NoiseValue;
 
             KalmanVars.cnt_measures += 2;
 
@@ -41,7 +41,7 @@ namespace Common_Namespace
             {
                 KalmanVars.Matrix_H[(KalmanVars.cnt_measures + 0) * iMx + value_iMx_dr3] = 1.0;
                 KalmanVars.Measure[(KalmanVars.cnt_measures + 0)] = SINSstate.Height - Altitude_CP;
-                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = SINSstate.Noise_GPS_PositionError;
+                KalmanVars.Noize_Z[(KalmanVars.cnt_measures + 0)] = NoiseValue;
 
                 KalmanVars.cnt_measures += 1;
             }
