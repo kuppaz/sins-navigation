@@ -156,64 +156,64 @@ namespace SINS_motion_processing_new_data
                                                         for (this.global_flag_AccuracyClass_vert = 0.02; this.global_flag_AccuracyClass_vert <= 0.21; this.global_flag_AccuracyClass_vert *= 10.0)
                                                         {
                                                             // === === === === === === === === ===//
-                                                            //this.StartParamScanning = true;
-                                                            //this.Single_Navigation_Processing();
+                                                            this.StartParamScanning = true;
+                                                            this.Single_Navigation_Processing();
                                                             // === === === === === === === === ===//
 
                                                             i++;
 
-                                                            //double[] array_kappa1_grad = new double[this.global_indx - 1]
-                                                            //    , array_kappa3_grad = new double[this.global_indx - 1]
-                                                            //    , array_scale = new double[this.global_indx - 1]
-                                                            //    , array_HorizontalError = new double[this.global_indx - 1]
-                                                            //    , array_HorizontalErrorFromStart = new double[this.global_indx - 1]
-                                                            //    , array_VerticalError = new double[this.global_indx - 1]
-                                                            //    , array_V_Up = new double[this.global_indx - 1]
-                                                            //    ;
+                                                            double[] array_kappa1_grad = new double[this.global_indx - 1]
+                                                                , array_kappa3_grad = new double[this.global_indx - 1]
+                                                                , array_scale = new double[this.global_indx - 1]
+                                                                , array_HorizontalError = new double[this.global_indx - 1]
+                                                                , array_HorizontalErrorFromStart = new double[this.global_indx - 1]
+                                                                , array_VerticalError = new double[this.global_indx - 1]
+                                                                , array_V_Up = new double[this.global_indx - 1]
+                                                                ;
 
-                                                            //SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
-                                                            //SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
-                                                            //SimpleOperations.CopyArray(array_scale, this.global_scale);
-                                                            //SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
-                                                            //SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
-                                                            //SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
-                                                            //for (int r = 0; r < array_VerticalError.Length; r++)
-                                                            //    array_VerticalError[r] = Math.Abs(array_VerticalError[r]);
-                                                            //SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
+                                                            SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
+                                                            SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
+                                                            SimpleOperations.CopyArray(array_scale, this.global_scale);
+                                                            SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
+                                                            SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
+                                                            SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
+                                                            for (int r = 0; r < array_VerticalError.Length; r++)
+                                                                array_VerticalError[r] = Math.Abs(array_VerticalError[r]);
+                                                            SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
 
-                                                            //string str_out = "";
-                                                            //str_out += i
-                                                            //    //+ " NoisModl=" + global_NoiseModelFlag
-                                                            //    //+ " eqlzVert=" + global_flag_equalizeVertNoise
-                                                            //    //+ " MyCorr=" + global_MyOwnKalman_Korrection
-                                                            //    //+ " CoordNois=" + global_CoordinateNoiseExist
-                                                            //    + " OdoCntZ=" + global_OdoLimitMeasuresNum
-                                                            //    + " OdoQz=" + global_odo_measure_noise
-                                                            //    + " OdoQzV=" + global_odo_measure_noise_Vertical
-                                                            //    + " Class=" + global_flag_AccuracyClass
-                                                            //    + " ClassVert=" + global_flag_AccuracyClass_vert
-                                                            //    ;
-                                                            //if (global_NoiseModelFlag == 0)
-                                                            //{
-                                                            //    str_out += " Noise=NO NoiseV=NO";
-                                                            //}
-                                                            //else
-                                                            //{
-                                                            //    str_out += " Noise=" + this.Cicle_Noise_Angular;
-                                                            //    str_out += " NoiseV=" + this.Cicle_Noise_Angular_Vert;
-                                                            //}
+                                                            string str_out = "";
+                                                            str_out += i
+                                                                //+ " NoisModl=" + global_NoiseModelFlag
+                                                                //+ " eqlzVert=" + global_flag_equalizeVertNoise
+                                                                //+ " MyCorr=" + global_MyOwnKalman_Korrection
+                                                                //+ " CoordNois=" + global_CoordinateNoiseExist
+                                                                + " OdoCntZ=" + global_OdoLimitMeasuresNum
+                                                                + " OdoQz=" + global_odo_measure_noise
+                                                                + " OdoQzV=" + global_odo_measure_noise_Vertical
+                                                                + " Class=" + global_flag_AccuracyClass
+                                                                + " ClassVert=" + global_flag_AccuracyClass_vert
+                                                                ;
+                                                            if (global_NoiseModelFlag == 0)
+                                                            {
+                                                                str_out += " Noise=NO NoiseV=NO";
+                                                            }
+                                                            else
+                                                            {
+                                                                str_out += " Noise=" + this.Cicle_Noise_Angular;
+                                                                str_out += " NoiseV=" + this.Cicle_Noise_Angular_Vert;
+                                                            }
 
-                                                            //if (this.global_indx > 1)
-                                                            //    str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
-                                                            //        + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
-                                                            //        + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(this.global_VerticalError[this.global_indx - 2], 3)
-                                                            //        + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
-                                                            //        + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
-                                                            //        + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
-                                                            //        + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
-                                                            //        ;
+                                                            if (this.global_indx > 1)
+                                                                str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                                                    + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
+                                                                    + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(this.global_VerticalError[this.global_indx - 2], 3)
+                                                                    + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
+                                                                    + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
+                                                                    + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
+                                                                    + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
+                                                                    ;
 
-                                                            //Cycle_Start_Configuratieons.WriteLine(str_out);
+                                                            Cycle_Start_Configurations.WriteLine(str_out);
                                                         }
                                                     }
                                                 }
