@@ -44,15 +44,15 @@ namespace SINS_motion_processing_new_data
 
         public static StreamWriter GRTV_output = new StreamWriter(SimpleData.PathOutputString + "S_GRTV_output.txt");
 
-        private bool NoiseParamScanning = false,
-                     StartParamScanning = false;
-        private double Cicle_Noise_Velocity = 0, Cicle_Noise_Angular = 0;
+        private bool StartParamScanning = false;
+        private double Cicle_Noise_Velocity = 0, Cicle_Noise_Angular = 0
+            , Cicle_Noise_Velocity_Vert = 0, Cicle_Noise_Angular_Vert = 0;
 
-        private double global_flag_AccuracyClass = 0
+        private double global_flag_AccuracyClass = 0, global_flag_AccuracyClass_vert = 0
                 , global_odo_measure_noise = 0
                 , global_odo_measure_noise_Vertical = 0;
 
-        private int global_NoiseModelFlag = 0
+        private int global_NoiseModelFlag = 0, global_NoiseModelFlag_vert = 0
                 , global_flag_equalizeVertNoise = 0
                 , global_MyOwnKalman_Korrection = 0
                 , global_CoordinateNoiseExist = 0
@@ -96,12 +96,13 @@ namespace SINS_motion_processing_new_data
         private void CycleStartParamChoosing_Click(object sender, EventArgs e)
         {
             double NoiseVel_start = 1E-3,
-                   NoiseVel_end = 1E-3,
+                   NoiseVel_end = 1E-2,
                    NoiseVel_multpl = 10.0;
 
             StreamWriter Cycle_Start_Configurations = new StreamWriter(SimpleData.PathOutputString + "CycleParamScanning//[] Cycle_Start_Configurations.txt");
 
-            string str = "Count NoisModl eqlzVert MyCorr CoordNois OdoCntZ OdoIncr OdoIncrV Class Noise ";
+            //string str = "Count NoisModl eqlzVert MyCorr CoordNois OdoCntZ OdoIncr OdoIncrV Class Noise ";
+            string str = "Count OdoCntZ OdoIncr OdoIncrV Class ClassV Noise NoiseV ";
             str += "HorErr_AVG HorErr_MAX HorErr_END HorStartErr_END ";
             str += "VertErr_AVG VertErr_MAX VertErr_END ";
             str += "V_Up_AVG V_Up_SPRD V_Up_END ";
@@ -113,88 +114,109 @@ namespace SINS_motion_processing_new_data
             int i = 0;
             for (this.global_NoiseModelFlag = 0; this.global_NoiseModelFlag <= 1; this.global_NoiseModelFlag++)
             {
-                for (this.Cicle_Noise_Velocity = NoiseVel_start; this.Cicle_Noise_Velocity <= NoiseVel_end; this.Cicle_Noise_Velocity = this.Cicle_Noise_Velocity * NoiseVel_multpl)
+                for (this.global_NoiseModelFlag_vert = 0; this.global_NoiseModelFlag_vert <= 1; this.global_NoiseModelFlag_vert++)
                 {
-                    this.Cicle_Noise_Angular = this.Cicle_Noise_Velocity / 100.0;
-                    if (this.global_NoiseModelFlag == 0)
-                        this.Cicle_Noise_Velocity = NoiseVel_end;
-                    //====================== 
-
-                    for (this.global_flag_equalizeVertNoise = 1; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
+                    for (this.Cicle_Noise_Velocity = NoiseVel_start; this.Cicle_Noise_Velocity <= NoiseVel_end; this.Cicle_Noise_Velocity *= NoiseVel_multpl)
                     {
-                        if (this.global_NoiseModelFlag == 1)
-                            this.global_flag_equalizeVertNoise = 1;
+                        this.Cicle_Noise_Angular = this.Cicle_Noise_Velocity / 100.0;
+                        if (this.global_NoiseModelFlag == 0)
+                            this.Cicle_Noise_Velocity = NoiseVel_end;
                         //====================== 
 
-                        // -- Параметр использования собственного алгоритма коррекции ФК --//
-                        for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 0; this.global_MyOwnKalman_Korrection++)
+                        for (this.Cicle_Noise_Velocity_Vert = NoiseVel_start; this.Cicle_Noise_Velocity_Vert <= NoiseVel_end; this.Cicle_Noise_Velocity_Vert *= NoiseVel_multpl)
                         {
-                            // -- Параметр использования шума по горизонтальным координатам --//
-                            for (this.global_CoordinateNoiseExist = 1; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
+                            this.Cicle_Noise_Angular_Vert = this.Cicle_Noise_Velocity_Vert / 100.0;
+                            if (this.global_NoiseModelFlag_vert == 0)
+                                this.Cicle_Noise_Velocity_Vert = NoiseVel_end;
+                            //====================== 
+
+                            for (this.global_flag_equalizeVertNoise = 1; this.global_flag_equalizeVertNoise <= 1; this.global_flag_equalizeVertNoise++)
                             {
-                                // -- Параметры частоты фиксации показаний одометра (в шт. её обновления) --// Если 0, то берется из настроечных параметров
-                                for (this.global_OdoLimitMeasuresNum = 1; this.global_OdoLimitMeasuresNum <= 10; this.global_OdoLimitMeasuresNum += 2)
+                                if (this.global_NoiseModelFlag == 1)
+                                    this.global_flag_equalizeVertNoise = 1;
+                                //====================== 
+
+                                // -- Параметр использования собственного алгоритма коррекции ФК --//
+                                for (this.global_MyOwnKalman_Korrection = 0; this.global_MyOwnKalman_Korrection <= 0; this.global_MyOwnKalman_Korrection++)
                                 {
-                                    // -- Параметры матрицы начальной ковариации --// Если 0, то берется из настроечных параметров
-                                    for (this.global_odo_measure_noise = 0.5; this.global_odo_measure_noise <= 3.1; this.global_odo_measure_noise += 0.5)
+                                    // -- Параметр использования шума по горизонтальным координатам --//
+                                    for (this.global_CoordinateNoiseExist = 1; this.global_CoordinateNoiseExist <= 1; this.global_CoordinateNoiseExist++)
                                     {
-                                        for (this.global_odo_measure_noise_Vertical = 0.5; this.global_odo_measure_noise_Vertical <= 5.1; this.global_odo_measure_noise_Vertical += 1.0)
+                                        // -- Параметры частоты фиксации показаний одометра (в шт. её обновления) --// Если 0, то берется из настроечных параметров
+                                        for (this.global_OdoLimitMeasuresNum = 3; this.global_OdoLimitMeasuresNum <= 8; this.global_OdoLimitMeasuresNum += 2)
                                         {
-                                            // -- Параметры матрицы начальной ковариации --//
-                                            for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass *= 10.0)
+                                            // -- Параметры матрицы начальной ковариации --// Если 0, то берется из настроечных параметров
+                                            for (this.global_odo_measure_noise = 0.5; this.global_odo_measure_noise <= 2.6; this.global_odo_measure_noise += 1.0)
                                             {
-                                                // === === === === === === === === ===//
-                                                this.StartParamScanning = true;
-                                                this.Single_Navigation_Processing();
-                                                // === === === === === === === === ===//
+                                                for (this.global_odo_measure_noise_Vertical = 0.5; this.global_odo_measure_noise_Vertical <= 4.1; this.global_odo_measure_noise_Vertical += 1.5)
+                                                {
+                                                    // -- Параметры матрицы начальной ковариации --//
+                                                    for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass *= 10.0)
+                                                    {
+                                                        for (this.global_flag_AccuracyClass_vert = 0.02; this.global_flag_AccuracyClass_vert <= 0.21; this.global_flag_AccuracyClass_vert *= 10.0)
+                                                        {
+                                                            // === === === === === === === === ===//
+                                                            //this.StartParamScanning = true;
+                                                            //this.Single_Navigation_Processing();
+                                                            // === === === === === === === === ===//
 
-                                                i++;
+                                                            i++;
 
-                                                double[] array_kappa1_grad = new double[this.global_indx - 1]
-                                                    , array_kappa3_grad = new double[this.global_indx - 1]
-                                                    , array_scale = new double[this.global_indx - 1]
-                                                    , array_HorizontalError = new double[this.global_indx - 1]
-                                                    , array_HorizontalErrorFromStart = new double[this.global_indx - 1]
-                                                    , array_VerticalError = new double[this.global_indx - 1]
-                                                    , array_V_Up = new double[this.global_indx - 1]
-                                                    ;
+                                                            //double[] array_kappa1_grad = new double[this.global_indx - 1]
+                                                            //    , array_kappa3_grad = new double[this.global_indx - 1]
+                                                            //    , array_scale = new double[this.global_indx - 1]
+                                                            //    , array_HorizontalError = new double[this.global_indx - 1]
+                                                            //    , array_HorizontalErrorFromStart = new double[this.global_indx - 1]
+                                                            //    , array_VerticalError = new double[this.global_indx - 1]
+                                                            //    , array_V_Up = new double[this.global_indx - 1]
+                                                            //    ;
 
-                                                SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
-                                                SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
-                                                SimpleOperations.CopyArray(array_scale, this.global_scale);
-                                                SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
-                                                SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
-                                                SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
-                                                for (int r = 0; r < array_VerticalError.Length; r++)
-                                                    array_VerticalError[r] = Math.Abs(array_VerticalError[r]);
-                                                SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
+                                                            //SimpleOperations.CopyArray(array_kappa1_grad, this.global_kappa1_grad);
+                                                            //SimpleOperations.CopyArray(array_kappa3_grad, this.global_kappa3_grad);
+                                                            //SimpleOperations.CopyArray(array_scale, this.global_scale);
+                                                            //SimpleOperations.CopyArray(array_HorizontalError, this.global_HorizontalError);
+                                                            //SimpleOperations.CopyArray(array_HorizontalErrorFromStart, this.global_HorizontalErrorFromStart);
+                                                            //SimpleOperations.CopyArray(array_VerticalError, this.global_VerticalError);
+                                                            //for (int r = 0; r < array_VerticalError.Length; r++)
+                                                            //    array_VerticalError[r] = Math.Abs(array_VerticalError[r]);
+                                                            //SimpleOperations.CopyArray(array_V_Up, this.global_V_Up);
 
-                                                string str_out = "";
-                                                str_out += i + " NoisModl=" + global_NoiseModelFlag
-                                                    + " eqlzVert=" + global_flag_equalizeVertNoise
-                                                    + " MyCorr=" + global_MyOwnKalman_Korrection
-                                                    + " CoordNois=" + global_CoordinateNoiseExist
-                                                    + " OdoCntZ=" + global_OdoLimitMeasuresNum
-                                                    + " OdoQz=" + global_odo_measure_noise
-                                                    + " OdoQzV=" + global_odo_measure_noise_Vertical
-                                                    + " Class=" + global_flag_AccuracyClass
-                                                    ;
-                                                if (global_NoiseModelFlag == 0)
-                                                    str_out += " Noise=NO";
-                                                else
-                                                    str_out += " Noise=" + this.Cicle_Noise_Angular;
+                                                            //string str_out = "";
+                                                            //str_out += i
+                                                            //    //+ " NoisModl=" + global_NoiseModelFlag
+                                                            //    //+ " eqlzVert=" + global_flag_equalizeVertNoise
+                                                            //    //+ " MyCorr=" + global_MyOwnKalman_Korrection
+                                                            //    //+ " CoordNois=" + global_CoordinateNoiseExist
+                                                            //    + " OdoCntZ=" + global_OdoLimitMeasuresNum
+                                                            //    + " OdoQz=" + global_odo_measure_noise
+                                                            //    + " OdoQzV=" + global_odo_measure_noise_Vertical
+                                                            //    + " Class=" + global_flag_AccuracyClass
+                                                            //    + " ClassVert=" + global_flag_AccuracyClass_vert
+                                                            //    ;
+                                                            //if (global_NoiseModelFlag == 0)
+                                                            //{
+                                                            //    str_out += " Noise=NO NoiseV=NO";
+                                                            //}
+                                                            //else
+                                                            //{
+                                                            //    str_out += " Noise=" + this.Cicle_Noise_Angular;
+                                                            //    str_out += " NoiseV=" + this.Cicle_Noise_Angular_Vert;
+                                                            //}
 
-                                                if (this.global_indx > 1)
-                                                    str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
-                                                        + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
-                                                        + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(this.global_VerticalError[this.global_indx - 2], 3)
-                                                        + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
-                                                        + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
-                                                        + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
-                                                        + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
-                                                        ;
+                                                            //if (this.global_indx > 1)
+                                                            //    str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
+                                                            //        + " " + Math.Round(array_HorizontalErrorFromStart[this.global_indx - 2], 3)
+                                                            //        + " " + Math.Round(array_VerticalError.Average(), 3) + " " + Math.Round(array_VerticalError.Max(), 3) + " " + Math.Round(this.global_VerticalError[this.global_indx - 2], 3)
+                                                            //        + " " + Math.Round(array_V_Up.Average(), 3) + " " + Math.Round(array_V_Up.Max() - array_V_Up.Min(), 3) + " " + Math.Round(array_V_Up[this.global_indx - 2], 3)
+                                                            //        + " " + Math.Round(array_kappa1_grad.Average(), 5) + " " + Math.Round(array_kappa1_grad.Max() - array_kappa1_grad.Min(), 5) + " " + Math.Round(array_kappa1_grad[this.global_indx - 2], 5)
+                                                            //        + " " + Math.Round(array_kappa3_grad.Average(), 5) + " " + Math.Round(array_kappa3_grad.Max() - array_kappa3_grad.Min(), 5) + " " + Math.Round(array_kappa3_grad[this.global_indx - 2], 5)
+                                                            //        + " " + Math.Round(array_scale.Average(), 5) + " " + Math.Round(array_scale.Max() - array_scale.Min(), 5) + " " + Math.Round(array_scale[this.global_indx - 2], 5)
+                                                            //        ;
 
-                                                Cycle_Start_Configurations.WriteLine(str_out);
+                                                            //Cycle_Start_Configuratieons.WriteLine(str_out);
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -208,166 +230,6 @@ namespace SINS_motion_processing_new_data
             Cycle_Start_Configurations.Close();
             this.Close();
         }
-
-
-
-
-
-        private void NoiseParamsScanning_Click(object sender, EventArgs e)
-        {
-            double NoiseVel_start = 1E-4,
-                   NoiseVel_end = 1E-1,
-                   NoiseVel_multpl = 5.0;
-
-            double NoiseAngl_start = 1E-4,
-                   NoiseAngl_end = 1E-1,
-                   NoiseAngl_multpl = 5.0;
-
-            for (this.Cicle_Noise_Velocity = NoiseVel_start; this.Cicle_Noise_Velocity <= NoiseVel_end; this.Cicle_Noise_Velocity = this.Cicle_Noise_Velocity * NoiseVel_multpl)
-            {
-                for (this.Cicle_Noise_Angular = NoiseAngl_start; this.Cicle_Noise_Angular <= NoiseAngl_end; this.Cicle_Noise_Angular = this.Cicle_Noise_Angular * NoiseAngl_multpl)
-                {
-                    this.NoiseParamScanning = true;
-                    this.Single_Navigation_Processing();
-                }
-            }
-
-
-            int j = 0;
-            string datastring = "";
-            string[] dataArray;
-
-            for (this.Cicle_Noise_Velocity = NoiseVel_start; this.Cicle_Noise_Velocity <= NoiseVel_end; this.Cicle_Noise_Velocity = this.Cicle_Noise_Velocity * NoiseVel_multpl)
-            {
-                for (this.Cicle_Noise_Angular = NoiseAngl_start; this.Cicle_Noise_Angular <= NoiseAngl_end; this.Cicle_Noise_Angular = this.Cicle_Noise_Angular * NoiseAngl_multpl)
-                {
-                    j++;
-                    StreamReader Cicle_Debag_Solution = new StreamReader(SimpleData.PathOutputString + "Debaging//Solution_"
-                        + this.Cicle_Noise_Angular.ToString("E2") + "_" + this.Cicle_Noise_Velocity.ToString("E2") + ".txt");
-
-                    if (j == 1)
-                    {
-                        for (; ; )
-                        {
-                            string tmpstr = Cicle_Debag_Solution.ReadLine();
-                            if (Cicle_Debag_Solution.EndOfStream) break;
-                            noiseParam_LastCountForRead++;
-                        }
-                        Cicle_Debag_Solution.Close();
-                        Cicle_Debag_Solution = new StreamReader(SimpleData.PathOutputString + "Debaging//Solution_"
-                            + this.Cicle_Noise_Angular.ToString("E2") + "_" + this.Cicle_Noise_Velocity.ToString("E2") + ".txt");
-
-                        FileStream fs = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
-                        fs.Close();
-                        FileStream fs2 = File.Create(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
-                        fs2.Close();
-                    }
-
-                    StreamWriter NoiseParam_CicleScanning_HorizError = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.csv");
-                    StreamWriter NoiseParam_CicleScanning_Height = new StreamWriter(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.csv");
-
-                    StreamReader NoiseParam_CicleScanning_HorizError_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
-                    StreamReader NoiseParam_CicleScanning_Height_Read = new StreamReader(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
-
-
-                    double[] minDataArray = new double[10];
-                    double[] maxDataArray = new double[10];
-                    for (int y = 0; y < minDataArray.Length; y++)
-                        minDataArray[y] = 1000000.0;
-
-                    for (int i = 0; i <= this.noiseParam_LastCountForRead; i++)
-                    {
-                        datastring = Cicle_Debag_Solution.ReadLine();
-                        dataArray = datastring.Split(' ');
-
-
-                        string str = "";
-                        if (j == 1)
-                        {
-                            if (i == 0)
-                                NoiseParam_CicleScanning_HorizError.WriteLine("Time;" + this.Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
-                            str = dataArray[0] + ";" + dataArray[2];
-                        }
-                        else
-                        {
-                            if (i == 0)
-                                NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine()
-                                    + ";" + this.Cicle_Noise_Velocity.ToString("E2") + "_" + Cicle_Noise_Angular.ToString("E2"));
-                            str = NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + dataArray[2];
-                        }
-                        if (Convert.ToDouble(dataArray[2]) < minDataArray[2])
-                            minDataArray[2] = Convert.ToDouble(dataArray[2]);
-                        if (Convert.ToDouble(dataArray[2]) > maxDataArray[2])
-                            maxDataArray[2] = Convert.ToDouble(dataArray[2]);
-                        NoiseParam_CicleScanning_HorizError.WriteLine(str);
-
-
-                        str = "";
-                        if (j == 1)
-                        {
-                            if (i == 0)
-                                NoiseParam_CicleScanning_Height.WriteLine("Time;" + this.Cicle_Noise_Velocity.ToString("E2") + "_" + this.Cicle_Noise_Angular.ToString("E2"));
-                            str = dataArray[0] + ";" + dataArray[1];
-                        }
-                        else
-                        {
-                            if (i == 0)
-                                NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";"
-                                    + this.Cicle_Noise_Velocity.ToString("E2") + "_" + this.Cicle_Noise_Angular.ToString("E2"));
-                            str = NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + dataArray[1];
-                        }
-                        if (Convert.ToDouble(dataArray[1]) < minDataArray[1])
-                            minDataArray[1] = Convert.ToDouble(dataArray[1]);
-                        if (Convert.ToDouble(dataArray[1]) > maxDataArray[1])
-                            maxDataArray[1] = Convert.ToDouble(dataArray[1]);
-                        NoiseParam_CicleScanning_Height.WriteLine(str);
-                    }
-
-                    if (j == 1)
-                    {
-                        NoiseParam_CicleScanning_Height.WriteLine("Min;" + minDataArray[1]);
-                        NoiseParam_CicleScanning_Height.WriteLine("Max;" + maxDataArray[1]);
-                        NoiseParam_CicleScanning_Height.WriteLine("Diff;" + (maxDataArray[1] - minDataArray[1]));
-
-                        NoiseParam_CicleScanning_HorizError.WriteLine("Min;" + minDataArray[2]);
-                        NoiseParam_CicleScanning_HorizError.WriteLine("Max;" + maxDataArray[2]);
-                        NoiseParam_CicleScanning_HorizError.WriteLine("Diff;" + (maxDataArray[2] - minDataArray[2]));
-                    }
-                    else
-                    {
-                        NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + minDataArray[1]);
-                        NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + maxDataArray[1]);
-                        NoiseParam_CicleScanning_Height.WriteLine(NoiseParam_CicleScanning_Height_Read.ReadLine() + ";" + (maxDataArray[1] - minDataArray[1]));
-
-                        NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + minDataArray[2]);
-                        NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + maxDataArray[2]);
-                        NoiseParam_CicleScanning_HorizError.WriteLine(NoiseParam_CicleScanning_HorizError_Read.ReadLine() + ";" + (maxDataArray[2] - minDataArray[2]));
-                    }
-
-                    NoiseParam_CicleScanning_HorizError.Close();
-                    NoiseParam_CicleScanning_HorizError_Read.Close();
-                    NoiseParam_CicleScanning_Height.Close();
-                    NoiseParam_CicleScanning_Height_Read.Close();
-
-                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
-                    File.Delete(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
-                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError_.csv", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_HorizError.csv");
-                    File.Move(SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height_.csv", SimpleData.PathOutputString + "Debaging//NoiseParam_CicleScanning_Height.csv");
-
-
-                    Cicle_Debag_Solution.Close();
-                    File.Delete(SimpleData.PathOutputString + "Debaging//Solution_"
-                        + this.Cicle_Noise_Angular.ToString("E2") + "_" + this.Cicle_Noise_Velocity.ToString("E2") + ".txt");
-                }
-            }
-
-
-            GRTV_output.Close();
-            this.Close();
-        }
-
-
-
 
 
 
@@ -437,6 +299,7 @@ namespace SINS_motion_processing_new_data
                     + ";odoQz=" + this.global_odo_measure_noise.ToString()
                     + ";odoQzV=" + this.global_odo_measure_noise_Vertical.ToString()
                     + ";cls=" + this.global_flag_AccuracyClass.ToString()
+                    + ";clsV=" + this.global_flag_AccuracyClass_vert.ToString()
                     ;
                 if (global_NoiseModelFlag == 0)
                     SINSstate.global_paramsCycleScanning += ";Noise=NO";
@@ -458,6 +321,15 @@ namespace SINS_motion_processing_new_data
                     ParamStart.Experiment_Noise_Angl = ParamStart.Imitator_Noise_Angl = this.Cicle_Noise_Angular;
                 }
 
+                if (global_NoiseModelFlag_vert == 0)
+                    ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                else
+                {
+                    ParamStart.Experiment_NoiseModelFlag_Vert = true;
+                    ParamStart.Experiment_Noise_Vel_vert = this.Cicle_Noise_Velocity_Vert;
+                    ParamStart.Experiment_Noise_Angl_vert = this.Cicle_Noise_Angular_Vert;
+                }
+
                 if (global_CoordinateNoiseExist == 0)
                     this.iMqDeltaR.Checked = this.iMqDeltaRodo.Checked = SINSstate.flag_iMqDeltaR = SINSstate.flag_iMqDeltaRodo = false;
                 else
@@ -475,6 +347,8 @@ namespace SINS_motion_processing_new_data
                 if (this.global_flag_AccuracyClass == 0.02) { SINSstate.flag_AccuracyClass_0_02grph = true; SINSstate.flag_AccuracyClass_0_2_grph = false; SINSstate.flag_AccuracyClass_2_0_grph = false; }
                 if (this.global_flag_AccuracyClass == 0.2) { SINSstate.flag_AccuracyClass_0_02grph = false; SINSstate.flag_AccuracyClass_0_2_grph = true; SINSstate.flag_AccuracyClass_2_0_grph = false; }
                 if (this.global_flag_AccuracyClass == 2.0) { SINSstate.flag_AccuracyClass_0_02grph = false; SINSstate.flag_AccuracyClass_0_2_grph = false; SINSstate.flag_AccuracyClass_2_0_grph = true; }
+
+                SINSstate.global_flag_AccuracyClass_vert = this.global_flag_AccuracyClass_vert;
 
                 SINSstate.flag_equalizeVertNoise = false;
                 if (this.global_flag_equalizeVertNoise == 1)
@@ -533,8 +407,12 @@ namespace SINS_motion_processing_new_data
                     {
                         KalmanVars.Noise_Vel[j] = ParamStart.Experiment_Noise_Vel;
                         KalmanVars.Noise_Angl[j] = ParamStart.Experiment_Noise_Angl;
-
                     }
+                }
+                if (ParamStart.Experiment_NoiseModelFlag_Vert)
+                {
+                    KalmanVars.Noise_Vel[2] = ParamStart.Experiment_Noise_Vel_vert;
+                    KalmanVars.Noise_Angl[2] = ParamStart.Experiment_Noise_Angl_vert;
                 }
 
                 //---Для экспериментальных данных SINSstate.stdF_Oz будут равны SINSstate.stdF, т.к. далее используются в нач.ков. матрице
@@ -570,17 +448,6 @@ namespace SINS_motion_processing_new_data
                 Odometr_SINS.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
             else
                 SINSprocessing.InitOfCovarianceMatrixes(SINSstate, KalmanVars);
-
-
-            //--- Если запустили циклический подбор параметров шумов ---//
-            if (this.NoiseParamScanning)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    KalmanVars.Noise_Vel[j] = this.Cicle_Noise_Velocity;
-                    KalmanVars.Noise_Angl[j] = this.Cicle_Noise_Angular;
-                }
-            }
 
 
 

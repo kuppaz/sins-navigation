@@ -373,8 +373,6 @@ namespace Common_Namespace
             }
 
 
-
-
             // ---------------------ВЕРТИКАЛЬНЫЙ КАНАЛ ОТДЕЛЬНО-----------------------------//
             if (SINSstate.flag_SeparateHorizVSVertical == true)
             {
@@ -419,6 +417,33 @@ namespace Common_Namespace
                             = KalmanVars.Vertical_CovarianceMatrixS_p[(vert_kappa3d + 1) * SimpleData.iMx_Vertical + (vert_kappa3d + 1)] = SINSstate.stdScale;
                     }
                 }
+            }
+
+
+            if (SINSstate.global_flag_AccuracyClass_vert > 0.001)
+            {
+                double stdF_tmp = 0, stdNu_tmp = 0;
+
+                if (SINSstate.global_flag_AccuracyClass_vert == 0.02)
+                {
+                    stdF_tmp = 1E-5 * 9.81;
+                    stdNu_tmp = 0.01;
+                }
+                if (SINSstate.global_flag_AccuracyClass_vert == 0.2)
+                {
+                    stdF_tmp = 1E-4 * 9.81;
+                    stdNu_tmp = 0.1;
+                }
+
+                KalmanVars.CovarianceMatrixS_m[(iMx_Nu0 + 2) * iMx + (iMx_Nu0 + 2)] = KalmanVars.CovarianceMatrixS_p[(iMx_Nu0 + 2) * iMx + (iMx_Nu0 + 2)] 
+                    = stdNu_tmp * SimpleData.ToRadian / 3600.0;
+
+                if (SINSstate.value_iMx_f0_3 > 0)
+                    KalmanVars.CovarianceMatrixS_m[(f0_3 + 0) * iMx + (f0_3 + 0)] = KalmanVars.CovarianceMatrixS_p[(f0_3 + 0) * iMx + (f0_3 + 0)] = stdF_tmp;
+
+                if (SINSstate.flag_SeparateHorizVSVertical == true)
+                    KalmanVars.Vertical_CovarianceMatrixS_m[SINSstate.Vertical_f0_3 * SimpleData.iMx_Vertical + SINSstate.Vertical_f0_3]
+                        = KalmanVars.Vertical_CovarianceMatrixS_p[SINSstate.Vertical_f0_3 * SimpleData.iMx_Vertical + SINSstate.Vertical_f0_3] = stdF_tmp;
             }
         }
 

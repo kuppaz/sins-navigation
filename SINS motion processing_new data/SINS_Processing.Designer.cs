@@ -107,7 +107,6 @@
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.iMqVarkappa1 = new System.Windows.Forms.CheckBox();
             this.flag_GRTV_output = new System.Windows.Forms.CheckBox();
-            this.NoiseParamsScanning = new System.Windows.Forms.Button();
             this.CycleStartParamChoosing = new System.Windows.Forms.Button();
             this.GRTV_ktn004_marsh16_afterbdnwin_20032012 = new System.Windows.Forms.CheckBox();
             this.GRTV_ktn004_marsh16_repeat_21032012 = new System.Windows.Forms.CheckBox();
@@ -1027,19 +1026,9 @@
             this.flag_GRTV_output.Text = "Output gor GRTV";
             this.flag_GRTV_output.UseVisualStyleBackColor = true;
             // 
-            // NoiseParamsScanning
-            // 
-            this.NoiseParamsScanning.Location = new System.Drawing.Point(929, 290);
-            this.NoiseParamsScanning.Name = "NoiseParamsScanning";
-            this.NoiseParamsScanning.Size = new System.Drawing.Size(83, 47);
-            this.NoiseParamsScanning.TabIndex = 84;
-            this.NoiseParamsScanning.Text = "Noise Params Scunning Start";
-            this.NoiseParamsScanning.UseVisualStyleBackColor = true;
-            this.NoiseParamsScanning.Click += new System.EventHandler(this.NoiseParamsScanning_Click);
-            // 
             // CycleStartParamChoosing
             // 
-            this.CycleStartParamChoosing.Location = new System.Drawing.Point(929, 347);
+            this.CycleStartParamChoosing.Location = new System.Drawing.Point(929, 286);
             this.CycleStartParamChoosing.Name = "CycleStartParamChoosing";
             this.CycleStartParamChoosing.Size = new System.Drawing.Size(83, 47);
             this.CycleStartParamChoosing.TabIndex = 86;
@@ -1089,7 +1078,6 @@
             this.Controls.Add(this.GRTV_ktn004_marsh16_repeat_21032012);
             this.Controls.Add(this.GRTV_ktn004_marsh16_afterbdnwin_20032012);
             this.Controls.Add(this.CycleStartParamChoosing);
-            this.Controls.Add(this.NoiseParamsScanning);
             this.Controls.Add(this.flag_GRTV_output);
             this.Controls.Add(this.groupBox17);
             this.Controls.Add(this.groupBox16);
@@ -1214,7 +1202,6 @@
         private System.Windows.Forms.CheckBox AccuracyClass_Custom;
         private System.Windows.Forms.CheckBox flag_onlyZeroSideVelocity;
         private System.Windows.Forms.CheckBox flag_GRTV_output;
-        private System.Windows.Forms.Button NoiseParamsScanning;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_zavod;
         private System.Windows.Forms.CheckBox GRTVout_GCEF_format_070715_kulikova;
         private System.Windows.Forms.CheckBox iMSmthd_Is_2_plus_Odo;

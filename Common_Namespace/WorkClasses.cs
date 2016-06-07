@@ -266,19 +266,20 @@ namespace Common_Namespace
         public bool SINS_is_accurateMounted_by_kappa_1, SINS_is_accurateMounted_by_kappa_3, SINS_is_accurateMounted_by_scaleError;
         public double OdometerStartValue;
         public bool AlgebraicCalibration_F_Zero;
+        public double global_flag_AccuracyClass_vert;
     }
 
 
     public class ParamToStart
     {
-        public double Experiment_Noise_Vel, Experiment_Noise_Angl;
+        public double Experiment_Noise_Vel, Experiment_Noise_Angl, Experiment_Noise_Vel_vert, Experiment_Noise_Angl_vert;
         public double Experiment_stdR;
         public double Experiment_stdOdoR;
         public double Experiment_stdV;
         public double Experiment_stdScale;
         public double Experiment_stdKappa1;
         public double Experiment_stdKappa3;
-        public bool Experiment_NoiseModelFlag;
+        public bool Experiment_NoiseModelFlag, Experiment_NoiseModelFlag_Vert;
         public double Experiment_GPS_PositionError, Experiment_Marker_PositionError;
 
         public bool Imitator_addNoisSample_DUS, Imitator_addNoisSample_ACCS;
