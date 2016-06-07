@@ -491,6 +491,15 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=1.5	Class=0.2	Noise=NO	26.859	63.593	55.028	29366.464	10.037	16.429	16.01
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=2.5	Class=0.2	Noise=NO	26.859	63.594	55.029	29366.466	10.125	16.601	16.255
 
+                // --- Forecast --- //
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2		OdoQzV=0.5	Class=0.2	Noise=NO	31.33	68.842	57.327	29373.995	7.626	12.009	10.258
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=NO	30.841	71.596	70.705	29329.953	7.764	12.261
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	30.843	71.603	70.711	29329.956	7.984	12.681
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2		OdoQzV=1.5	Class=0.2	Noise=NO	31.333	68.85	57.336	29373.999	7.847	12.429
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2		OdoQzV=2.5	Class=0.2	Noise=NO	31.333	68.85	57.337	29373.999	7.849	12.472
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1		OdoQzV=0.5	Class=0.2	Noise=NO	34.132	82.651	81.195	29314.41	8.886	14.236	13.555
+
+
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
@@ -605,6 +614,16 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=2.5	OdoQzV=3.5	Class=0.2	Noise=NO	38.994	87.933	72.397	71.383	21.423	57.061	-11.421
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=1.5	Class=0.02	Noise=NO	39.499	91.923	69.936	68.986	28.862	61.061	21.981
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=3	    OdoQzV=1.5	Class=0.02	Noise=NO	38.601	88.628	70.295	69.281	28.833	61.091	22.465
+
+                // --- Forecast --- //
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1		OdoQzV=0.5	Class=0.2	Noise=NO	38.842	84.065	67.306	66.59	32.393	73.36	-9.428
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=NO	38.136	82.676	67.536	66.725	32.422	73.301	-10.728
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=2		OdoQzV=2.5	Class=0.2	Noise=NO	38.264	82.978	69.477	68.454	25.508	68.4	-8.914
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1.5	OdoQzV=4.5	Class=0.2	Noise=NO	38.97	84.416	71.046	69.976	20.324	60.121	2.418
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1		OdoQzV=4.5	Class=0.2	Noise=NO	39.392	86.336	70.882	69.835	20.378	60.122	2.089
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1		OdoQzV=1.5	Class=0.02	Noise=NO	39.817	87.659	71.884	70.819	18.648	74.484	74.484
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1.5	OdoQzV=1.5	Class=0.02	Noise=NO	39.387	86.329	72.047	70.961	18.681	74.749	74.749
+
 
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
 
@@ -815,6 +834,16 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	11.8	24.226	14.836	15.206	11.612	32.337	3.919
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.785	23.775	14.822	15.19	11.616	32.336	3.937
 
+                // --- Forecast --- //
+                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1		OdoQzV=0.5	Class=0.2	Noise=1E-05	16.442	36.495	16.233	16.361	17.452	53.065	-11.542
+                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=1E-05	16.218	37.591	16.17	16.297	17.454	53.074	-11.548
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=0.5	OdoQzV=2.5	Class=0.2	Noise=NO	14.448	32.629	15.48	15.827	20.796	59.046	1.385
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1		OdoQzV=2.5	Class=0.2	Noise=NO	13.206	28.542	15.406	15.749	20.812	59.071	1.431
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=2		OdoQzV=1.5	Class=0.2	Noise=NO	15.465	29.846	15.6	15.976	19.568	60.597	-6.601
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	15.543	30.284	15.608	15.985	19.568	60.593	-6.605
+
+
+
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
@@ -836,7 +865,7 @@ namespace Common_Namespace
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
-                KalmanVars.OdoNoise_STOP = 0.5;
+                KalmanVars.OdoNoise_STOP = 0.1;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;
@@ -924,6 +953,16 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1.5	OdoQzV=2.5	Class=0.2	Noise=NO	11.088	24.367	16.684	17.65	15.671	61.944	9.768
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1	    OdoQzV=2.5	Class=0.2	Noise=NO	11.436	25.607	16.7	17.666	15.674	61.94	9.771
 
+                // --- Forecast --- //
+                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=1E-05	14.657	28.051	22.618	23.689	16.922	49.046	16.072
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1		OdoQzV=1.5	Class=0.2	Noise=NO	12.007	26.7	16.594	17.559	14.292	56.348	10.807
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1.5	OdoQzV=2.5	Class=0.2	Noise=NO	11.209	24.819	16.639	17.608	15.927	61.98	10.803
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1		OdoQzV=0.5	Class=0.2	Noise=NO	14.295	30.51	16.774	17.72	10.556	49.377	-0.553
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=NO	13.334	28.068	16.76	17.706	10.56	49.395	-0.529
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1		OdoQzV=1.5	Class=0.2	Noise=NO	14.222	30.555	16.893	17.847	15.347	55.899	-17.396
+                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=NO	16.253	31.926	17.014	17.951	13.285	48.907	-15.84
+
+
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
@@ -945,7 +984,7 @@ namespace Common_Namespace
 
                 KalmanVars.OdoNoise_V = SINSstate.odo_min_increment / SINSstate.Freq / SINSstate.OdoLimitMeasuresNum;
                 KalmanVars.OdoNoise_Dist = SINSstate.odo_min_increment;
-                KalmanVars.OdoNoise_STOP = 0.5;
+                KalmanVars.OdoNoise_STOP = 0.1;
 
                 SINSstate.existRelationHoriz_VS_Vertical = false;
                 SINSstate.flag_equalizeVertNoise = true;

@@ -441,7 +441,7 @@ namespace Common_Namespace
                 ;
 
             double sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.Freq));
-            sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
+            //sqrt_freq = Math.Sqrt(Math.Abs(SINSstate.timeStep) / SINSstate.TimeBetweenForecast);
             //sqrt_freq = 1.0;
 
 

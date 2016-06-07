@@ -229,10 +229,19 @@ namespace SINSProcessingModes
                 //---------------Формирование флага остановки------------//
                 SINSstate.flag_ZUPT = false;
                 SINSstate.flag_Vertical_ZUPT = false;
-                if (SINSstate.FLG_Stop == 1 && SINSstate.flag_NotUse_ZUPT == false)
+                if (SINSstate.flag_NotUse_ZUPT == false)
                 {
-                    SINSstate.flag_ZUPT = true;
-                    SINSstate.flag_UsingCorrection = true;
+                    double longOdoIncrement = SINSstate.OdometerData.odometer_left.Value 
+                        - SINSstate.OdometerLeft_ArrayOfPrev[Math.Min(20, SINSstate.OdometerLeft_ArrayOfPrev.Length)];
+                    double longOdoIncrement_dt = SINSstate.Time + SINSstate.Time_Alignment 
+                        - SINSstate.OdometerLeft_ArrayOfPrevTime[Math.Min(20, SINSstate.OdometerLeft_ArrayOfPrev.Length)];
+
+                    if (SINSstate.FLG_Stop == 1 || longOdoIncrement / longOdoIncrement_dt == 0.0)
+                    {
+                        SINSstate.flag_ZUPT = true;
+                        SINSstate.flag_Vertical_ZUPT = true;
+                        SINSstate.flag_UsingCorrection = true;
+                    }
                 }
 
                 // === Кооррекция по нулевой скорости вертикального канала === //
