@@ -18,9 +18,9 @@ namespace SINSProcessingModes
         public static StreamWriter SlippageLog = new StreamWriter(SimpleData.PathOutputString + "Debaging//SlippageLog.txt");
         public static StreamWriter KMLFileOut, KMLFileOutSmthd;
 
-        public static StreamWriter STD_data = new StreamWriter(SimpleData.PathOutputString + "Debaging//S_STD.txt");
+        public static StreamWriter STD_data;
         public static StreamWriter Kinematic_solution = new StreamWriter(SimpleData.PathOutputString + "S_Kinem.txt");
-        public static StreamWriter DinamicOdometer = new StreamWriter(SimpleData.PathOutputString + "DinamicOdometer.txt");
+        public static StreamWriter DinamicOdometer;
         public static StreamWriter Speed_Angles = new StreamWriter(SimpleData.PathOutputString + "Debaging//Speed_Angles.txt");
         public static StreamWriter Check_Measurement = new StreamWriter(SimpleData.PathOutputString + "Check_Measurement.txt");
 
@@ -80,6 +80,8 @@ namespace SINSProcessingModes
             Nav_StateErrorsVector = new StreamWriter(SimpleData.PathOutputString + str_name_forvard_back + "_ErrVect.txt");
             StreamWriter Imitator_Telemetric = new StreamWriter(SimpleData.PathTelemetricString + SINSstate.Global_file + ".dat");
             Nav_EstimateSolution = new StreamWriter(SimpleData.PathOutputString + str_name_forvard_back + "_SlnEstimate" + ".txt");
+            DinamicOdometer = new StreamWriter(SimpleData.PathOutputString + "DinamicOdometer.txt");
+            STD_data = new StreamWriter(SimpleData.PathOutputString + "Debaging//S_STD.txt");
 
             Cicle_Debag_Solution = new StreamWriter(SimpleData.PathOutputString + "Debaging//Solution_"
                 + KalmanVars.Noise_Angl[0].ToString("E2") + "_" + KalmanVars.Noise_Vel[0].ToString("E2") + ".txt");
@@ -488,12 +490,14 @@ namespace SINSProcessingModes
             if (SINSstate.flag_Smoothing) KMLFileOutSmthd.Close();
             Nav_Autonomous.Close();
             Speed_Angles.Close();
+            DinamicOdometer.Close();
             Cicle_Debag_Solution.Close();
             Check_Measurement.Close();
             Nav_Errors.Close();
             Nav_Smoothed.Close();
             KMLFileOut.Close();
             ForHelp.Close();
+            STD_data.Close();
 
         }
 

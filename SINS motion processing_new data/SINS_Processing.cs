@@ -148,7 +148,7 @@ namespace SINS_motion_processing_new_data
                                             // -- Параметры матрицы начальной ковариации --// Если 0, то берется из настроечных параметров
                                             for (this.global_odo_measure_noise = 0.5; this.global_odo_measure_noise <= 2.6; this.global_odo_measure_noise += 1.0)
                                             {
-                                                for (this.global_odo_measure_noise_Vertical = 0.5; this.global_odo_measure_noise_Vertical <= 4.1; this.global_odo_measure_noise_Vertical += 1.5)
+                                                for (this.global_odo_measure_noise_Vertical = 0.5; this.global_odo_measure_noise_Vertical <= 5.1; this.global_odo_measure_noise_Vertical += 1.5)
                                                 {
                                                     // -- Параметры матрицы начальной ковариации --//
                                                     for (this.global_flag_AccuracyClass = 0.02; this.global_flag_AccuracyClass <= 0.21; this.global_flag_AccuracyClass *= 10.0)
@@ -194,14 +194,14 @@ namespace SINS_motion_processing_new_data
                                                                 + " ClassVert=" + global_flag_AccuracyClass_vert
                                                                 ;
                                                             if (global_NoiseModelFlag == 0)
-                                                            {
-                                                                str_out += " Noise=NO NoiseV=NO";
-                                                            }
+                                                                str_out += " Noise=NO";
                                                             else
-                                                            {
                                                                 str_out += " Noise=" + this.Cicle_Noise_Angular;
+
+                                                            if (global_NoiseModelFlag_vert == 0)
+                                                                str_out += " NoiseV=NO";
+                                                            else
                                                                 str_out += " NoiseV=" + this.Cicle_Noise_Angular_Vert;
-                                                            }
 
                                                             if (this.global_indx > 1)
                                                                 str_out += " " + Math.Round(array_HorizontalError.Average(), 3) + " " + Math.Round(array_HorizontalError.Max(), 3) + " " + Math.Round(array_HorizontalError[this.global_indx - 2], 3)
@@ -403,11 +403,10 @@ namespace SINS_motion_processing_new_data
 
                 if (ParamStart.Experiment_NoiseModelFlag == true)
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        KalmanVars.Noise_Vel[j] = ParamStart.Experiment_Noise_Vel;
-                        KalmanVars.Noise_Angl[j] = ParamStart.Experiment_Noise_Angl;
-                    }
+                    KalmanVars.Noise_Vel[0] = ParamStart.Experiment_Noise_Vel;
+                    KalmanVars.Noise_Angl[0] = ParamStart.Experiment_Noise_Angl;
+                    KalmanVars.Noise_Vel[1] = ParamStart.Experiment_Noise_Vel;
+                    KalmanVars.Noise_Angl[1] = ParamStart.Experiment_Noise_Angl;
                 }
                 if (ParamStart.Experiment_NoiseModelFlag_Vert)
                 {

@@ -828,7 +828,9 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=2.5	OdoQzV=2.5	Class=0.2	Noise=NO	11.862	25.151	14.799	15.165	12.192	28.654	9.512
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=3	    OdoQzV=2.5	Class=0.2	Noise=NO	11.786	24.427	14.757	15.119	12.197	28.667	9.53
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	11.778	24.992	14.616	14.976	11.986	29.099	9.653
+
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.692	23.93	14.591	14.95	11.993	29.115	9.679
+
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2	    OdoQzV=1.5	Class=0.2	Noise=NO	11.683	23.438	14.576	14.933	11.997	29.124	9.696
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.886	25.242	14.855	15.227	11.607	32.337	3.898
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	11.8	24.226	14.836	15.206	11.612	32.337	3.919
@@ -847,7 +849,11 @@ namespace Common_Namespace
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
-                SINSstate.OdoLimitMeasuresNum = 5;
+                SINSstate.OdoLimitMeasuresNum = 3;
+
+                /*!!!!!!!!!*/
+                SINSstate.global_odo_measure_noise = 1.5;
+                SINSstate.global_odo_measure_noise_Vertical = 1.5;
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.03;
