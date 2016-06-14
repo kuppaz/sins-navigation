@@ -837,26 +837,22 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.785	23.775	14.822	15.19	11.616	32.336	3.937
 
                 // --- Forecast --- //
-                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1		OdoQzV=0.5	Class=0.2	Noise=1E-05	16.442	36.495	16.233	16.361	17.452	53.065	-11.542
-                //NoisModl=1	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=0.5	Class=0.2	Noise=1E-05	16.218	37.591	16.17	16.297	17.454	53.074	-11.548
-                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=0.5	OdoQzV=2.5	Class=0.2	Noise=NO	14.448	32.629	15.48	15.827	20.796	59.046	1.385
-                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1		OdoQzV=2.5	Class=0.2	Noise=NO	13.206	28.542	15.406	15.749	20.812	59.071	1.431
-                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=2		OdoQzV=1.5	Class=0.2	Noise=NO	15.465	29.846	15.6	15.976	19.568	60.597	-6.601
-                //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=9	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	15.543	30.284	15.608	15.985	19.568	60.593	-6.605
+                
 
 
 
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
-                SINSstate.OdoLimitMeasuresNum = 3;
+                SINSstate.OdoLimitMeasuresNum = 5;
 
                 /*!!!!!!!!!*/
-                SINSstate.global_odo_measure_noise = 1.5;
-                SINSstate.global_odo_measure_noise_Vertical = 1.5;
+                //SINSstate.global_odo_measure_noise = 1.5;
+                //SINSstate.global_odo_measure_noise_Vertical = 1.5;
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.03;
+
 
                 // --- Заданный курс: флаг и значение --- //
                 SINSstate.Alignment_HeadingDetermined = true;
@@ -878,6 +874,8 @@ namespace Common_Namespace
                 SINSstate.MyOwnKalman_Korrection = false;
 
                 SINSstate.first100m_StartHeightCorrection_value = 130.0;
+
+                SINSstate.AlgebraicCalibration_F_Zero = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
@@ -997,6 +995,8 @@ namespace Common_Namespace
                 SINSstate.MyOwnKalman_Korrection = false;
 
                 SINSstate.first100m_StartHeightCorrection_value = 130.0;
+
+                SINSstate.AlgebraicCalibration_F_Zero = true;
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
