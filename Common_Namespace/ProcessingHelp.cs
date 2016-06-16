@@ -749,8 +749,8 @@ namespace Common_Namespace
             }
 
 
-            
-            if (i % 15 == 0)
+
+            if (i % SINSstate.FreqOutput == 0)
             {
                 //------------------------------------------------------------//
                 bool flag_SK42 = false;

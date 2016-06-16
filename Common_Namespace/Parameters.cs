@@ -119,8 +119,9 @@ namespace Common_Namespace
 
                 //=== С параметрами ниже решение OdoSINS лучше SINSOdo (акцент на 3E-5 и 3E-7)
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-5; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-7; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = true;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 3E-5; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 3E-7; //3E-6- optim
 
                 // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
@@ -182,8 +183,9 @@ namespace Common_Namespace
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-3; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-5; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = true;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 3E-3; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 3E-5; //3E-6- optim
                 // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
@@ -240,8 +242,9 @@ namespace Common_Namespace
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-3; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-5; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = true;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 3E-3; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 3E-5; //3E-6- optim
                 // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
@@ -309,8 +312,9 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -408,8 +412,9 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-004; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 1.00E-004; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 1.00E-006; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -499,19 +504,40 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2		OdoQzV=2.5	Class=0.2	Noise=NO	31.333	68.85	57.337	29373.999	7.849	12.472
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1		OdoQzV=0.5	Class=0.2	Noise=NO	34.132	82.651	81.195	29314.41	8.886	14.236	13.555
 
+                // --- SeparateChannels ParamCycling --- //
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    17.241	39.653	8.28	29366.943	10.283	16.74	16.486
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=0.5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    17.238	39.643	8.281	29366.932	9.723	15.404	15.158
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=3.5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=1E-05	17.575	38.297	17.448	29367.377	14.439	51.719	-16.588
+                //OdoCntZ=3	OdoQz=0.5	OdoQzV=2	Class=0.02	ClassVert=0.2	Noise=1E-05	    NoiseV=1E-05	23.098	59.271	19.792	29380.016	9.825	26.502	5.96
+                //OdoCntZ=3	OdoQz=2.5	OdoQzV=2	Class=0.02	ClassVert=0.2	Noise=1E-05	    NoiseV=1E-05	33.005	85.399	44.257	29413.242	9.813	26.417	5.943
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=2	Class=0.02	ClassVert=0.2	Noise=1E-05	    NoiseV=1E-05	30.171	78.823	37.346	29405.481	9.817	26.441	5.951
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=0.5	Class=0.02	ClassVert=0.2	Noise=1E-05	    NoiseV=0.0001	32.442	75.456	39.368	29404.989	14.688	24.649	22.534
+                //OdoCntZ=3	OdoQz=2.5	OdoQzV=0.5	Class=0.02	ClassVert=0.2	Noise=1E-05	    NoiseV=0.0001	35.444	82.586	45.992	29412.872	14.678	24.63	22.5
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=0.5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    20.778	48.73	18.353	29381.291	9.807	15.597	15.301
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    20.782	48.736	18.357	29381.299	10.159	16.482	16.269
+                //OdoCntZ=5	OdoQz=0.5	OdoQzV=0.5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    20.053	40.393	21.907	29360.89	9.864	15.719	15.449
+                //OdoCntZ=5	OdoQz=0.5	OdoQzV=3.5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    20.056	40.402	21.91	29360.899	10.272	16.744	16.407
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=2	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=1E-05	20.275	48.41	24.705	29381.366	7.472	21.951	-1.703
+                //OdoCntZ=5	OdoQz=0.5	OdoQzV=2	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=1E-05	19.546	38.9	26.619	29360.982	7.473	21.959	-1.798
+                //OdoCntZ=5	OdoQz=0.5	OdoQzV=0.5	Class=0.02	ClassVert=0.2	Noise=1E-05 	NoiseV=0.0001	30.884	70.984	36.166	29401.477	14.984	25.347	23.118
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=2	Class=0.02	ClassVert=0.2	Noise=1E-05	    NoiseV=1E-05	32.954	84.863	44.003	29413.185	8.399	33.314	-6.695
+                //OdoCntZ=5	OdoQz=2.5	OdoQzV=2	Class=0.02	ClassVert=0.2	Noise=1E-05	    NoiseV=1E-05	34.408	88.168	47.349	29416.822	8.402	33.324	-6.703
+                //OdoCntZ=7	OdoQz=1.5	OdoQzV=3.5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    23.733	57.95	27.437	29392.603	10.131	16.44	16.159
+                //OdoCntZ=7	OdoQz=1.5	OdoQzV=2	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	    23.732	57.951	27.438	29392.602	10.081	16.446	15.896
+
 
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
-                SINSstate.OdoLimitMeasuresNum = 5;
+                SINSstate.OdoLimitMeasuresNum = 3;
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
                 SINSstate.OdoVerticalNoiseMultiplicator = 5;
 
                 /*!!!!!!!!!*/
-                //SINSstate.global_odo_measure_noise = 1.5;
-                //SINSstate.global_odo_measure_noise_Vertical = 0.5;
+                SINSstate.global_odo_measure_noise = 1.5;
+                SINSstate.global_odo_measure_noise_Vertical = 5.0;
 
                 // --- Заданный курс: флаг и значение --- //
                 SINSstate.Alignment_HeadingDetermined = true;
@@ -536,13 +562,13 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 0.01; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 0.0001; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel_vert = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl_vert = 1.00E-005; //3E-6- optim
                 //===
-
-                // === best configurations === //
-                //VertRel=0	NoisModl=0	eqlzVert=1	MyCorr=1	CoordNois=1	Class=0.2	Noise=NO
 
                 // --- Шум по горизонтальным координатам --- //
                 KalmanVars.Noise_Pos = 1.0;
@@ -624,11 +650,23 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1		OdoQzV=1.5	Class=0.02	Noise=NO	39.817	87.659	71.884	70.819	18.648	74.484	74.484
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=7	OdoQz=1.5	OdoQzV=1.5	Class=0.02	Noise=NO	39.387	86.329	72.047	70.961	18.681	74.749	74.749
 
+                // --- SeparateChannels ParamCycling --- //
+                //OdoCntZ=3	OdoQz=0.5	OdoQzV=2	Class=0.2	ClassVert=0.02	Noise=0.0001	NoiseV=NO	38.58	85.231	68.634	68.448	21.98	49.776	47.913
+                //OdoCntZ=3	OdoQz=0.5	OdoQzV=2	Class=0.02	ClassVert=0.02	Noise=0.0001	NoiseV=NO	38.442	84.381	68.625	68.435	21.986	49.791	48.363
+                //OdoCntZ=3	OdoQz=0.5	OdoQzV=2	Class=0.02	ClassVert=0.02	Noise=1E-05	NoiseV=NO	38.58	87.646	68.052	67.94	22.101	49.976	47.345
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=NO	37.466	82.402	68.91	68.657	22.613	57.356	-14.792
+                //OdoCntZ=5	OdoQz=0.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=0.0001	NoiseV=NO	37.624	82.467	68.816	68.575	22.429	57.398	-13.839
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=1E-05	NoiseV=NO	37.951	87.021	68.177	68.036	22.601	57.479	-14.719
+
 
                 SINSstate.timeStep = SINSstate.Freq = 0.02048;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
                 SINSstate.OdoLimitMeasuresNum = 5;
+
+                /*!!!!!!!!!*/
+                SINSstate.global_odo_measure_noise = 1.5;
+                SINSstate.global_odo_measure_noise_Vertical = 5.0;
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.1;
@@ -657,9 +695,12 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim 
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 0.01; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 0.0001; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel_vert = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl_vert = 1.00E-005; //3E-6- optim
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -754,8 +795,9 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 1.00E-005; //3E-6- optim
                 //===
 
                 // === best configurations === //
@@ -828,27 +870,35 @@ namespace Common_Namespace
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=2.5	OdoQzV=2.5	Class=0.2	Noise=NO	11.862	25.151	14.799	15.165	12.192	28.654	9.512
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=1	OdoQz=3	    OdoQzV=2.5	Class=0.2	Noise=NO	11.786	24.427	14.757	15.119	12.197	28.667	9.53
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	11.778	24.992	14.616	14.976	11.986	29.099	9.653
-
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.692	23.93	14.591	14.95	11.993	29.115	9.679
-
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=3	OdoQz=2	    OdoQzV=1.5	Class=0.2	Noise=NO	11.683	23.438	14.576	14.933	11.997	29.124	9.696
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=0.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.886	25.242	14.855	15.227	11.607	32.337	3.898
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1	    OdoQzV=1.5	Class=0.2	Noise=NO	11.8	24.226	14.836	15.206	11.612	32.337	3.919
                 //NoisModl=0	eqlzVert=1	MyCorr=0	CoordNois=1	OdoCntZ=5	OdoQz=1.5	OdoQzV=1.5	Class=0.2	Noise=NO	11.785	23.775	14.822	15.19	11.616	32.336	3.937
 
-                // --- Forecast --- //
-                
+                // --- SeparateChannels ParamCycling --- //
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=0.0001	NoiseV=0.0001	11.28	23.205	14.113	14.593	10.25	30.486	6.154
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=0.0001	11.287	22.934	14.108	14.584	10.269	30.489	6.234
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=NO	    NoiseV=0.0001	11.417	22.904	13.708	14.196	10.356	30.652	6.537
+                //OdoCntZ=3	OdoQz=1.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=NO	    NoiseV=0.0001	11.365	22.437	13.702	14.208	10.337	30.697	6.439
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=0.0001	NoiseV=0.0001	11.142	23.452	14.301	14.792	10.214	29.729	2.247
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=NO	    NoiseV=0.0001	11.497	22.639	13.896	14.397	10.246	29.753	2.5
+                //OdoCntZ=5	OdoQz=1.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=NO	    NoiseV=0.0001	11.466	22.706	13.884	14.401	10.285	29.884	2.465
+                //OdoCntZ=7	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=NO	    NoiseV=0.0001	11.602	22.862	14.112	14.626	10.257	29.281	-0.355
+                //OdoCntZ=7	OdoQz=1.5	OdoQzV=5	Class=0.2	ClassVert=0.2	Noise=0.0001	NoiseV=0.0001	11.207	23.517	14.511	15.011	10.263	29.298	-0.483
+                //OdoCntZ=7	OdoQz=1.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=0.0001	NoiseV=0.0001	11.164	23.801	14.515	15.019	10.283	29.344	-0.527
+                //OdoCntZ=7	OdoQz=1.5	OdoQzV=5	Class=0.02	ClassVert=0.2	Noise=NO	    NoiseV=0.0001	11.584	23.05	14.096	14.626	10.343	29.465	-0.35
 
 
 
                 SINSstate.timeStep = SINSstate.Freq = 0.01024;
 
                 // --- Лишь каждое OdoLimitMeasuresNum обновление показаний одометра будут использоваться для коррекции --- //
-                SINSstate.OdoLimitMeasuresNum = 5;
+                SINSstate.OdoLimitMeasuresNum = 3;
 
                 /*!!!!!!!!!*/
-                //SINSstate.global_odo_measure_noise = 1.5;
-                //SINSstate.global_odo_measure_noise_Vertical = 1.5;
+                SINSstate.global_odo_measure_noise = 1.5;
+                SINSstate.global_odo_measure_noise_Vertical = 5.0;
 
                 // --- Минимальное приращение показания одометра --- //
                 SINSstate.odo_min_increment = 0.03;
@@ -879,9 +929,12 @@ namespace Common_Namespace
 
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
-                ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag = true; // false - Брать значения шума с выставки, true - задаваемые ниже
+                ParamStart.Experiment_Noise_Vel = 0.01; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = 0.0001; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel_vert = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl_vert = 1.00E-005; //3E-6- optim
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -1001,8 +1054,9 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 1.00E-005; //3E-6- optim
                 //===
 
                 // --- Шум по горизонтальным координатам --- //
@@ -1108,8 +1162,10 @@ namespace Common_Namespace
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-4; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-6; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = true;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 3E-4; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 3E-6; //3E-6- optim
+
                 // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
@@ -1175,8 +1231,9 @@ namespace Common_Namespace
 
                 //=== 
                 ParamStart.Experiment_NoiseModelFlag = true; // Брать модельные значения, а не задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-4; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-6; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = true;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 3E-4; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 3E-6; //3E-6- optim
                 // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 1.0;
                 ParamStart.Experiment_stdOdoR = 1.0; // метров
@@ -1297,8 +1354,9 @@ namespace Common_Namespace
                 SINSstate.MyOwnKalman_Korrection = false;
 
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 3E-2; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 3E-4; //3E-6- optim
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 3E-2; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 3E-4; //3E-6- optim
                 // --- Начальные ковариации --- //
                 ParamStart.Experiment_stdR = 0.10;
                 ParamStart.Experiment_stdOdoR = 0.1; // метров
@@ -1412,8 +1470,9 @@ namespace Common_Namespace
                 //=== 
                 //---Здесь нужно брать класс точности 2.0
                 ParamStart.Experiment_NoiseModelFlag = false; // false - Брать значения шума с выставки, true - задаваемые ниже
-                ParamStart.Experiment_Noise_Vel = 1.00E-003; //3E-4- optim
-                ParamStart.Experiment_Noise_Angl = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
+                ParamStart.Experiment_NoiseModelFlag_Vert = false;
+                ParamStart.Experiment_Noise_Vel = ParamStart.Experiment_Noise_Vel_vert = 1.00E-003; //3E-4- optim
+                ParamStart.Experiment_Noise_Angl = ParamStart.Experiment_Noise_Angl_vert = 1.00E-005; //3E-6- optim При этом ошибка - максимум 50 метров!!!
                 //===
 
 

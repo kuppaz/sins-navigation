@@ -306,6 +306,11 @@ namespace SINS_motion_processing_new_data
                 else
                     SINSstate.global_paramsCycleScanning += ";Noise=" + this.Cicle_Noise_Angular;
 
+                if (global_NoiseModelFlag_vert == 0)
+                    SINSstate.global_paramsCycleScanning += ";NoiseV=NO";
+                else
+                    SINSstate.global_paramsCycleScanning += ";NoiseV=" + this.Cicle_Noise_Angular_Vert;
+
                 SINSstate.global_paramsCycleScanning += "_";
 
                 if (global_MyOwnKalman_Korrection == 0) SINSstate.MyOwnKalman_Korrection = false;
